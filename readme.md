@@ -1,0 +1,3 @@
+# Graphing in Groups with Geogebra
+
+This project is updated aproach to previous work done by Dr. Tobin White which used Geogebra and NetLogo to provide group controlled line graphing activities.  This implementation will use HTML, javascript and a Geogebra applet to send and receive messages about the location of points within the Geogebra view.  As users update the location of their point, the view on the remote user's machine will move and the line graph redrawn.  The sending and receiving of messages relies on a Node.js based communication library.
