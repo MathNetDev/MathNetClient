@@ -11,6 +11,10 @@ var ERROR_VAL = -Infinity;
 var N = 1;
 var Nmax = 10;
 
+// debugging control - for the 'debug' function below
+	debug_activep = true;		// controls behavior of debug()
+	debug_method = "console";	// = "alert" or "console"
+
 /*************************************************************************
  * 
  *	Initialization Functions - called from $(document).ready in index.html
@@ -24,7 +28,7 @@ function initialize_groupgraph() {
 	initialize_session_data();		// see gg_sessionstore.js
 	
 	// setup callback functions that will be called when NetLogo messages arrive
-	initialize_netlogo();
+	//initialize_netlogo();
 	
 	initialize_display();
 	
@@ -33,65 +37,65 @@ function initialize_groupgraph() {
 }
 
 
-function initialize_netlogo() {
-	var error_msg;
+// function initialize_netlogo() {
+// 	var error_msg;
 	
-	/****************  User configurable settings *******************/
+// 	/****************  User configurable settings *******************/
 
-	NETLOGO.set_version("NetLogo 5.0.4");	// This client built for 'NetLogo 5.0.4' but this is how to override
-	NETLOGO.set_port(9999);					// 9999 is current default - but this is how you would override			
-	NETLOGO.set_timeout(2000);				// set connect timeout to 2 seconds instead of default 5 secs
+// 	NETLOGO.set_version("NetLogo 5.0.4");	// This client built for 'NetLogo 5.0.4' but this is how to override
+// 	NETLOGO.set_port(9999);					// 9999 is current default - but this is how you would override			
+// 	NETLOGO.set_timeout(2000);				// set connect timeout to 2 seconds instead of default 5 secs
 
-	/****************  NETLOGO  message  tags  **********************/
+// 	/****************  NETLOGO  message  tags  **********************/
 
-	// establish "handlers" for all tags sent by NetLogo server
+// 	// establish "handlers" for all tags sent by NetLogo server
 	
-	error_msg = "init_event_handlers: failed to set_handler(";
-	if (!NETLOGO.set_handler("show-equation", handle_show_equation)) {
-		nl_alert(error_msg + "show-equation)");
-	}
-	if (!NETLOGO.set_handler("show-partner", handle_show_partner)) {
-		nl_alert(error_msg + "show-partner)");
-	}
-	if (!NETLOGO.set_handler("mark-partner", handle_mark_partner)) {
-		nl_alert(error_msg + "mark-partner)");
-	}
-	if (!NETLOGO.set_handler("set-graph-dim", handle_set_graph_dim)) {
-		nl_alert(error_msg + "set-graph-dim)");
-	}
+// 	error_msg = "init_event_handlers: failed to set_handler(";
+// 	if (!NETLOGO.set_handler("show-equation", handle_show_equation)) {
+// 		nl_alert(error_msg + "show-equation)");
+// 	}
+// 	if (!NETLOGO.set_handler("show-partner", handle_show_partner)) {
+// 		nl_alert(error_msg + "show-partner)");
+// 	}
+// 	if (!NETLOGO.set_handler("mark-partner", handle_mark_partner)) {
+// 		nl_alert(error_msg + "mark-partner)");
+// 	}
+// 	if (!NETLOGO.set_handler("set-graph-dim", handle_set_graph_dim)) {
+// 		nl_alert(error_msg + "set-graph-dim)");
+// 	}
 	
-	// here a more generic handler is established for anything other than above messages
-	if (!NETLOGO.set_handler("default", handle_unrecognized_tags)) {
-		nl_alert(error_msg + "default)");
-	}
+// 	// here a more generic handler is established for anything other than above messages
+// 	if (!NETLOGO.set_handler("default", handle_unrecognized_tags)) {
+// 		nl_alert(error_msg + "default)");
+// 	}
 	
 	
-	// you can look at the installed handlers at any time:
-	alert("Installed NetLogo Handlers: " + NETLOGO.show_handlers());
+// 	// you can look at the installed handlers at any time:
+// 	alert("Installed NetLogo Handlers: " + NETLOGO.show_handlers());
 
-	/****************  ERROR  handlers  **********************/
+// 	/****************  ERROR  handlers  **********************/
 
-	// establish handlers for errors - this is optional
-	// if you establish no error handlers, alert(<message>) will be called.
-	// set_errorhandler returns true on success, false otherwise
-	// here we set a handler for just the "netlogo-exit" error/event
-	if (!NETLOGO.set_errorhandler("netlogo-exit", handle_netlogo_exit)) {
-		alert("Something went wrong with my NETLOGO.set_errorhandler call!");
-	}
+// 	// establish handlers for errors - this is optional
+// 	// if you establish no error handlers, alert(<message>) will be called.
+// 	// set_errorhandler returns true on success, false otherwise
+// 	// here we set a handler for just the "netlogo-exit" error/event
+// 	if (!NETLOGO.set_errorhandler("netlogo-exit", handle_netlogo_exit)) {
+// 		alert("Something went wrong with my NETLOGO.set_errorhandler call!");
+// 	}
 
-	// here we set a handler for just the "netlogo-version" error/event
-	if (!NETLOGO.set_errorhandler("netlogo-version", handle_netlogo_version_mismatch)) {
-		alert("Something went wrong with my NETLOGO.set_errorhandler call!");
-	}
+// 	// here we set a handler for just the "netlogo-version" error/event
+// 	if (!NETLOGO.set_errorhandler("netlogo-version", handle_netlogo_version_mismatch)) {
+// 		alert("Something went wrong with my NETLOGO.set_errorhandler call!");
+// 	}
 
-	// here we establish a more generic handler for anything else that happens
-	NETLOGO.set_errorhandler("default", default_error_handler);
+// 	// here we establish a more generic handler for anything else that happens
+// 	NETLOGO.set_errorhandler("default", default_error_handler);
 
-	//	you can get the list of all currently assigned error handlers by uncommenting:
-	alert("Installed error handlers: " + NETLOGO.show_errorhandlers());
+// 	//	you can get the list of all currently assigned error handlers by uncommenting:
+// 	alert("Installed error handlers: " + NETLOGO.show_errorhandlers());
 
-	debug("initialize_netlogo: completed");
-}
+// 	debug("initialize_netlogo: completed");
+// }
 
 
 function initialize_display() {
@@ -112,12 +116,12 @@ function initialize_display() {
 
 		ggbOnInit();
 		
-		if (!setup_completep()) {
-			nl_alert("Warning: You have not run Setup yet.  You will be able to move your point, but you cannot connect to NetLogo.");
-			$("#gnetlogo").hide();
-		} else {
-			$("#gnetlogo").show();
-		}
+		// if (!setup_completep()) {
+		// 	nl_alert("Warning: You have not run Setup yet.  You will be able to move your point, but you cannot connect to NetLogo.");
+		// 	$("#gnetlogo").hide();
+		// } else {
+		// 	$("#gnetlogo").show();
+		// }
 	
 		group = sessionStorage.getItem("group");
 		color = sessionStorage.getItem("color");
@@ -157,28 +161,28 @@ function initialize_display() {
 
 
 
-function toggle_netlogo() {
-	if (netlogo_connectedp()) {
-		var r = confirm("Are you sure you want to leave the group?");
-		if (r === true) {
-			NETLOGO.disconnect();
-			ui_close();
-		}
+// function toggle_netlogo() {
+// 	if (netlogo_connectedp()) {
+// 		var r = confirm("Are you sure you want to leave the group?");
+// 		if (r === true) {
+// 			NETLOGO.disconnect();
+// 			ui_close();
+// 		}
 
-	} else {
-		if (!setup_completep()) {
-			nl_alert("You can't join until you have completed Setup. Use the Back arrow to get to Setup.");
-		} else {
-			serveraddr = sessionStorage.getItem("serveraddr");
-			username = sessionStorage.getItem("username");
+// 	} else {
+// 		if (!setup_completep()) {
+// 			nl_alert("You can't join until you have completed Setup. Use the Back arrow to get to Setup.");
+// 		} else {
+// 			serveraddr = sessionStorage.getItem("serveraddr");
+// 			username = sessionStorage.getItem("username");
 			
-			// specify a logincomplete_handler that sends the groupid information
-			NETLOGO.connect(serveraddr, username, sendGroup);
-			ui_open();
-		}
-	}
-	return true;
-}
+// 			// specify a logincomplete_handler that sends the groupid information
+// 			NETLOGO.connect(serveraddr, username, sendGroup);
+// 			ui_open();
+// 		}
+// 	}
+// 	return true;
+// }
 
 
 function setup_completep() {
@@ -192,9 +196,9 @@ function setup_completep() {
 }
 
 
-function netlogo_connectedp() {
-	return (NETLOGO.connection_state() === "OPEN");
-}
+// function netlogo_connectedp() {
+// 	return (NETLOGO.connection_state() === "OPEN");
+// }
 
 
 /*****************************************************************************
@@ -232,6 +236,7 @@ function mark_point() {
 	ggb_set_value("x1m", Number(x1));
 	ggb_set_value("y1m", Number(y1));
 
+	//sendString to send request to mark the point
 	sendString("B");
 }
 
@@ -248,17 +253,23 @@ function mark_point() {
 // sendString: used to send Show (A) and Mark (B) messages
 
 function sendString(str) {
-	var message, rval;
+	var message, rval = false;
 
-	if (!setup_completep()) {
-		debug("sendString called before setup_completep is true!");
-		return false;
+	if(str == "A"){ //show
+		rval = true;
+	} else if (str == "B"){ //mark
+		rval = true;
 	}
 
-	// send_command(<tag>, <type>, <value>)
-	rval = NETLOGO.send_command("string", "String", str);
+	// if (!setup_completep()) {
+	// 	debug("sendString called before setup_completep is true!");
+	// 	return false;
+	// }
+
+	// // send_command(<tag>, <type>, <value>)
+	// rval = NETLOGO.send_command("string", "String", str);
 	
-	debug("string [" + str + "] sent");
+	// debug("string [" + str + "] sent");
 
 	return rval;
 }
@@ -272,17 +283,17 @@ function sendString(str) {
 function sendPoint(x, y) {
 	var message, rval;
 
-	if (!setup_completep()) {
-		// debug("sendPoint called before setup_completep is true!");
-		return false;
-	}
+	// if (!setup_completep()) {
+	// 	// debug("sendPoint called before setup_completep is true!");
+	// 	return false;
+	// }
 
-	message = "[" + x + " " + y + "]";
+	// message = "[" + x + " " + y + "]";
 	
-	// send_command(<tag>, <type>, <value>)
-	rval = NETLOGO.send_command("point", "String", message);
+	// // send_command(<tag>, <type>, <value>)
+	// rval = NETLOGO.send_command("point", "String", message);
 	
-	debug("point " + message + " sent.");
+	// debug("point " + message + " sent.");
 
 	return rval;
 }
@@ -298,21 +309,21 @@ function sendPoint(x, y) {
 function sendGroup() {
 	var group, color, grpstr, rval;
 
-	if (!setup_completep()) {
-		debug("sendGroup called before setup_completep is true!");
-		return false;
-	}
+	// if (!setup_completep()) {
+	// 	debug("sendGroup called before setup_completep is true!");
+	// 	return false;
+	// }
 
-	rval = false;
-	group = sessionStorage.getItem("group");
-	color = sessionStorage.getItem("color");
+	// rval = false;
+	// group = sessionStorage.getItem("group");
+	// color = sessionStorage.getItem("color");
 
-	if (group && color) {
-		grpstr = group + color;
+	// if (group && color) {
+	// 	grpstr = group + color;
 		
-		rval = NETLOGO.send_command("string", "String", grpstr);
-		debug("sendGroup: Group/Color info sent - " + grpstr);
-	}
+	// 	rval = NETLOGO.send_command("string", "String", grpstr);
+	// 	debug("sendGroup: Group/Color info sent - " + grpstr);
+	// }
 	
 	return rval;
 }
@@ -608,9 +619,6 @@ function movePoint(direction) {
 	xtmp = ggb_get_value(MY_XNAME);
 	ytmp = ggb_get_value(MY_YNAME);
 
-	my_xcor = getItemTyped(MY_XNAME, "number");
-	my_ycor = getItemTyped(MY_YNAME, "number");
-
 	if ((xtmp !== my_xcor) || (ytmp !== my_ycor)) {
 		nl_alert("javascript and GGB disagree on current position JS: (" + my_xcor + ", " + my_ycor + ")  GGB: (" + xtmp + ", " + ytmp + ")");
 	}
@@ -618,25 +626,29 @@ function movePoint(direction) {
 	switch (direction) {
 	case 'up':
 		if (ggb_inc_var(MY_YNAME)) {
-			my_ycor += 1;
+			my_ycor = 1;
+			my_xcor = 0;
 			sessionStorage.setItem(MY_YNAME, my_ycor);
 		}
 		break;
 	case 'down':
 		if (ggb_dec_var(MY_YNAME)) {
-			my_ycor -= 1;
+			my_ycor = -1;
+			my_xcor = 0;
 			sessionStorage.setItem(MY_YNAME, my_ycor);
 		}
 		break;
 	case 'left':
 		if (ggb_dec_var(MY_XNAME)) {
-			my_xcor -= 1;
+			my_xcor = -1;
+			my_ycor = 0;
 			sessionStorage.setItem(MY_XNAME, my_xcor);
 		}
 		break;
 	case 'right':
 		if (ggb_inc_var(MY_XNAME)) {
-			my_xcor += 1;
+			my_xcor = 1;
+			my_ycor = 0;
 			sessionStorage.setItem(MY_XNAME, my_xcor);
 		}
 		break;
@@ -648,6 +660,8 @@ function movePoint(direction) {
 
 	// attempt to send point to NetLogo - this may not happen if we are not yet logged in.
 	// this case is checked in sendPoint()
+
+	//this becomes a coord_change call. socket.coordinate_change(username, class, group, dx, dy);
 	sendPoint(my_xcor, my_ycor);
 }
 
@@ -783,6 +797,21 @@ function ggb_dec_var(varname) {
 	}
 	return rval;
 }
-
-
+function nl_alert(str) {
+		alert("socket error: " + str);
+}
+function debug(str) {
+	if (debug_activep) {
+		switch (debug_method) {
+		case "alert":
+			alert("socket debug: " + str);
+			break;
+		case "console":
+			console.log("socket debug: " + str);
+			break;
+		default:
+			alert("debug: illegal option in debug_method - [" + debug_method + "]");
+		}
+	}
+}
 

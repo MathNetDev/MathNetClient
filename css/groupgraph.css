@@ -55,3 +55,7 @@ body {
   margin: 0 5px 0 0;
   font-weight: bold;
 }
+
+.ui-overlay-b {
+	overflow-x: visible !important;
+}
