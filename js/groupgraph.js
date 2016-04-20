@@ -613,14 +613,17 @@ function ggb_set_visible(name, onoff) {
 //
 
 function movePoint(direction) {
-	var my_xcor, my_ycor, xtmp, ytmp;
+	var my_xcor = 0, my_ycor = 0, xtmp, ytmp;
 
 	// do some sanity checking first - make sure javascript x, y = ggb x, y
 	xtmp = ggb_get_value(MY_XNAME);
 	ytmp = ggb_get_value(MY_YNAME);
 
-	if ((xtmp !== my_xcor) || (ytmp !== my_ycor)) {
-		nl_alert("javascript and GGB disagree on current position JS: (" + my_xcor + ", " + my_ycor + ")  GGB: (" + xtmp + ", " + ytmp + ")");
+	var js_ycor = getItemTyped(MY_YNAME, "number");
+	var js_xcor = getItemTyped(MY_XNAME, "number");
+
+	if ((js_xcor !== xtmp) || (js_ycor !== ytmp)) {
+		nl_alert("javascript and GGB disagree on current position JS: (" + js_xcor + ", " + js_ycor + ")  GGB: (" + xtmp + ", " + ytmp + ")");
 	}
 
 	switch (direction) {
@@ -628,28 +631,28 @@ function movePoint(direction) {
 		if (ggb_inc_var(MY_YNAME)) {
 			my_ycor = 1;
 			my_xcor = 0;
-			sessionStorage.setItem(MY_YNAME, my_ycor);
+			sessionStorage.setItem(MY_YNAME, my_ycor+js_ycor);
 		}
 		break;
 	case 'down':
 		if (ggb_dec_var(MY_YNAME)) {
 			my_ycor = -1;
 			my_xcor = 0;
-			sessionStorage.setItem(MY_YNAME, my_ycor);
+			sessionStorage.setItem(MY_YNAME, my_ycor+js_ycor);
 		}
 		break;
 	case 'left':
 		if (ggb_dec_var(MY_XNAME)) {
 			my_xcor = -1;
 			my_ycor = 0;
-			sessionStorage.setItem(MY_XNAME, my_xcor);
+			sessionStorage.setItem(MY_XNAME, my_xcor+js_xcor);
 		}
 		break;
 	case 'right':
 		if (ggb_inc_var(MY_XNAME)) {
 			my_xcor = 1;
 			my_ycor = 0;
-			sessionStorage.setItem(MY_XNAME, my_xcor);
+			sessionStorage.setItem(MY_XNAME, my_xcor+js_xcor);
 		}
 		break;
 	default:
