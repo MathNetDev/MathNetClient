@@ -59,3 +59,8 @@ body {
 .ui-overlay-b {
 	overflow-x: visible !important;
 }
+.ui-page { 
+	min-height: 1px;
+}
+
+
