@@ -32,7 +32,7 @@ function initialize_groupgraph() {
 	
 	initialize_display();
 	
-	initialize_form_validator();	// see gg_validation.js
+	//initialize_form_validator();	// see gg_validation.js
 
 }
 
@@ -102,10 +102,10 @@ function initialize_display() {
 	
 	var group, color, x1, y1, connectedp, validator;
 					
-	$("#setup_netlogo_form").bind("submit", function (event, ui) {
-		store_netlogo_setup();
-		return true;		// must return true to close dialog box.
-	});
+	// $("#setup_netlogo_form").bind("submit", function (event, ui) {
+	// 	store_netlogo_setup();
+	// 	return true;		// must return true to close dialog box.
+	// });
 	
 	$( "#setup" ).on( "pagebeforeshow", function(event) {
 		init_setup_from_session();
@@ -282,7 +282,12 @@ function sendString(str) {
 
 function sendPoint(x, y) {
 	var message, rval;
+	//coordinate_change = function(username, class_id, group_id, x, y, info) 
+	var username = getItemTyped("username", "string");
+	var class_id = getItemTyped("class_id", "string");
+	var group_id = getItemTyped("group_id", "string");
 
+	socket.coordinate_change(username, class_id, group_id, x, y);
 	// if (!setup_completep()) {
 	// 	// debug("sendPoint called before setup_completep is true!");
 	// 	return false;
@@ -360,46 +365,31 @@ function handle_show_equation(fields) {
 
 
 function handle_show_partner(fields) {
-	var content_type, content_value, vec, x2, y2;
+	var username, x2, y2;
 
-	content_type = fields.content.type;
-	content_value = fields.content.value;
+	username = fields.username;
+	x2 = fields.x;
+	y2 = fields.y;
 
-	if (content_type === "LogoList") {
-		//debug("show-partner: value = " + content_value);
-		vec = JSON.parse(content_value);
-		x2 = vec[0];
-		y2 = vec[1];
-		debug("show-partner: x2 = " + x2 + " y2 = " + y2);
-		ggb_set_value("x2", Number(x2));
-		ggb_set_value("y2", Number(y2));
-	} else {
-		nl_alert("handle_show_partner: unexpected content_type: " + content_type);
-	}
+	debug("show-partner: x2 = " + x2 + " y2 = " + y2);
+	ggb_set_value("x2", Number(x2));
+	ggb_set_value("y2", Number(y2));
+	ggb_set_label("B", username, true);	
+
 }
 
 
 function handle_mark_partner(fields) {
-	var content_type, content_value, vec, x2, y2;
-
-	content_type = fields.content.type;
-	content_value = fields.content.value;
+	var username, x2, y2;
 
 	debug("mark-partner: " + fields);
-
-	if (content_type === "LogoList") {
-		//debug("show-partner: value = " + content_value);
-		vec = JSON.parse(content_value);
-		x2 = vec[0];
-		y2 = vec[1];
-		debug("mark-partner: x2 = " + x2 + " y2 = " + y2);
-		ggb_set_value("x2m", x2);
-		ggb_set_value("y2m", y2);
-		ggb_set_visible("b", true);
-		ggb_set_visible("Bm", true);
-	} else {
-		nl_alert("handle_mark_partner: unexpected content_type: " + content_type);
-	}
+	x2 = fields.x;
+	y2 = fields.y;
+	debug("mark-partner: x2 = " + x2 + " y2 = " + y2 + " username = " + username);
+	ggb_set_value("x2m", x2);
+	ggb_set_value("y2m", y2);
+	ggb_set_visible("b", true);
+	ggb_set_visible("Bm", true);
 
 }
 
@@ -495,6 +485,9 @@ function ggbOnInit() {
 
 	debug("ggbOnInit called");
 	
+	ggb_set_value("x1", 0);
+	ggb_set_value("y1", 0);
+
 	// set my partner's points to (0,0) in both working and Mark lines
 	ggb_set_value("x2", 0);
 	ggb_set_value("y2", 0);
@@ -523,34 +516,6 @@ function ggbOnInit() {
 	// "b" is the name of the Mark line - turn it off
 	ggb_set_label("b", "b", false);
 	ggb_set_visible("b", false);
-
-
-	// do some sanity checking first - make sure javascript x, y = ggb x, y
-	xtmp = ggb_get_value(MY_XNAME);
-	ytmp = ggb_get_value(MY_YNAME);
-
-	my_xcor = getItemTyped(MY_XNAME, "number");
-	my_ycor = getItemTyped(MY_YNAME, "number");
-
-	// if the js xcor and the ggb xcor differ, update ggb to match js
-	if (xtmp !== my_xcor) {
-		rval = ggb_set_value(MY_XNAME, my_xcor);
-		if (rval !== my_xcor) {
-			nl_alert("Failed to update ggb xcord");
-		} else {
-			debug("ggbOnInit: updated '" + MY_XNAME + "' to " + rval);
-		}
-	}
-
-	// if the js ycor and the ggb ycor differ, update ggb to match js
-	if (ytmp !== my_ycor) {
-		rval = ggb_set_value(MY_YNAME, my_ycor);
-		if (rval !== my_ycor) {
-			nl_alert("Failed to update ggb ycord");
-		} else {
-			debug("ggbOnInit: updated '" + MY_YNAME + "' to " + rval);
-		}
-	}
 
 	// update my point 'A' to be my user name
 	username = sessionStorage.getItem("username");
@@ -659,12 +624,11 @@ function movePoint(direction) {
 		nl_alert("Unrecognized direction in movePoint: " + direction);
 	}
 
-	$('#location').text("(" + my_xcor + "," + my_ycor + ")");
 
 	// attempt to send point to NetLogo - this may not happen if we are not yet logged in.
 	// this case is checked in sendPoint()
 
-	//this becomes a coord_change call. socket.coordinate_change(username, class, group, dx, dy);
+	//this becomes a coord_change call. socket.coordinate_change(username, class, group, dx, dy, info);
 	sendPoint(my_xcor, my_ycor);
 }
 

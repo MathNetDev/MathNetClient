@@ -84,7 +84,7 @@
                 
                 <div id="status_box">
                   <!--  <div style="position:relative;z-index:20;margin-top:-50px;" id="status_box"> -->
-                  <span id="groupid"></span><span id="location"></span><span id="equation"></span><br />
+                  <span id="groupid"></span><span id="equation"></span><br />
                 </div>
                 <div style="margin-top:5px;margin-left:20px;margin-bottom:-10px" class="col-md-12">
                   <div class="row">
@@ -129,21 +129,20 @@
   <footer>
     <!-- this is all geogebra -->
     
-    <script type="text/javascript" language="javascript" src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
-    
-    <script type="text/javascript" language="javascript" charset="utf-8" src="js/jquery.validate.min.js"></script>
+
     
     <!-- jq_mobile_custom.js must be loaded before jquery-mobile - it contains defaults -->
 
     
     <script type="text/javascript" language="javascript" charset="utf-8" src="js/geogebramobile.nocache.js"></script>
-    
-    <script type="text/javascript" language="javascript" charset="utf-8" src="js/groupgraph.js"></script>
     <script type="text/javascript" language="javascript" charset="utf-8" src="js/gg_sessionstore.js"></script>
-    <script type="text/javascript" language="javascript" charset="utf-8" src="js/gg_validation.js"></script>
+    <script type="text/javascript" language="javascript" charset="utf-8" src="js/groupgraph.js"></script>
+    
 
     <!-- normal communications library stuff -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script type="text/javascript" language="javascript" src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+
     <script src="https://cdn.socket.io/socket.io-1.3.5.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     
@@ -154,7 +153,11 @@
     <script src="js/class.js"></script>
     <script src="js/groups.js"></script>
     <script>
-      
+      $(document).ready(function() {
+
+        initialize_groupgraph();  // all other init operations called from this function
+            
+      });
       var socket = Student.Socket(io(host));
     </script>
 

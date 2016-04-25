@@ -1,5 +1,7 @@
 "use strict";
 
+var d3app = $("#field-container");
+var geogebra = $("#ging");
 function escapeStr(str) 
 {
     if (str)
@@ -84,8 +86,10 @@ function group_join_response(username, class_id, group_id) {
     $group_view.show();
 
     // Clear points and redraw
-    users = [];
-    remove_drawn_vectors();
+    if (d3app.length != 0){
+        users = []; //users is not defined in geogebra, so move it to the app only?
+        remove_drawn_vectors();
+    }
     
     sessionStorage.setItem('group_id', group_id);
 
@@ -106,8 +110,9 @@ function group_leave_response(username, class_id, group_id, disconnect) {
     if(!disconnect){
         sessionStorage.removeItem('group_id');
     }
-    
-    field_remove_user(username);
+    if (d3app.length != 0){
+        field_remove_user(username);
+    }
     //socket.group_info(username, class_id, group_id, false);
 }
 
@@ -144,10 +149,24 @@ function group_info_response(username, class_id, group_id, members, status) {
         var escUsername = username.replace(/&lt;/g,'<').replace(/&gt;/g, '>');
         escUsername = escapeStr(escUsername);
         $("#" + escUsername).remove();
-        field_remove_user(username);
+        if(d3app.length != 0){
+            field_remove_user(username);
+        }
         $('#messages').append(username + ' has left the group<br/>');
     }
-    field_sync_users(members);
+    if (d3app.length != 0){
+        field_sync_users(members);
+    } else if (geogebra.length != 0){
+        if(username == sessionStorage.getItem("username") ){
+            sessionStorage.setItem("x1", 0);
+            sessionStorage.setItem("y1", 0);
+            ggbOnInit();
+            if( members.length != 0){
+                var fields = {username: members[0].member_name, x: members[0].member_x, y: members[0].member_y};
+                handle_show_partner(fields);
+            }
+        }//if there is a partner in the group mark them
+    }
 }
 
 // set #username.(x/y) with the respective coordinates, and adds relavent message
@@ -160,8 +179,15 @@ function coordinate_change_response(username, class_id, group_id, x, y, info) {
 
     $messages.append(username + ' has moved their point to (' 
                           + x + ', ' + y +')<br/>');
-
-    field_move_users(username, x, y, info);
+    if (d3app.length != 0){
+        field_move_users(username, x, y, info);
+    } else if (geogebra.length != 0) {
+        if(username != sessionStorage.getItem("username")){
+            var fields = {username: username, x: x, y: y};
+            handle_show_partner(fields);
+        }//if there is a partner in the group mark them
+        //look call handler to look through info a la netlogo
+    }
 }
 
 // updates $class_settings based on settings array
@@ -183,7 +209,9 @@ function get_settings_response(class_id, settings) {
                 $('#messages').append('Admin has turned on options.<br/>')
             );//hide display options if certain global is turned on.
             
-            update_display_settings();
+            if (d3app.length != 0){
+                update_display_settings();
+            }
         }
         //if setting == "whateveroption"
         //  enableOptionInApp(settings[setting]);
