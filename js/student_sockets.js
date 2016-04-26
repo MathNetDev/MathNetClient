@@ -89,7 +89,7 @@
         });
 
         socket.on('group_join_response', function(data) {
-            group_join_response(data.username, data.class_id, data.group_id);
+            group_join_response(data.username, data.class_id, data.group_id, data.group_size);
         });
 
         socket.on('group_leave_response', function(data) {

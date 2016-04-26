@@ -72,7 +72,7 @@ function group_numbers_response(username, class_id, group_id, status, group_size
 }
 //resets $messages and $people, sets group_id in sessionStorage, then calls group_info
 // and get_settings
-function group_join_response(username, class_id, group_id) {
+function group_join_response(username, class_id, group_id, group_size) {
     var $login_view = $('.login_view');
     var $class_view = $('.class_view');
     var $group_view = $('.group_view');
@@ -87,8 +87,13 @@ function group_join_response(username, class_id, group_id) {
 
     // Clear points and redraw
     if (d3app.length != 0){
-        users = []; //users is not defined in geogebra, so move it to the app only?
+        users = []; 
         remove_drawn_vectors();
+    } else if (geogebra.length != 0){
+        if (group_size > 2){ //shouldn't be in here get out!
+            //socket.group_leave(username, class_id, group_id, 0);
+            //return;
+        }
     }
     
     sessionStorage.setItem('group_id', group_id);
@@ -161,11 +166,18 @@ function group_info_response(username, class_id, group_id, members, status) {
             sessionStorage.setItem("x1", 0);
             sessionStorage.setItem("y1", 0);
             ggbOnInit();
-            if( members.length != 0){
+            if( (members.length != 0) && status){
                 var fields = {username: members[0].member_name, x: members[0].member_x, y: members[0].member_y};
                 handle_show_partner(fields);
             }
-        }//if there is a partner in the group mark them
+        } else {
+            if(!status){ //if person is leaving reset B to (0,0), and label as well.
+                var fields = {x: 0,
+                              y: 0, 
+                              username: "B"};
+                handle_show_partner(fields);
+            }
+        }
     }
 }
 
