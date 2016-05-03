@@ -114,7 +114,7 @@ function initialize_display() {
 	
 	$( "#ging" ).on( "pagebeforeshow", function(event) {
 
-		ggbOnInit();
+		//ggbOnInit();
 		
 		// if (!setup_completep()) {
 		// 	nl_alert("Warning: You have not run Setup yet.  You will be able to move your point, but you cannot connect to NetLogo.");
@@ -139,15 +139,6 @@ function initialize_display() {
 		}
 
 		$("#location").text("(" + x1 + "," + y1 + ")");
-		
-		if (netlogo_connectedp()) {
-			// show mark and 
-			$("#gshow").show();
-			$("#gmark").show();
-		} else {
-			$("#gshow").hide();
-			$("#gmark").hide();
-		}
 	
 	});
 	
@@ -221,7 +212,7 @@ function mark_point() {
 
 	x1 = sessionStorage.getItem("x1");
 	y1 = sessionStorage.getItem("y1");
-	color = sessionStorage.getItem("y1");
+	color = sessionStorage.getItem("color");
 
 	if (color === "G") {
 		ggb_set_color("Am", 0, 255, 0);
@@ -258,6 +249,13 @@ function sendString(str) {
 	if(str == "A"){ //show
 		rval = true;
 	} else if (str == "B"){ //mark
+		var username = getItemTyped("username", "string");
+		var class_id = getItemTyped("class_id", "string");
+		var group_id = getItemTyped("group_id", "string");
+		var info = "mark";
+
+		socket.coordinate_change(username, class_id, group_id, 0, 0, info);
+
 		rval = true;
 	}
 
@@ -383,6 +381,7 @@ function handle_mark_partner(fields) {
 	var username, x2, y2;
 
 	debug("mark-partner: " + fields);
+	username = fields.username;
 	x2 = fields.x;
 	y2 = fields.y;
 	debug("mark-partner: x2 = " + x2 + " y2 = " + y2 + " username = " + username);
@@ -420,6 +419,13 @@ function handle_set_graph_dim(fields) {
 		nl_alert("handle_set_graph_dim: unexpected content_type: " + content_type);
 	}
 
+}
+function handle_partner_leave(fields){
+
+	ggb_set_value("x2", Number(0));
+	ggb_set_value("y2", Number(0));
+	ggb_set_label("B", "B", false);			// false means label is off; turn back on when NetLogo tells us
+	ggb_set_visible("B", true);
 }
 
 
@@ -528,6 +534,7 @@ function ggbOnInit() {
 
 
 function ggb_set_label(ptname, newlabel, visiblep) {
+
 	var rval;
 	if (typeof ggbApplet === 'undefined') {
 		nl_alert("Sorry, but ggbApplet is not defined!");
@@ -628,7 +635,6 @@ function movePoint(direction) {
 	// attempt to send point to NetLogo - this may not happen if we are not yet logged in.
 	// this case is checked in sendPoint()
 
-	//this becomes a coord_change call. socket.coordinate_change(username, class, group, dx, dy, info);
 	sendPoint(my_xcor, my_ycor);
 }
 

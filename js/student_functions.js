@@ -154,11 +154,17 @@ function group_info_response(username, class_id, group_id, members, status) {
         var escUsername = username.replace(/&lt;/g,'<').replace(/&gt;/g, '>');
         escUsername = escapeStr(escUsername);
         $("#" + escUsername).remove();
+        $('#messages').append(username + ' has left the group<br/>');
         if(d3app.length != 0){
             field_remove_user(username);
+        } else if (geogebra.length != 0){
+            var fields = {x: 0,
+                          y: 0, 
+                          username: "B"};
+            handle_partner_leave(fields);
         }
-        $('#messages').append(username + ' has left the group<br/>');
     }
+
     if (d3app.length != 0){
         field_sync_users(members);
     } else if (geogebra.length != 0){
@@ -166,20 +172,15 @@ function group_info_response(username, class_id, group_id, members, status) {
             sessionStorage.setItem("x1", 0);
             sessionStorage.setItem("y1", 0);
             ggbOnInit();
-            if( (members.length != 0) && status){
-                var fields = {username: members[0].member_name, x: members[0].member_x, y: members[0].member_y};
-                handle_show_partner(fields);
-            }
         } else {
-            if(!status){ //if person is leaving reset B to (0,0), and label as well.
-                var fields = {x: 0,
-                              y: 0, 
-                              username: "B"};
-                handle_show_partner(fields);
-            }
+            
+        }
+        if(status && (members.length != 0) ){
+            var fields = {username: members[0].member_name, x: members[0].member_x, y: members[0].member_y};
+            handle_show_partner(fields);
         }
     }
-}
+}//members is undefined if group_info_response is triggered by group_leave, so short circuit it on status.
 
 // set #username.(x/y) with the respective coordinates, and adds relavent message
 function coordinate_change_response(username, class_id, group_id, x, y, info) {
@@ -195,8 +196,11 @@ function coordinate_change_response(username, class_id, group_id, x, y, info) {
         field_move_users(username, x, y, info);
     } else if (geogebra.length != 0) {
         if(username != sessionStorage.getItem("username")){
-            var fields = {username: username, x: x, y: y};
+            var fields = {username: username, x: x, y: y}; //this doesn't work as well as group_join, why things undefined?
             handle_show_partner(fields);
+            if(info != undefined && info != "" && info == "\"mark\""){
+                handle_mark_partner(fields);
+            }
         }//if there is a partner in the group mark them
         //look call handler to look through info a la netlogo
     }
