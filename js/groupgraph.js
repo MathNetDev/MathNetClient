@@ -227,6 +227,10 @@ function mark_point() {
 	ggb_set_value("x1m", Number(x1));
 	ggb_set_value("y1m", Number(y1));
 
+	if(ggbApplet.getVisible("Bm", 1) == true){
+		ggb_set_visible("b", true);
+	}
+
 	//sendString to send request to mark the point
 	sendString("B");
 }
@@ -252,7 +256,13 @@ function sendString(str) {
 		var username = getItemTyped("username", "string");
 		var class_id = getItemTyped("class_id", "string");
 		var group_id = getItemTyped("group_id", "string");
-		var info = "mark";
+
+		var x1m = getItemTyped("x1", "number");
+		var y1m = getItemTyped("y1", "number");
+		var info = {mark:true,
+					xm: x1m,
+					ym: y1m
+					};
 
 		socket.coordinate_change(username, class_id, group_id, 0, 0, info);
 
@@ -279,13 +289,24 @@ function sendString(str) {
 //
 
 function sendPoint(x, y) {
-	var message, rval;
+	var rval, info;
+
+	info = {};
 	//coordinate_change = function(username, class_id, group_id, x, y, info) 
 	var username = getItemTyped("username", "string");
 	var class_id = getItemTyped("class_id", "string");
 	var group_id = getItemTyped("group_id", "string");
 
-	socket.coordinate_change(username, class_id, group_id, x, y);
+	if(ggbApplet.getVisible("Am", 1) == true){
+		var x1m = ggbApplet.getValue("x1m");
+		var y1m = ggbApplet.getValue("y1m");
+		info = {mark:true,
+					xm: x1m,
+					ym: y1m 
+					};
+	}
+
+	socket.coordinate_change(username, class_id, group_id, x, y, info);
 	// if (!setup_completep()) {
 	// 	// debug("sendPoint called before setup_completep is true!");
 	// 	return false;
@@ -378,16 +399,19 @@ function handle_show_partner(fields) {
 
 
 function handle_mark_partner(fields) {
-	var username, x2, y2;
+	var username, x2, y2, prev;
 
 	debug("mark-partner: " + fields);
 	username = fields.username;
-	x2 = fields.x;
-	y2 = fields.y;
+	x2 = fields.info.xm;
+	y2 = fields.info.ym;
 	debug("mark-partner: x2 = " + x2 + " y2 = " + y2 + " username = " + username);
 	ggb_set_value("x2m", x2);
 	ggb_set_value("y2m", y2);
-	ggb_set_visible("b", true);
+
+	if(ggbApplet.getVisible("Am", 1) == true){
+		ggb_set_visible("b", true);
+	}
 	ggb_set_visible("Bm", true);
 
 }
@@ -424,6 +448,10 @@ function handle_partner_leave(fields){
 
 	ggb_set_value("x2", Number(0));
 	ggb_set_value("y2", Number(0));
+	if(ggbApplet.getVisible("Bm", 1) == true){
+		ggb_set_visible("b", false);
+		ggb_set_visible("Bm", false);
+	}
 	ggb_set_label("B", "B", false);			// false means label is off; turn back on when NetLogo tells us
 	ggb_set_visible("B", true);
 }

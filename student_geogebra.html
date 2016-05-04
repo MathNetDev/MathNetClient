@@ -49,7 +49,7 @@
             <h2 id="number">Group</h2>
             <!-- add in class name, display buttons based on the class's groups to enter the individual groups  -->
             <!-- foreach group, create a html button with onclick to emit action to a group -->
-            <div id="ging" data-theme="b" data-add-back-btn="true" style="min-height: 0px;">
+            <div class="col-md-9 col-lg-9 col-sm-9" id="ging" data-theme="b" data-add-back-btn="true" style="min-height: 0px;">
 
               <div data-role="header" data-theme="b">
                 <h1 style="font-size:smaller">Graphing in Groups</h1>
@@ -85,8 +85,10 @@
                 <div id="status_box">
                   <!--  <div style="position:relative;z-index:20;margin-top:-50px;" id="status_box"> -->
                   <span id="groupid"></span><span id="equation"></span><br />
-                </div>
-                <div style="margin-top:5px;margin-left:20px;margin-bottom:-10px" class="col-md-12">
+                  <!-- </div> -->
+                
+                </div><!-- /grid-b -->
+                <div style="margin-top:5px;margin-left:20px;margin-bottom:0px" class="col-md-12">
                   <div class="row">
                     <div class="col-lg-4 col-md-4 col-xs-4"><a href="#" onclick="movePoint('up')"><img style="margin-bottom:-10px;" class="center-block" src="images/arrowup50.gif" alt="up arrow" /></a></div>
                   </div>
@@ -97,8 +99,6 @@
                   <div class="row">
                     <div class="col-lg-4 col-md-4 col-xs-4"><a href="#" onclick="movePoint('down')"><img style="margin-top:-10px;" class="center-block" src="images/arrowdown50.gif" alt="down arrow" /></a></div>
                   </div>
-                </div><!-- /grid-b -->
-
               </div><!-- /content -->
             
               <div data-role="footer" data-theme="b">
@@ -107,7 +107,7 @@
             </div><!-- /page  -->
 
           </div>
-          <div class="col-md-3">
+          <div class="col-md-3 col-lg-3 col-sm-3">
             <h3>People - Coordinates</h3>
             <ul id="people"></ul>
             <!--<input type="button" value="←" class="btn btn-default change_coord" data-x=-1 data-y=0 />

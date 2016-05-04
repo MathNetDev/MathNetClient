@@ -90,10 +90,7 @@ function group_join_response(username, class_id, group_id, group_size) {
         users = []; 
         remove_drawn_vectors();
     } else if (geogebra.length != 0){
-        if (group_size > 2){ //shouldn't be in here get out!
-            //socket.group_leave(username, class_id, group_id, 0);
-            //return;
-        }
+        
     }
     
     sessionStorage.setItem('group_id', group_id);
@@ -178,6 +175,13 @@ function group_info_response(username, class_id, group_id, members, status) {
         if(status && (members.length != 0) ){
             var fields = {username: members[0].member_name, x: members[0].member_x, y: members[0].member_y};
             handle_show_partner(fields);
+            if(members[0].member_info.length != 0 && members[0].member_info != "{}" ){
+                var info = JSON.parse(members[0].member_info);
+                if(info.mark == true){
+                    fields.info = info;
+                    handle_mark_partner(fields);
+                }
+            }
         }
     }
 }//members is undefined if group_info_response is triggered by group_leave, so short circuit it on status.
@@ -198,8 +202,12 @@ function coordinate_change_response(username, class_id, group_id, x, y, info) {
         if(username != sessionStorage.getItem("username")){
             var fields = {username: username, x: x, y: y}; //this doesn't work as well as group_join, why things undefined?
             handle_show_partner(fields);
-            if(info != undefined && info != "" && info == "\"mark\""){
-                handle_mark_partner(fields);
+            if(info.length != 0 && info != "{}"){
+                info = JSON.parse(info);
+                if(info.mark == true){
+                    fields.info = info;
+                    handle_mark_partner(fields);
+                }
             }
         }//if there is a partner in the group mark them
         //look call handler to look through info a la netlogo
