@@ -213,7 +213,9 @@ function coordinate_change_response(username, class_id, group_id, x, y, info) {
         //look call handler to look through info a la netlogo
     }
 }
-
+function xml_change_response(xml) {
+    appletSetExtXML(xml);
+}
 // updates $class_settings based on settings array
 function get_settings_response(class_id, settings) {
     var $class_settings = $('#settings');

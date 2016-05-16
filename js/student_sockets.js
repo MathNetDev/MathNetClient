@@ -55,6 +55,10 @@
             socket.emit('coordinate_change', username, class_id, group_id, x, y, info);
         }
 
+        var xml_change = function(xml) {
+            socket.emit('xml_change', xml);
+        }
+
         //This function takes a class_id and group_id
         //It then emits a socket event to retrieve the settings of given group_id
         //in class_id.
@@ -105,6 +109,9 @@
             coordinate_change_response(data.username, data.class_id, 
                                        data.group_id, data.x, data.y, data.info);
         });
+        socket.on('xml_change_response', function(data) {
+            xml_change_response(data.xml);
+        });
         socket.on('group_numbers_response', function(data) {
             group_numbers_response(data.username, data.class_id, data.group_id, 
                                 data.status, data.group_size);
@@ -131,6 +138,7 @@
             group_leave: group_leave,
             group_info: group_info,
             coordinate_change: coordinate_change,
+            xml_change: xml_change,
             get_settings: get_settings,
             disconnect: disconnect
         };
