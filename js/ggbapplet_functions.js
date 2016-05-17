@@ -21,12 +21,24 @@ function appletSetExtXML(xml){
     document.applet.setXML(xml);
 }
 function ggbOnInit(arg) {
+    var applet = document.ggbApplet;
+    applet.registerAddListener(listener);
+    applet.registerRemoveListener(listener);
+    applet.registerUpdateListener(listener);
     console.log(arg);
 }
 function check_xml(xml, socket){
     var old_xml = cur_xml;
     cur_xml = xml;
     if(old_xml != cur_xml){
-        socket.xml_change(cur_xml);
+        console.log("diff xml, socket call!");
+        var username = sessionStorage.getItem('username');
+        var class_id = sessionStorage.getItem('class_id');
+        var group_id = sessionStorage.getItem('group_id');
+        socket.xml_change(username, class_id, group_id, cur_xml);
     }
+}
+function listener(obj){
+    console.log("i am listening");
+    check_xml(document.applet.getXML(), socket);
 }

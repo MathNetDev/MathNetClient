@@ -55,8 +55,8 @@
             socket.emit('coordinate_change', username, class_id, group_id, x, y, info);
         }
 
-        var xml_change = function(xml) {
-            socket.emit('xml_change', xml);
+        var xml_change = function(username, class_id, group_id, xml) {
+            socket.emit('xml_change', username, class_id, group_id, xml);
         }
 
         //This function takes a class_id and group_id
@@ -110,7 +110,7 @@
                                        data.group_id, data.x, data.y, data.info);
         });
         socket.on('xml_change_response', function(data) {
-            xml_change_response(data.xml);
+            xml_change_response(data.username, data.class_id, data.group_id, data.xml);
         });
         socket.on('group_numbers_response', function(data) {
             group_numbers_response(data.username, data.class_id, data.group_id, 

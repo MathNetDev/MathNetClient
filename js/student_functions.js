@@ -213,7 +213,9 @@ function coordinate_change_response(username, class_id, group_id, x, y, info) {
         //look call handler to look through info a la netlogo
     }
 }
-function xml_change_response(xml) {
+function xml_change_response(username, class_id, group_id, xml) {
+    var $messages = $('#messages');
+    $messages.append(username + 'has changed the xml');
     appletSetExtXML(xml);
 }
 // updates $class_settings based on settings array
