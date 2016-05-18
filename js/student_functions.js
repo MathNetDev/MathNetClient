@@ -2,6 +2,7 @@
 
 var d3app = $("#field-container");
 var geogebra = $("#ging");
+var geogebra_full = $(".javascriptapplet")
 function escapeStr(str) 
 {
     if (str)
@@ -91,6 +92,13 @@ function group_join_response(username, class_id, group_id, group_size) {
         remove_drawn_vectors();
     } else if (geogebra.length != 0){
         
+    } else if (geogebra_full.length != 0){
+        if (group_size > 1){
+            socket.get_xml(username, class_id, group_id);
+        } else {
+            var xml = applet.getXML();
+            socket.xml_change(username, class_id, group_id, xml);
+        }
     }
     
     sessionStorage.setItem('group_id', group_id);
@@ -215,7 +223,10 @@ function coordinate_change_response(username, class_id, group_id, x, y, info) {
 }
 function xml_change_response(username, class_id, group_id, xml) {
     var $messages = $('#messages');
-    $messages.append(username + 'has changed the xml');
+    $messages.append(username + ' has changed the xml.<br/>');
+    appletSetExtXML(xml);
+}
+function get_xml_response(username, class_id, group_id, xml){
     appletSetExtXML(xml);
 }
 // updates $class_settings based on settings array

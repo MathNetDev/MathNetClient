@@ -16,7 +16,9 @@ function appletEvalXML(source){
 function appletSetExtXML(xml){
     console.log("got to appletSetExtXML");
     xml = xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>');
+    xml = JSON.parse(xml);
     $("#xmlView").val(xml);
+    //console.log(xml);
 
     document.applet.setXML(xml);
 }
@@ -31,6 +33,8 @@ function check_xml(xml, socket){
     var old_xml = cur_xml;
     cur_xml = xml;
     if(old_xml != cur_xml){
+        var $messages = $("#messages");
+        $messages.append(sessionStorage.getItem("username") + ' has changed the xml.<br/>');
         console.log("diff xml, socket call!");
         var username = sessionStorage.getItem('username');
         var class_id = sessionStorage.getItem('class_id');
