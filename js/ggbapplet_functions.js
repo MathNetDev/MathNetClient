@@ -19,8 +19,11 @@ function appletSetExtXML(xml){
     xml = JSON.parse(xml);
     $("#xmlView").val(xml);
     //console.log(xml);
-
+    
     document.applet.setXML(xml);
+}
+function clearApplet(){
+    document.applet.reset();
 }
 function ggbOnInit(arg) {
     var applet = document.ggbApplet;
@@ -32,7 +35,7 @@ function ggbOnInit(arg) {
 function check_xml(xml, socket){
     var old_xml = cur_xml;
     cur_xml = xml;
-    if(old_xml != cur_xml){
+    if(old_xml /*!= cur_xml*/){
         var $messages = $("#messages");
         $messages.append(sessionStorage.getItem("username") + ' has changed the xml.<br/>');
         console.log("diff xml, socket call!");

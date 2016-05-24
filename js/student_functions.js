@@ -94,10 +94,9 @@ function group_join_response(username, class_id, group_id, group_size) {
         
     } else if (geogebra_full.length != 0){
         if (group_size > 1){
-            socket.get_xml(username, class_id, group_id);
+            //socket.get_xml(username, class_id, group_id);
         } else {
-            var xml = applet.getXML();
-            socket.xml_change(username, class_id, group_id, xml);
+            
         }
     }
     
@@ -122,6 +121,8 @@ function group_leave_response(username, class_id, group_id, disconnect) {
     }
     if (d3app.length != 0){
         field_remove_user(username);
+    } else if (geogebra_full.length != 0){
+        clearApplet();
     }
     //socket.group_info(username, class_id, group_id, false);
 }
@@ -136,7 +137,7 @@ function group_info_response(username, class_id, group_id, members, status) {
     //$people.html('');
     if(status){
         for (var i in members) {
-            
+            members[i].member_info = JSON.parse(members[i].member_info);
             if(members[i].member_name.replace(/&lt;/g,'<').replace(/&gt;/g, '>') != current_user) {
                 var member = '<li id="' + members[i].member_name + '">';
                 member += members[i].member_name;
@@ -184,12 +185,17 @@ function group_info_response(username, class_id, group_id, members, status) {
             var fields = {username: members[0].member_name, x: members[0].member_x, y: members[0].member_y};
             handle_show_partner(fields);
             if(members[0].member_info.length != 0 && members[0].member_info != "{}" ){
-                var info = JSON.parse(members[0].member_info);
+                var info = members[0].member_info;
                 if(info.mark == true){
                     fields.info = info;
                     handle_mark_partner(fields);
                 }
             }
+        }
+    } else if (geogebra_full.length != 0){
+        if(username == sessionStorage.getItem('username') && members.length == 1){
+            var xml = document.applet.getXML();
+            //socket.xml_change(username, class_id, group_id, xml);
         }
     }
 }//members is undefined if group_info_response is triggered by group_leave, so short circuit it on status.
@@ -205,6 +211,7 @@ function coordinate_change_response(username, class_id, group_id, x, y, info) {
     $messages.append(username + ' has moved their point to (' 
                           + x + ', ' + y +')<br/>');
     if (d3app.length != 0){
+        info = JSON.parse(info);
         field_move_users(username, x, y, info);
     } else if (geogebra.length != 0) {
         if(username != sessionStorage.getItem("username")){

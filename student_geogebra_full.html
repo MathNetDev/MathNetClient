@@ -71,6 +71,10 @@
                   }
                 </script>
               </div>
+              <div class="col-md-6 col-lg-6 col-sm-6">
+                <br/>
+                 <button class="btn btn-primary" onclick="check_xml(document.applet.getXML(), socket);">Update XML</button>
+              </div>
 
             </div>
             <div class="col-md-6 col-lg-6 col-sm-6">
@@ -106,12 +110,18 @@
       <script src="js/groups.js"></script>
       <script>
         $(document).ready(function() {
-          
-          $(".javascriptapplet").mouseup(function(){
-            console.log("mouseup_event");
-            check_xml(document.applet.getXML(), socket);
-          });
-          
+          // $("body").mouseup(function(e){
+          //   console.log(e.target);
+          //   console.log(" was the element you mouseup'd on.");
+          // });
+          // $(".javascriptapplet").mouseup(function(){
+          //   console.log("mouseup_event");
+          //   check_xml(document.applet.getXML(), socket);
+          // });
+          // $(".gwt-Button").mouseup(function(){
+          //   console.log("mouseup_event");
+          //   check_xml(document.applet.getXML(), socket);
+          // });
           
         });
         
