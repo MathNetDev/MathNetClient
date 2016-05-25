@@ -85,7 +85,7 @@ function group_join_response(username, class_id, group_id, group_size) {
     $login_view.hide();
     $class_view.hide();
     $group_view.show();
-
+    appletInit();
     // Clear points and redraw
     if (d3app.length != 0){
         users = []; 
@@ -93,6 +93,7 @@ function group_join_response(username, class_id, group_id, group_size) {
     } else if (geogebra.length != 0){
         
     } else if (geogebra_full.length != 0){
+
         if (group_size > 1){
             //socket.get_xml(username, class_id, group_id);
         } else {
