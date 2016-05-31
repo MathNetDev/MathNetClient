@@ -1,0 +1,143 @@
+
+
+html {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    /*position: fixed;*/
+}
+
+body {
+  width: 100%;
+  height: 100%;
+  font: 13px sans-serif;
+  /*position: relative; */
+  /*position: fixed;*/
+  /*overflow: hidden;*/
+  margin:0px;
+}
+
+#revArrow{
+    fill: red;
+    stroke-width:3;
+    stroke-dasharray:0; 
+}
+#arrow{
+    fill: red;
+    stroke-width:3;
+    stroke-dasharray:0; 
+}
+#forceArrow{
+    fill: mediumseagreen;
+    stroke-width:3;
+    stroke-dasharray:0; 
+}
+
+#testArrow{
+    fill: steelblue;
+    stroke-width:3;
+    stroke-dasharray:0; 
+}
+#testChargeArrow{
+    fill: rgb(187, 96, 187);
+    stroke-width:3;
+    stroke-dasharray:0; 
+}
+
+ellipse {
+  fill: none;
+  stroke: rgb(187, 96, 187);
+  pointer-events: all;
+  stroke-width: 1.5px;
+}
+
+circle, .line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+.field {
+    fill:none;
+    stroke-opacity:0.4;
+    stroke-width: 2.5px;
+}
+
+.pointvector {
+  fill: none;
+  stroke: orange;
+  stroke-opacity:0.4;
+  stroke-width: 2px;
+}
+.testvector {
+  fill: none;
+  stroke: rgb(187, 96, 187);
+  stroke-opacity:0.4;
+  stroke-width: 4px;
+}
+.resultvector {
+  fill: none;
+  stroke: red;
+  stroke-opacity:0.4;
+  stroke-width: 4px;
+}
+.forcevector {
+  fill: none;
+  stroke: mediumseagreen;
+  stroke-opacity:0.4;
+  stroke-width: 4px;
+}
+circle {
+  fill: #fff;
+  cursor: move;
+}
+
+.selected {
+  stroke: #ff7f0e;
+}
+
+#field-svg {
+  border-style: solid;
+  border-width: 1px;
+}
+
+#field-container {
+  /* border-style: solid;
+  border-width: 1px; */
+  margin:10px;
+}
+
+input[type=checkbox]
+{
+  /* Double-sized Checkboxes */
+  -webkit-transform: scale(1.5); /* Safari and Chrome */
+  padding: 10px;
+}
+
+.checkboxtext {
+  /* Checkbox text */
+  font-size: 110%;
+  display: inline;
+  margin-left:5px;
+  margin-right:10px;
+}
+
+.part-button {
+  font-size:150%;
+  margin:10px;
+}
+
+.axis path,
+.axis line{
+  fill: none;
+  stroke: black;
+}
+
+.tick text{
+  font-size: 12px;
+}
+
+.tick line{
+  opacity: 0.2;
+}
+
