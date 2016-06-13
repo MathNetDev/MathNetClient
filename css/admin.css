@@ -1,0 +1,30 @@
+.axis path,
+.axis line{
+  fill: none;
+  stroke: black;
+}
+
+.tick text{
+  font-size: 12px;
+}
+
+.tick line{
+  opacity: 0.2;
+}
+
+#field-svg {
+  border-style: solid;
+  border-width: 1px;
+}
+
+#field-container {
+  /* border-style: solid;
+  border-width: 1px; */
+  margin:10px;
+}
+circle {
+  fill: #fff;
+  cursor: move;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
