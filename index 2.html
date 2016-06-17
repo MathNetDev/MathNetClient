@@ -13,6 +13,7 @@
 		<script src="https://code.jquery.com/jquery-2.2.3.min.js" integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo=" crossorigin="anonymous"></script>
 		<script type="text/javascript" src="js/deployggb.js"></script>
 		<script type="text/javascript" src="js/ggbapplet_functions.js"></script>
+
 	</head>
 	<body>
 		<div><button onclick="appletGetXML('xmlView');">getXML</button> <button onclick="appletSetXML('xmlView');">setXML</button> <button onclick="appletEvalXML('xmlView');">evalXML</button></div>
@@ -38,19 +39,20 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 		<script src="https://cdn.socket.io/socket.io-1.3.5.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="js/xml2json.js"></script>
 
 		<script src="js/host.js"></script>
 		<script src="js/student_sockets.js"></script>
 		<script src="js/student_functions.js"></script>
 		<div id="geogebra_onInit">
 			<script type="text/javascript">	
-				$(document).ready(function() {
-					$(".javascriptapplet").mouseup(function(){
-						check_xml(document.applet.getXML(), socket);
-					});
+				//$(document).ready(function() {
+				//	$(".javascriptapplet").mouseup(function(){
+				//		check_xml(document.applet.getXML(), socket);
+				//	});
 
-				});
-				var socket = Student.Socket(io(host));
+				//});
+				//var socket = Student.Socket(io(host));
 			</script>
 		</div>
 	</body>
