@@ -1,4 +1,5 @@
 var cur_xml;
+
 function appletGetXML(target){
     cur_xml = document.applet.getXML();
     $('#'+target).val(cur_xml);
@@ -14,13 +15,23 @@ function appletEvalXML(source){
     document.applet.evalXML(cur_xml);
 }
 function appletSetExtXML(xml){
+    cur_xml = document.applet.getXML(); 
     console.log("got to appletSetExtXML");
     xml = xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>');
     xml = JSON.parse(xml);
+
+    var cur_json = x2js.xml_str2json(cur_xml);
+    var new_json = x2js.xml_str2json(xml);
+    //console.log(cur_json);
+    //console.log(new_json);
+    cur_json.geogebra.construction = new_json.geogebra.construction;
+
+
     $("#xmlView").val(xml);
     //console.log(xml);
     
-    document.applet.setXML(xml);
+    var final_xml = x2js.json2xml_str(cur_json);
+    document.applet.setXML(final_xml);
 }
 function clearApplet(){
     document.applet.reset();

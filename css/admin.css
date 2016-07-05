@@ -8,8 +8,31 @@
   font-size: 12px;
 }
 
+.btn{
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+#get-classes{
+    margin-bottom: 5px;
+    max-height:300px; 
+    overflow:auto;
+}
+
+.list{
+
+  background-color: rgb(238, 238, 238);
+  border: 1px solid #B79431;
+  border-radius: 4px;
+  margin: 5px;
+  }
+
 .tick line{
   opacity: 0.2;
+}
+
+#get-classes div:hover{
+  background-color: rgba(211, 214, 34, 0.42);
 }
 
 #field-svg {
