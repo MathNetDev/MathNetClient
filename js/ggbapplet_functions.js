@@ -37,12 +37,28 @@ function clearApplet(){
     document.applet.reset();
 }
 function ggbOnInit(arg) {
-    var applet = document.ggbApplet;
-    applet.registerAddListener(listener);
-    applet.registerRemoveListener(listener);
-    applet.registerUpdateListener(listener);
+    document.applet.registerAddListener("addLock");
+    document.applet.registerUpdateListener("checkUser");
     console.log(arg);
 }
+function randomizeColors() {
+    cur_xml = document.applet.getXML(); 
+    var minimum = 0, maximum = 255, colors = [], i;
+    for(i = 0; i < 3; i++){
+        colors.push(Math.floor(Math.random() * (maximum - minimum + 1)) + minimum);
+    } //this is your color
+
+    var cur_json = x2js.xml_str2json(cur_xml);
+    var array = cur_json.geogebra.construction.element;
+    console.log(array);
+    for (i = 0; i < array.length; i++){
+        var name = array[i]._label;
+        document.applet.setColor(name, colors[0], colors[1], colors[2]); 
+    }
+   
+   
+}
+
 function check_xml(xml, socket){
     var old_xml = cur_xml;
     cur_xml = xml;
