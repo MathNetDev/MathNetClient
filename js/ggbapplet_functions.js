@@ -15,57 +15,22 @@ function appletEvalXML(source){
     document.applet.evalXML(cur_xml);
 }
 function appletSetExtXML(xml){
-    cur_xml = document.applet.getXML(); 
-    console.log("got to appletSetExtXML");
+    cur_xml = document.applet.getXML();
     xml = xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>');
     xml = JSON.parse(xml);
 
     var cur_json = x2js.xml_str2json(cur_xml);
     var new_json = x2js.xml_str2json(xml);
-    //console.log(cur_json);
     var commandString = "";
 
     if((new_json.geogebra.construction).hasOwnProperty('command')){
-        var array = new_json.geogebra.construction.command;
-        if(array !== null && typeof array === 'object' && !(array instanceof Array)){
-            var temp = array;
-            array = [];
-            array.push(temp);
-        }
-        console.log(array);
-        for (var i = 0; i < array.length; i++){
-            console.log(array[i]);
-            commandString += array[i]._name + "[ ";
-            for (var point in array[i].input){
-                commandString += array[i]["input"][point] + ",";
-            }
-            commandString = commandString.slice(0, commandString.length-1);
-            commandString += "]\n";
-        }
-        delete new_json.geogebra.construction.command;
+        var obj = commandParsing(new_json);
+        new_json = obj.new_json;
+        commandString = obj.commandString;
     }
-    console.log(new_json);
+
     if((new_json.geogebra.construction).hasOwnProperty('element')){
-        var array = new_json.geogebra.construction.element;
-        if(array !== null && typeof array === 'object' && !(array instanceof Array)){
-            var temp = array;
-            array = [];
-            array.push(temp);
-        }
-        console.log(array);
-        var len = array.length;
-        var splice = []
-        for (var i = 0; i < len; i++){
-            var type = array[i]["_type"];
-            if(type != "point" && type != "button" && type != "numeric" && type != "text" && type != "boolean" && type != "textfield" ){
-                console.log(array[i]["_type"] + "  " + array[i]["_label"]);
-                splice.unshift(i);
-            }
-        }
-        console.log(splice);
-        for(var i = 0; i < splice.length; i++){
-            new_json.geogebra.construction.element.splice(splice[i], 1);
-        }
+        new_json = objectClear(new_json);
     }
 
     console.log(new_json);
@@ -82,7 +47,59 @@ function appletSetExtXML(xml){
         console.log(commandString);
         document.applet.evalCommand(commandString);
     }
+    randomizeColors();
 }
+
+function commandParsing(new_json){
+    var commandString = "";
+    var array = new_json.geogebra.construction.command;
+    if(array !== null && typeof array === 'object' && !(array instanceof Array)){
+        var temp = array;
+        array = [];
+        array.push(temp);
+    }
+    console.log(array);
+    for (var i = 0; i < array.length; i++){
+        console.log(array[i]);
+        commandString += array[i]._name + "[ ";
+        for (var point in array[i].input){
+            commandString += array[i]["input"][point] + ",";
+        }
+        commandString = commandString.slice(0, commandString.length-1);
+        commandString += "]\n";
+    }
+    delete new_json.geogebra.construction.command;
+
+    return {
+        "new_json": new_json,
+        "commandString": commandString
+    };
+}
+
+function objectClear(new_json){
+    var array = new_json.geogebra.construction.element;
+    if(array !== null && typeof array === 'object' && !(array instanceof Array)){
+        var temp = array;
+        array = [];
+        array.push(temp);
+    }
+    console.log(array);
+    var len = array.length;
+    var splice = []
+    for (var i = 0; i < len; i++){
+        var type = array[i]["_type"];
+        if(type != "point" && type != "button" && type != "numeric" && type != "text" && type != "boolean" && type != "textfield" ){
+            console.log(array[i]["_type"] + "  " + array[i]["_label"]);
+            splice.unshift(i);
+        }
+    }
+    console.log(splice);
+    for(var i = 0; i < splice.length; i++){
+        new_json.geogebra.construction.element.splice(splice[i], 1);
+    }
+    return new_json;
+}
+
 function clearApplet(){
     document.applet.reset();
 }

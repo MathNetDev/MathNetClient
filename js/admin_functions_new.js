@@ -32,6 +32,7 @@ function add_class_response(class_id, class_name, group_count) {
     var $secret_view = $('.secret_view');
     var $create_view = $('.create_view');
     var $manage_view = $('.manage_view');
+    var $class_view = $('.class_view');
     var $settings_view = $('.settings_view');
     var $class_name = $('.class_name');
     var $groups = $('.groups');
@@ -41,8 +42,7 @@ function add_class_response(class_id, class_name, group_count) {
 
     $secret_view.hide();
     $create_view.hide();
-    $manage_view.show();
-    $settings_view.show();
+    $class_view.show();
 
     $class_name.html(class_name + " ID: " + class_id);
     var groups_html = "";
@@ -54,7 +54,8 @@ function add_class_response(class_id, class_name, group_count) {
     $groups.html(groups_html);
     
     for (var group=1; group < group_number+1; group++) {
-        draw_mirror(".g"+group);
+        //draw_mirror(".g"+group);
+        //draw_mirror not used in geogebra (unsuprisingly)
         users.push([]);
     }
 }
@@ -93,16 +94,14 @@ function delete_group_response() {
 function leave_class_response(disconnect) {
     var $secret_view = $('.secret_view');
     var $create_view = $('.create_view');
-    var $manage_view = $('.manage_view');
-    var $settings_view = $('.settings_view');
+    var $class_view = $('.class_view');
     var $secret = $('.secret');
     
     $('#error_frame').html('');
     
     $secret_view.hide();
     $create_view.show();
-    $manage_view.hide();
-    $settings_view.hide();
+    $class_view.hide();
 
     if(!disconnect){
         sessionStorage.removeItem('admin_class_id');
@@ -127,7 +126,7 @@ function group_info_response(username, class_id, group_id, group, status) {
         for (var i in group) {
             var member = '<li id="' + group[i].member_name +'">';
             member += group[i].member_name;
-            member += ' - (<span class="x">' + group[i].member_x + '</span>, ' 
+            member += ' - (<span class="x">' + group[i].member_x + '</span>, '; 
             member += '<span class="y">' + group[i].member_y + '</span>)';
             member += '</li>';
             $people.append(member);
@@ -170,13 +169,11 @@ function coordinate_change_response(username, class_id, group_id, x, y, info) {
 function get_classes_response(classes){
     var $secret_view = $('.secret_view');
     var $create_view = $('.create_view');
-    var $manage_view = $('.manage_view');
-    var $settings_view = $('.settings_view');
+    var $class_view = $('.class_view');
 
     $secret_view.hide();
     $create_view.show();
-    $manage_view.hide();
-    $settings_view.hide();
+    $class_view.hide();
 
     $('#get-classes').html('');
     for (var i = 0; i < classes.length; i++) {

@@ -4,6 +4,7 @@ $(function() {
     // Initialize variables
     var $secret_view = $('.secret_view');
     var $create_view = $('.create_view'); // Div holding class creation view
+    var $class_view = $('.class_view');
     var $manage_view = $('.manage_view'); // Div holding class management view
     var $settings_view = $('.settings_view'); // Div holding class settings view
 
@@ -33,8 +34,7 @@ $(function() {
     
     // Start with secret view visible and create/manage/settings view hidden
     $create_view.hide();
-    $manage_view.hide();
-    $settings_view.hide();
+    $class_view.hide();
 
 
     if(sessionStorage.getItem('admin_class_id')){
