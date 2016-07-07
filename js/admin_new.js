@@ -100,6 +100,6 @@ $(function() {
         }
         socket.save_settings(sessionStorage.getItem('admin_class_id'), data, $secret.val().trim());
     });
-
-
 });
+
+

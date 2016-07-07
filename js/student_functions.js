@@ -2,7 +2,9 @@
 
 var d3app = $("#field-container");
 var geogebra = $("#ging");
-var geogebra_full = $(".javascriptapplet")
+var geogebra_full = $(".javascriptapplet");
+
+//escapes most strings to not break general forms
 function escapeStr(str) 
 {
     if (str)
@@ -21,6 +23,7 @@ function server_error(error) {
     sessionStorage.setItem('error', error);
     location.reload();
 }
+
 //shows class_view and sets sessionStorage for class_id and username, then calls groups_get
 function login_response(username, class_id) {
     var $login_view = $('.login_view');
@@ -37,6 +40,7 @@ function login_response(username, class_id) {
     sessionStorage.setItem('username', username);
     socket.groups_get(username, class_id);
 }
+
 //shows login_view, and removes class_id and username from sessionStorage 
 //if logout was not a disconnect
 function logout_response(disconnect) {
@@ -52,6 +56,7 @@ function logout_response(disconnect) {
         sessionStorage.removeItem('username');
     }
 }
+
 //populates $groups with buttons with info from groups.
 function groups_get_response(username, class_id, groups) {
     var $groups = $('#buttons');
@@ -65,12 +70,13 @@ function groups_get_response(username, class_id, groups) {
         $groups.append(button);
     }
 }
+
 //increments group_size if status is true (user is joining group), else decrements
 function group_numbers_response(username, class_id, group_id, status, group_size){
     var group_size = (status ? group_size++ : group_size--);
     $("#grp" + group_id).val('Group ' + group_id + ' - ' + group_size);
-
 }
+
 //resets $messages and $people, sets group_id in sessionStorage, then calls group_info
 // and get_settings
 function group_join_response(username, class_id, group_id, group_size) {
@@ -229,14 +235,19 @@ function coordinate_change_response(username, class_id, group_id, x, y, info) {
         //look call handler to look through info a la netlogo
     }
 }
+
+//handler for xml_change response, appends message to chatbox, and calls appletSetExtXML()
 function xml_change_response(username, class_id, group_id, xml) {
     var $messages = $('#messages');
     $messages.append(username + ' has changed the xml.<br/>');
     appletSetExtXML(xml);
 }
+
+//calls appletSetExtXML() to update the local geogebra applet.
 function get_xml_response(username, class_id, group_id, xml){
     appletSetExtXML(xml);
 }
+
 // updates $class_settings based on settings array
 function get_settings_response(class_id, settings) {
     var $class_settings = $('#settings');
@@ -264,6 +275,7 @@ function get_settings_response(class_id, settings) {
         //  enableOptionInApp(settings[setting]);
     }
 }
+
 //adds a new group button
 function add_group_response() {
     var $groups = $('#buttons');
@@ -273,7 +285,9 @@ function add_group_response() {
     button += '" /></li>';
     $groups.append(button);
 }
+
 //removes last group button
 function delete_group_response() {
     $('#buttons > li:last').remove();
 }
+

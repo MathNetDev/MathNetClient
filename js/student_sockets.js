@@ -119,12 +119,15 @@
             coordinate_change_response(data.username, data.class_id, 
                                        data.group_id, data.x, data.y, data.info);
         });
+        
         socket.on('xml_change_response', function(data) {
             xml_change_response(data.username, data.class_id, data.group_id, data.xml);
         });
+
         socket.on('get_xml_response', function(data) {
             get_xml_response(data.username, data.class_id, data.group_id, data.xml);
         });
+
         socket.on('group_numbers_response', function(data) {
             group_numbers_response(data.username, data.class_id, data.group_id, 
                                 data.status, data.group_size);
