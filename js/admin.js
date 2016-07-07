@@ -20,6 +20,8 @@ $(function() {
     
     var $save_button = $('.save_button'); // Button for saving class settings
     var $settings = $('.setting');
+    var $get_classes_button = $('.get_classes_button');
+
 
     // Connect to the server using the Admin.Socket object constructor
     var socket = Admin.Socket(io(host));
@@ -88,6 +90,13 @@ $(function() {
             data[$settings[i].name] = $settings[i].checked;
         }
         socket.save_settings(sessionStorage.getItem('admin_class_id'), data, $secret.val().trim());
+    });
+
+    //
+    // GET CLASSES
+    //
+    $get_classes_button.bind('click', function() {
+        socket.get_classes($secret.val().trim());
     });
 
 });

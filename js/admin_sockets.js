@@ -55,6 +55,13 @@
             socket.emit('save-settings', class_id, settings, secret);
         }
 
+        // This function takes a secret password provided by the user
+        // The socket then emits this to the server to send the list of
+        // current created classes and their login IDs to the user.
+        var get_classes = function (secret){
+            socket.emit('get-classes', secret);
+        }
+
         // This function disconnects the socket
         var disconnect = function() {
             socket.disconnect();
@@ -94,6 +101,9 @@
             coordinate_change_response(data.username, data.class_id, 
                                        data.group_id, data.x, data.y, data.info);
         });
+        socket.on('get-classes-response', function(data){
+            get_classes_response(data.classes);
+        });
 
         return {
             add_class: add_class,
@@ -102,6 +112,7 @@
             delete_group: delete_group,
             leave_class: leave_class,
             save_settings: save_settings,
+            get_classes: get_classes,
             disconnect: disconnect
         };
     };

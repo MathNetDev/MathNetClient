@@ -23,7 +23,52 @@ function appletSetExtXML(xml){
     var cur_json = x2js.xml_str2json(cur_xml);
     var new_json = x2js.xml_str2json(xml);
     //console.log(cur_json);
-    //console.log(new_json);
+    var commandString = "";
+
+    if((new_json.geogebra.construction).hasOwnProperty('command')){
+        var array = new_json.geogebra.construction.command;
+        if(array !== null && typeof array === 'object' && !(array instanceof Array)){
+            var temp = array;
+            array = [];
+            array.push(temp);
+        }
+        console.log(array);
+        for (var i = 0; i < array.length; i++){
+            console.log(array[i]);
+            commandString += array[i]._name + "[ ";
+            for (var point in array[i].input){
+                commandString += array[i]["input"][point] + ",";
+            }
+            commandString = commandString.slice(0, commandString.length-1);
+            commandString += "]\n";
+        }
+        delete new_json.geogebra.construction.command;
+    }
+    console.log(new_json);
+    if((new_json.geogebra.construction).hasOwnProperty('element')){
+        var array = new_json.geogebra.construction.element;
+        if(array !== null && typeof array === 'object' && !(array instanceof Array)){
+            var temp = array;
+            array = [];
+            array.push(temp);
+        }
+        console.log(array);
+        var len = array.length;
+        var splice = []
+        for (var i = 0; i < len; i++){
+            var type = array[i]["_type"];
+            if(type != "point" && type != "button" && type != "numeric" && type != "text" && type != "boolean" && type != "textfield" ){
+                console.log(array[i]["_type"] + "  " + array[i]["_label"]);
+                splice.unshift(i);
+            }
+        }
+        console.log(splice);
+        for(var i = 0; i < splice.length; i++){
+            new_json.geogebra.construction.element.splice(splice[i], 1);
+        }
+    }
+
+    console.log(new_json);
     cur_json.geogebra.construction = new_json.geogebra.construction;
 
 
@@ -31,7 +76,12 @@ function appletSetExtXML(xml){
     //console.log(xml);
     
     var final_xml = x2js.json2xml_str(cur_json);
+    //console.log(final_xml);
     document.applet.setXML(final_xml);
+    if(commandString != undefined && commandString != ""){
+        console.log(commandString);
+        document.applet.evalCommand(commandString);
+    }
 }
 function clearApplet(){
     document.applet.reset();
@@ -42,21 +92,26 @@ function ggbOnInit(arg) {
     console.log(arg);
 }
 function randomizeColors() {
-    cur_xml = document.applet.getXML(); 
+    //cur_xml = document.applet.getXML(); 
     var minimum = 0, maximum = 255, colors = [], i;
     for(i = 0; i < 3; i++){
         colors.push(Math.floor(Math.random() * (maximum - minimum + 1)) + minimum);
     } //this is your color
 
-    var cur_json = x2js.xml_str2json(cur_xml);
-    var array = cur_json.geogebra.construction.element;
-    console.log(array);
-    for (i = 0; i < array.length; i++){
-        var name = array[i]._label;
+    // var cur_json = x2js.xml_str2json(cur_xml);
+    // var array = cur_json.geogebra.construction.element;
+    // console.log(array);
+    var numelems = document.applet.getObjectNumber();
+    for (i = 0; i < numelems; i++){
+        var name = document.applet.getObjectName(i);
         document.applet.setColor(name, colors[0], colors[1], colors[2]); 
     }
+    // for (i = 0; i < array.length; i++){
+    //     var name = array[i]._label;
+    //     document.applet.setColor(name, colors[0], colors[1], colors[2]); 
+    // }
    
-   
+
 }
 
 function check_xml(xml, socket){
