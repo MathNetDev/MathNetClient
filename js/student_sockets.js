@@ -55,9 +55,16 @@
             socket.emit('coordinate_change', username, class_id, group_id, x, y, info);
         }
 
+        //This function takes a username, class_id, group_id, and XML
+        //It then emits a socket event to change the class's XML in the datastructure
+        //based on the given XML, group_id, and class_id
         var xml_change = function(username, class_id, group_id, xml) {
             socket.emit('xml_change', username, class_id, group_id, xml);
         }
+
+        //This function takes a username, class_id, and group_id
+        //It then emits a socket event to retrieve the group's XML
+        //using the given class_id and group_id
         var get_xml = function(username, class_id, group_id){
             socket.emit('get_xml', username, class_id, group_id);
         }
