@@ -2,9 +2,7 @@
 $(function() {
 
     // Initialize variables
-    var $secret_view = $('.secret_view');
     var $create_view = $('.create_view'); // Div holding class creation view
-    var $class_view = $('.class_view');
     var $manage_view = $('.manage_view'); // Div holding class management view
     var $settings_view = $('.settings_view'); // Div holding class settings view
 
@@ -23,18 +21,19 @@ $(function() {
     var $save_button = $('.save_button'); // Button for saving class settings
     var $settings = $('.setting');
     var $get_classes_button = $('.get_classes_button');
-    var $secret_button = $('.secret_button');
+
 
     // Connect to the server using the Admin.Socket object constructor
+    var socket = Admin.Socket(io(host));
     
     var class_id;
     
     // Holds secret needed to allow socket calls
     var $secret = $('.secret');     
     
-    // Start with secret view visible and create/manage/settings view hidden
-    $create_view.hide();
-    $class_view.hide();
+    // Start with create view visible and manage view hidden
+    $manage_view.hide();
+    $settings_view.hide();
 
 
     if(sessionStorage.getItem('admin_class_id')){
@@ -42,14 +41,7 @@ $(function() {
         socket.join_class(sessionStorage.getItem('admin_class_id'), 'ucd-247');
     }
     //
-    // SECRET INPUT
-    //
-    $secret_button.bind('click', function() {
-        socket.get_classes($secret.val().trim());
-    });
-
-    //
-    // CREATE CLASS
+    // ADD CLASS
     //
     $create_button.bind('click', function() {
         // Tell the server to create a class in the database
@@ -87,7 +79,6 @@ $(function() {
     //
     $leave_button.bind('click', function() {
         socket.leave_class(sessionStorage.getItem('admin_class_id'), $secret.val().trim(), false);
-
     });
 
     //
@@ -100,6 +91,12 @@ $(function() {
         }
         socket.save_settings(sessionStorage.getItem('admin_class_id'), data, $secret.val().trim());
     });
+
+    //
+    // GET CLASSES
+    //
+    $get_classes_button.bind('click', function() {
+        socket.get_classes($secret.val().trim());
+    });
+
 });
-
-

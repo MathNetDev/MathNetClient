@@ -187,7 +187,7 @@ function addLock(object){
     console.log("addLock called?");
     var username = sessionStorage.getItem('username');
     document.applet.setCaption(object, username);
-    //document.applet.setFixed(object, true);
+    document.applet.setFixed(object, true);
 }
 
 //This function is an update listener added in ggbOnInit()
@@ -198,7 +198,7 @@ function checkUser(object){
     var ggb_user = document.applet.getCaption(object);
     var username = sessionStorage.getItem('username');
     if (username !== ggb_user){
-        document.applet.setUndoPoint();
+        document.applet.setFixed(object, true);
     }
 
 }
