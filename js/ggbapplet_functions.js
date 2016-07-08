@@ -37,10 +37,10 @@ function appletSetExtXML(xml){
     }
 
     if((new_json.geogebra.construction).hasOwnProperty('element')){
-        new_json = objectClear(new_json);
+        //new_json = objectClear(new_json);
     }
 
-    //console.log(new_json);
+    console.log(new_json);
     cur_json.geogebra.construction = new_json.geogebra.construction;
 
 
@@ -74,6 +74,23 @@ function commandParsing(new_json){
         for (var point in array[i].input){
             commandString += array[i]["input"][point] + ",";
         }
+        var loc = i;
+        for (var point in array[i].output){
+            var stack = [];
+            var label = array[i]["output"][point];
+            var len = new_json.geogebra.construction.element.length;
+            console.log(array[i].output);
+            console.log(point + " " + label + " " + len);
+            for (var j = 0; j < len; j++){
+                if (label == new_json["geogebra"]["construction"]["element"][j]["_label"]){
+
+                    stack.unshift(j)
+                }
+            }
+            for(var j = 0; j < stack.length; j++){
+                new_json.geogebra.construction.element.splice(stack[j], 1);
+            }
+        }
         commandString = commandString.slice(0, commandString.length-1);
         commandString += "]\n";
     }
@@ -99,7 +116,7 @@ function objectClear(new_json){
     var splice = []
     for (var i = 0; i < len; i++){
         var type = array[i]["_type"];
-        if(type != "point" && type != "button" && type != "numeric" && type != "text" && type != "boolean" && type != "textfield" ){
+        if(type != "point" && type != "button" && type != "numeric" /*&& type != "text"*/ && type != "boolean" && type != "textfield" ){
             //console.log(array[i]["_type"] + "  " + array[i]["_label"]);
             splice.unshift(i);
         }
