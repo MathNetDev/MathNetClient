@@ -25,7 +25,15 @@
 #get-classes div:hover{
   background-color: rgba(211, 214, 34, 0.42);
 }
-
+.settings_view{
+  margin:4em 0 0 0;
+}
+.settings_view p{
+  margin:0;
+}
+.settings_view input[type=checkbox]{
+  margin:0 .5em 0 0;
+}
 .list{
 
   background-color: rgb(238, 238, 238);
