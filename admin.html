@@ -13,60 +13,63 @@
 
 <body>
   <div class="container">
-    <div class="col-md-4">
-      <h3 id="error_frame"></h3>
-    </div>
-    <br/>
-    <div class="col-md-12">
-      <div class="secret_view">
-        <h3>Enter Secret Code</h3>
-        <input class="secret" type="password" placeholder="Secret"><br/>
-        <input class="btn btn-default secret_button" type="button" value="Submit Secret">
-        <br/>
+  <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+      <li role="presentation" class="active"><a href="#admin" aria-controls="design" role="tab" data-toggle="tab">Admin</a></li>
+      <li role="presentation"><a href="#design" aria-controls="design" role="tab" data-toggle="tab">Design</a></li>
+    </ul>
+  
+    <div class="tab-content">
+      <div role="tabpanel" class="tab-pane active" id="admin">
+        <div class="col-md-4">
+          <h3 id="error_frame"></h3>
+        </div>
+        <div class="col-md-12">
+          <div class="secret_view">
+            <h3>Enter Secret Code</h3>
+            <input class="secret" type="password" class="form-control" placeholder="Secret">
+            <input class="btn btn-default secret_button" type="button" value="Submit Secret">
+          </div>
+
+          <!-- This div appears when an admin leaves a class or has not made on yet -->
+          <div class="create_view">
+            <h3>Click To Join A Past Class</h3>
+            <div>
+              <h3 id="get-classes-head"></h3>
+              <div class="col-md-12 col-lg-12 col-xs-12 col-sm-12" id="get-classes"></div>
+            </div>
+            <h3> or Create a new Class</h3>
+            <h4>Class Name</h4>
+            <input class="class_input" type="text" placeholder="Class Name">
+            <h4>Number of Groups</h4>
+            <input class="group_input" type="number" value="0">
+            <input class="btn btn-default create_button" type="button" value="Create Class">   
+          </div>
+
+          <!-- This div appears once an admin has created a class -->
+          <div class="class_view">
+            <header>
+              <h3 class="class_name"></h3>
+            </header>
+
+            <input class="btn btn-default add_button" type="button" value="Add Group"> 
+            <input class="btn btn-default delete_button" type="button" value="Delete Group">
+            <input class="btn btn-default leave_button" type="button" value="Leave Class">
+            <div class="manage_view">
+              <ul class="groups"></ul>
+            </div>
+
+            <div class="settings_view">
+            <input class="btn btn-default setting" type="checkbox" name="Hide Options" id="setting-hide-options"><label for="setting-hide-options">Hide Options</label>
+            <input class="btn btn-default setting" type="checkbox" name="Test2" id="setting-test2"><label for="setting-test2">Test2</label>
+            <input class="btn btn-default setting" type="checkbox" name="Test3" id="setting=test3"><label for="setting-test3">Test3</label>
+              <input class="btn btn-default save_button" type="button" value="Save Settings">
+            </div>
+          </div>
+        </div>
       </div>
-
-      <!-- This div appears when an admin leaves a class or has not made on yet -->
-      <div class="create_view">
-        <h3>Click To Join A Past Class</h3>
-        <div>
-          <h3 id="get-classes-head"></h3>
-          <div class="col-md-12 col-lg-12 col-xs-12 col-sm-12" id="get-classes"></div>
-        </div>
-        <h3> or Create a new Class</h3>
-        <h4>Class Name</h4>
-
-        <input class="class_input" type="text" placeholder="Class Name">
-        <br>
-
-        <h4>Number of Groups</h4>
-        <input class="group_input" type="number" value="0">
-        <br>
-        <input class="btn btn-default create_button" type="button" value="Create Class">   
-      </div>
-
-      <!-- This div appears once an admin has created a class -->
-      <div class="class_view">
-        <header>
-          <h3 class="class_name"></h3>
-        </header>
-
-        <input class="btn btn-default add_button" type="button" value="Add Group"> 
-        <input class="btn btn-default delete_button" type="button" value="Delete Group">
-        <input class="btn btn-default leave_button" type="button" value="Leave Class">
-        <div class="manage_view">
-          
-
-          <ul class="groups"></ul>
-        </div>
-
-        <div class="settings_view">
-          <br>
-          <input class="btn btn-default setting" type="checkbox" name="Hide Options">Hide Options<br>
-          <input class="btn btn-default setting" type="checkbox" name="Test2">Test2<br>
-          <input class="btn btn-default setting" type="checkbox" name="Test3">Test3<br>
-        
-          <input class="btn btn-default save_button" type="button" value="Save Settings">
-        </div>
+      <div role="tabpanel" class="tab-pane" id="design">
+        ...
       </div>
     </div>
   </div>
@@ -80,7 +83,7 @@
   <script src="js/admin.js"></script>
   <script src="js/admin_sockets.js"></script>
   <script>
-    var socket = Admin.Socket(io(host));
+    //var socket = Admin.Socket(io(host));
   </script>
 </footer>
   
