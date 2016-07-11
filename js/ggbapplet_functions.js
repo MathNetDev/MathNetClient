@@ -49,6 +49,7 @@ function appletSetExtXML(xml){
     
     var final_xml = x2js.json2xml_str(cur_json);
     //console.log(final_xml);
+    document.applet.reset();
     document.applet.setXML(final_xml);
     if(commandString != undefined && commandString != ""){
         //console.log(commandString);
@@ -135,6 +136,10 @@ function clearApplet(){
 
 //This function registers listeners on geogebra initialization 
 function ggbOnInit(arg) {
+    // document.applet.unregisterAddListener('addLock');
+    // document.applet.unregisterUpdateListener('checkUser');
+
+    ßdocument.applet.registerClearListener('reAddListeners');
     document.applet.registerAddListener("addLock");
     document.applet.registerUpdateListener("checkUser");
     console.log(arg);
@@ -179,15 +184,22 @@ function check_xml(xml, socket){
         socket.xml_change(username, class_id, group_id, cur_xml);
     }
 }
+//This function is a clear listener added in ggbOnInit()
+//It re-adds the update and add listeners to the construction
+//after the construction is cleared
+function reAddListeners(){
+    document.applet.registerAddListener("addLock");
+    document.applet.registerUpdateListener("checkUser");
+}
 
 //This function is an add listener added in gbbOnInit()
 //It adds a caption to the new object with the local user's class username,
 // and can add a lock onto it.
 function addLock(object){
-    console.log("addLock called?");
+    //console.log("addLock called?");
     var username = sessionStorage.getItem('username');
     document.applet.setCaption(object, username);
-    document.applet.setFixed(object, true);
+    //document.applet.setFixed(object, true);
 }
 
 //This function is an update listener added in ggbOnInit()
@@ -199,8 +211,7 @@ function checkUser(object){
     var username = sessionStorage.getItem('username');
     if (username !== ggb_user){
         document.applet.setFixed(object, true);
-    }
-
+    } 
 }
 //This function is called in group_join_response(), initializing the geogebra applet
 function appletInit(){

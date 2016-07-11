@@ -91,7 +91,9 @@ function group_join_response(username, class_id, group_id, group_size) {
     $login_view.hide();
     $class_view.hide();
     $group_view.show();
+
     appletInit();
+    
     // Clear points and redraw
     if (d3app.length != 0){
         users = []; 
@@ -240,7 +242,9 @@ function coordinate_change_response(username, class_id, group_id, x, y, info) {
 function xml_change_response(username, class_id, group_id, xml) {
     var $messages = $('#messages');
     $messages.append(username + ' has changed the xml.<br/>');
+
     appletSetExtXML(xml);
+    //ggbOnInit();
 }
 
 //calls appletSetExtXML() to update the local geogebra applet.
