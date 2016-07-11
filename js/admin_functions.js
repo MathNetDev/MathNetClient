@@ -178,8 +178,8 @@ function get_classes_response(classes){
     $('#get-classes').html('');
     for (var i = 0; i < classes.length; i++) {
         //console.log(classes[i]);
-        $('#get-classes').append('<div class="list col-md-3 col-lg-3 col-xs-3 col-sm-3" style="padding-bottom: 3px;" onclick=\'join_class("'
-            +classes[i].hashed_id+'")\'>Class: <b>' + classes[i].class_name + '</b> ID: <b>' + classes[i].hashed_id + '</b></div>');
+        $('#get-classes').append('<button class="btn btn-primary" onclick=\'join_class("'
+            +classes[i].hashed_id+'")\'>Class: <span>' + classes[i].class_name + '</span> ID: <span>' + classes[i].hashed_id + '</span></button>');
     }
 }
 
