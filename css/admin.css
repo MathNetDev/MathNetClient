@@ -14,9 +14,16 @@
 }
 
 #get-classes{
-    margin-bottom: 5px;
+    margin-bottom: 2em;
     max-height:300px; 
     overflow:auto;
+}
+#get-classes button{
+  margin: 0 .5em;
+}
+
+#get-classes div:hover{
+  background-color: rgba(211, 214, 34, 0.42);
 }
 
 .list{
@@ -31,9 +38,7 @@
   opacity: 0.2;
 }
 
-#get-classes div:hover{
-  background-color: rgba(211, 214, 34, 0.42);
-}
+
 
 #field-svg {
   border-style: solid;

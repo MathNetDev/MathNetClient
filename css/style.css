@@ -1,15 +1,10 @@
 .container {
-    border: 2px solid rgba(0, 0, 0, 0.23);
-    padding-top: 2px;
-    padding-bottom: 2px;
-    padding-left: 15px;
-    padding-right: 15px;
-    border-radius: 10px;
-    background-color: #FFFFFF;
+    border: none;
+    background-color: #abc;
 }
 body {
     padding: 15px;
-    background-color: rgba(114, 190, 210, 0.46);
+    background-color: #abc;
     overflow-y:scroll;
 }
 #error_frame:not(:empty){
@@ -22,4 +17,10 @@ body {
 #messages{
     height:300px; 
     overflow:auto;
+}
+.tab-content{
+    background:#fff;
+    overflow:auto;
+    padding: 0 0 2em 0;
+    border-radius: 0 0 4px 4px;
 }
