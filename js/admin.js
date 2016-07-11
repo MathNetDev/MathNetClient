@@ -110,7 +110,7 @@ $(function() {
         var tab = String(e.target).split('#')[1];
         //alert(tab);
         if(tab == 'design'){
-            appletInit();
+            appletInit('appletContainer',1000,600);
         }
     });
 });
