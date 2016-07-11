@@ -100,6 +100,19 @@ $(function() {
         }
         socket.save_settings(sessionStorage.getItem('admin_class_id'), data, $secret.val().trim());
     });
+
+    //
+    // TAB CHANGES
+    // 
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        //e.target // newly activated tab
+        //e.relatedTarget // previous active tab
+        var tab = String(e.target).split('#')[1];
+        //alert(tab);
+        if(tab == 'design'){
+            appletInit();
+        }
+    });
 });
 
 
