@@ -1,6 +1,5 @@
 //all document.applet (geogebra) calls are documented at http://www.geogebra.org/manual/en/Reference:JavaScript
 var cur_xml;
-
 //Used in the test html to show how the XML is got
 function appletGetXML(target){
     cur_xml = document.applet.getXML();
@@ -36,10 +35,6 @@ function appletSetExtXML(xml){
         commandString = obj.commandString;
     }
 
-    if((new_json.geogebra.construction).hasOwnProperty('element')){
-        //new_json = objectClear(new_json);
-    }
-
     console.log(new_json);
     cur_json.geogebra.construction = new_json.geogebra.construction;
 
@@ -56,6 +51,7 @@ function appletSetExtXML(xml){
         document.applet.evalCommand(commandString);
     }
     randomizeColors();
+    checkLocks();
 }
 
 //This function takes the new_json, removes all commands in the construction, and creates a string (commandString)
@@ -103,46 +99,9 @@ function commandParsing(new_json){
     };
 }
 
-//This function takes the new_json, removes all elements that will be redrawn by commands
-//then returns the cleaned new_json
-function objectClear(new_json){
-    var array = new_json.geogebra.construction.element;
-    if(array !== null && typeof array === 'object' && !(array instanceof Array)){
-        var temp = array;
-        array = [];
-        array.push(temp);
-    }
-    //console.log(array);
-    var len = array.length;
-    var splice = []
-    for (var i = 0; i < len; i++){
-        var type = array[i]["_type"];
-        if(type != "point" && type != "button" && type != "numeric" /*&& type != "text"*/ && type != "boolean" && type != "textfield" ){
-            //console.log(array[i]["_type"] + "  " + array[i]["_label"]);
-            splice.unshift(i);
-        }
-    }
-    //console.log(splice);
-    for(var i = 0; i < splice.length; i++){
-        new_json.geogebra.construction.element.splice(splice[i], 1);
-    }
-    return new_json;
-}
-
 //This clears the local applet view
 function clearApplet(){
     document.applet.reset();
-}
-
-//This function registers listeners on geogebra initialization 
-function ggbOnInit(arg) {
-    // document.applet.unregisterAddListener('addLock');
-    // document.applet.unregisterUpdateListener('checkUser');
-
-    ßdocument.applet.registerClearListener('reAddListeners');
-    document.applet.registerAddListener("addLock");
-    document.applet.registerUpdateListener("checkUser");
-    console.log(arg);
 }
 
 //This function changes the colors of all elements on the local view to a random color
@@ -153,20 +112,29 @@ function randomizeColors() {
         colors.push(Math.floor(Math.random() * (maximum - minimum + 1)) + minimum);
     } //this is your color
 
-    // var cur_json = x2js.xml_str2json(cur_xml);
-    // var array = cur_json.geogebra.construction.element;
     // console.log(array);
     var numelems = document.applet.getObjectNumber();
     for (i = 0; i < numelems; i++){
         var name = document.applet.getObjectName(i);
         document.applet.setColor(name, colors[0], colors[1], colors[2]); 
     }
-    // for (i = 0; i < array.length; i++){
-    //     var name = array[i]._label;
-    //     document.applet.setColor(name, colors[0], colors[1], colors[2]); 
-    // }
-   
+}
 
+//This function grabs all objects in the construction, and sets a lock on them
+//if the username in the caption is not the current user.
+function checkLocks(){
+    var numelems = document.applet.getObjectNumber();
+    for (i = 0; i < numelems; i++){
+        var name = document.applet.getObjectName(i);
+        var ggb_user = document.applet.getCaption(name);
+        var username = sessionStorage.getItem('username');
+
+        if (username !== ggb_user){
+            document.applet.setFixed(name, true);
+        } else if (username === ggb_user ){
+            document.applet.setFixed(name, false);
+        }
+    }
 }
 
 //This function sends the socket call that there was a XML change,
@@ -184,13 +152,6 @@ function check_xml(xml, socket){
         socket.xml_change(username, class_id, group_id, cur_xml);
     }
 }
-//This function is a clear listener added in ggbOnInit()
-//It re-adds the update and add listeners to the construction
-//after the construction is cleared
-function reAddListeners(){
-    document.applet.registerAddListener("addLock");
-    document.applet.registerUpdateListener("checkUser");
-}
 
 //This function is an add listener added in gbbOnInit()
 //It adds a caption to the new object with the local user's class username,
@@ -206,10 +167,10 @@ function addLock(object){
 //It checks if the caption of the point is the username of the current user,
 //to figure out if the user is allowed to move the point or not.
 function checkUser(object){
-    console.log("this is the update listener");
     var ggb_user = document.applet.getCaption(object);
     var username = sessionStorage.getItem('username');
-    if (username !== ggb_user){
+    var move = document.applet.isMoveable(object);
+    if (username !== ggb_user && move){
         document.applet.setFixed(object, true);
     } 
 }

@@ -203,7 +203,7 @@ function group_info_response(username, class_id, group_id, members, status) {
         }
     } else if (geogebra_full.length != 0){
         if(username == sessionStorage.getItem('username') && members.length == 1){
-            var xml = document.applet.getXML();
+            //var xml = document.applet.getXML();
             //socket.xml_change(username, class_id, group_id, xml);
         }
     }
@@ -244,7 +244,7 @@ function xml_change_response(username, class_id, group_id, xml) {
     $messages.append(username + ' has changed the xml.<br/>');
 
     appletSetExtXML(xml);
-    //ggbOnInit();
+    ggbOnInit();
 }
 
 //calls appletSetExtXML() to update the local geogebra applet.
@@ -293,5 +293,12 @@ function add_group_response() {
 //removes last group button
 function delete_group_response() {
     $('#buttons > li:last').remove();
+}
+
+//This function registers listeners on geogebra initialization 
+function ggbOnInit(arg) {
+    document.applet.registerAddListener("addLock");
+    document.applet.registerUpdateListener("checkUser");
+    console.log(arg);
 }
 
