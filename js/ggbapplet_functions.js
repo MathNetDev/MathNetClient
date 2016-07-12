@@ -205,6 +205,7 @@ function checkUser(object){
 
 //This function appends a set of button toolbar items to a container
 function getToolbarIcons(container){
+    container = typeof container !== 'undefined' ? container : 'toolbox';
     var icons = [
                     {"name":"Move", "mode":0, "src":"/images/Mode_move.svg"},
                     {"name":"Point", "mode":1, "src":"/images/Mode_point.svg"},
