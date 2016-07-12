@@ -203,7 +203,7 @@ function checkUser(object){
 
 }
 
-//This function returns a set of toolbar items
+//This function appends a set of button toolbar items to a container
 function getToolbarIcons(container){
     var icons = [
                     {"name":"Move", "mode":0, "src":"/images/Mode_move.svg"},
@@ -212,13 +212,18 @@ function getToolbarIcons(container){
                     {"name":"Join", "mode":2, "src":"/images/Mode_join.svg"},
                     {"name":"Delete", "mode":6, "src":"/images/Mode_delete.svg"}
                 ];
-    var tb = "";
     for(var i = 0; i < icons.length; i++){
         var data = icons[i];
-        var b = "<button data-mode=" + data.mode + ">" + data.name + "</button>";
-        tb += b;
+        var b = $("<button>");
+        var img = $("<img>");
+        img.attr('src',data.src);
+        img.attr('alt',data.name);
+        b.append(img);
+        b.addClass('btn');
+        b.addClass('btn-default');
+        b.attr('data-mode', data.mode);
+        $(container).append(b); 
     }
-    return tb; 
 }
 
 //This function is called in group_join_response(), initializing the geogebra applet
