@@ -205,7 +205,7 @@ function checkUser(object){
 
 //This function appends a set of button toolbar items to a container
 function getToolbarIcons(container){
-    container = typeof container !== 'undefined' ? container : 'toolbox';
+    container = typeof container !== 'undefined' ? container : '.toolbox';
     var icons = [
                     {"name":"Move", "mode":0, "src":"/images/Mode_move.svg"},
                     {"name":"Point", "mode":1, "src":"/images/Mode_point.svg"},
@@ -220,8 +220,7 @@ function getToolbarIcons(container){
         img.attr('src',data.src);
         img.attr('alt',data.name);
         b.append(img);
-        b.addClass('btn');
-        b.addClass('btn-default');
+        b.addClass('btn btn-default btn-toolbox');
         b.attr('data-mode', data.mode);
         $(container).append(b); 
     }
