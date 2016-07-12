@@ -57,6 +57,11 @@
   top: 0;
   left: 0
 }
+.nav-tabs>li.active>a, 
+.nav-tabs>li.active>a:focus, 
+.nav-tabs>li.active>a:hover{
+  border:1px solid transparent;
+}
 .list{
 
   background-color: rgb(238, 238, 238);
