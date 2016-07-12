@@ -189,3 +189,8 @@ function join_class(class_id){
     var $secret = $('.secret'); 
     socket.join_class(class_id, $secret.val().trim());
 }
+
+//This function registers listeners on geogebra initialization 
+function ggbOnInit(arg) {
+    applet.setCustomToolBar('');
+}
