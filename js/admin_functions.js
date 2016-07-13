@@ -170,12 +170,10 @@ function get_classes_response(classes, secret){
     var $secret_view = $('.secret_view');
     var $create_view = $('.create_view');
     var $class_view = $('.class_view');
-    var $design_tab = $('#design_tab');
-
+    
     $secret_view.hide();
     $create_view.show();
     $class_view.hide();
-    $design_tab.show();
 
     sessionStorage.setItem('admin_secret', secret);
 
@@ -188,8 +186,10 @@ function get_classes_response(classes, secret){
 }
 
 function join_class(class_id){
+    var $design_tab = $('#design_tab');
     var $secret = $('.secret'); 
     socket.join_class(class_id, $secret.val().trim());
+    $design_tab.show();
 }
 
 //This function registers listeners on geogebra initialization 
