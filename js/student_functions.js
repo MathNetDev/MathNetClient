@@ -91,8 +91,30 @@ function group_join_response(username, class_id, group_id, group_size) {
     $login_view.hide();
     $class_view.hide();
     $group_view.show();
-
-    appletInit();
+    var params = {
+                "container":"appletContainer",
+                "id":"applet",
+                "width":800,
+                "height":600,
+                "perspective":"AG",
+                "showAlgebraInput":true,
+                "showToolBarHelp":false,
+                "showMenubar":true,
+                "enableLabelDrags":false,
+                "showResetIcon":true,
+                "showToolbar":true,
+                "allowStyleBar":true,
+                "useBrowserForJS":true,
+                "enableShiftDragZoom":true,
+                "errorDialogsActive":true,
+                "enableRightClick":false,
+                "enableCAS":false,
+                "enable3d":false,
+                "isPreloader":false,
+                "screenshotGenerator":false,
+                "preventFocus":false
+            };
+    appletInit(params);
     
     // Clear points and redraw
     if (d3app.length != 0){
