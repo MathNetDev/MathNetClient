@@ -36,13 +36,15 @@ function add_class_response(class_id, class_name, group_count) {
     var $settings_view = $('.settings_view');
     var $class_name = $('.class_name');
     var $groups = $('.groups');
-
+    var $design_tab = $('#design_tab');
+    
     sessionStorage.setItem('admin_class_id', class_id);
     $('#error_frame').html('');
 
     $secret_view.hide();
     $create_view.hide();
     $class_view.show();
+    $design_tab.show();
 
     $class_name.html(class_name + " ID: " + class_id);
     var groups_html = "";
@@ -184,10 +186,8 @@ function get_classes_response(classes){
 }
 
 function join_class(class_id){
-    var $design_tab = $('#design_tab');
     var $secret = $('.secret'); 
     socket.join_class(class_id, $secret.val().trim());
-    $design_tab.show();
 }
 
 //This function registers listeners on geogebra initialization 
