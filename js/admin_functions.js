@@ -170,10 +170,12 @@ function get_classes_response(classes){
     var $secret_view = $('.secret_view');
     var $create_view = $('.create_view');
     var $class_view = $('.class_view');
+    var $design_tab = $('#design_tab');
 
     $secret_view.hide();
     $create_view.show();
     $class_view.hide();
+    $design_tab.show();
 
     $('#get-classes').html('');
     for (var i = 0; i < classes.length; i++) {

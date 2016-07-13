@@ -25,6 +25,9 @@ $(function() {
     var $get_classes_button = $('.get_classes_button');
     var $secret_button = $('.secret_button');
 
+    var $design_tab = $('#design-tab');
+    var $design_toolbox = $('.toolbox'); //design view tool container
+
     // Connect to the server using the Admin.Socket object constructor
     
     var class_id;
@@ -100,6 +103,21 @@ $(function() {
         }
         socket.save_settings(sessionStorage.getItem('admin_class_id'), data, $secret.val().trim());
     });
-});
 
+    //
+    // TAB CHANGES
+    // 
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        //e.target  newly activated tab
+        //e.relatedTarget  previous active tab
+        var tab = String(e.target).split('#')[1];
+        //alert(tab);
+        if(tab == 'design'){
+            getToolbarIcons();
+            appletInit('appletContainer',1000,600);
+        }else{
+            $design_toolbox.empty('');
+        }
+    });
+});
 
