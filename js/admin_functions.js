@@ -37,7 +37,7 @@ function add_class_response(class_id, class_name, group_count) {
     var $class_name = $('.class_name');
     var $groups = $('.groups');
     var $design_tab = $('#design_tab');
-    
+
     sessionStorage.setItem('admin_class_id', class_id);
     $('#error_frame').html('');
 
@@ -98,13 +98,15 @@ function leave_class_response(disconnect) {
     var $create_view = $('.create_view');
     var $class_view = $('.class_view');
     var $secret = $('.secret');
-    
+    var $design_tab = $('#design_tab');
+
     $('#error_frame').html('');
     
     $secret_view.hide();
     $create_view.show();
     $class_view.hide();
-
+    $design_tab.hide();
+    
     if(!disconnect){
         sessionStorage.removeItem('admin_class_id');
     }

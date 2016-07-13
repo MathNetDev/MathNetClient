@@ -186,13 +186,14 @@ function getToolbarIcons(container){
                 ];
     for(var i = 0; i < icons.length; i++){
         var data = icons[i];
-        var b = $("<button>");
+        var b = $("<div>");
         var img = $("<img>");
         img.attr('src',data.src);
         img.attr('alt',data.name);
         b.append(img);
-        b.addClass('btn btn-default btn-toolbox');
+        b.addClass('btn-toolbox');
         b.attr('data-mode', data.mode);
+        b.draggable({ revert: true });
         $(container).append(b); 
     }
 }
