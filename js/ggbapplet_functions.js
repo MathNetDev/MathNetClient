@@ -179,21 +179,22 @@ function checkUser(object){
 function getToolbarIcons(container){
     container = typeof container !== 'undefined' ? container : '.toolbox';
     var icons = [
-                    {"name":"Move", "mode":0, "src":"/images/Mode_move.svg"},
-                    {"name":"Point", "mode":1, "src":"/images/Mode_point.svg"},
-                    {"name":"Segment", "mode":15, "src":"/images/Mode_segment.svg"},
-                    {"name":"Join", "mode":2, "src":"/images/Mode_join.svg"},
-                    {"name":"Delete", "mode":6, "src":"/images/Mode_delete.svg"}
+                    {"name":"Move", "mode":0, "src":"./images/Mode_move.svg"},
+                    {"name":"Point", "mode":1, "src":"./images/Mode_point.svg"},
+                    {"name":"Segment", "mode":15, "src":"./images/Mode_segment.svg"},
+                    {"name":"Join", "mode":2, "src":"./images/Mode_join.svg"},
+                    {"name":"Delete", "mode":6, "src":"./images/Mode_delete.svg"}
                 ];
     for(var i = 0; i < icons.length; i++){
         var data = icons[i];
-        var b = $("<button>");
+        var b = $("<div>");
         var img = $("<img>");
         img.attr('src',data.src);
         img.attr('alt',data.name);
         b.append(img);
-        b.addClass('btn btn-default btn-toolbox');
+        b.addClass('btn-toolbox');
         b.attr('data-mode', data.mode);
+        b.draggable({ revert: true });
         $(container).append(b); 
     }
 }

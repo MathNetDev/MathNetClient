@@ -27,7 +27,10 @@ $(function() {
 
     var $design_tab = $('#design-tab');
     var $design_toolbox = $('.toolbox'); //design view tool container
-
+    
+    var toolbar_locs = [];
+        while(toolbar_locs.push([]) < 12);
+    
     // Connect to the server using the Admin.Socket object constructor
     
     var class_id;
@@ -136,8 +139,20 @@ $(function() {
                 "screenshotGenerator":false,
                 "preventFocus":false
             };
+            
             getToolbarIcons();
             appletInit(params);
+
+            $(".toolbar-target").droppable({
+                drop: function( event, ui ) {
+                    var target = $(this);
+                    var location = $(".toolbar-target").index(target);
+                    var item = ui.draggable.attr("data-mode");
+                    toolbar_locs[location].push(item);
+                    target.append(ui.draggable);
+                    console.log(toolbar_locs);
+                }
+            });
         }else{
             $design_toolbox.empty();
         }
