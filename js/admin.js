@@ -113,10 +113,33 @@ $(function() {
         var tab = String(e.target).split('#')[1];
         //alert(tab);
         if(tab == 'design'){
+            var params = {
+                "container":"appletContainer",
+                "id":"applet",
+                "width":1000,
+                "height":600,
+                "perspective":"",
+                "showAlgebraInput":false,
+                "showToolBarHelp":false,
+                "showMenubar":false,
+                "enableLabelDrags":false,
+                "showResetIcon":false,
+                "showToolbar":true,
+                "allowStyleBar":false,
+                "useBrowserForJS":true,
+                "enableShiftDragZoom":true,
+                "errorDialogsActive":true,
+                "enableRightClick":false,
+                "enableCAS":false,
+                "enable3d":false,
+                "isPreloader":false,
+                "screenshotGenerator":false,
+                "preventFocus":false
+            };
             getToolbarIcons();
-            appletInit('appletContainer',1000,600);
+            appletInit(params);
         }else{
-            $design_toolbox.empty('');
+            $design_toolbox.empty();
         }
     });
 });

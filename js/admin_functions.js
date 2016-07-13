@@ -192,5 +192,6 @@ function join_class(class_id){
 
 //This function registers listeners on geogebra initialization 
 function ggbOnInit(arg) {
+    applet.evalCommand("CenterView[(0,0)]");
     applet.setCustomToolBar('');
 }
