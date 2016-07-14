@@ -39,10 +39,10 @@ $(function() {
     $create_view.hide();
     $class_view.hide();
 
-
-    if(sessionStorage.getItem('admin_class_id')){
-        console.log("made it");
-        socket.join_class(sessionStorage.getItem('admin_class_id'), 'ucd-247');
+    //secret rejoin cookie
+    var admin_secret = sessionStorage.getItem('admin_secret');
+    if(admin_secret && admin_secret == 'ucd_247'){
+        socket.get_classes(admin_secret);
     }
     //
     // SECRET INPUT

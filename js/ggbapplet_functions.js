@@ -38,7 +38,6 @@ function appletSetExtXML(xml){
     console.log(new_json);
     cur_json.geogebra.construction = new_json.geogebra.construction;
 
-
     $("#xmlView").val(xml);
     //console.log(xml);
     
@@ -179,11 +178,11 @@ function checkUser(object){
 function getToolbarIcons(container){
     container = typeof container !== 'undefined' ? container : '.toolbox';
     var icons = [
-                    {"name":"Move", "mode":0, "src":"/images/Mode_move.svg"},
-                    {"name":"Point", "mode":1, "src":"/images/Mode_point.svg"},
-                    {"name":"Segment", "mode":15, "src":"/images/Mode_segment.svg"},
-                    {"name":"Join", "mode":2, "src":"/images/Mode_join.svg"},
-                    {"name":"Delete", "mode":6, "src":"/images/Mode_delete.svg"}
+                    {"name":"Move", "mode":0, "src":"./images/Mode_move.svg"},
+                    {"name":"Point", "mode":1, "src":"./images/Mode_point.svg"},
+                    {"name":"Segment", "mode":15, "src":"./images/Mode_segment.svg"},
+                    {"name":"Join", "mode":2, "src":"./images/Mode_join.svg"},
+                    {"name":"Delete", "mode":6, "src":"./images/Mode_delete.svg"}
                 ];
     for(var i = 0; i < icons.length; i++){
         var data = icons[i];
