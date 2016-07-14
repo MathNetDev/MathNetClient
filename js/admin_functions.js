@@ -166,7 +166,7 @@ function coordinate_change_response(username, class_id, group_id, x, y, info) {
  * @param {array[object]} classes array of objects holding classes and their hashed IDs
  * @description appends list objects of Classes and their IDs to an unordered list in admin.html
  */
-function get_classes_response(classes){
+function get_classes_response(classes, secret){
     var $secret_view = $('.secret_view');
     var $create_view = $('.create_view');
     var $class_view = $('.class_view');
@@ -176,6 +176,8 @@ function get_classes_response(classes){
     $create_view.show();
     $class_view.hide();
     $design_tab.show();
+
+    sessionStorage.setItem('admin_secret', secret);
 
     $('#get-classes').html('');
     for (var i = 0; i < classes.length; i++) {
