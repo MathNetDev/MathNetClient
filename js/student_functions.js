@@ -1,9 +1,5 @@
 "use strict";
 
-var d3app = $("#field-container");
-var geogebra = $("#ging");
-var geogebra_full = $(".javascriptapplet");
-
 //escapes most strings to not break general forms
 function escapeStr(str) 
 {
@@ -99,11 +95,11 @@ function group_join_response(username, class_id, group_id, group_size) {
                 "perspective":"AG",
                 "showAlgebraInput":true,
                 "showToolBarHelp":false,
-                "showMenubar":true,
+                "showMenubar":false,
                 "enableLabelDrags":false,
                 "showResetIcon":true,
                 "showToolbar":true,
-                "allowStyleBar":true,
+                "allowStyleBar":false,
                 "useBrowserForJS":true,
                 "enableShiftDragZoom":true,
                 "errorDialogsActive":true,
@@ -113,23 +109,9 @@ function group_join_response(username, class_id, group_id, group_size) {
                 "isPreloader":false,
                 "screenshotGenerator":false,
                 "preventFocus":false
-            };
-    appletInit(params);
-    
-    // Clear points and redraw
-    if (d3app.length != 0){
-        users = []; 
-        remove_drawn_vectors();
-    } else if (geogebra.length != 0){
-        
-    } else if (geogebra_full.length != 0){
+    };
 
-        if (group_size > 1){
-            //socket.get_xml(username, class_id, group_id);
-        } else {
-            
-        }
-    }
+    appletInit(params);
     
     sessionStorage.setItem('group_id', group_id);
 
@@ -150,12 +132,9 @@ function group_leave_response(username, class_id, group_id, disconnect) {
     if(!disconnect){
         sessionStorage.removeItem('group_id');
     }
-    if (d3app.length != 0){
-        field_remove_user(username);
-    } else if (geogebra_full.length != 0){
-        clearApplet();
-    }
-    //socket.group_info(username, class_id, group_id, false);
+    
+    clearApplet();
+    
 }
 
 // populates $people with members array values, and appends join/leave message
@@ -192,42 +171,6 @@ function group_info_response(username, class_id, group_id, members, status) {
         escUsername = escapeStr(escUsername);
         $("#" + escUsername).remove();
         $('#messages').append(username + ' has left the group<br/>');
-        if(d3app.length != 0){
-            field_remove_user(username);
-        } else if (geogebra.length != 0){
-            var fields = {x: 0,
-                          y: 0, 
-                          username: "B"};
-            handle_partner_leave(fields);
-        }
-    }
-
-    if (d3app.length != 0){
-        field_sync_users(members);
-    } else if (geogebra.length != 0){
-        if(username == sessionStorage.getItem("username") ){
-            sessionStorage.setItem("x1", 0);
-            sessionStorage.setItem("y1", 0);
-            ggbOnInit();
-        } else {
-            
-        }
-        if(status && (members.length != 0) ){
-            var fields = {username: members[0].member_name, x: members[0].member_x, y: members[0].member_y};
-            handle_show_partner(fields);
-            if(members[0].member_info.length != 0 && members[0].member_info != "{}" ){
-                var info = members[0].member_info;
-                if(info.mark == true){
-                    fields.info = info;
-                    handle_mark_partner(fields);
-                }
-            }
-        }
-    } else if (geogebra_full.length != 0){
-        if(username == sessionStorage.getItem('username') && members.length == 1){
-            //var xml = document.applet.getXML();
-            //socket.xml_change(username, class_id, group_id, xml);
-        }
     }
 }//members is undefined if group_info_response is triggered by group_leave, so short circuit it on status.
 
@@ -241,23 +184,6 @@ function coordinate_change_response(username, class_id, group_id, x, y, info) {
 
     $messages.append(username + ' has moved their point to (' 
                           + x + ', ' + y +')<br/>');
-    if (d3app.length != 0){
-        info = JSON.parse(info);
-        field_move_users(username, x, y, info);
-    } else if (geogebra.length != 0) {
-        if(username != sessionStorage.getItem("username")){
-            var fields = {username: username, x: x, y: y}; //this doesn't work as well as group_join, why things undefined?
-            handle_show_partner(fields);
-            if(info.length != 0 && info != "{}"){
-                info = JSON.parse(info);
-                if(info.mark == true){
-                    fields.info = info;
-                    handle_mark_partner(fields);
-                }
-            }
-        }//if there is a partner in the group mark them
-        //look call handler to look through info a la netlogo
-    }
 }
 
 //handler for xml_change response, appends message to chatbox, and calls appletSetExtXML()
@@ -292,13 +218,7 @@ function get_settings_response(class_id, settings) {
                 $("#display-settings").show(),
                 $('#messages').append('Admin has turned on options.<br/>')
             );//hide display options if certain global is turned on.
-            
-            if (d3app.length != 0){
-                update_display_settings();
-            }
         }
-        //if setting == "whateveroption"
-        //  enableOptionInApp(settings[setting]);
     }
 }
 
