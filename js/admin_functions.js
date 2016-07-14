@@ -99,14 +99,15 @@ function leave_class_response(disconnect) {
     var $class_view = $('.class_view');
     var $secret = $('.secret');
     var $design_tab = $('#design_tab');
-
+    var $design_icons = $('.toolbar-target');
     $('#error_frame').html('');
     
     $secret_view.hide();
     $create_view.show();
     $class_view.hide();
+    $design_icons.empty();
     $design_tab.hide();
-    
+
     if(!disconnect){
         sessionStorage.removeItem('admin_class_id');
     }
