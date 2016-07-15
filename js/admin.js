@@ -46,6 +46,7 @@ $(function() {
     var admin_secret = sessionStorage.getItem('admin_secret');
     if(admin_secret && admin_secret == 'ucd_247'){
         socket.get_classes(admin_secret);
+        $secret.val('ucd_247');
     }
     //
     // SECRET INPUT

@@ -17,9 +17,11 @@
     margin-bottom: 2em;
     max-height:300px; 
     overflow:auto;
+    text-align: center;
 }
 #get-classes button{
-  margin: 0 .5em;
+  margin: .25em;
+  width:20%
 }
 
 #get-classes div:hover{
