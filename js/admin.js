@@ -139,8 +139,41 @@ $(function() {
             };
             getToolbarIcons();
             appletInit(params);
-        }else{
+        }else if (tab == 'view'){
             $design_toolbox.empty();
+            var numgroups = $('ul.groups div').length;
+            for(var i = 0; i < numgroups; i++){
+                var newgroup = '<div class="geogebrawebapplet" id="appletContainer'+ i +'"'
+                    + 'style="width:100%;height:650px;display: block;"></div><br/>';
+                $('#views_jsapp').append(newgroup);
+            
+                var params = {
+                    "container":"appletContainer"+i,
+                    "id":"applet"+i,
+                    "width":1000,
+                    "height":600,
+                    "perspective":"",
+                    "showAlgebraInput":false,
+                    "showToolBarHelp":false,
+                    "showMenubar":false,
+                    "enableLabelDrags":false,
+                    "showResetIcon":false,
+                    "showToolbar":false,
+                    "allowStyleBar":false,
+                    "useBrowserForJS":true,
+                    "enableShiftDragZoom":true,
+                    "errorDialogsActive":true,
+                    "enableRightClick":false,
+                    "enableCAS":false,
+                    "enable3d":false,
+                    "isPreloader":false,
+                    "screenshotGenerator":false,
+                    "preventFocus":true
+                };
+                appletInit(params);
+            }
+        } else {
+             $design_toolbox.empty();
         }
     });
 });

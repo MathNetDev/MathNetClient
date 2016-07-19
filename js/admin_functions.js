@@ -71,7 +71,7 @@ function add_group_response() {
     var new_group = "";
     var group_number = $('.groups > li:last').index() + 2;
     new_group += "<li>Group " + group_number;
-    new_group += "<ul class='g" + group_number + "'></ul></li>";
+    new_group += "<div class='g" + group_number + "'></div></li>";
     $groups.append(new_group);
     draw_mirror(".g"+group_number);
     users.push([]);
@@ -171,11 +171,13 @@ function get_classes_response(classes, secret){
     var $create_view = $('.create_view');
     var $class_view = $('.class_view');
     var $design_tab = $('#design_tab');
+    var $view_tab = $('#view_tab');
 
     $secret_view.hide();
     $create_view.show();
     $class_view.hide();
     $design_tab.show();
+    $view_tab.show();
 
     sessionStorage.setItem('admin_secret', secret);
 
