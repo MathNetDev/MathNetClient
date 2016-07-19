@@ -199,3 +199,14 @@ function ggbOnInit(arg) {
     applet.evalCommand("CenterView[(0,0)]");
     applet.setCustomToolBar('');
 }
+
+//handler for xml_change response, appends message to chatbox, and calls appletSetExtXML()
+function xml_change_response(username, class_id, group_id, xml) {
+    appletSetExtXML(xml, group_id);
+    ggbOnInit();
+}
+
+//calls appletSetExtXML() to update the local geogebra applet.
+function get_xml_response(username, class_id, group_id, xml){
+    appletSetExtXML(xml, group_id);
+}

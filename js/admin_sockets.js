@@ -62,6 +62,19 @@
             socket.emit('get-classes', secret);
         }
 
+        //This function takes a username, class_id, group_id, and XML
+        //It then emits a socket event to change the class's XML in the datastructure
+        //based on the given XML, group_id, and class_id
+        var xml_change = function(username, class_id, group_id, xml) {
+            socket.emit('xml_change', username, class_id, group_id, xml);
+        }
+
+        //This function takes a username, class_id, and group_id
+        //It then emits a socket event to retrieve the group's XML
+        //using the given class_id and group_id
+        var get_xml = function(username, class_id, group_id){
+            socket.emit('get_xml', username, class_id, group_id);
+        }
         // This function disconnects the socket
         var disconnect = function() {
             socket.disconnect();
@@ -104,6 +117,14 @@
             get_classes_response(data.classes, data.secret);
         });
 
+        socket.on('xml_change_response', function(data) {
+            xml_change_response(data.username, data.class_id, data.group_id, data.xml);
+        });
+
+        socket.on('get_xml_response', function(data) {
+            get_xml_response(data.username, data.class_id, data.group_id, data.xml);
+        });
+
         return {
             add_class: add_class,
             join_class: join_class,
@@ -112,6 +133,8 @@
             leave_class: leave_class,
             save_settings: save_settings,
             get_classes: get_classes,
+            xml_change: xml_change,
+            get_xml: get_xml,
             disconnect: disconnect
         };
     };

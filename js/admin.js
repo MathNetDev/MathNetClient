@@ -141,9 +141,9 @@ $(function() {
             appletInit(params);
         }else if (tab == 'view'){
             $design_toolbox.empty();
-            var numgroups = $('ul.groups div').length;
-            for(var i = 0; i < numgroups; i++){
-                var newgroup = '<div class="geogebrawebapplet" id="appletContainer'+ i +'"'
+            var numgroups = ($('ul.groups div').length)+1;
+            for(var i = 1; i < numgroups; i++){
+                var newgroup = '<h4> Group ' + i + '</h4><div class="geogebrawebapplet" id="appletContainer'+ i +'"'
                     + 'style="width:100%;height:650px;display: block;"></div><br/>';
                 $('#views_jsapp').append(newgroup);
             
@@ -171,7 +171,11 @@ $(function() {
                     "preventFocus":true
                 };
                 appletInit(params);
+                var classname = $('.class_name').html().split(' ').pop();
+                socket.get_xml('admin', classname, i);
+                
             }
+
         } else {
              $design_toolbox.empty();
         }
