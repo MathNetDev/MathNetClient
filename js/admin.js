@@ -141,6 +141,7 @@ $(function() {
             appletInit(params);
         }else if (tab == 'view'){
             $design_toolbox.empty();
+            $('#views_jsapp').empty();
             var numgroups = ($('ul.groups div').length)+1;
             for(var i = 1; i < numgroups; i++){
                 var newgroup = '<h4> Group ' + i + '</h4><div class="geogebrawebapplet" id="appletContainer'+ i +'"'
