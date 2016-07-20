@@ -34,6 +34,9 @@ function appletSetExtXML(xml, id){
     var new_json = x2js.xml_str2json(xml);
     var commandString = "";
 
+    if(new_json === null){
+        return;
+    }
     if((new_json.geogebra.construction).hasOwnProperty('command')){
         var obj = commandParsing(new_json);
         new_json = obj.new_json;

@@ -160,6 +160,7 @@ $(function() {
                     "enableLabelDrags":false,
                     "showResetIcon":false,
                     "showToolbar":false,
+                    "data-param-id": "loadXML" + i,
                     "allowStyleBar":false,
                     "useBrowserForJS":true,
                     "enableShiftDragZoom":true,
@@ -171,10 +172,7 @@ $(function() {
                     "screenshotGenerator":false,
                     "preventFocus":true
                 };
-                appletInit(params);
-                var classname = $('.class_name').html().split(' ').pop();
-                socket.get_xml('admin', classname, i);
-                
+                appletInit(params);                
             }
 
         } else {

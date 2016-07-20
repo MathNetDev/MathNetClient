@@ -196,8 +196,18 @@ function join_class(class_id){
 
 //This function registers listeners on geogebra initialization 
 function ggbOnInit(arg) {
-    applet.evalCommand("CenterView[(0,0)]");
-    applet.setCustomToolBar('');
+    console.log(arg);
+    document[arg].evalCommand("CenterView[(0,0)]");
+    document[arg].setCustomToolBar('');
+    var name, num, index = arg.search('[0-9]');
+    if (index != -1){
+        num = arg.slice(index);
+        name = arg.slice(0, index);
+        if (name == "applet"){
+            var classname = $('.class_name').html().split(' ').pop();
+            socket.get_xml('admin', classname, num);
+        }
+    }
 }
 
 //handler for xml_change response, appends message to chatbox, and calls appletSetExtXML()
@@ -208,5 +218,8 @@ function xml_change_response(username, class_id, group_id, xml) {
 
 //calls appletSetExtXML() to update the local geogebra applet.
 function get_xml_response(username, class_id, group_id, xml){
+    if(xml == undefined){
+        xml = '{}';
+    }
     appletSetExtXML(xml, group_id);
 }
