@@ -223,3 +223,15 @@ function get_xml_response(username, class_id, group_id, xml){
     }
     appletSetExtXML(xml, group_id);
 }
+function views_change(event){
+    console.log(event);
+    var box = $(event)[0];
+    console.log(box);
+    var $view = $("."+box.name);
+    console.log($view);
+    if(box.checked){
+        $view.show();
+    } else {
+        $view.hide();
+    }
+}

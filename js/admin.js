@@ -142,11 +142,15 @@ $(function() {
         }else if (tab == 'view'){
             $design_toolbox.empty();
             $('#views_jsapp').empty();
+            $('#views_checkboxes').html('Show Groups &emsp;');
             var numgroups = ($('ul.groups div').length)+1;
             for(var i = 1; i < numgroups; i++){
-                var newgroup = '<h4> Group ' + i + '</h4><div class="geogebrawebapplet" id="appletContainer'+ i +'"'
-                    + 'style="width:100%;height:650px;display: block;"></div><br/>';
+                var newgroup = '<div class="views_group_'+i+'" ><h4> Group ' + i + '</h4><div class="geogebrawebapplet" id="appletContainer'
+                    + i + '"style="width:100%;height:650px;display:block;"></div></div><br/>';
+                var checkbox = '&emsp;<input checked type="checkbox" onchange="views_change(this)" value="applet'+i+'" name="views_group_'+ i
+                    + '">Group '+ i + '';
                 $('#views_jsapp').append(newgroup);
+                $('#views_checkboxes').append(checkbox);
             
                 var params = {
                     "container":"appletContainer"+i,
