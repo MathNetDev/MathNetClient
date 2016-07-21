@@ -213,7 +213,7 @@ function ggbOnInit(arg) {
 //handler for xml_change response, appends message to chatbox, and calls appletSetExtXML()
 function xml_change_response(username, class_id, group_id, xml) {
     appletSetExtXML(xml, group_id);
-    ggbOnInit();
+    //ggbOnInit();
 }
 
 //calls appletSetExtXML() to update the local geogebra applet.
@@ -233,5 +233,36 @@ function views_change(event){
         $view.show();
     } else {
         $view.hide();
+    }
+}
+
+function view_merge(event){
+    $('.mergeview_button').hide();
+    $('.unmergeview_button').show();
+    var XMLs = {};
+    var array = $('#views_checkboxes :checked');
+    for (var i = 0; i < array.length; i++){
+        var value = array[i]["value"];
+        var parsing = document[value].getXML();
+        var obj = x2js.xml_str2json(parsing);
+        //console.log(obj)
+        $.extend(true, XMLs, obj);
+        $("." + array[i]["name"]).hide()
+    }
+    console.log(XMLs);
+    var final_xml = x2js.json2xml_str(XMLs);
+    final_xml = JSON.stringify(final_xml);
+    var numgroups = ($('ul.groups div').length)+1;
+    appletSetExtXML(final_xml, numgroups);
+    $('.merge_group').show();
+}
+function unmerge_views(event){
+    $('.mergeview_button').show();
+    $('.unmergeview_button').hide();
+
+    $('.merge_group').hide();
+    var array = $('#views_checkboxes :checked');
+    for (var i = 0; i < array.length; i++){
+        $("." + array[i]["name"]).show();
     }
 }
