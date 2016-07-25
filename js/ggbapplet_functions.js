@@ -1,5 +1,6 @@
 //all document.applet (geogebra) calls are documented at http://www.geogebra.org/manual/en/Reference:JavaScript
 var cur_xml;
+appletName = document.applet;
 //Used in the test html to show how the XML is got
 function appletGetXML(target){
     cur_xml = document.applet.getXML();
@@ -53,11 +54,14 @@ function appletSetExtXML(xml, id){
     //console.log(final_xml);
     appletName.reset();
     appletName.setXML(final_xml);
+
     if(commandString != undefined && commandString != ""){
         //console.log(commandString);
         appletName.evalCommand(commandString);
     }
-    randomizeColors(appletName);
+
+    colorizePoints(appletName, cur_json);
+    //randomizeColors(appletName);
     checkLocks(appletName);
 }
 
@@ -111,20 +115,47 @@ function clearApplet(appletName){
     appletName.reset();
 }
 
-//This function changes the colors of all elements on the local view to a random color
-function randomizeColors(appletName) {
-    //cur_xml = appletName.getXML(); 
-    var minimum = 0, maximum = 255, colors = [], i;
-    for(i = 0; i < 3; i++){
-        colors.push(Math.floor(Math.random() * (maximum - minimum + 1)) + minimum);
-    } //this is your color
+function colorizePoints(appletName, cur_json){
+    var elem = cur_json.geogebra.construction.element;
+    console.log(elem);
+    if(elem !== null && typeof elem === 'object' && !(elem instanceof Array)){
+        var temp = elem;
+        elem = [];
+        elem.push(temp);
+    }
+    if(elem != null){
+        var colors = elem[0]["objColor"];
+        if(colors._b != "255" || colors._g != "0" || colors._r != "0"){
+            var red = colors._r;
+            var green = colors._g;
+            var blue = colors._b;
+            console.log("called randomizeColors");
+            randomizeColors(appletName, red, green, blue);
+        }
+    }
 
-    // console.log(array);
+}
+
+//This function changes the colors of all elements on the local view to a random color
+function randomizeColors(appletName, r, g, b) {
+    //cur_xml = appletName.getXML(); 
+    console.log(appletName);
+    var minimum = 0, maximum = 255, colors = [], i;
+    if (r != undefined && g != undefined && b != undefined){
+        colors.push(r, g, b);
+    } else {
+        for(i = 0; i < 3; i++){
+            colors.push(Math.floor(Math.random() * (maximum - minimum + 1)) + minimum);
+        } //this is your color
+    }
+
+    console.log(colors);
     var numelems = appletName.getObjectNumber();
     for (i = 0; i < numelems; i++){
         var name = appletName.getObjectName(i);
         appletName.setColor(name, colors[0], colors[1], colors[2]); 
     }
+    console.log("finished coloring");
 }
 
 //This function grabs all objects in the construction, and sets a lock on them
