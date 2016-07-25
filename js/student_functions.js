@@ -95,7 +95,7 @@ function group_join_response(username, class_id, group_id, group_size) {
                 "perspective":"AG",
                 "showAlgebraInput":true,
                 "showToolBarHelp":false,
-                "showMenubar":false,
+                "showMenubar":true,
                 "enableLabelDrags":false,
                 "showResetIcon":true,
                 "showToolbar":true,

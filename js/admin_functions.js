@@ -203,7 +203,7 @@ function ggbOnInit(arg) {
     if (index != -1){
         num = arg.slice(index);
         name = arg.slice(0, index);
-        if (name == "applet"){
+        if (name == "applet" && num <= $('ul.groups div').length){
             var classname = $('.class_name').html().split(' ').pop();
             socket.get_xml('admin', classname, num);
         }
@@ -223,6 +223,7 @@ function get_xml_response(username, class_id, group_id, xml){
     }
     appletSetExtXML(xml, group_id);
 }
+
 function views_change(event){
     console.log(event);
     var box = $(event)[0];
@@ -246,7 +247,15 @@ function view_merge(event){
         var parsing = document[value].getXML();
         var obj = x2js.xml_str2json(parsing);
         //console.log(obj)
-        $.extend(true, XMLs, obj);
+        var num = array[i]["value"].substr(-1, 1);
+        obj = rename_labels(obj, num);
+        console.log(obj);
+        _.mergeWith(XMLs, obj, function (a, b) {
+          if (_.isArray(a)) {
+            return a.concat(b);
+          }
+        });
+        //$.extend(true, XMLs, obj);
         $("." + array[i]["name"]).hide()
     }
     console.log(XMLs);
@@ -254,9 +263,47 @@ function view_merge(event){
     final_xml = JSON.stringify(final_xml);
     var numgroups = ($('ul.groups div').length)+1;
     appletSetExtXML(final_xml, numgroups);
+    $('#views_checkboxes :checkbox').hide();
     $('.merge_group').show();
 }
+
+function rename_labels(xml, num){
+    if((xml.geogebra).hasOwnProperty('construction')){
+        if((xml.geogebra.construction).hasOwnProperty('element')){
+            var array = xml.geogebra.construction.element;
+            if(array !== null && typeof array === 'object' && !(array instanceof Array)){
+                var temp = array;
+                array = [];
+                array.push(temp);
+            }
+            for (var i = 0; i < array.length; i++){
+                array[i]["_label"] = array[i]["_label"] + 'g' + num;
+            }
+            xml.geogebra.construction.element = array;
+        }
+        if((xml.geogebra.construction).hasOwnProperty('command')){
+            var array = xml.geogebra.construction.command;
+            if(array !== null && typeof array === 'object' && !(array instanceof Array)){
+                var temp = array;
+                array = [];
+                array.push(temp);
+            }
+            for (var i = 0; i < array.length; i++){
+                for (var point in array[i].input){
+                    array[i]["input"][point] =  array[i]["input"][point] + 'g' + num;
+                }
+                for (var point in array[i].output){
+                    array[i]["output"][point] = array[i]["output"][point] + 'g' + num;
+                }
+            }
+            xml.geogebra.construction.command = array;
+        }
+    }
+    return xml;
+
+}
 function unmerge_views(event){
+    $('#views_checkboxes :checkbox').show();
     $('.mergeview_button').show();
     $('.unmergeview_button').hide();
 
