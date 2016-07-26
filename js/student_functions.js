@@ -187,17 +187,17 @@ function coordinate_change_response(username, class_id, group_id, x, y, info) {
 }
 
 //handler for xml_change response, appends message to chatbox, and calls appletSetExtXML()
-function xml_change_response(username, class_id, group_id, xml) {
+function xml_change_response(username, class_id, group_id, xml, toolbar) {
     var $messages = $('#messages');
     $messages.append(username + ' has changed the xml.<br/>');
 
-    appletSetExtXML(xml);
+    appletSetExtXML(xml, toolbar);
     ggbOnInit();
 }
 
 //calls appletSetExtXML() to update the local geogebra applet.
-function get_xml_response(username, class_id, group_id, xml){
-    appletSetExtXML(xml);
+function get_xml_response(username, class_id, group_id, xml,toolbar){
+    appletSetExtXML(xml, toolbar);
 }
 
 // updates $class_settings based on settings array

@@ -211,19 +211,21 @@ function ggbOnInit(arg) {
 }
 
 //handler for xml_change response, appends message to chatbox, and calls appletSetExtXML()
-function xml_change_response(username, class_id, group_id, xml) {
-    appletSetExtXML(xml, group_id);
+function xml_change_response(username, class_id, group_id, xml, toolbar) {
+    appletSetExtXML(xml, toolbar, group_id);
     //ggbOnInit();
 }
 
 //calls appletSetExtXML() to update the local geogebra applet.
-function get_xml_response(username, class_id, group_id, xml){
+function get_xml_response(username, class_id, group_id, xml, toolbar){
     if(xml == undefined){
         xml = '{}';
     }
-    appletSetExtXML(xml, group_id);
+    
+    appletSetExtXML(xml, toolbar, group_id);
 }
 
+//called on checkbox change, shows/hides box based on if checked or not
 function views_change(event){
     console.log(event);
     var box = $(event)[0];
@@ -237,6 +239,9 @@ function views_change(event){
     }
 }
 
+//called on merge view button press in the views tab
+//this parses the xml of all shown groups and condenses
+//them into one XML for appletSetExtXML to evaluate
 function view_merge(event){
     $('.mergeview_button').hide();
     $('.unmergeview_button').show();
@@ -267,6 +272,9 @@ function view_merge(event){
     $('.merge_group').show();
 }
 
+//this is used to rename all object labels within the given XML to 
+//have their group number added onto the end, preventing conflicts
+//when merging multiple XMLs together
 function rename_labels(xml, num){
     if((xml.geogebra).hasOwnProperty('construction')){
         if((xml.geogebra.construction).hasOwnProperty('element')){
@@ -302,6 +310,9 @@ function rename_labels(xml, num){
     return xml;
 
 }
+
+//this is called when the unmerge views button is pressed.
+//it shows all hidden divs from the merge view
 function unmerge_views(event){
     $('#views_checkboxes :checkbox').show();
     $('.mergeview_button').show();

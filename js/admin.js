@@ -24,6 +24,7 @@ $(function() {
     var $settings = $('.setting');
     var $get_classes_button = $('.get_classes_button');
     var $secret_button = $('.secret_button');
+    var $sendtoolbar_button = $('.sendtoolbar_button');
 
     var $design_tab = $('#design-tab');
     var $design_toolbox = $('.toolbox'); //design view tool container
@@ -103,6 +104,17 @@ $(function() {
             data[$settings[i].name] = $settings[i].checked;
         }
         socket.save_settings(sessionStorage.getItem('admin_class_id'), data, $secret.val().trim());
+    });
+
+    //
+    // SEND TOOLBAR
+    //
+    $sendtoolbar_button.bind('click', function(){
+        var numgroups = ($('ul.groups div').length)+1;
+            
+        for(var i = 1; i < numgroups; i++){
+            socket.xml_change('admin', sessionStorage.getItem('admin_class_id'), i, document.applet.getXML(), /*curstr*/);
+        }
     });
 
     //

@@ -21,11 +21,14 @@ function appletEvalXML(source){
 
 //This function takes the new XML, changes it and the old XML to a JSON format, and then 
 // parses it, and changes it back to XML to be set in the geogebra applet.
-function appletSetExtXML(xml, id){
+function appletSetExtXML(xml, toolbar, id){
     var appletName = document.applet;
     if (id !== undefined){
         appletName = document['applet' + id];
         console.log(appletName);
+    }
+    if (toolbar != '' && toolbar != undefined){
+        appletName.setCustomToolbar(toolbar);
     }
     cur_xml = appletName.getXML();
     xml = xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>');
@@ -60,7 +63,7 @@ function appletSetExtXML(xml, id){
         appletName.evalCommand(commandString);
     }
 
-    colorizePoints(appletName, cur_json);
+    //colorizePoints(appletName, cur_json);
     //randomizeColors(appletName);
     checkLocks(appletName);
 }
@@ -187,7 +190,7 @@ function check_xml(xml, socket){
         var username = sessionStorage.getItem('username');
         var class_id = sessionStorage.getItem('class_id');
         var group_id = sessionStorage.getItem('group_id');
-        socket.xml_change(username, class_id, group_id, cur_xml);
+        socket.xml_change(username, class_id, group_id, cur_xml, '');
     }
 }
 
