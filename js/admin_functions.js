@@ -267,7 +267,7 @@ function view_merge(event){
     var final_xml = x2js.json2xml_str(XMLs);
     final_xml = JSON.stringify(final_xml);
     var numgroups = ($('ul.groups div').length)+1;
-    appletSetExtXML(final_xml, numgroups);
+    appletSetExtXML(final_xml, '', numgroups);
     $('#views_checkboxes :checkbox').hide();
     $('.merge_group').show();
 }
@@ -301,7 +301,7 @@ function rename_labels(xml, num){
                     array[i]["input"][point] =  array[i]["input"][point] + 'g' + num;
                 }
                 for (var point in array[i].output){
-                    array[i]["output"][point] = array[i]["output"][point] + 'g' + num;
+                    //array[i]["output"][point] = array[i]["output"][point] + 'g' + num;
                 }
             }
             xml.geogebra.construction.command = array;

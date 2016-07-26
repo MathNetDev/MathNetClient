@@ -113,7 +113,7 @@ $(function() {
         var numgroups = ($('ul.groups div').length)+1;
             
         for(var i = 1; i < numgroups; i++){
-            socket.xml_change('admin', sessionStorage.getItem('admin_class_id'), i, document.applet.getXML(), /*curstr*/);
+            socket.xml_change('admin', sessionStorage.getItem('admin_class_id'), i, document.applet.getXML()/*,curstr*/);
         }
     });
 
