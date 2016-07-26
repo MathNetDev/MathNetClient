@@ -1,5 +1,6 @@
 //all document.applet (geogebra) calls are documented at http://www.geogebra.org/manual/en/Reference:JavaScript
 var cur_xml;
+appletName = document.applet;
 //Used in the test html to show how the XML is got
 function appletGetXML(target){
     cur_xml = document.applet.getXML();
@@ -20,8 +21,16 @@ function appletEvalXML(source){
 
 //This function takes the new XML, changes it and the old XML to a JSON format, and then 
 // parses it, and changes it back to XML to be set in the geogebra applet.
-function appletSetExtXML(xml){
-    cur_xml = document.applet.getXML();
+function appletSetExtXML(xml, toolbar, id){
+    var appletName = document.applet;
+    if (id !== undefined){
+        appletName = document['applet' + id];
+        console.log(appletName);
+    }
+    if (toolbar != '' && toolbar != undefined){
+        appletName.setCustomToolbar(toolbar);
+    }
+    cur_xml = appletName.getXML();
     xml = xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>');
     xml = JSON.parse(xml);
 
@@ -29,6 +38,9 @@ function appletSetExtXML(xml){
     var new_json = x2js.xml_str2json(xml);
     var commandString = "";
 
+    if(new_json === null){
+        return;
+    }
     if((new_json.geogebra.construction).hasOwnProperty('command')){
         var obj = commandParsing(new_json);
         new_json = obj.new_json;
@@ -43,14 +55,17 @@ function appletSetExtXML(xml){
     
     var final_xml = x2js.json2xml_str(cur_json);
     //console.log(final_xml);
-    document.applet.reset();
-    document.applet.setXML(final_xml);
+    appletName.reset();
+    appletName.setXML(final_xml);
+
     if(commandString != undefined && commandString != ""){
         //console.log(commandString);
-        document.applet.evalCommand(commandString);
+        appletName.evalCommand(commandString);
     }
-    randomizeColors();
-    checkLocks();
+
+    //colorizePoints(appletName, cur_json);
+    //randomizeColors(appletName);
+    checkLocks(appletName);
 }
 
 //This function takes the new_json, removes all commands in the construction, and creates a string (commandString)
@@ -99,39 +114,66 @@ function commandParsing(new_json){
 }
 
 //This clears the local applet view
-function clearApplet(){
-    document.applet.reset();
+function clearApplet(appletName){
+    appletName.reset();
+}
+
+function colorizePoints(appletName, cur_json){
+    var elem = cur_json.geogebra.construction.element;
+    console.log(elem);
+    if(elem !== null && typeof elem === 'object' && !(elem instanceof Array)){
+        var temp = elem;
+        elem = [];
+        elem.push(temp);
+    }
+    if(elem != null){
+        var colors = elem[0]["objColor"];
+        if(colors._b != "255" || colors._g != "0" || colors._r != "0"){
+            var red = colors._r;
+            var green = colors._g;
+            var blue = colors._b;
+            console.log("called randomizeColors");
+            randomizeColors(appletName, red, green, blue);
+        }
+    }
+
 }
 
 //This function changes the colors of all elements on the local view to a random color
-function randomizeColors() {
-    //cur_xml = document.applet.getXML(); 
+function randomizeColors(appletName, r, g, b) {
+    //cur_xml = appletName.getXML(); 
+    console.log(appletName);
     var minimum = 0, maximum = 255, colors = [], i;
-    for(i = 0; i < 3; i++){
-        colors.push(Math.floor(Math.random() * (maximum - minimum + 1)) + minimum);
-    } //this is your color
-
-    // console.log(array);
-    var numelems = document.applet.getObjectNumber();
-    for (i = 0; i < numelems; i++){
-        var name = document.applet.getObjectName(i);
-        document.applet.setColor(name, colors[0], colors[1], colors[2]); 
+    if (r != undefined && g != undefined && b != undefined){
+        colors.push(r, g, b);
+    } else {
+        for(i = 0; i < 3; i++){
+            colors.push(Math.floor(Math.random() * (maximum - minimum + 1)) + minimum);
+        } //this is your color
     }
+
+    console.log(colors);
+    var numelems = appletName.getObjectNumber();
+    for (i = 0; i < numelems; i++){
+        var name = appletName.getObjectName(i);
+        appletName.setColor(name, colors[0], colors[1], colors[2]); 
+    }
+    console.log("finished coloring");
 }
 
 //This function grabs all objects in the construction, and sets a lock on them
 //if the username in the caption is not the current user.
-function checkLocks(){
-    var numelems = document.applet.getObjectNumber();
+function checkLocks(appletName){
+    var numelems = appletName.getObjectNumber();
     for (i = 0; i < numelems; i++){
-        var name = document.applet.getObjectName(i);
-        var ggb_user = document.applet.getCaption(name);
+        var name = appletName.getObjectName(i);
+        var ggb_user = appletName.getCaption(name);
         var username = sessionStorage.getItem('username');
 
         if (username !== ggb_user){
-            document.applet.setFixed(name, true);
+            appletName.setFixed(name, true);
         } else if (username === ggb_user ){
-            document.applet.setFixed(name, false);
+            appletName.setFixed(name, false);
         }
     }
 }
@@ -148,7 +190,7 @@ function check_xml(xml, socket){
         var username = sessionStorage.getItem('username');
         var class_id = sessionStorage.getItem('class_id');
         var group_id = sessionStorage.getItem('group_id');
-        socket.xml_change(username, class_id, group_id, cur_xml);
+        socket.xml_change(username, class_id, group_id, cur_xml, '');
     }
 }
 

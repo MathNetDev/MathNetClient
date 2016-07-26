@@ -24,6 +24,7 @@ $(function() {
     var $settings = $('.setting');
     var $get_classes_button = $('.get_classes_button');
     var $secret_button = $('.secret_button');
+    var $sendtoolbar_button = $('.sendtoolbar_button');
 
     var $design_tab = $('#design-tab');
     var $design_toolbox = $('.toolbox'); //design view tool container
@@ -106,6 +107,17 @@ $(function() {
     });
 
     //
+    // SEND TOOLBAR
+    //
+    $sendtoolbar_button.bind('click', function(){
+        var numgroups = ($('ul.groups div').length)+1;
+            
+        for(var i = 1; i < numgroups; i++){
+            socket.xml_change('admin', sessionStorage.getItem('admin_class_id'), i, document.applet.getXML()/*,curstr*/);
+        }
+    });
+
+    //
     // TAB CHANGES
     // 
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
@@ -139,8 +151,83 @@ $(function() {
             };
             getToolbarIcons();
             appletInit(params);
-        }else{
+        }else if (tab == 'view'){
             $design_toolbox.empty();
+            $('#views_jsapp').empty();
+            $('#views_checkboxes').html('Show Groups &emsp;');
+            var numgroups = ($('ul.groups div').length)+1;
+            
+            for(var i = 1; i < numgroups; i++){
+                var params = {
+                    "container":"appletContainer"+i,
+                    "id":"applet"+i,
+                    "width":1000,
+                    "height":600,
+                    "perspective":"",
+                    "showAlgebraInput":false,
+                    "showToolBarHelp":false,
+                    "showMenubar":false,
+                    "enableLabelDrags":false,
+                    "showResetIcon":false,
+                    "showToolbar":false,
+                    "data-param-id": "loadXML" + i,
+                    "allowStyleBar":false,
+                    "useBrowserForJS":true,
+                    "enableShiftDragZoom":true,
+                    "errorDialogsActive":true,
+                    "enableRightClick":false,
+                    "enableCAS":false,
+                    "enable3d":false,
+                    "isPreloader":false,
+                    "screenshotGenerator":false,
+                    "preventFocus":true
+                };
+                var newgroup = '<div class="views_group_'+i+'" ><h4> Group ' + i + '</h4><div class="geogebrawebapplet" id="appletContainer'
+                    + i + '"style="width:100%;height:650px;display:block;"></div></div><br/>';
+
+                var checkbox = '&emsp;<input checked type="checkbox" onchange="views_change(this)" value="applet'+i+'" name="views_group_'+ i
+                    + '">Group '+ i;
+
+                $('#views_jsapp').append(newgroup);
+                $('#views_checkboxes').append(checkbox);
+                appletInit(params);                
+            }
+            var params = {
+                    "container":"appletContainer"+numgroups,
+                    "id":"applet"+numgroups,
+                    "width":1000,
+                    "height":600,
+                    "perspective":"",
+                    "showAlgebraInput":false,
+                    "showToolBarHelp":false,
+                    "showMenubar":false,
+                    "enableLabelDrags":false,
+                    "showResetIcon":false,
+                    "showToolbar":false,
+                    "data-param-id": "loadXML" + numgroups,
+                    "allowStyleBar":false,
+                    "useBrowserForJS":true,
+                    "enableShiftDragZoom":true,
+                    "errorDialogsActive":true,
+                    "enableRightClick":false,
+                    "enableCAS":false,
+                    "enable3d":false,
+                    "isPreloader":false,
+                    "screenshotGenerator":false,
+                    "preventFocus":true
+                };
+            var mergegroup = '<div class="merge_group" style="display:none;"><h4> Merge Group</h4><div class="geogebrawebapplet"' +
+                'id="appletContainer' + numgroups + '"style="width:100%;height:650px;display:block;"></div></div><br/>';
+
+            var mergebutton = '&emsp;&emsp;<input class="btn btn-default mergeview_button" onclick="view_merge(this)"'+
+                ' type="button" value="Merge Checked Views"><input class="btn btn-default unmergeview_button" onclick="unmerge_views(this)"'+
+                ' type="button" value="Unmerge Views" style="display:none;">';
+            $('#views_checkboxes').append(mergebutton);
+            $('#views_jsapp').append(mergegroup);
+            appletInit(params); 
+
+        } else {
+             $design_toolbox.empty();
         }
     });
 });

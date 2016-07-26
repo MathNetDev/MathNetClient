@@ -17,6 +17,7 @@
     <ul class="nav nav-tabs" role="tablist">
       <li role="presentation" class="active"><a href="#admin" aria-controls="design" role="tab" data-toggle="tab" id="admin_tab">Admin</a></li>
       <li role="presentation"><a href="#design" aria-controls="design" role="tab" data-toggle="tab" id="design_tab" style="display:none">Design</a></li>
+      <li role="presentation"><a href="#view" aria-controls="design" role="tab" data-toggle="tab" id="view_tab" style="display:none">View</a></li>
     </ul>
   
     <div class="tab-content">
@@ -71,10 +72,18 @@
       </div>
       <div role="tabpanel" class="tab-pane" id="design">
         <div class="col-md-12">
-          <h3>Activity Designer</h3>
+          <h3>Activity Designer <input type="button" class="btn btn-warning sendtoolbar_button" value="Send Toolbar"></input></h3>
           <div class="toolbox"></div>
           <div class="javascriptapplet">
             <div class="geogebrawebapplet" id="appletContainer" style="width:100%;height:650px;display: block;"></div>
+          </div> 
+        </div>
+      </div>
+      <div role="tabpanel" class="tab-pane" id="view">
+        <div class="col-md-12">
+          <h3>View Panel</h3>
+          <h5 id="views_checkboxes"></h5>
+          <div class="javascriptapplet" id="views_jsapp">
           </div> 
         </div>
       </div>
@@ -85,13 +94,17 @@
   <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
   <script src="https://cdn.socket.io/socket.io-1.3.5.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+  <script type="text/javascript" src="js/lodash.min.js"></script>
+  <script type="text/javascript" src="js/xml2json.min.js"></script>
   <script src="js/host.js"></script>
+  <script src="js/admin_sockets.js"></script>
   <script src="js/admin_functions.js"></script>
   <script src="js/admin.js"></script>
-  <script src="js/admin_sockets.js"></script>
   <script type="text/javascript" src="js/deployggb.js"></script>
   <script src="js/ggbapplet_functions.js"></script>
   <script>
+    var x2js = new X2JS();
     var socket = Admin.Socket(io(host));
   </script>
 </footer>
