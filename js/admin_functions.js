@@ -73,7 +73,7 @@ function add_group_response() {
     var new_group = "";
     var group_number = $('.groups > li:last').index() + 2;
     new_group += "<li>Group " + group_number;
-    new_group += "<ul class='g" + group_number + "'></ul></li>";
+    new_group += "<div class='g" + group_number + "'></div></li>";
     $groups.append(new_group);
     draw_mirror(".g"+group_number);
     users.push([]);
@@ -175,10 +175,21 @@ function get_classes_response(classes, secret){
     var $secret_view = $('.secret_view');
     var $create_view = $('.create_view');
     var $class_view = $('.class_view');
+<<<<<<< HEAD
     
     $secret_view.hide();
     $create_view.show();
     $class_view.hide();
+=======
+    var $design_tab = $('#design_tab');
+    var $view_tab = $('#view_tab');
+
+    $secret_view.hide();
+    $create_view.show();
+    $class_view.hide();
+    $design_tab.show();
+    $view_tab.show();
+>>>>>>> a6dfa3f007d8078e199e1a7f93319205a32b6f7b
 
     sessionStorage.setItem('admin_secret', secret);
 
@@ -197,6 +208,131 @@ function join_class(class_id){
 
 //This function registers listeners on geogebra initialization 
 function ggbOnInit(arg) {
-    applet.evalCommand("CenterView[(0,0)]");
-    applet.setCustomToolBar('');
+    console.log(arg);
+    document[arg].evalCommand("CenterView[(0,0)]");
+    document[arg].setCustomToolBar('');
+    var name, num, index = arg.search('[0-9]');
+    if (index != -1){
+        num = arg.slice(index);
+        name = arg.slice(0, index);
+        if (name == "applet" && num <= $('ul.groups div').length){
+            var classname = $('.class_name').html().split(' ').pop();
+            socket.get_xml('admin', classname, num);
+        }
+    }
+}
+
+//handler for xml_change response, appends message to chatbox, and calls appletSetExtXML()
+function xml_change_response(username, class_id, group_id, xml, toolbar) {
+    appletSetExtXML(xml, toolbar, group_id);
+    //ggbOnInit();
+}
+
+//calls appletSetExtXML() to update the local geogebra applet.
+function get_xml_response(username, class_id, group_id, xml, toolbar){
+    if(xml == undefined){
+        xml = '{}';
+    }
+    
+    appletSetExtXML(xml, toolbar, group_id);
+}
+
+//called on checkbox change, shows/hides box based on if checked or not
+function views_change(event){
+    console.log(event);
+    var box = $(event)[0];
+    console.log(box);
+    var $view = $("."+box.name);
+    console.log($view);
+    if(box.checked){
+        $view.show();
+    } else {
+        $view.hide();
+    }
+}
+
+//called on merge view button press in the views tab
+//this parses the xml of all shown groups and condenses
+//them into one XML for appletSetExtXML to evaluate
+function view_merge(event){
+    $('.mergeview_button').hide();
+    $('.unmergeview_button').show();
+    var XMLs = {};
+    var array = $('#views_checkboxes :checked');
+    for (var i = 0; i < array.length; i++){
+        var value = array[i]["value"];
+        var parsing = document[value].getXML();
+        var obj = x2js.xml_str2json(parsing);
+        //console.log(obj)
+        var num = array[i]["value"].substr(-1, 1);
+        obj = rename_labels(obj, num);
+        console.log(obj);
+        _.mergeWith(XMLs, obj, function (a, b) {
+          if (_.isArray(a)) {
+            return a.concat(b);
+          }
+        });
+        //$.extend(true, XMLs, obj);
+        $("." + array[i]["name"]).hide()
+    }
+    console.log(XMLs);
+    var final_xml = x2js.json2xml_str(XMLs);
+    final_xml = JSON.stringify(final_xml);
+    var numgroups = ($('ul.groups div').length)+1;
+    appletSetExtXML(final_xml, '', numgroups);
+    $('#views_checkboxes :checkbox').hide();
+    $('.merge_group').show();
+}
+
+//this is used to rename all object labels within the given XML to 
+//have their group number added onto the end, preventing conflicts
+//when merging multiple XMLs together
+function rename_labels(xml, num){
+    if((xml.geogebra).hasOwnProperty('construction')){
+        if((xml.geogebra.construction).hasOwnProperty('element')){
+            var array = xml.geogebra.construction.element;
+            if(array !== null && typeof array === 'object' && !(array instanceof Array)){
+                var temp = array;
+                array = [];
+                array.push(temp);
+            }
+            for (var i = 0; i < array.length; i++){
+                array[i]["_label"] = array[i]["_label"] + 'g' + num;
+            }
+            xml.geogebra.construction.element = array;
+        }
+        if((xml.geogebra.construction).hasOwnProperty('command')){
+            var array = xml.geogebra.construction.command;
+            if(array !== null && typeof array === 'object' && !(array instanceof Array)){
+                var temp = array;
+                array = [];
+                array.push(temp);
+            }
+            for (var i = 0; i < array.length; i++){
+                for (var point in array[i].input){
+                    array[i]["input"][point] =  array[i]["input"][point] + 'g' + num;
+                }
+                for (var point in array[i].output){
+                    //array[i]["output"][point] = array[i]["output"][point] + 'g' + num;
+                }
+            }
+            xml.geogebra.construction.command = array;
+        }
+    }
+    return xml;
+
+}
+
+//this is called when the unmerge views button is pressed.
+//it shows all hidden divs from the merge view
+function unmerge_views(event){
+    $('#views_checkboxes :checkbox').show();
+    $('.mergeview_button').show();
+    $('.unmergeview_button').hide();
+
+    $('.merge_group').hide();
+    var array = $('#views_checkboxes :checked');
+    for (var i = 0; i < array.length; i++){
+        $("." + array[i]["name"]).show();
+    }
 }

@@ -58,8 +58,8 @@
         //This function takes a username, class_id, group_id, and XML
         //It then emits a socket event to change the class's XML in the datastructure
         //based on the given XML, group_id, and class_id
-        var xml_change = function(username, class_id, group_id, xml) {
-            socket.emit('xml_change', username, class_id, group_id, xml);
+        var xml_change = function(username, class_id, group_id, xml, toolbar) {
+            socket.emit('xml_change', username, class_id, group_id, xml, toolbar);
         }
 
         //This function takes a username, class_id, and group_id
@@ -121,11 +121,11 @@
         });
         
         socket.on('xml_change_response', function(data) {
-            xml_change_response(data.username, data.class_id, data.group_id, data.xml);
+            xml_change_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar);
         });
 
         socket.on('get_xml_response', function(data) {
-            get_xml_response(data.username, data.class_id, data.group_id, data.xml);
+            get_xml_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar);
         });
 
         socket.on('group_numbers_response', function(data) {
