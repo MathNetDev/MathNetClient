@@ -24,7 +24,7 @@ $(function() {
     var $settings = $('.setting');
     var $get_classes_button = $('.get_classes_button');
     var $secret_button = $('.secret_button');
-    var $sendtoolbar_button = $('.sendtoolbar_button');
+    var $sendtoolbar_button = $('.btn-sendtoolbar');
 
     var $design_tab = $('#design-tab');
     var $design_toolbox = $('.toolbox'); //design view tool container
@@ -138,11 +138,11 @@ $(function() {
                 "perspective":"",
                 "showAlgebraInput":false,
                 "showToolBarHelp":false,
-                "showMenubar":true,
+                "showMenubar":false,
                 "enableLabelDrags":false,
                 "showResetIcon":false,
                 "showToolbar":true,
-                "allowStyleBar":true,
+                "allowStyleBar":false,
                 "useBrowserForJS":true,
                 "enableShiftDragZoom":true,
                 "errorDialogsActive":true,
@@ -161,9 +161,22 @@ $(function() {
                 drop: function( event, ui ) {
                     var target = $(this);
                     var location = $(".toolbar-target").index(target);
-                    var item = ui.draggable.attr("data-mode");
-                    toolbar_locs[location].push(item);
-                    target.append(ui.draggable);
+                    var mode = ui.draggable.attr("data-mode");
+                    var button = $('<button>');
+                    var tb_index = toolbar_locs[location].push(mode) - 1;
+                    var toolbar_tool = ui.draggable.clone();
+                    button.html('-');
+                    button.bind('click', function(){
+                        //alert('toolbar_locs[' + location + '][' + tb_index + ']');
+                        toolbar_locs[location].splice(tb_index,1);
+                        console.log(toolbar_locs);
+                        var tool = $(this).parent();
+                        $('.toolbox').append(tool);
+                        tool.remove();
+                    });
+                    toolbar_tool.append(button);
+                    
+                    target.append(toolbar_tool);
                     console.log(toolbar_locs);
                 }
             });

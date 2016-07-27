@@ -63,12 +63,28 @@
   top: 0;
   left: 0
 }
+.btn-toolbox button{
+  position: absolute;
+  border-radius:50%;
+  border:none;
+  font-size:.8em;
+  font-weight:bold;
+  font-family: sans-serif;
+  height:1.5em;
+  width:1.5em;
+  background: #ff3300;
+  color:#fff;
+  text-align: center;
+  vertical-align: middle;
+  padding: 0;
+  top:-.25em;
+  right:-.5em;
+}
 .ggbtoolbar{
   display: block;
   width: 1000px;
   min-height: 50px;
   background: none;
-  overflow: hidden;
   z-index: 10000;
   position: absolute;
 }
@@ -82,7 +98,10 @@
   text-align: center;
   background: #eee;
 }
-
+.toolbar-target div.btn-toolbox{
+  top:0!important;
+  left:0!important;
+}
 .nav-tabs>li.active>a, 
 .nav-tabs>li.active>a:focus, 
 .nav-tabs>li.active>a:hover{
