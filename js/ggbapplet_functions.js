@@ -27,8 +27,10 @@ function appletSetExtXML(xml, toolbar, id){
         appletName = document['applet' + id];
         console.log(appletName);
     }
+    console.log('toolbar_str: ' + toolbar);
     if (toolbar != '' && toolbar != undefined){
-        appletName.setCustomToolbar(toolbar);
+        console.log('setting custom toolbar to: ' + toolbar);
+        appletName.setCustomToolBar(toolbar);
     }
     cur_xml = appletName.getXML();
     xml = xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>');
@@ -228,13 +230,14 @@ function getToolbarIcons(container){
                 ];
     for(var i = 0; i < icons.length; i++){
         var data = icons[i];
-        var b = $("<button>");
-        var img = $("<img>");
+        var b = $('<div>');
+        var img = $('<img>');
         img.attr('src',data.src);
         img.attr('alt',data.name);
         b.append(img);
-        b.addClass('btn btn-default btn-toolbox');
+        b.addClass('btn-toolbox');
         b.attr('data-mode', data.mode);
+        b.draggable({ revert: true });
         $(container).append(b); 
     }
 }

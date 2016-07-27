@@ -37,27 +37,70 @@
   margin:0 .5em 0 0;
 }
 .toolbox{
-  margin:1em;
+  margin:1em 0;
   padding:.5em;
   display:block;
-  width:1000px;
   height:100px;
-  border:2px solid #ccc;
+  border:1px solid #abc;
 }
 .btn-toolbox{
-  height: 25px;
-  width: 25px;
-  margin: 0 2px;
+  height: 40px;
+  width: 40px;
+  margin: 2px;
+  display:inline-block;
+  background: #fff;
+  border:1px solid #ccc;
+  border-radius:4px;
   text-align: center;
   vertical-align: middle;
   position: relative;
+  z-index:10001;
 }
 .btn-toolbox img{
-  height: 25px;
-  width: 25px;
+  height: 40px;
+  width: 40px;
   position: absolute;
   top: 0;
   left: 0
+}
+.btn-toolbox button{
+  position: absolute;
+  border-radius:50%;
+  border:none;
+  font-size:.8em;
+  font-weight:bold;
+  font-family: sans-serif;
+  height:1.5em;
+  width:1.5em;
+  background: #ff3300;
+  color:#fff;
+  text-align: center;
+  vertical-align: middle;
+  padding: 0;
+  top:-.25em;
+  right:-.5em;
+}
+.ggbtoolbar{
+  display: block;
+  width: 1000px;
+  min-height: 50px;
+  background: none;
+  z-index: 10000;
+  position: absolute;
+}
+
+.toolbar-target{
+  border: 1px solid #d2d2d2;
+  display: inline-block;
+  min-height: 52px;
+  padding: 0;
+  width: 50px;
+  text-align: center;
+  background: #eee;
+}
+.toolbar-target div.btn-toolbox{
+  top:0!important;
+  left:0!important;
 }
 .nav-tabs>li.active>a, 
 .nav-tabs>li.active>a:focus, 
@@ -75,8 +118,6 @@
 .tick line{
   opacity: 0.2;
 }
-
-
 
 #field-svg {
   border-style: solid;

@@ -24,11 +24,14 @@ $(function() {
     var $settings = $('.setting');
     var $get_classes_button = $('.get_classes_button');
     var $secret_button = $('.secret_button');
-    var $sendtoolbar_button = $('.sendtoolbar_button');
+    var $sendtoolbar_button = $('.btn-sendtoolbar');
 
     var $design_tab = $('#design-tab');
     var $design_toolbox = $('.toolbox'); //design view tool container
-
+    
+    var toolbar_locs = [];
+        while(toolbar_locs.push([]) < 12);
+    
     // Connect to the server using the Admin.Socket object constructor
     
     var class_id;
@@ -111,9 +114,10 @@ $(function() {
     //
     $sendtoolbar_button.bind('click', function(){
         var numgroups = ($('ul.groups div').length)+1;
-            
+        var toolbar_str = toolbar_locs.join('|');
+        console.log(toolbar_str);
         for(var i = 1; i < numgroups; i++){
-            socket.xml_change('admin', sessionStorage.getItem('admin_class_id'), i, document.applet.getXML()/*,curstr*/);
+            socket.xml_change('admin', sessionStorage.getItem('admin_class_id'), i, document.applet.getXML(), toolbar_str);
         }
     });
 
@@ -149,8 +153,34 @@ $(function() {
                 "screenshotGenerator":false,
                 "preventFocus":false
             };
+            
             getToolbarIcons();
             appletInit(params);
+
+            $(".toolbar-target").droppable({
+                drop: function( event, ui ) {
+                    var target = $(this);
+                    var location = $(".toolbar-target").index(target);
+                    var mode = ui.draggable.attr("data-mode");
+                    var button = $('<button>');
+                    var tb_index = toolbar_locs[location].push(mode) - 1;
+                    var toolbar_tool = ui.draggable.clone();
+                    button.html('-');
+                    button.bind('click', function(){
+                        //alert('toolbar_locs[' + location + '][' + tb_index + ']');
+                        toolbar_locs[location].splice(tb_index,1);
+                        console.log(toolbar_locs);
+                        var tool = $(this).parent();
+                        $('.toolbox').append(tool);
+                        tool.remove();
+                    });
+                    toolbar_tool.append(button);
+                    
+                    target.append(toolbar_tool);
+                    console.log(toolbar_locs);
+                }
+            });
+
         }else if (tab == 'view'){
             $design_toolbox.empty();
             $('#views_jsapp').empty();

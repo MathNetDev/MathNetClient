@@ -36,6 +36,8 @@ function add_class_response(class_id, class_name, group_count) {
     var $settings_view = $('.settings_view');
     var $class_name = $('.class_name');
     var $groups = $('.groups');
+    var $design_tab = $('#design_tab');
+    var $view_tab = $('#view_tab');
 
     sessionStorage.setItem('admin_class_id', class_id);
     $('#error_frame').html('');
@@ -43,6 +45,8 @@ function add_class_response(class_id, class_name, group_count) {
     $secret_view.hide();
     $create_view.hide();
     $class_view.show();
+    $design_tab.show();
+    $view_tab.show();
 
     $class_name.html(class_name + " ID: " + class_id);
     var groups_html = "";
@@ -96,12 +100,15 @@ function leave_class_response(disconnect) {
     var $create_view = $('.create_view');
     var $class_view = $('.class_view');
     var $secret = $('.secret');
-    
+    var $design_tab = $('#design_tab');
+    var $design_icons = $('.toolbar-target');
     $('#error_frame').html('');
     
     $secret_view.hide();
     $create_view.show();
     $class_view.hide();
+    $design_icons.empty();
+    $design_tab.hide();
 
     if(!disconnect){
         sessionStorage.removeItem('admin_class_id');
@@ -170,14 +177,14 @@ function get_classes_response(classes, secret){
     var $secret_view = $('.secret_view');
     var $create_view = $('.create_view');
     var $class_view = $('.class_view');
-    var $design_tab = $('#design_tab');
-    var $view_tab = $('#view_tab');
+    
+    $secret_view.hide();
+    $create_view.show();
+    $class_view.hide();
 
     $secret_view.hide();
     $create_view.show();
     $class_view.hide();
-    $design_tab.show();
-    $view_tab.show();
 
     sessionStorage.setItem('admin_secret', secret);
 
