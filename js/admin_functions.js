@@ -37,6 +37,7 @@ function add_class_response(class_id, class_name, group_count) {
     var $class_name = $('.class_name');
     var $groups = $('.groups');
     var $design_tab = $('#design_tab');
+    var $view_tab = $('#view_tab');
 
     sessionStorage.setItem('admin_class_id', class_id);
     $('#error_frame').html('');
@@ -45,6 +46,7 @@ function add_class_response(class_id, class_name, group_count) {
     $create_view.hide();
     $class_view.show();
     $design_tab.show();
+    $view_tab.show();
 
     $class_name.html(class_name + " ID: " + class_id);
     var groups_html = "";
@@ -175,21 +177,14 @@ function get_classes_response(classes, secret){
     var $secret_view = $('.secret_view');
     var $create_view = $('.create_view');
     var $class_view = $('.class_view');
-<<<<<<< HEAD
     
     $secret_view.hide();
     $create_view.show();
     $class_view.hide();
-=======
-    var $design_tab = $('#design_tab');
-    var $view_tab = $('#view_tab');
 
     $secret_view.hide();
     $create_view.show();
     $class_view.hide();
-    $design_tab.show();
-    $view_tab.show();
->>>>>>> a6dfa3f007d8078e199e1a7f93319205a32b6f7b
 
     sessionStorage.setItem('admin_secret', secret);
 

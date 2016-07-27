@@ -114,9 +114,10 @@ $(function() {
     //
     $sendtoolbar_button.bind('click', function(){
         var numgroups = ($('ul.groups div').length)+1;
-            
+        var toolbar_str = toolbar_locs.join('|');
+        console.log(toolbar_str);
         for(var i = 1; i < numgroups; i++){
-            socket.xml_change('admin', sessionStorage.getItem('admin_class_id'), i, document.applet.getXML()/*,curstr*/);
+            socket.xml_change('admin', sessionStorage.getItem('admin_class_id'), i, document.applet.getXML(), toolbar_str);
         }
     });
 
@@ -155,7 +156,6 @@ $(function() {
             
             getToolbarIcons();
             appletInit(params);
-<<<<<<< HEAD
 
             $(".toolbar-target").droppable({
                 drop: function( event, ui ) {
@@ -167,10 +167,8 @@ $(function() {
                     console.log(toolbar_locs);
                 }
             });
-        }else{
-=======
+
         }else if (tab == 'view'){
->>>>>>> a6dfa3f007d8078e199e1a7f93319205a32b6f7b
             $design_toolbox.empty();
             $('#views_jsapp').empty();
             $('#views_checkboxes').html('Show Groups &emsp;');
