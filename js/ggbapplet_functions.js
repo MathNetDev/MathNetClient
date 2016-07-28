@@ -23,13 +23,14 @@ function appletEvalXML(source){
 // parses it, and changes it back to XML to be set in the geogebra applet.
 function appletSetExtXML(xml, toolbar, id){
     var appletName = document.applet;
-    if (id !== undefined){
+    console.log('appletSetExtXML id param: ' + id);
+    if (typeof document['applet' + id] !== 'undefined'){
         appletName = document['applet' + id];
         console.log(appletName);
     }
     console.log('toolbar_str: ' + toolbar);
     if (toolbar != '' && toolbar != undefined){
-        console.log('setting custom toolbar to: ' + toolbar);
+        console.log('setting ' + appletName.id + ' custom toolbar to: ' + toolbar);
         appletName.setCustomToolBar(toolbar);
     }
     cur_xml = appletName.getXML();
@@ -57,7 +58,6 @@ function appletSetExtXML(xml, toolbar, id){
     
     var final_xml = x2js.json2xml_str(cur_json);
     //console.log(final_xml);
-    appletName.reset();
     appletName.setXML(final_xml);
 
     if(commandString != undefined && commandString != ""){
