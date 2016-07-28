@@ -1,5 +1,5 @@
 //all document.applet (geogebra) calls are documented at http://www.geogebra.org/manual/en/Reference:JavaScript
-var cur_xml;
+var cur_xml = '<xml/>';
 appletName = document.applet;
 //Used in the test html to show how the XML is got
 function appletGetXML(target){
