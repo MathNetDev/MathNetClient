@@ -181,6 +181,17 @@ $(function() {
                 }
             });
 
+            // listen for menu bar checkbox toggle and re-inject applet
+            $('#toggle-menu-bar').bind('change',function(){
+                if($(this).is(':checked')){
+                    params.showMenubar = true;
+                    params.allowStyleBar = false;
+                }else{
+                    params.showMenubar = false;
+                };
+                appletInit(params);
+            });
+
         }else if (tab == 'view'){
             $design_toolbox.empty();
             $('#views_jsapp').empty();
