@@ -53,7 +53,7 @@ function add_class_response(class_id, class_name, group_count) {
     var group_number = parseInt(group_count);
     for (var group=1; group < group_number+1; group++) {
         groups_html += "<li>Group " + group;
-        groups_html += "<ul class='g" + group + "'></ul></li>";
+        groups_html += "<div class='g" + group + "'></div></li>";
     }
     $groups.html(groups_html);
     
@@ -75,7 +75,7 @@ function add_group_response() {
     var new_group = "";
     var group_number = $('.groups > li:last').index() + 2;
     new_group += "<li>Group " + group_number;
-    new_group += "<ul class='g" + group_number + "'></ul></li>";
+    new_group += "<div class='g" + group_number + "'></div></li>";
     $groups.append(new_group);
     draw_mirror(".g"+group_number);
     users.push([]);
