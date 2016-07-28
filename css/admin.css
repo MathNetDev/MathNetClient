@@ -102,6 +102,12 @@
   top:0!important;
   left:0!important;
 }
+#views_checkboxes label{
+  margin:0 1.5em 0 0;
+}
+#views_checkboxes label input{
+  margin: 0 .25em 0 0;
+}
 .nav-tabs>li.active>a, 
 .nav-tabs>li.active>a:focus, 
 .nav-tabs>li.active>a:hover{

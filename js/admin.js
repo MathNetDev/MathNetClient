@@ -184,7 +184,7 @@ $(function() {
         }else if (tab == 'view'){
             $design_toolbox.empty();
             $('#views_jsapp').empty();
-            $('#views_checkboxes').html('Show Groups &emsp;');
+            $('#views_checkboxes').html('<div class="panel-heading"><h3 class="panel-title">Show Groups</h3></div><div class="panel-body"></div>');
             var numgroups = ($('ul.groups div').length)+1;
             
             for(var i = 1; i < numgroups; i++){
@@ -215,11 +215,11 @@ $(function() {
                 var newgroup = '<div class="views_group_'+i+'" ><h4> Group ' + i + '</h4><div class="geogebrawebapplet" id="appletContainer'
                     + i + '"style="width:100%;height:650px;display:block;"></div></div><br/>';
 
-                var checkbox = '&emsp;<input checked type="checkbox" onchange="views_change(this)" value="applet'+i+'" name="views_group_'+ i
-                    + '">Group '+ i;
+                var checkbox = '<label><input checked type="checkbox" onchange="views_change(this)" value="applet'+i+'" name="views_group_'+ i
+                + '">Group '+ i + '</label>';
 
                 $('#views_jsapp').append(newgroup);
-                $('#views_checkboxes').append(checkbox);
+                $('#views_checkboxes .panel-body').append(checkbox);
                 appletInit(params);                
             }
             var params = {
@@ -252,7 +252,7 @@ $(function() {
             var mergebutton = '&emsp;&emsp;<input class="btn btn-default mergeview_button" onclick="view_merge(this)"'+
                 ' type="button" value="Merge Checked Views"><input class="btn btn-default unmergeview_button" onclick="unmerge_views(this)"'+
                 ' type="button" value="Unmerge Views" style="display:none;">';
-            $('#views_checkboxes').append(mergebutton);
+            $('#views_checkboxes .panel-body').append(mergebutton);
             $('#views_jsapp').append(mergegroup);
             appletInit(params); 
 
