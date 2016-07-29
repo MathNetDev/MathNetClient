@@ -57,11 +57,6 @@ function add_class_response(class_id, class_name, group_count) {
     }
     $groups.html(groups_html);
     
-    for (var group=1; group < group_number+1; group++) {
-        //draw_mirror(".g"+group);
-        //draw_mirror not used in geogebra (unsuprisingly)
-        users.push([]);
-    }
 }
 
 /**
@@ -77,8 +72,6 @@ function add_group_response() {
     new_group += "<li>Group " + group_number;
     new_group += "<div class='g" + group_number + "'></div></li>";
     $groups.append(new_group);
-    draw_mirror(".g"+group_number);
-    users.push([]);
 }
 
 /**
@@ -131,41 +124,18 @@ function group_info_response(username, class_id, group_id, group, status) {
     
     if (status) {
         for (var i in group) {
-            var member = '<li id="' + group[i].member_name +'">';
+            var member = '<li id="' + group[i].member_name +'"><ul><li>';
             member += group[i].member_name;
-            member += ' - (<span class="x">' + group[i].member_x + '</span>, '; 
-            member += '<span class="y">' + group[i].member_y + '</span>)';
-            member += '</li>';
+            member += '</li></ul></li>';
             $people.append(member);
         }
-        field_sync_users(group_id, group);
     }
     else {
         username = username.replace(/&lt;/g, "<").replace(/&gt;/g, ">");
         username = escapeStr(username);
         $('li[id="' + username + '"]').remove();
         console.log(group_id);
-        field_remove_user(username, group_id);
-        field_sync_users(group_id, group);
     }
-}
-
-/**
- * @function coordinate_change_response
- * @param {string} username username of person whose point has moved
- * @param {number} class_id id of class being updated
- * @param {number} group_id id of group being updated
- * @param {number} x the x coordinate of the point
- * @param {number} y the y coordinate of the point
- * @param {object} info JSON object holding any extra user info 
- * @description updates points on the view every time a user moves one
- */
-function coordinate_change_response(username, class_id, group_id, x, y, info) {
-    username = username.replace(/&lt;/g, "<").replace(/&gt;/g, ">");
-    username = escapeStr(username);
-    $('li[id="' + username + '"] .x').html(x);
-    $('li[id="' + username + '"] .y').html(y);
-    field_move_users(username, group_id, x, y, info);
 }
 
 /**
@@ -192,7 +162,8 @@ function get_classes_response(classes, secret){
     for (var i = 0; i < classes.length; i++) {
         //console.log(classes[i]);
         $('#get-classes').append('<button class="btn btn-primary" onclick=\'join_class("'
-            +classes[i].hashed_id+'")\'>Class: <span>' + classes[i].class_name + '</span> ID: <span>' + classes[i].hashed_id + '</span></button>');
+            + classes[i].hashed_id + '")\'>Class: <span>' + classes[i].class_name + '</span> ID: <span>'
+            + classes[i].hashed_id + '</span></button>');
     }
 }
 
@@ -228,17 +199,14 @@ function get_xml_response(username, class_id, group_id, xml, toolbar){
     if(xml == undefined){
         xml = '{}';
     }
-    
     appletSetExtXML(xml, toolbar, group_id);
 }
 
 //called on checkbox change, shows/hides box based on if checked or not
 function views_change(event){
-    console.log(event);
     var box = $(event)[0];
-    console.log(box);
     var $view = $("."+box.name);
-    console.log($view);
+
     if(box.checked){
         $view.show();
     } else {
@@ -252,16 +220,17 @@ function views_change(event){
 function view_merge(event){
     $('.mergeview_button').hide();
     $('.unmergeview_button').show();
+
     var XMLs = {};
     var array = $('#views_checkboxes :checked');
+
     for (var i = 0; i < array.length; i++){
         var value = array[i]["value"];
         var parsing = document[value].getXML();
         var obj = x2js.xml_str2json(parsing);
-        //console.log(obj)
         var num = array[i]["value"].substr(-1, 1);
+
         obj = rename_labels(obj, num);
-        console.log(obj);
         _.mergeWith(XMLs, obj, function (a, b) {
           if (_.isArray(a)) {
             return a.concat(b);
@@ -270,11 +239,12 @@ function view_merge(event){
         //$.extend(true, XMLs, obj);
         $("." + array[i]["name"]).hide()
     }
-    console.log(XMLs);
     var final_xml = x2js.json2xml_str(XMLs);
     final_xml = JSON.stringify(final_xml);
     var numgroups = ($('ul.groups div').length)+1;
+
     appletSetExtXML(final_xml, '', numgroups);
+
     $('#views_checkboxes :checkbox').hide();
     $('.merge_group').show();
 }
@@ -286,6 +256,7 @@ function rename_labels(xml, num){
     if((xml.geogebra).hasOwnProperty('construction')){
         if((xml.geogebra.construction).hasOwnProperty('element')){
             var array = xml.geogebra.construction.element;
+
             if(array !== null && typeof array === 'object' && !(array instanceof Array)){
                 var temp = array;
                 array = [];
@@ -296,17 +267,21 @@ function rename_labels(xml, num){
             }
             xml.geogebra.construction.element = array;
         }
+
         if((xml.geogebra.construction).hasOwnProperty('command')){
             var array = xml.geogebra.construction.command;
+
             if(array !== null && typeof array === 'object' && !(array instanceof Array)){
                 var temp = array;
                 array = [];
                 array.push(temp);
             }
+
             for (var i = 0; i < array.length; i++){
                 for (var point in array[i].input){
                     array[i]["input"][point] =  array[i]["input"][point] + 'g' + num;
                 }
+
                 for (var point in array[i].output){
                     //array[i]["output"][point] = array[i]["output"][point] + 'g' + num;
                 }
@@ -324,8 +299,8 @@ function unmerge_views(event){
     $('#views_checkboxes :checkbox').show();
     $('.mergeview_button').show();
     $('.unmergeview_button').hide();
-
     $('.merge_group').hide();
+
     var array = $('#views_checkboxes :checked');
     for (var i = 0; i < array.length; i++){
         $("." + array[i]["name"]).show();
