@@ -79,6 +79,9 @@
   top:-.25em;
   right:-.5em;
 }
+.btn-sendtoolbar{
+  margin:.5em 1em;
+}
 .ggbtoolbar{
   display: block;
   width: 1000px;
@@ -111,6 +114,12 @@
 .nav-tabs>li.active>a:focus, 
 .nav-tabs>li.active>a:hover{
   border:1px solid transparent;
+}
+.groups li{
+  margin-bottom: 1em;
+}
+.groups div{
+  margin:0 0 0 2em;
 }
 .list{
 
