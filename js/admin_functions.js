@@ -176,6 +176,7 @@ function join_class(class_id){
 function ggbOnInit(arg) {
     console.log(arg);
     document[arg].evalCommand("CenterView[(0,0)]");
+    document[arg].evalCommand("ZoomOut[4,(0,0)]");
     document[arg].setCustomToolBar('');
     var name, num, index = arg.search('[0-9]');
     if (index != -1){
