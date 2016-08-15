@@ -202,8 +202,8 @@ $(function() {
                 var params = {
                     "container":"appletContainer"+i,
                     "id":"applet"+i,
-                    "width":1000,
-                    "height":600,
+                    "width":300,
+                    "height":200,
                     "perspective":"",
                     "showAlgebraInput":false,
                     "showToolBarHelp":false,
@@ -223,8 +223,9 @@ $(function() {
                     "screenshotGenerator":false,
                     "preventFocus":true
                 };
-                var newgroup = '<div class="views_group_'+i+'" ><h4> Group ' + i + '</h4><div class="geogebrawebapplet" id="appletContainer'
-                    + i + '"style="width:100%;height:650px;display:block;"></div></div><br/>';
+                var newgroup = '<div class="views_group_'+i+' col-md-4 col-sm-5 col-lg-4" ><h4> Group ' + i + 
+                    '</h4><div class="geogebrawebapplet" id="appletContainer'+ i + 
+                    '"style="width:100%;height:650px;display:block;"></div></div>';
 
                 var checkbox = '<label><input checked type="checkbox" onchange="views_change(this)" value="applet'+i+'" name="views_group_'+ i
                 + '">Group '+ i + '</label>';
@@ -236,8 +237,8 @@ $(function() {
             var params = {
                     "container":"appletContainer"+numgroups,
                     "id":"applet"+numgroups,
-                    "width":1000,
-                    "height":600,
+                    "width":300,
+                    "height":200,
                     "perspective":"",
                     "showAlgebraInput":false,
                     "showToolBarHelp":false,

@@ -1,23 +1,6 @@
 //all document.applet (geogebra) calls are documented at http://www.geogebra.org/manual/en/Reference:JavaScript
 var cur_xml = '<xml/>';
 appletName = document.applet;
-//Used in the test html to show how the XML is got
-function appletGetXML(target){
-    cur_xml = document.applet.getXML();
-    $('#'+target).val(cur_xml);
-}
-
-//Used in the test html to show how you set XML (clears construction)
-function appletSetXML(source){
-    cur_xml = $('#'+source).val();
-    document.applet.setXML(cur_xml);
-}
-
-//Used in the test html to show how XML is evaluated (does not clear construction)
-function appletEvalXML(source){
-    cur_xml = $('#'+source).val();
-    document.applet.evalXML(cur_xml);
-}
 
 //This function takes the new XML, changes it and the old XML to a JSON format, and then 
 // parses it, and changes it back to XML to be set in the geogebra applet.
@@ -25,14 +8,16 @@ function appletSetExtXML(xml, toolbar, id){
     var appletName = document.applet;
     console.log('appletSetExtXML id param: ' + id);
     if (typeof document['applet' + id] !== 'undefined'){
+
         appletName = document['applet' + id];
         console.log(appletName);
     }
-    console.log('toolbar_str: ' + toolbar);
+
     if (toolbar != '' && toolbar != undefined){
         console.log('setting ' + appletName.id + ' custom toolbar to: ' + toolbar);
         appletName.setCustomToolBar(toolbar);
     }
+
     cur_xml = appletName.getXML();
     xml = xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>');
     xml = JSON.parse(xml);
@@ -50,23 +35,19 @@ function appletSetExtXML(xml, toolbar, id){
         commandString = obj.commandString;
     }
 
-    console.log(new_json);
     cur_json.geogebra.construction = new_json.geogebra.construction;
 
     $("#xmlView").val(xml);
-    //console.log(xml);
     
     var final_xml = x2js.json2xml_str(cur_json);
-    //console.log(final_xml);
+
     appletName.setXML(final_xml);
 
     if(commandString != undefined && commandString != ""){
-        //console.log(commandString);
         appletName.evalCommand(commandString);
     }
 
     //colorizePoints(appletName, cur_json);
-    //randomizeColors(appletName);
     checkLocks(appletName);
 }
 
@@ -75,12 +56,13 @@ function appletSetExtXML(xml, toolbar, id){
 function commandParsing(new_json){
     var commandString = "";
     var array = new_json.geogebra.construction.command;
+
     if(array !== null && typeof array === 'object' && !(array instanceof Array)){
         var temp = array;
         array = [];
         array.push(temp);
     }
-    console.log(array);
+
     for (var i = 0; i < array.length; i++){
         //console.log(array[i]);
         commandString += array[i]._name + "[ ";
@@ -92,21 +74,22 @@ function commandParsing(new_json){
             var stack = [];
             var label = array[i]["output"][point];
             var len = new_json.geogebra.construction.element.length;
-            console.log(array[i].output);
-            console.log(point + " " + label + " " + len);
+
             for (var j = 0; j < len; j++){
                 if (label == new_json["geogebra"]["construction"]["element"][j]["_label"]){
-
                     stack.unshift(j)
                 }
             }
+
             for(var j = 0; j < stack.length; j++){
                 new_json.geogebra.construction.element.splice(stack[j], 1);
             }
         }
+
         commandString = commandString.slice(0, commandString.length-1);
         commandString += "]\n";
     }
+
     delete new_json.geogebra.construction.command;
 
     return {
@@ -122,12 +105,13 @@ function clearApplet(appletName){
 
 function colorizePoints(appletName, cur_json){
     var elem = cur_json.geogebra.construction.element;
-    console.log(elem);
+
     if(elem !== null && typeof elem === 'object' && !(elem instanceof Array)){
         var temp = elem;
         elem = [];
         elem.push(temp);
     }
+
     if(elem != null){
         var colors = elem[0]["objColor"];
         if(colors._b != "255" || colors._g != "0" || colors._r != "0"){
@@ -138,14 +122,13 @@ function colorizePoints(appletName, cur_json){
             randomizeColors(appletName, red, green, blue);
         }
     }
-
 }
 
 //This function changes the colors of all elements on the local view to a random color
 function randomizeColors(appletName, r, g, b) {
     //cur_xml = appletName.getXML(); 
-    console.log(appletName);
     var minimum = 0, maximum = 255, colors = [], i;
+
     if (r != undefined && g != undefined && b != undefined){
         colors.push(r, g, b);
     } else {
@@ -154,13 +137,11 @@ function randomizeColors(appletName, r, g, b) {
         } //this is your color
     }
 
-    console.log(colors);
     var numelems = appletName.getObjectNumber();
     for (i = 0; i < numelems; i++){
         var name = appletName.getObjectName(i);
         appletName.setColor(name, colors[0], colors[1], colors[2]); 
     }
-    console.log("finished coloring");
 }
 
 //This function grabs all objects in the construction, and sets a lock on them
@@ -183,24 +164,20 @@ function checkLocks(appletName){
 //This function sends the socket call that there was a XML change,
 // and takes the new XML, and the socket that the call will go through. 
 function check_xml(xml, socket){
-    var old_xml = cur_xml;
     cur_xml = xml;
-    if(old_xml /*!= cur_xml*/){
-        var $messages = $("#messages");
-        $messages.append(sessionStorage.getItem("username") + ' has changed the xml.<br/>');
-        console.log("diff xml, socket call!");
-        var username = sessionStorage.getItem('username');
-        var class_id = sessionStorage.getItem('class_id');
-        var group_id = sessionStorage.getItem('group_id');
-        socket.xml_change(username, class_id, group_id, cur_xml, '');
-    }
+    var $messages = $("#messages");
+    var username = sessionStorage.getItem('username');
+    var class_id = sessionStorage.getItem('class_id');
+    var group_id = sessionStorage.getItem('group_id');
+
+    $messages.append(sessionStorage.getItem("username") + ' has changed the xml.<br/>');
+    socket.xml_change(username, class_id, group_id, cur_xml, '');
 }
 
 //This function is an add listener added in gbbOnInit()
 //It adds a caption to the new object with the local user's class username,
 // and can add a lock onto it.
 function addLock(object){
-    //console.log("addLock called?");
     var username = sessionStorage.getItem('username');
     document.applet.setCaption(object, username);
     //document.applet.setFixed(object, true);
@@ -213,6 +190,7 @@ function checkUser(object){
     var ggb_user = document.applet.getCaption(object);
     var username = sessionStorage.getItem('username');
     var move = document.applet.isMoveable(object);
+
     if (username !== ggb_user && move){
         document.applet.setFixed(object, true);
     } 
@@ -282,16 +260,20 @@ function getToolbarIcons(container){
             {"name":"Fitline", "mode":58, "src":"./images/Mode_fitline.svg"},
             {"name":"Record_To_Spreadsheet", "mode":59, "src":"./images/Mode_recordtospreadsheet.svg"}
     ];
+
     for(var i = 0; i < icons.length; i++){
         var data = icons[i];
         var b = $('<div>');
         var img = $('<img>');
+
         img.attr('src',data.src);
         img.attr('alt',data.name);
+
         b.append(img);
         b.addClass('btn-toolbox');
         b.attr('data-mode', data.mode);
         b.draggable({ revert: true });
+
         $(container).append(b); 
     }
 }
@@ -304,6 +286,7 @@ function appletInit(params){
     params.height = typeof params.height !== 'undefined' ? params.height : 600;
     params.ggbBase64 = ggbBase64;
     var applet = new GGBApplet(params, true);
+    
     //applet.setJavaCodebase('geogebra/Java/4.2', 'true');
     //applet.setHTML5Codebase('/', 'true');
     applet.inject(params.container, 'auto');

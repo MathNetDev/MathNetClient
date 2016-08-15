@@ -47,6 +47,7 @@ function logout_response(disconnect) {
     $login_view.show();
     $class_view.hide();
     $group_view.hide();
+
     if(!disconnect){
         sessionStorage.removeItem('class_id');
         sessionStorage.removeItem('username');
@@ -58,7 +59,9 @@ function groups_get_response(username, class_id, groups) {
     var $groups = $('#buttons');
     var current_user = sessionStorage.getItem('username');
     var current_class = sessionStorage.getItem('class_id');
+
     $groups.empty();
+
     for (var i in groups){
         var button = '<li><input type="button" id="grp' + groups[i].grp_name + '" value="Group ';
         button += groups[i].grp_name + ' - '+ groups[i].num;
@@ -87,6 +90,7 @@ function group_join_response(username, class_id, group_id, group_size) {
     $login_view.hide();
     $class_view.hide();
     $group_view.show();
+
     var params = {
                 "container":"appletContainer",
                 "id":"applet",
@@ -148,43 +152,30 @@ function group_info_response(username, class_id, group_id, members, status) {
     if(status){
         for (var i in members) {
             members[i].member_info = JSON.parse(members[i].member_info);
-            if(members[i].member_name.replace(/&lt;/g,'<').replace(/&gt;/g, '>') != current_user) {
+            var member = members[i].member_name.replace(/&lt;/g,'<').replace(/&gt;/g, '>');
+
+            if(member != current_user) {
                 var member = '<li id="' + members[i].member_name + '">';
-                member += members[i].member_name;
-                member += ' - (<span class="x">' + members[i].member_x + '</span>, ';
-                member += '<span class="y">' + members[i].member_y + '</span>) </li>';
+                member += members[i].member_name + '</li>';
             }
             else {
                 $group_name.html('Group: ' + current_group); //only update this for the new member
                 var member = '<li id="' + members[i].member_name + '">';
-                member += members[i].member_name + ' (You)';
-                member += ' - (<span class="x">' + members[i].member_x + '</span>, ';
-                member += '<span class="y">' + members[i].member_y + '</span>) </li>';
+                member += members[i].member_name + ' (You)</li>';
             }
+
             $people.append(member);
-            
         }
     
         $('#messages').append(username + ' has joined the group<br/>');
     } else {
         var escUsername = username.replace(/&lt;/g,'<').replace(/&gt;/g, '>');
         escUsername = escapeStr(escUsername);
+
         $("#" + escUsername).remove();
         $('#messages').append(username + ' has left the group<br/>');
     }
 }//members is undefined if group_info_response is triggered by group_leave, so short circuit it on status.
-
-// set #username.(x/y) with the respective coordinates, and adds relavent message
-function coordinate_change_response(username, class_id, group_id, x, y, info) {
-    var $messages = $('#messages');
-    var escUsername = username.replace(/&lt;/g,'<').replace(/&gt;/g, '>');
-    escUsername = escapeStr(escUsername);
-    $('#' + escUsername + ' .x').html(x);
-    $('#' + escUsername + ' .y').html(y);
-
-    $messages.append(username + ' has moved their point to (' 
-                          + x + ', ' + y +')<br/>');
-}
 
 //handler for xml_change response, appends message to chatbox, and calls appletSetExtXML()
 function xml_change_response(username, class_id, group_id, xml, toolbar) {
@@ -227,8 +218,10 @@ function add_group_response() {
     var $groups = $('#buttons');
     var group_number = $('#buttons > li:last').index() + 2;
     var button = '<li><input type="button" id="grp' + group_number + '" value="Group ';
+
     button += group_number + ' - '+ 0;
     button += '" /></li>';
+    
     $groups.append(button);
 }
 
