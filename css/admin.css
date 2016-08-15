@@ -40,7 +40,6 @@
   margin:1em 0;
   padding:.5em;
   display:block;
-  height:100px;
   border:1px solid #abc;
 }
 .btn-toolbox{
@@ -80,6 +79,9 @@
   top:-.25em;
   right:-.5em;
 }
+.btn-sendtoolbar{
+  margin:.5em 1em;
+}
 .ggbtoolbar{
   display: block;
   width: 1000px;
@@ -102,10 +104,22 @@
   top:0!important;
   left:0!important;
 }
+#views_checkboxes label{
+  margin:0 1.5em 0 0;
+}
+#views_checkboxes label input{
+  margin: 0 .25em 0 0;
+}
 .nav-tabs>li.active>a, 
 .nav-tabs>li.active>a:focus, 
 .nav-tabs>li.active>a:hover{
   border:1px solid transparent;
+}
+.groups li{
+  margin-bottom: 1em;
+}
+.groups div{
+  margin:0 0 0 2em;
 }
 .list{
 

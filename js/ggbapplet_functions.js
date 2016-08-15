@@ -6,14 +6,15 @@ appletName = document.applet;
 // parses it, and changes it back to XML to be set in the geogebra applet.
 function appletSetExtXML(xml, toolbar, id){
     var appletName = document.applet;
+    console.log('appletSetExtXML id param: ' + id);
+    if (typeof document['applet' + id] !== 'undefined'){
 
-    if (id !== undefined){
         appletName = document['applet' + id];
         console.log(appletName);
     }
 
     if (toolbar != '' && toolbar != undefined){
-        console.log('setting custom toolbar to: ' + toolbar);
+        console.log('setting ' + appletName.id + ' custom toolbar to: ' + toolbar);
         appletName.setCustomToolBar(toolbar);
     }
 
@@ -40,7 +41,6 @@ function appletSetExtXML(xml, toolbar, id){
     
     var final_xml = x2js.json2xml_str(cur_json);
 
-    appletName.reset();
     appletName.setXML(final_xml);
 
     if(commandString != undefined && commandString != ""){
@@ -200,12 +200,66 @@ function checkUser(object){
 function getToolbarIcons(container){
     container = typeof container !== 'undefined' ? container : '.toolbox';
     var icons = [
-                    {"name":"Move", "mode":0, "src":"./images/Mode_move.svg"},
-                    {"name":"Point", "mode":1, "src":"./images/Mode_point.svg"},
-                    {"name":"Segment", "mode":15, "src":"./images/Mode_segment.svg"},
-                    {"name":"Join", "mode":2, "src":"./images/Mode_join.svg"},
-                    {"name":"Delete", "mode":6, "src":"./images/Mode_delete.svg"}
-                ];
+            {"name":"Move", "mode":0, "src":"./images/Mode_move.svg"},
+            {"name":"Point", "mode":1, "src":"./images/Mode_point.svg"},
+            {"name":"Join", "mode":2, "src":"./images/Mode_join.svg"},
+            {"name":"Parallel", "mode":3, "src":"./images/Mode_parallel.svg"},
+            {"name":"Orthogonal", "mode":4, "src":"./images/Mode_orthogonal.svg"},
+            {"name":"Intersect", "mode":5, "src":"./images/Mode_intersect.svg"},
+            {"name":"Delete", "mode":6, "src":"./images/Mode_delete.svg"},
+            {"name":"Vector", "mode":7, "src":"./images/Mode_vector.svg"},
+            {"name":"Line_Bisector", "mode":8, "src":"./images/Mode_linebisector.svg"},
+            {"name":"Angular_Bisector", "mode":9, "src":"./images/Mode_angularbisector.svg"},
+            {"name":"Circle_Two_Points", "mode":10, "src":"./images/Mode_circle2.svg"},
+            {"name":"Circle_Three_Points", "mode":11, "src":"./images/Mode_circle3.svg"},
+            {"name":"Conic_Five_Points", "mode":12, "src":"./images/Mode_conic5.svg"},
+            {"name":"Tangents", "mode":13, "src":"./images/Mode_tangent.svg"},
+            {"name":"Relation", "mode":14, "src":"./images/Mode_relation.svg"},
+            {"name":"Segment", "mode":15, "src":"./images/Mode_segment.svg"},
+            {"name":"Polygon", "mode":16, "src":"./images/Mode_polygon.svg"},
+            {"name":"Text", "mode":17, "src":"./images/Mode_text.svg"},
+            {"name":"Ray", "mode":18, "src":"./images/Mode_ray.svg"},
+            {"name":"Midpoint", "mode":19, "src":"./images/Mode_midpoint.svg"},
+            {"name":"Circle_Arc_Three_Points", "mode":20, "src":"./images/Mode_circlearc3.svg"},
+            {"name":"Circle_Sector_Three_Points", "mode":21, "src":"./images/Mode_circlesector3.svg"},
+            {"name":"Circumcircle_Arc_Three_Points", "mode":22, "src":"./images/Mode_circumcirclearc3.svg"},
+            {"name":"Circumcircle_Sector_Three_Points", "mode":23, "src":"./images/Mode_circumcirclesector3.svg"},
+            {"name":"Semicircle", "mode":24, "src":"./images/Mode_semicircle.svg"},
+            {"name":"Slider", "mode":25, "src":"./images/Mode_slider.svg"},
+            {"name":"Image", "mode":26, "src":"./images/Mode_image.svg"},
+            {"name":"Show_Hide_Object", "mode":27, "src":"./images/Mode_showhideobject.svg"},
+            {"name":"Show_Hide_Label", "mode":28, "src":"./images/Mode_showhidelabel.svg"},
+            {"name":"Mirror_At_Point", "mode":29, "src":"./images/Mode_mirroratpoint.svg"},
+            {"name":"Mirror_At_Line", "mode":30, "src":"./images/Mode_mirroratline.svg"},
+            {"name":"Translate_By_Vector", "mode":31, "src":"./images/Mode_translatebyvector.svg"},
+            {"name":"Rotate_By_Angle", "mode":32, "src":"./images/Mode_rotatebyangle.svg"},
+            {"name":"Dilate_From_Point", "mode":33, "src":"./images/Mode_dilatefrompoint.svg"},
+            {"name":"Circle_Point_Radius", "mode":34, "src":"./images/Mode_circlepointradius.svg"},
+            {"name":"Copy_Visual_Style", "mode":35, "src":"./images/Mode_copyvisualstyle.svg"},
+            {"name":"Angle", "mode":36, "src":"./images/Mode_angle.svg"},
+            {"name":"Vector_From_Point", "mode":37, "src":"./images/Mode_vectorfrompoint.svg"},
+            {"name":"Distance", "mode":38, "src":"./images/Mode_distance.svg"},
+            {"name":"Move_Rotate", "mode":39, "src":"./images/Mode_moverotate.svg"},
+            {"name":"Translateview", "mode":40, "src":"./images/Mode_translateview.svg"},
+            {"name":"Zoom_In", "mode":41, "src":"./images/Mode_zoomin.svg"},
+            {"name":"Zoom_Out", "mode":42, "src":"./images/Mode_zoomout.svg"},
+            {"name":"Polar_Diameter", "mode":44, "src":"./images/Mode_polardiameter.svg"},
+            {"name":"Segment_Fixed", "mode":45, "src":"./images/Mode_segmentfixed.svg"},
+            {"name":"Angle_Fixed", "mode":46, "src":"./images/Mode_anglefixed.svg"},
+            {"name":"Locus", "mode":47, "src":"./images/Mode_locus.svg"},
+            {"name":"Macro", "mode":48, "src":"./images/Mode_tool.svg"},
+            {"name":"Area", "mode":49, "src":"./images/Mode_area.svg"},
+            {"name":"Slope", "mode":50, "src":"./images/Mode_slope.svg"},
+            {"name":"Regular_Polygon", "mode":51, "src":"./images/Mode_regularpolygon.svg"},
+            {"name":"Show_Hide_Checkbox", "mode":52, "src":"./images/Mode_showcheckbox.svg"},
+            {"name":"Compasses", "mode":53, "src":"./images/Mode_compasses.svg"},
+            {"name":"Mirror_At_Circle", "mode":54, "src":"./images/Mode_mirroratcircle.svg"},
+            {"name":"Ellipse_Three_Points", "mode":55, "src":"./images/Mode_ellipse3.svg"},
+            {"name":"Hyperbola_Three_Points", "mode":56, "src":"./images/Mode_hyperbola3.svg"},
+            {"name":"Parabola", "mode":57, "src":"./images/Mode_parabola.svg"},
+            {"name":"Fitline", "mode":58, "src":"./images/Mode_fitline.svg"},
+            {"name":"Record_To_Spreadsheet", "mode":59, "src":"./images/Mode_recordtospreadsheet.svg"}
+    ];
 
     for(var i = 0; i < icons.length; i++){
         var data = icons[i];
