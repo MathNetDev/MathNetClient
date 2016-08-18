@@ -230,6 +230,11 @@ function delete_group_response() {
     $('#buttons > li:last').remove();
 }
 
+function delete_student_class_response() {
+    delete sessionStorage.class_id;
+    delete sessionStorage.group_id;
+    delete sessionStorage.username;
+}
 //This function registers listeners on geogebra initialization 
 function ggbOnInit(arg) {
     document.applet.registerAddListener("addLock");

@@ -7,6 +7,7 @@ $(function() {
     var $randomizeColors_button = $('#randomizeColors_button');
 
 
+
     $coord_change_buttons.bind('click', function(event) {
         var x = parseInt($(event.target).attr('data-x'));
         var y = parseInt($(event.target).attr('data-y'));
@@ -35,4 +36,5 @@ $(function() {
         e.preventDefault();
         randomizeColors(document.applet);
     });
+
 });

@@ -145,6 +145,10 @@
             delete_group_response();
         });
 
+        socket.on('delete-student-class-response', function(data) {
+            delete_student_class_response();
+        });
+
 
         return {
             login: login,
