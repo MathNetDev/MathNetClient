@@ -188,6 +188,7 @@ function xml_change_response(username, class_id, group_id, xml, toolbar) {
 
 //calls appletSetExtXML() to update the local geogebra applet.
 function get_xml_response(username, class_id, group_id, xml,toolbar){
+    sessionStorage.setItem('toolbar', toolbar);
     appletSetExtXML(xml, toolbar);
 }
 
@@ -235,5 +236,6 @@ function ggbOnInit(arg) {
     document.applet.registerAddListener("addLock");
     document.applet.registerUpdateListener("checkUser");
     console.log(arg);
+    socket.get_xml(sessionStorage.getItem('username'),sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'))
 }
 

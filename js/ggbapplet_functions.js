@@ -5,15 +5,14 @@ appletName = document.applet;
 //This function takes the new XML, changes it and the old XML to a JSON format, and then 
 // parses it, and changes it back to XML to be set in the geogebra applet.
 function appletSetExtXML(xml, toolbar, id){
-    var appletName = document.applet;
+    appletName = document.applet;
     console.log('appletSetExtXML id param: ' + id);
     if (typeof document['applet' + id] !== 'undefined'){
 
         appletName = document['applet' + id];
         console.log(appletName);
     }
-
-    if (toolbar != '' && toolbar != undefined){
+    if (!(toolbar == '' || toolbar == 'undefined')){
         console.log('setting ' + appletName.id + ' custom toolbar to: ' + toolbar);
         appletName.setCustomToolBar(toolbar);
     }
@@ -169,9 +168,10 @@ function check_xml(xml, socket){
     var username = sessionStorage.getItem('username');
     var class_id = sessionStorage.getItem('class_id');
     var group_id = sessionStorage.getItem('group_id');
+    var toolbar = sessionStorage.getItem('toolbar');
 
     $messages.append(sessionStorage.getItem("username") + ' has changed the xml.<br/>');
-    socket.xml_change(username, class_id, group_id, cur_xml, '');
+    socket.xml_change(username, class_id, group_id, cur_xml, toolbar);
 }
 
 //This function is an add listener added in gbbOnInit()

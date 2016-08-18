@@ -95,6 +95,7 @@ function leave_class_response(disconnect) {
     var $secret = $('.secret');
     var $design_tab = $('#design_tab');
     var $design_icons = $('.toolbar-target');
+    var $view_tab = $('#view_tab');
     $('#error_frame').html('');
     
     $secret_view.hide();
@@ -102,6 +103,7 @@ function leave_class_response(disconnect) {
     $class_view.hide();
     $design_icons.empty();
     $design_tab.hide();
+    $view_tab.hide();
 
     if(!disconnect){
         sessionStorage.removeItem('admin_class_id');
