@@ -19,6 +19,7 @@ $(function() {
     var $groups = $('.groups'); // List that will hold groups
     var $add_button = $('.add_button'); // Button for adding a group
     var $delete_button = $('.delete_button'); // Button for deleting a group
+    var $delete_class_button = $('#delete_class_button'); // Button for deleting a class
     
     var $save_button = $('.save_button'); // Button for saving class settings
     var $settings = $('.setting');
@@ -120,6 +121,18 @@ $(function() {
             socket.xml_change('admin', sessionStorage.getItem('admin_class_id'), i, document.applet.getXML(), toolbar_str);
         }
     });
+
+    $delete_class_button.bind('click', function(e)
+    {
+        var password = prompt('If you really want to delete class, then enter secret password')    
+
+        if (password == $secret.val().trim())
+        {
+           alert('Correct!. The class has been deleted. Press Ok to continue');
+           socket.delete_class(sessionStorage.getItem('admin_class_id'), $secret.val().trim(), true);
+        }
+    });
+
 
     //
     // TAB CHANGES

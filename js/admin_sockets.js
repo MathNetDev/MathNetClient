@@ -80,6 +80,10 @@
             socket.disconnect();
         };
 
+        var delete_class = function(class_id, secret, disconnect){
+            socket.emit('delete-class', class_id, secret, disconnect);
+        };
+
         //
         // Socket event handlers
         //
@@ -96,11 +100,16 @@
             add_group_response();
         });
 
+        socket.on('delete-class-response', function(data) {
+            delete_class_response(data.class_id);
+        });
+
         socket.on('delete-group-response', function(data) {
             delete_group_response();
         });
 
         socket.on('leave-class-response', function(data) {
+            console.log("hello");
             leave_class_response(data.disconnect);
         });
 
@@ -132,6 +141,7 @@
             add_group: add_group,
             delete_group: delete_group,
             leave_class: leave_class,
+            delete_class: delete_class,
             save_settings: save_settings,
             get_classes: get_classes,
             xml_change: xml_change,

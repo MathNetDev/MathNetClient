@@ -1,5 +1,6 @@
 "use strict";
 
+
 /**
  * @function escapeStr
  * @param {string} str the string to be escaped
@@ -82,6 +83,17 @@ function delete_group_response() {
     $('#error_frame').html('');
     $('.groups > li:last').remove(); 
 }
+
+/**
+ * @function delete_group_response
+ * @description deletes the last group from the list
+ */
+function delete_class_response(class_id) {
+    console.log("hellos");
+    delete sessionStorage.admin_class_id;
+     //console.out(classes.available_classes[0]);
+}
+
 
 /**
  * @function leave_class_response
