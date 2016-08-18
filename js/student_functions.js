@@ -183,13 +183,14 @@ function xml_change_response(username, class_id, group_id, xml, toolbar) {
     $messages.append(username + ' has changed the xml.<br/>');
 
     appletSetExtXML(xml, toolbar);
-    ggbOnInit();
+    ggbOnInit('socket_call');
 }
 
 //calls appletSetExtXML() to update the local geogebra applet.
 function get_xml_response(username, class_id, group_id, xml,toolbar){
     sessionStorage.setItem('toolbar', toolbar);
     appletSetExtXML(xml, toolbar);
+    ggbOnInit('socket_call')
 }
 
 // updates $class_settings based on settings array
@@ -236,6 +237,8 @@ function ggbOnInit(arg) {
     document.applet.registerAddListener("addLock");
     document.applet.registerUpdateListener("checkUser");
     console.log(arg);
-    socket.get_xml(sessionStorage.getItem('username'),sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'))
+    if(arg != 'socket_call'){
+        socket.get_xml(sessionStorage.getItem('username'),sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'));
+    }
 }
 
