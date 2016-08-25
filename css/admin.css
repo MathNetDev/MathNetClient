@@ -82,6 +82,12 @@
   top:-.25em;
   right:-.5em;
 }
+.btn-trash {
+  border:0;
+  background:transparent.
+
+}
+
 .btn-sendtoolbar{
   margin:.5em 1em;
 }
@@ -135,6 +141,11 @@
 .tick line{
   opacity: 0.2;
 }
+#trash{
+  position : relative;
+  top : 5px;
+  left : 5px;
+}
 
 #field-svg {
   border-style: solid;
@@ -151,4 +162,14 @@ circle {
   cursor: move;
   stroke: steelblue;
   stroke-width: 1.5px;
+}
+#mySelect{
+
+  width:60%;
+  height:100px;
+}
+
+#hello{
+  position: relative;
+  top: 11px;
 }

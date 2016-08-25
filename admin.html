@@ -82,24 +82,37 @@
                 <label>
                   <input type="checkbox" id="toggle-menu-bar" value="1"> Show menu bar
                 </label>
+                <div>
+                  <p id = "hello">  Select Default ToolBar </p>
+                  <select id="mySelect" size="1000">
+                  </select>
+                  <div>
+                    <button class="btn btn-primary btn-usetoolbar">Use Toolbar</button>
+                    <button class="btn btn-primary btn-deletetoolbar">Delete Toolbar</button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
           
           <div class="ggbtoolbar">
-            <div class="col-md-1 toolbar-target"></div>
-            <div class="col-md-1 toolbar-target"></div>
-            <div class="col-md-1 toolbar-target"></div>
-            <div class="col-md-1 toolbar-target"></div>
-            <div class="col-md-1 toolbar-target"></div>
-            <div class="col-md-1 toolbar-target"></div>
-            <div class="col-md-1 toolbar-target"></div>
-            <div class="col-md-1 toolbar-target"></div>
-            <div class="col-md-1 toolbar-target"></div>
-            <div class="col-md-1 toolbar-target"></div>
-            <div class="col-md-1 toolbar-target"></div>
-            <div class="col-md-1 toolbar-target"></div> 
+            <div id = "toolbar-target-0" class="col-md-1 toolbar-target"></div>
+            <div id = "toolbar-target-1" class="col-md-1 toolbar-target"></div>
+            <div id = "toolbar-target-2" class="col-md-1 toolbar-target"></div>
+            <div id = "toolbar-target-3" class="col-md-1 toolbar-target"></div>
+            <div id = "toolbar-target-4" class="col-md-1 toolbar-target"></div>
+            <div id = "toolbar-target-5" class="col-md-1 toolbar-target"></div>
+            <div id = "toolbar-target-6" class="col-md-1 toolbar-target"></div>
+            <div id = "toolbar-target-7" class="col-md-1 toolbar-target"></div>
+            <div id = "toolbar-target-8" class="col-md-1 toolbar-target"></div>
+            <div id = "toolbar-target-9" class="col-md-1 toolbar-target"></div>
+            <div id = "toolbar-target-10" class="col-md-1 toolbar-target"></div>
+            <div id = "toolbar-target-11" class="col-md-1 toolbar-target"></div> 
             <button class="btn btn-primary btn-sendtoolbar">Send to clients</button>
+            <button class="btn btn-primary btn-savetoolbar">Save Toolbar</button>
+            <button id = "trash" class = "btn-trash" type="button" style="border: 0; background: transparent">
+              <span class="glyphicon glyphicon-trash" aria-hidden="true" style= "height:10px"></span>
+            </button>
           </div>
           <div class="javascriptapplet">
             <div class="geogebrawebapplet" id="appletContainer" style="width:100%;height:650px;display: block;"></div>

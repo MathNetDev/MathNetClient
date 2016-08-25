@@ -76,6 +76,41 @@ function add_group_response() {
 }
 
 /**
+ * @function get_toolbar_response
+ * @description refreshes the selection list of all the default toolbars
+ */
+function get_toolbar_response(response) {
+
+    document.getElementById("mySelect").options.length = 0;
+    var selection_list = document.getElementById("mySelect");
+
+    //console.log(response.toolbars.length);
+
+    for (var i = 0; i < response.toolbars.length; i++){
+        
+        var option = document.createElement("option");
+        option.text = response.toolbars[i].toolbar_name;
+        option.tool = response.toolbars[i].tools;
+        selection_list.add(option);
+    }
+
+}
+
+/**
+ * @function get_toolbar_response
+ * @description refreshes the selection list of all the default toolbars
+ */
+function delete_toolbar_response(response) {
+
+
+    var select = document.getElementById("mySelect");
+    var id = select.selectedIndex;
+    //console.log(id);
+    document.getElementById("mySelect").remove(id);
+
+}
+
+/**
  * @function delete_group_response
  * @description deletes the last group from the list
  */
@@ -89,7 +124,7 @@ function delete_group_response() {
  * @description deletes the last group from the list
  */
 function delete_class_response(class_id) {
-    console.log("hellos");
+    //console.log("hellos");
     delete sessionStorage.admin_class_id;
      //console.out(classes.available_classes[0]);
 }

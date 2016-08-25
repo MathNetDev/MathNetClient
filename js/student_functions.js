@@ -167,20 +167,20 @@ function group_info_response(username, class_id, group_id, members, status) {
             $people.append(member);
         }
     
-        $('#messages').append(username + ' has joined the group<br/>');
+        $('#messages').prepend(username + ' has joined the group<br/>');
     } else {
         var escUsername = username.replace(/&lt;/g,'<').replace(/&gt;/g, '>');
         escUsername = escapeStr(escUsername);
 
         $("#" + escUsername).remove();
-        $('#messages').append(username + ' has left the group<br/>');
+        $('#messages').prepend(username + ' has left the group<br/>');
     }
 }//members is undefined if group_info_response is triggered by group_leave, so short circuit it on status.
 
 //handler for xml_change response, appends message to chatbox, and calls appletSetExtXML()
 function xml_change_response(username, class_id, group_id, xml, toolbar) {
     var $messages = $('#messages');
-    $messages.append(username + ' has changed the xml.<br/>');
+    $messages.prepend(username + ' has changed the xml.<br/>');
 
     appletSetExtXML(xml, toolbar);
     ggbOnInit('socket_call');
@@ -204,12 +204,12 @@ function get_settings_response(class_id, settings) {
         if (setting == "Hide Options" ){
             settings[setting] ? (
                 $("#display-settings").hide(), 
-                $('#messages').append('Admin has turned off options.<br/>'),
+                $('#messages').prepend('Admin has turned off options.<br/>'),
                 $("#display-settings input:checkbox").prop('checked', ''),
                 $("#display-settings #show_points").prop('checked', true)
             ) : (
                 $("#display-settings").show(),
-                $('#messages').append('Admin has turned on options.<br/>')
+                $('#messages').prepend('Admin has turned on options.<br/>')
             );//hide display options if certain global is turned on.
         }
     }
@@ -246,4 +246,6 @@ function ggbOnInit(arg) {
         socket.get_xml(sessionStorage.getItem('username'),sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'));
     }
 }
+
+
 
