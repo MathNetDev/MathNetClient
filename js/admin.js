@@ -26,9 +26,13 @@ $(function() {
     var $get_classes_button = $('.get_classes_button');
     var $secret_button = $('.secret_button');
     var $sendtoolbar_button = $('.btn-sendtoolbar');
+    var $savetoolbar_button = $('.btn-savetoolbar');
+    var $deletetoolbar_button = $('.btn-deletetoolbar');
+    var $usetoolbar_button = $('.btn-usetoolbar');
 
     var $design_tab = $('#design-tab');
     var $design_toolbox = $('.toolbox'); //design view tool container
+    var $trash_button = $('.btn-trash');
     
     var toolbar_locs = [];
         while(toolbar_locs.push([]) < 12);
@@ -122,6 +126,96 @@ $(function() {
         }
     });
 
+
+    $savetoolbar_button.bind('click', function(){
+
+        var tools = toolbar_locs.join('|');
+        var toolbar_name = prompt("Enter toolbar name");
+        var len = document.getElementById("mySelect").options.length;
+
+        for(var i = 0; i < len; i++)
+        {
+            if(document.getElementById("mySelect")[i].text == toolbar_name)
+                break;
+        }
+        
+        if (i == len)
+            socket.save_toolbar(sessionStorage.getItem('admin_class_id'), toolbar_name, tools);
+        else
+            alert("You already have a toolbox with that name");
+
+    });
+
+    $usetoolbar_button.bind('click', function(){
+
+        var select = document.getElementById("mySelect");
+        var id = select.selectedIndex;
+        var array = select[id].tool.split('|');
+        var i,j;
+
+        for(i = 0; i < 12; i++ )
+        {
+            $('#toolbar-target-' + i).empty();
+            toolbar_locs[i] = [];
+            console.log(toolbar_locs);
+        }
+
+        console.log(array);
+        for( i = 0; i < array.length; i++)
+        {
+            var temp = array[i].split(',');
+            for ( j = 0; j < temp.length; j++ )
+            {
+                if(temp[j] != ""){
+                    var this_tool = $("div[data-mode='" + temp[j] + "']");
+                    var target = $('#toolbar-target-'+i);
+                    var location = $(".toolbar-target").index(target);
+                    var mode = this_tool.attr("data-mode");
+                    var button = $('<button>');
+                    var tb_index = toolbar_locs[location].push(mode) - 1;
+                    var toolbar_tool = this_tool.clone();
+                    button.html('-');
+                    button.bind('click', function(){
+                        //alert('toolbar_locs[' + location + '][' + tb_index + ']');
+                        var tool = $(this).parent();
+                        toolbar_locs[tool.parent().index(0)].splice(tool.index(0),1);
+
+                        console.log(toolbar_locs);
+                        $('.toolbox').append(tool);
+                        tool.remove();
+                    });
+                    toolbar_tool.append(button);
+                    
+                    target.append(toolbar_tool);
+                }
+            }
+        }
+
+    });
+
+    $deletetoolbar_button.bind('click', function(){
+
+    var result = confirm("Are you sure you want to delete this toolbar?");
+    if (result) {
+    
+        var select = document.getElementById("mySelect");
+        var id = select.selectedIndex;
+        socket.delete_toolbar(sessionStorage.getItem('admin_class_id'), select[id].text);
+
+
+    }
+     });
+
+    $trash_button.bind('click', function(){
+
+        for(var i = 0; i < 12; i++ )
+        {
+            $('#toolbar-target-' + i).empty();
+            toolbar_locs[i] = [];
+            console.log(toolbar_locs);
+        }
+    });
+
     $delete_class_button.bind('click', function(e)
     {
         var password = prompt('If you really want to delete class, then enter secret password')    
@@ -143,6 +237,7 @@ $(function() {
         var tab = String(e.target).split('#')[1];
         //alert(tab);
         if(tab == 'design'){
+
             var params = {
                 "container":"appletContainer",
                 "id":"applet",
@@ -182,7 +277,8 @@ $(function() {
                     button.bind('click', function(){
                         //alert('toolbar_locs[' + location + '][' + tb_index + ']');
                         toolbar_locs[location].splice(tb_index,1);
-                        console.log(toolbar_locs);
+                        console.log(tb_index);
+                        //console.log(toolbar_locs);
                         var tool = $(this).parent();
                         $('.toolbox').append(tool);
                         tool.remove();
@@ -190,7 +286,6 @@ $(function() {
                     toolbar_tool.append(button);
                     
                     target.append(toolbar_tool);
-                    console.log(toolbar_locs);
                 }
             });
 
@@ -204,6 +299,8 @@ $(function() {
                 };
                 appletInit(params);
             });
+
+            socket.get_toolbars(sessionStorage.getItem('admin_class_id'));
 
         }else if (tab == 'view'){
             $design_toolbox.empty();

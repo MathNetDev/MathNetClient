@@ -34,6 +34,27 @@
             socket.emit('add-group', class_id, secret);
         }
 
+        // This function takes a class name provided by the user.
+        // The socket then emits this data to the server to create a 
+        // toolbar for the class.
+        var save_toolbar = function (class_id, toolbar_name, tools) {
+            socket.emit('save-toolbar', class_id, toolbar_name, tools);
+        }
+
+        // This function takes a class name provided by the user.
+        // The socket then emits this data to the server to get all 
+        // the toolbars for the class.
+        var get_toolbars = function (class_id) {
+            socket.emit('get-toolbars', class_id);
+        }
+
+        // This function takes a class id and the tools provided by the user.
+        // The socket then emits this data to the server to delete a toolbar
+        // from the class.
+        var delete_toolbar = function (class_id, toolbar_name) {
+            socket.emit('delete-toolbar', class_id, toolbar_name);
+        }
+
         // This function takes a class id and group id provided by the user.
         // The socket then emits this data to the server to delete a group
         // from the class.
@@ -100,6 +121,14 @@
             add_group_response();
         });
 
+        socket.on('get-toolbar-response', function(data) {
+            get_toolbar_response(data);
+        });
+
+        socket.on('delete-toolbar-response', function() {
+            delete_toolbar_response();
+        });
+
         socket.on('delete-class-response', function(data) {
             delete_class_response(data.class_id);
         });
@@ -139,6 +168,9 @@
             add_class: add_class,
             join_class: join_class,
             add_group: add_group,
+            save_toolbar: save_toolbar,
+            get_toolbars: get_toolbars,
+            delete_toolbar: delete_toolbar,
             delete_group: delete_group,
             leave_class: leave_class,
             delete_class: delete_class,
