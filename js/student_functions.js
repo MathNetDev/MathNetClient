@@ -188,6 +188,9 @@ function xml_change_response(username, class_id, group_id, xml, toolbar) {
 
 //calls appletSetExtXML() to update the local geogebra applet.
 function get_xml_response(username, class_id, group_id, xml,toolbar){
+    if(xml == undefined){
+        xml = '{}';
+    }
     sessionStorage.setItem('toolbar', toolbar);
     appletSetExtXML(xml, toolbar);
     ggbOnInit('socket_call')
