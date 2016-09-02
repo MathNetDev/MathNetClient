@@ -48,7 +48,10 @@
 
           <div class="group_view" style="display:none">
             <div class="col-md-12 col-lg-12 col-sm-12">
-              <h2 id="number">Group</h2>
+              <h2> 
+                <span id="number">Group</span> 
+                <input style="margin-left: 2em" class="btn btn-danger" type="button" value="Leave Group" id="leave_group"/>
+              </h2>
               <!-- add in class name, display buttons based on the class's groups to enter the individual groups  -->
               <!-- foreach group, create a html button with onclick to emit action to a group -->
               <div class="javascriptapplet"><div class="geogebrawebapplet" id="appletContainer" style="min-width:800px;min-height:600px"></div></div>
@@ -60,20 +63,20 @@
               </div>
 
             </div>
-            <div class="col-md-6 col-lg-6 col-sm-6">
+            <!-- <div class="col-md-6 col-lg-6 col-sm-6">
               <h3>People</h3>
               <ul id="people"></ul>
-              <!--<input type="button" value="←" class="btn btn-default change_coord" data-x=-1 data-y=0 />
+              <input type="button" value="←" class="btn btn-default change_coord" data-x=-1 data-y=0 />
               <input type="button" value="↑" class="btn btn-default change_coord" data-x=0 data-y=1 />
               <input type="button" value="↓" class="btn btn-default change_coord" data-x=0 data-y=-1 />
               <input type="button" value="→" class="btn btn-default change_coord" data-x=1 data-y=0 />
               <br/>
-              this is hiding buttons so others can be shown-->
-              <input class="btn btn-default" type="button" value="Leave Group" id="leave_group"/><br><br>
+              this is hiding buttons so others can be shown
+              <br><br>
 
               <ul id="settings"></ul>
               <div id="messages"></div>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
