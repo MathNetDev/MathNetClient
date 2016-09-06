@@ -304,7 +304,6 @@ function view_merge(event){
 //when merging multiple XMLs together
 function rename_labels(xml, num){
     console.log(xml);
-    var elem_to_index = {};
     if((xml.geogebra).hasOwnProperty('construction')){
         if((xml.geogebra.construction).hasOwnProperty('element')){
             var array = xml.geogebra.construction.element;
@@ -314,13 +313,13 @@ function rename_labels(xml, num){
                 array = [];
                 array.push(temp);
             }
+            
             for (var i = 0; i < array.length; i++){
-                if ("caption" in array[i]){
-                    console.log(array[i]["caption"]);
-                    var elem = array[i]["caption"]["_val"];
-                    array[i]["caption"]["_val"] = elem + "g" + num;
-                    if (!(elem in elem_to_index)){
-                        elem_to_index[elem] = array[i]["caption"]["_val"];
+                if(array[i]["_type"] === 'point'){
+                    array[i]["_label"] = array[i]["_label"] + 'g' + num;
+                    if ("caption" in array[i]){
+                        var elem = array[i]["caption"]["_val"];
+                        array[i]["caption"]["_val"] = elem + "g" + num;
                     }
                 }
             }
@@ -338,12 +337,8 @@ function rename_labels(xml, num){
 
             for (var i = 0; i < array.length; i++){
                 for (var point in array[i].input){
-                    var elem = array[i]["input"][point]
-                    if(elem in elem_to_index){
-                        array[i]["input"][point] = elem_to_index[elem];
-                    }
+                    array[i]["input"][point] =  array[i]["input"][point] + 'g' + num;
                 }
-
             }
             xml.geogebra.construction.command = array;
         }
@@ -364,8 +359,4 @@ function unmerge_views(event){
     for (var i = 0; i < array.length; i++){
         $("." + array[i]["name"]).show();
     }
-
-    // for(i = 0; i < numelems; i++){
-    //     var name = document.
-    // }
 }

@@ -169,7 +169,8 @@ function checkLabels(appletName){
     console.log(admin);
     for (i = 0; i < numelems; i++){
         var name = appletName.getObjectName(i);
-        if(admin){
+        var type = appletName.getObjectType(name);
+        if(type !== 'point'){
             appletName.setLabelStyle(name, 0);
         } else {
             appletName.setLabelStyle(name, 3);
@@ -197,7 +198,10 @@ function check_xml(xml, socket){
 function addLock(object){
     var username = sessionStorage.getItem('username');
     document.applet.setCaption(object, username);
-    document.applet.setLabelStyle(object, 3);
+    var type = document.applet.getObjectType(object);
+    if (type === 'point'){
+        document.applet.setLabelStyle(object, 3);
+    }
     //document.applet.setFixed(object, true);
 }
 
