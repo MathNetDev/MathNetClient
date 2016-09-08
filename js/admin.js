@@ -347,8 +347,8 @@ $(function() {
             var params = {
                     "container":"appletContainer"+numgroups,
                     "id":"applet"+numgroups,
-                    "width":300,
-                    "height":200,
+                    "width":800,
+                    "height":600,
                     "perspective":"",
                     "showAlgebraInput":false,
                     "showToolBarHelp":false,

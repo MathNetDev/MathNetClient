@@ -223,11 +223,12 @@ function join_class(class_id){
 
 //This function registers listeners on geogebra initialization 
 function ggbOnInit(arg) {
+    var name, num, index = arg.search('[0-9]');
     console.log(arg);
     document[arg].evalCommand("CenterView[(0,0)]");
     document[arg].evalCommand("ZoomOut[4,(0,0)]");
     document[arg].setCustomToolBar('');
-    var name, num, index = arg.search('[0-9]');
+
     if (index != -1){
         num = arg.slice(index);
         name = arg.slice(0, index);
@@ -290,9 +291,9 @@ function view_merge(event){
         $("." + array[i]["name"]).hide()
     }
     var final_xml = x2js.json2xml_str(XMLs);
-    final_xml = JSON.stringify(final_xml);
     var numgroups = ($('ul.groups div').length)+1;
-
+    final_xml = JSON.stringify(final_xml);
+    
     appletSetExtXML(final_xml, '', numgroups);
 
     $('#views_checkboxes :checkbox').hide();
@@ -313,7 +314,7 @@ function rename_labels(xml, num){
                 array = [];
                 array.push(temp);
             }
-            
+
             for (var i = 0; i < array.length; i++){
                 if(array[i]["_type"] === 'point'){
                     array[i]["_label"] = array[i]["_label"] + 'g' + num;
@@ -344,7 +345,6 @@ function rename_labels(xml, num){
         }
     }
     return xml;
-
 }
 
 //this is called when the unmerge views button is pressed.
