@@ -48,6 +48,7 @@ function appletSetExtXML(xml, toolbar, id){
 
     //colorizePoints(appletName, cur_json);
     checkLocks(appletName);
+    //checkLabels(appletName);
 }
 
 //This function takes the new_json, removes all commands in the construction, and creates a string (commandString)
@@ -159,6 +160,23 @@ function checkLocks(appletName){
         }
     }
 }
+function checkLabels(appletName){
+    var admin = false;
+    var numelems = appletName.getObjectNumber();
+    if(sessionStorage.getItem('admin_class_id') !== null){
+        admin = true;
+    }
+    console.log(admin);
+    for (i = 0; i < numelems; i++){
+        var name = appletName.getObjectName(i);
+        var type = appletName.getObjectType(name);
+        if(type !== 'point'){
+            appletName.setLabelStyle(name, 0);
+        } else {
+            appletName.setLabelStyle(name, 3);
+        }
+    }
+}
 
 //This function sends the socket call that there was a XML change,
 // and takes the new XML, and the socket that the call will go through. 
@@ -180,6 +198,10 @@ function check_xml(xml, socket){
 function addLock(object){
     var username = sessionStorage.getItem('username');
     document.applet.setCaption(object, username);
+    var type = document.applet.getObjectType(object);
+    if (type === 'point'){
+        document.applet.setLabelStyle(object, 3);
+    }
     //document.applet.setFixed(object, true);
 }
 
