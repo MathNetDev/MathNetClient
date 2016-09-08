@@ -16,6 +16,12 @@
 #delete_class_button {
   color: red;
 }
+
+#logout_class_button{
+  background-color: red;
+  color: white;
+}
+
 #get-classes{
     margin-bottom: 2em;
     max-height:300px; 
