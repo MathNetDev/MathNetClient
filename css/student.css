@@ -3,3 +3,17 @@
     border: 5px solid aliceblue;
     border-radius: 10px;
 }
+#graphing_box{
+	width : 65%;
+	float: left;
+}
+#log{
+	width : 35%;
+	float: right;
+}
+#messages{
+	border-style : solid;
+	border-width: 1px;
+	padding-left: 10px;
+	padding-top: 5px;
+}

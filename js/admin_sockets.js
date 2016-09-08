@@ -14,11 +14,23 @@
     var init = function (socket) {
        // sock = socket;
 
+        // This funcrion takes a username and password provided by the user
+        // The socket then emits this data to the server to create the admin
+        var create_admin = function(username, password, secret) {
+            socket.emit('create-admin', username, password, secret);
+        };
+
+        // Takes admin id and a normal string 
+        // Socket then emits data to create a new session
+        var create_session = function(admin_id, string) {
+            socket.emit('create-session', admin_id, string);
+        }
+
         // This function takes a class name and group count provided by the 
         // user. The socket then emits this data to the server to create 
         // the class and groups. 
-        var add_class = function (class_name, group_count, secret) {
-            socket.emit('add-class', class_name, group_count, secret);
+        var add_class = function (class_name, group_count, secret, admin_id) {
+            socket.emit('add-class', class_name, group_count, secret, admin_id);
         };
 
         // This function takes a class id provided by the user. The socket then
@@ -48,6 +60,12 @@
             socket.emit('get-toolbars', class_id);
         }
 
+        // This function takes a username and a password
+        // The socket then emits this data to the server to check the combination
+        var check_username = function (username, password, secret) {
+            socket.emit('check-username', username, password, secret);
+        }
+
         // This function takes a class id and the tools provided by the user.
         // The socket then emits this data to the server to delete a toolbar
         // from the class.
@@ -60,6 +78,19 @@
         // from the class.
         var delete_group = function (class_id, group_id, secret) {
             socket.emit('delete-group', class_id, group_id, secret);
+        }
+
+        // This function takes a class id and group id provided by the user.
+        // The socket then emits this data to the server to delete a session
+        // from the class.
+        var delete_session = function (admin_id) {
+            socket.emit('delete-session', admin_id);
+        }
+
+        // This function takes a admin id and check to see if the 
+        // admin is already logged in
+        var check_session = function (admin_id, check) {
+            socket.emit('check-session', admin_id, check);
         }
 
         // This function takes a class id provided by the user.
@@ -79,8 +110,8 @@
         // This function takes a secret password provided by the user
         // The socket then emits this to the server to send the list of
         // current created classes and their login IDs to the user.
-        var get_classes = function (secret){
-            socket.emit('get-classes', secret);
+        var get_classes = function (secret, admin_id){
+            socket.emit('get-classes', secret, admin_id);
         }
 
         //This function takes a username, class_id, group_id, and XML
@@ -121,6 +152,10 @@
             add_group_response();
         });
 
+        socket.on('create-admin-response', function(data){
+            create_admin_response(data.check);
+        });
+
         socket.on('get-toolbar-response', function(data) {
             get_toolbar_response(data);
         });
@@ -156,6 +191,14 @@
             get_classes_response(data.classes, data.secret);
         });
 
+        socket.on('check-username-response', function(admin_id, check) {
+            check_username_response(admin_id, check)
+        });
+
+        socket.on('check-session-response', function(admin_id, check) {
+            check_session_response(admin_id, check);
+        });
+
         socket.on('xml_change_response', function(data) {
             xml_change_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar);
         });
@@ -166,12 +209,17 @@
 
         return {
             add_class: add_class,
+            create_admin: create_admin,
+            create_session: create_session,
             join_class: join_class,
             add_group: add_group,
             save_toolbar: save_toolbar,
             get_toolbars: get_toolbars,
+            check_username: check_username,
+            check_session: check_session,
             delete_toolbar: delete_toolbar,
             delete_group: delete_group,
+            delete_session: delete_session,
             leave_class: leave_class,
             delete_class: delete_class,
             save_settings: save_settings,

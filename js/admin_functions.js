@@ -61,6 +61,30 @@ function add_class_response(class_id, class_name, group_count) {
 }
 
 /**
+ * @function create_admin response
+ * @description adds an admin
+ */
+
+ function create_admin_response( check ){
+
+    $('.new_username').val("");
+    $('.new_password').val("");
+    $('.re_new_password').val("");
+    $('.Secret').val("");
+
+    if (check == 0)
+       alert("Username already exists. Try again");
+
+    else {
+        alert("user created");
+        var $create_user_view = $('.create_user_view'); // Div holding user creation view
+        var $username_password_view = $('.username_password_view'); // Div holding user creation view
+        $create_user_view.hide();
+        $username_password_view.show();
+    }
+ }
+
+/**
  * @function add_group_response
  * @description adds a group to the end of the list
  */
@@ -97,8 +121,8 @@ function get_toolbar_response(response) {
 }
 
 /**
- * @function get_toolbar_response
- * @description refreshes the selection list of all the default toolbars
+ * @function delete_toolbar_response
+ * @description deletes the selected toolbar
  */
 function delete_toolbar_response(response) {
 
@@ -139,7 +163,7 @@ function leave_class_response(disconnect) {
     var $secret_view = $('.secret_view');
     var $create_view = $('.create_view');
     var $class_view = $('.class_view');
-    var $secret = $('.secret');
+    var $secret = 'ucd_247';
     var $design_tab = $('#design_tab');
     var $design_icons = $('.toolbar-target');
     var $view_tab = $('#view_tab');
@@ -155,7 +179,7 @@ function leave_class_response(disconnect) {
     if(!disconnect){
         sessionStorage.removeItem('admin_class_id');
     }
-    socket.get_classes($secret.val().trim());
+    socket.get_classes($secret);
 }
 
 /**
@@ -193,15 +217,15 @@ function group_info_response(username, class_id, group_id, group, status) {
  * @description appends list objects of Classes and their IDs to an unordered list in admin.html
  */
 function get_classes_response(classes, secret){
-    var $secret_view = $('.secret_view');
+    var $username_password_view = $('.username_password_view');
     var $create_view = $('.create_view');
     var $class_view = $('.class_view');
     
-    $secret_view.hide();
+    $username_password_view.hide();
     $create_view.show();
     $class_view.hide();
 
-    $secret_view.hide();
+    $username_password_view.hide();
     $create_view.show();
     $class_view.hide();
 
@@ -216,9 +240,66 @@ function get_classes_response(classes, secret){
     }
 }
 
+/**
+ * @function check_username response
+ * @param admin id and password
+ * @description logs the user in and creates a session
+ */
+function check_username_response(admin_id, check){
+    
+    if(check == 0)
+        alert("Your username doesn't match any in the database");
+
+    else if (check == -1)
+        alert("Your password doesn't match your username");
+    else
+        {
+            $('.username').val("");
+            $('.password').val("");
+
+            var string = Math.random().toString(36).substr(2, 8).toLowerCase(); 
+            socket.create_session(admin_id, string);
+            localStorage.setItem("check", string);
+            localStorage.setItem("admin_id", admin_id);
+            socket.get_classes("ucd_247", admin_id);
+        }
+
+}
+
+/**
+ * @function check_session response
+ * @param admin id and password
+ * @description checks a session
+ */
+function check_session_response(admin_id, check){
+    
+    if(check == 1){
+        socket.get_classes("ucd_247", admin_id);
+    }
+
+    if(check == -1){
+        socket.delete_session(admin_id);
+        localStorage.setItem('admin_id', '');
+        localStorage.setItem('check', '');
+        sessionStorage.setItem('admin_secret', '');
+    }
+
+    if(check == 0 ){
+        localStorage.setItem('admin_id', '');
+        localStorage.setItem('check', '');
+        sessionStorage.setItem('admin_secret', '');
+    }
+
+}
+
+/**
+ * @function join_class
+ * @param class_id
+ * @description for letting student join class
+ */
 function join_class(class_id){
-    var $secret = $('.secret'); 
-    socket.join_class(class_id, $secret.val().trim());
+    var $secret = 'ucd_247'; 
+    socket.join_class(class_id, $secret);
 }
 
 //This function registers listeners on geogebra initialization 
