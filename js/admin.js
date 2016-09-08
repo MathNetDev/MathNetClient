@@ -62,7 +62,11 @@ $(function() {
     $create_user_view.hide();
 
     //secret rejoin cookie
-    socket.check_session(localStorage.getItem('admin_id'), localStorage.getItem('check'));
+    if(localStorage.getItem('admin_id')){
+        if(localStorage.getItem('check')){
+            socket.check_session(localStorage.getItem('admin_id'), localStorage.getItem('check'));
+        }
+    }
     
 
     //
