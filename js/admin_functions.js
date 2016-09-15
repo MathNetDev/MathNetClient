@@ -19,7 +19,13 @@ function escapeStr(str) {
  * @description to handle errors sent by the server
  */
 function server_error(error) {
-    $('#error_frame').html(JSON.stringify(error)); 
+    if(error != "Duplicate Entry")
+        $('#error_frame').html(JSON.stringify(error)); 
+    else {
+
+        document.getElementById("class_input").style.borderColor = "red";
+        $('.error_class_input').show();
+    }
 }
 
 /**
@@ -67,20 +73,28 @@ function add_class_response(class_id, class_name, group_count) {
 
  function create_admin_response( check ){
 
-    $('.new_username').val("");
-    $('.new_password').val("");
-    $('.re_new_password').val("");
-    $('.Secret').val("");
-
-    if (check == 0)
-       alert("Username already exists. Try again");
+    if (check == 0) {
+        document.getElementById("new_username").style.borderColor = "red";
+        $('.error_new_username').show();
+        $('.error_re_new_password').hide();
+        document.getElementById("re_new_password").style.borderColor = null;
+    }
 
     else {
+        $('.new_username').val("");
+        $('.new_password').val("");
+        $('.re_new_password').val("");
+        $('.Secret').val("");
         alert("user created");
         var $create_user_view = $('.create_user_view'); // Div holding user creation view
         var $username_password_view = $('.username_password_view'); // Div holding user creation view
         $create_user_view.hide();
         $username_password_view.show();
+
+        $('.error_new_username').hide();
+        document.getElementById("new_username").style.borderColor = null;
+        $('.error_re_new_password').hide();
+        document.getElementById("re_new_password").style.borderColor = null;
     }
  }
 
@@ -175,11 +189,15 @@ function leave_class_response(disconnect) {
     $design_icons.empty();
     $design_tab.hide();
     $view_tab.hide();
+    $('.error_class_input').hide();
+    document.getElementById("class_input").style.borderColor = null;
+    $('.class_input').val("");
+    $('.group_input').val("");
 
     if(!disconnect){
         sessionStorage.removeItem('admin_class_id');
     }
-    socket.get_classes($secret);
+    socket.get_classes($secret, localStorage.getItem('admin_id'));
 }
 
 /**
@@ -235,8 +253,7 @@ function get_classes_response(classes, secret){
     for (var i = 0; i < classes.length; i++) {
         //console.log(classes[i]);
         $('#get-classes').append('<button class="btn btn-primary" onclick=\'join_class("'
-            + classes[i].hashed_id + '")\'>Class: <span>' + classes[i].class_name + '</span> ID: <span>'
-            + classes[i].hashed_id + '</span></button>');
+            + classes[i].hashed_id + '")\'><span>' + classes[i].class_name + '</span></button>');
     }
 }
 
@@ -247,22 +264,33 @@ function get_classes_response(classes, secret){
  */
 function check_username_response(admin_id, check){
     
-    if(check == 0)
-        alert("Your username doesn't match any in the database");
+    if(check == 0){
 
-    else if (check == -1)
-        alert("Your password doesn't match your username");
-    else
-        {
-            $('.username').val("");
-            $('.password').val("");
+        document.getElementById("username").style.borderColor = "red";
+        $('.error_username').show();
+        $('.error_password').hide();
+        document.getElementById("password").style.borderColor = null;
+    }
 
-            var string = Math.random().toString(36).substr(2, 8).toLowerCase(); 
-            socket.create_session(admin_id, string);
-            localStorage.setItem("check", string);
-            localStorage.setItem("admin_id", admin_id);
-            socket.get_classes("ucd_247", admin_id);
-        }
+    else if (check == -1){
+
+        document.getElementById("password").style.borderColor = "red";
+        $('.error_password').show();
+        $('.error_username').hide();
+        document.getElementById("username").style.borderColor = null;
+    }
+
+    else{
+
+        $('.username').val("");
+        $('.password').val("");
+
+        var string = Math.random().toString(36).substr(2, 8).toLowerCase(); 
+        socket.create_session(admin_id, string);
+        localStorage.setItem("check", string);
+        localStorage.setItem("admin_id", admin_id);
+        socket.get_classes("ucd_247", admin_id);
+    }
 
 }
 
@@ -282,12 +310,16 @@ function check_session_response(admin_id, check){
         localStorage.setItem('admin_id', '');
         localStorage.setItem('check', '');
         sessionStorage.setItem('admin_secret', '');
+        console.log(-1);
+        $('.username_password_view').show();
     }
 
     if(check == 0 ){
         localStorage.setItem('admin_id', '');
         localStorage.setItem('check', '');
         sessionStorage.setItem('admin_secret', '');
+        console.log(0);
+        $('.username_password_view').show();
     }
 
 }

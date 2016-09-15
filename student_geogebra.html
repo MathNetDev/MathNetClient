@@ -22,28 +22,72 @@
   </head>
   <body>
     <div class="container" id="main">
+
       <div class="row">
       
         <div class="login_view">
-          <h1 > Student Login :  </h1>
+          
           <div class="col-md-4">
             <h4 id="error_frame"></h4>
           </div>
+          <!-- Title -->
+          <div class="col-md-12 col-sm-12">
+            <div class="col-md-4 col-sm-4"></div>
+            <div class="col-md-4 col-sm-4">
+              <h2 style="text-align: center"> Student Login </h2>
+            </div>
+            <div class="col-md-4 col-sm-4"></div>
+          </div>
+
           <br/>
-          <div class="col-md-12">
-            Class ID : <input type="text" id="class_id" name="class_id"/><br/>
-            Nickname : <input type="text" id="nickname" name="nickname"/><br/>
-            <input class="btn btn-default" type="submit" value="Login" id="login"/><br/>
+
+          <!-- Text Fields and Login Button -->
+          <div class="col-md-12 col-sm-12">
+            <div class="col-md-4 col-sm-4"></div>
+            <div class="col-md-4 col-sm-4">
+              <input type="text" class="form-control class_id" id="class_id" name="class_id" required="" placeholder="Class ID"/>
+              <p class = "error error_class_id" hidden> Class ID does not exist </p> <br/>
+              <input type="text" class="form-control nickname" id="nickname" name="nickname" required="" placeholder="Nickname"/>
+              <p class = "error error_nickname" hidden> Nickname already taken </p> <br/>
+              <input class="btn btn-lg btn-primary btn-block login" type="submit" value="Login" id="login"/><br/>
+            </div>
+            <div class="col-md-4 col-sm-4"></div>
           </div>
         </div>
         
         <div class="col-md-12">
-          <div class="class_view" style="display:none">
-            <h2 > Student Groups :</h2>
+          <div class="class_view" style="display:none; text-align: center">
+
+        <!-- Title -->
+        <div class="col-md-12 col-sm-12">
+          <div class="col-md-4 col-sm-4"></div>
+          <div class="col-md-4 col-sm-4">
+            <h3> Student Groups </h3>
+          </div>
+          <div class="col-md-4 col-sm-4"></div>
+        </div>
+
+        <!-- Group Buttons -->
+        <div class="col-md-12 col-sm-12">
+          <div class="col-md-3 col-sm-3"></div>
+          <div class="col-md-6 col-sm-6">
             <!-- add in class name, display buttons based on the class's groups to enter the individual groups  -->
-            <ul id="buttons"> </ul>
+            <h3 id="buttons"> </h3>
+          </div>
+          <div class="col-md-3 col-sm-3"></div>
+        </div>
+
+        <!-- Log Out button -->
+        <div class="col-md-12 col-sm-12">
+          <div class="col-md-4 col-sm-4"></div>
+          <div class="col-md-4 col-sm-4">
             <!-- foreach group, create a html button with onclick to emit action to a group -->
-            <input class="btn btn-default" type="button" value="Log Out" id="logout" />
+            <input type="button" class="btn btn-danger" style="margin-bottom: 1em" value="Log Out" id="logout" />
+          </div>
+          <div class="col-md-4 col-sm-4"></div>
+        </div>
+
+      </div> <!-- ***** End of class_view ***** -->
           </div>
 
           <div class="group_view" style="display:none">

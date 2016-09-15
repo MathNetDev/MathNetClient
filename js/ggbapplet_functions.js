@@ -39,6 +39,7 @@ function appletSetExtXML(xml, toolbar, id){
     $("#xmlView").val(xml);
     
     var final_xml = x2js.json2xml_str(cur_json);
+    console.log(toolbar);
 
     appletName.setXML(final_xml);
 
@@ -311,5 +312,6 @@ function appletInit(params){
     
     //applet.setJavaCodebase('geogebra/Java/4.2', 'true');
     //applet.setHTML5Codebase('/', 'true');
+    debugger;
     applet.inject(params.container, 'auto');
 }

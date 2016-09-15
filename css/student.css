@@ -1,5 +1,5 @@
 .row{
-    background-color: rgba(255, 255, 255, 0.88);
+    background-color: rgba(255, 255, 255,1.0);
     border: 5px solid aliceblue;
     border-radius: 10px;
 }
@@ -16,4 +16,8 @@
 	border-width: 1px;
 	padding-left: 10px;
 	padding-top: 5px;
+}
+
+.error{
+  color: red;
 }
