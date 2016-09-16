@@ -42,9 +42,11 @@ function add_class_response(class_id, class_name, group_count) {
     var $class_view = $('.class_view');
     var $settings_view = $('.settings_view');
     var $class_name = $('.class_name');
+    var $class_id = $('.class_id');
     var $groups = $('.groups');
     var $design_tab = $('#design_tab');
     var $view_tab = $('#view_tab');
+    var $lists = $('.lists')
 
     sessionStorage.setItem('admin_class_id', class_id);
     $('#error_frame').html('');
@@ -55,14 +57,20 @@ function add_class_response(class_id, class_name, group_count) {
     $design_tab.show();
     $view_tab.show();
 
-    $class_name.html(class_name + " ID: " + class_id);
+    $class_name.html(class_name);
+    $class_id.html("ID : " + class_id);
     var groups_html = "";
+    var lists_html = "";
     var group_number = parseInt(group_count);
     for (var group=1; group < group_number+1; group++) {
+        lists_html += "<div class = 'info_box "+ group +"'> </div>";
+
+        // $lists.append($("<div class = '"+group+" g'>"+ group +"</div>").attr('id', 'well')); //create new div
         groups_html += "<li>Group " + group;
         groups_html += "<div class='g" + group + "'></div></li>";
     }
     $groups.html(groups_html);
+    $lists.html(lists_html);
     
 }
 
@@ -346,8 +354,8 @@ function ggbOnInit(arg) {
         num = arg.slice(index);
         name = arg.slice(0, index);
         if (name == "applet" && num <= $('ul.groups div').length){
-            var classname = $('.class_name').html().split(' ').pop();
-            socket.get_xml('admin', classname, num);
+            var class_id = sessionStorage.getItem('admin_class_id');
+            socket.get_xml('admin', class_id, num);
         }
     }
 }

@@ -21,15 +21,13 @@ hr {
   margin-top: 5px;
   margin-bottom: 5px;
 }
-
-#delete_class_button {
-  color: red;
+.info_box{
+  height: 100px;
+  width: 100px;
+  border-style: solid;
 }
 
-#logout_class_button{
-  background-color: red;
-  color: white;
-}
+
 #get-classes{
     margin-bottom: 2em;
     max-height:300px; 
@@ -43,6 +41,11 @@ hr {
 
 #get-classes div:hover{
   background-color: rgba(211, 214, 34, 0.42);
+}
+
+.leave_button{
+  position:  relative;
+  top: 15px; 
 }
 .settings_view{
   margin:4em 0 0 0;

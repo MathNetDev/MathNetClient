@@ -155,7 +155,7 @@
               <div class="col-md-4 col-sm-4"></div>
               <div class="col-md-4 col-sm-4" style="text-align: center">
                 <input class="btn btn-primary btn-block create_button" type="button" value="Create Class" /><br/><br/>
-                <input id = "logout_class_button" class="btn btn-default logout_class_button" type="button" value="Logout">
+                <input id = "logout_class_button" class="btn btn-default btn-danger logout_class_button" type="button" value="Logout">
               </div>
               <div class="col-md-4 col-sm-4"></div>
             </div>  
@@ -166,18 +166,55 @@
 
           <!-- This div appears once an admin has created a class -->
           <div class="class_view" style="display:none">
-            <header>
-              <h3 class="class_name"></h3>
-            </header>
-
-            <input class="btn btn-default add_button" type="button" value="Add Group"> 
-            <input class="btn btn-default delete_button" type="button" value="Delete Group">
-            <input class="btn btn-default leave_button" type="button" value="Leave Class">
-            <input id = "delete_class_button" class="btn btn-default delete_class_button" type="button" value="Delete Class">
-            
-            <div class="manage_view">
-              <ul class="groups"></ul>
+            <!-- Title -->
+            <div class="col-md-12 col-sm-12">
+              <div class="col-md-4 col-sm-4"></div>
+              <div class="col-md-4 col-sm-4">
+                <h1 class = "class_name" style = "text-align: center"></h1>
+              </div>
+              <div class="col-md-4 col-sm-4"></div>
             </div>
+
+            <!-- Title -->
+            <div class="col-md-12 col-sm-12">
+              <div class="col-md-4 col-sm-4">
+                <input class="btn btn-default btn-danger leave_button" type="button" value="Leave Class">
+              </div>
+              <div class="col-md-4 col-sm-4">
+                <h3 class = "class_id" style = "text-align: center"></h3>
+              </div>
+              <div class="col-md-4 col-sm-4"></div>
+            </div>
+
+
+            <div class="col-md-12 col-sm-12">
+              <div class="col-md-2 col-sm-2"></div>
+              <div class="col-md-8 col-sm-8" style = "text-align: center">
+                <input class="btn btn-primary add_button" type="button" value="Add Group"> &emsp;&emsp;&emsp;
+                <input class="btn btn-primary delete_button" type="button" value="Delete Group"> &emsp;&emsp;&emsp;
+                <input id = "delete_class_button" class="btn btn-danger delete_class_button" type="button" value="Delete Class"> <br/><br/>
+              </div>
+              <div class="col-md-2 col-sm-2"></div>
+            </div>  
+
+            <!-- The place to store the lists -->
+            <div class="manage_view" hidden>
+              <ul class="groups" ></ul>
+            </div>
+
+                        <!-- Line Break -->
+            <table width="100%">
+              <td><hr/></td>
+                <td style="width:1px; padding: 0 10px; white-space: nowrap;">GROUPS AND STUDENTS</td>
+              <td><hr /></td>
+            </table>​
+
+            <div class="col-md-12 lists">
+            <div class="info_box 1"> </div>
+          </div> 
+
+
+
 
             <div class="settings_view">
               <h4>Settings</h4>
@@ -189,6 +226,7 @@
           </div>
         </div>
       </div>
+
       <div role="tabpanel" class="tab-pane" id="design">
         <div class="col-md-12">
           <h3>Activity Designer</h3>

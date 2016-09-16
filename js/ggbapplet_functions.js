@@ -312,6 +312,5 @@ function appletInit(params){
     
     //applet.setJavaCodebase('geogebra/Java/4.2', 'true');
     //applet.setHTML5Codebase('/', 'true');
-    debugger;
     applet.inject(params.container, 'auto');
 }

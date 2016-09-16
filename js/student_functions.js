@@ -19,9 +19,10 @@ function server_error(error) {
     if (str.indexOf("Invalid username") !== -1) {
         document.getElementById("class_id").style.borderColor = "red";
         $('.error_class_id').show();
+        console.log("logout");
     }
 
-    else if (str.indexOf("taken.") !== -1) {
+    else if (str.indexOf("invalid.") !== -1) {
         document.getElementById("nickname").style.borderColor = "red";
         $('.error_nickname').show();
     }
@@ -80,7 +81,7 @@ function groups_get_response(username, class_id, groups) {
     var current_class = sessionStorage.getItem('class_id');
     $groups.empty();
     for (var i in groups){
-        var button = '<input type="button" class="btn btn-md btn-primary btn-block" style="margin: 0em 1em 1em 0em" id="grp' + groups[i].grp_name + '" value="Group ';
+        var button = '<input type="button" class="btn btn-md btn-primary " style="margin: 0em 1em 1em 0em" id="grp' + groups[i].grp_name + '" value="Group ';
         button += groups[i].grp_name + ' - '+ groups[i].num;
         button += '" />';
         $groups.append(button);
