@@ -19,7 +19,13 @@ function escapeStr(str) {
  * @description to handle errors sent by the server
  */
 function server_error(error) {
-    $('#error_frame').html(JSON.stringify(error)); 
+    if(error != "Duplicate Entry")
+        $('#error_frame').html(JSON.stringify(error)); 
+    else {
+
+        document.getElementById("class_input").style.borderColor = "red";
+        $('.error_class_input').show();
+    }
 }
 
 /**
@@ -36,9 +42,11 @@ function add_class_response(class_id, class_name, group_count) {
     var $class_view = $('.class_view');
     var $settings_view = $('.settings_view');
     var $class_name = $('.class_name');
+    var $class_id = $('.class_id');
     var $groups = $('.groups');
     var $design_tab = $('#design_tab');
     var $view_tab = $('#view_tab');
+    var $lists = $('.lists')
 
     sessionStorage.setItem('admin_class_id', class_id);
     $('#error_frame').html('');
@@ -49,14 +57,24 @@ function add_class_response(class_id, class_name, group_count) {
     $design_tab.show();
     $view_tab.show();
 
-    $class_name.html(class_name + " ID: " + class_id);
+    $class_name.html(class_name);
+    $class_id.html("ID : " + class_id);
     var groups_html = "";
+    var lists_html = "";
     var group_number = parseInt(group_count);
     for (var group=1; group < group_number+1; group++) {
+        if(group%3 == 0)
+            lists_html += "<div style='margin-left: 1em; margin-bottom: 1em;' class='col-md-2 info_box1 gr"+ group +"'><h3 style = 'text-align: center; color: white;'>Group "+ group + "</h3></div>";
+        else if(group%3 == 1 )
+            lists_html += "<div style='margin-left: 1em; margin-bottom: 1em;' class='col-md-2 info_box gr"+ group +"'><h3 style = 'text-align: center; color: white;'>Group "+ group + "</h3></div>";
+        else
+             lists_html += "<div style='margin-left: 1em; margin-bottom: 1em;' class='col-md-2 info_box2 gr"+ group +"'><h3 style = 'text-align: center; color: white;'>Group "+ group + "</h3></div>";
+        // $lists.append($("<div class = '"+group+" g'>"+ group +"</div>").attr('id', 'well')); //create new div
         groups_html += "<li>Group " + group;
         groups_html += "<div class='g" + group + "'></div></li>";
     }
     $groups.html(groups_html);
+    $lists.html(lists_html);
     
 }
 
@@ -67,20 +85,28 @@ function add_class_response(class_id, class_name, group_count) {
 
  function create_admin_response( check ){
 
-    $('.new_username').val("");
-    $('.new_password').val("");
-    $('.re_new_password').val("");
-    $('.Secret').val("");
-
-    if (check == 0)
-       alert("Username already exists. Try again");
+    if (check == 0) {
+        document.getElementById("new_username").style.borderColor = "red";
+        $('.error_new_username').show();
+        $('.error_re_new_password').hide();
+        document.getElementById("re_new_password").style.borderColor = null;
+    }
 
     else {
+        $('.new_username').val("");
+        $('.new_password').val("");
+        $('.re_new_password').val("");
+        $('.Secret').val("");
         alert("user created");
         var $create_user_view = $('.create_user_view'); // Div holding user creation view
         var $username_password_view = $('.username_password_view'); // Div holding user creation view
         $create_user_view.hide();
         $username_password_view.show();
+
+        $('.error_new_username').hide();
+        document.getElementById("new_username").style.borderColor = null;
+        $('.error_re_new_password').hide();
+        document.getElementById("re_new_password").style.borderColor = null;
     }
  }
 
@@ -90,13 +116,23 @@ function add_class_response(class_id, class_name, group_count) {
  */
 function add_group_response() {
     var $groups = $('.groups');
+    var $lists = $('.lists');
     
     $('#error_frame').html('');
     var new_group = "";
+    var lists_html = "";
     var group_number = $('.groups > li:last').index() + 2;
     new_group += "<li>Group " + group_number;
     new_group += "<div class='g" + group_number + "'></div></li>";
+
+    if(group_number%3 == 0)
+        lists_html += "<div style='margin-left: 1em; margin-bottom: 1em;' class=' col-md-2 info_box1 gr"+ group_number +"'><h3 style = 'text-align: center; color: white;'>Group "+ group_number + "</h3></div>";
+    else if(group_number%3 == 1 )
+        lists_html += "<div style='margin-left: 1em; margin-bottom: 1em;' class='col-md-2 info_box gr"+ group_number +"'><h3 style = 'text-align: center; color: white;'>Group "+ group_number + "</h3></div>";
+    else
+         lists_html += "<div style='margin-left: 1em; margin-bottom: 1em;' class='col-md-2 info_box2 gr"+ group_number +"'><h3 style = 'text-align: center; color: white;'>Group "+ group_number + "</h3></div>";
     $groups.append(new_group);
+    $lists.append(lists_html);
 }
 
 /**
@@ -140,7 +176,10 @@ function delete_toolbar_response(response) {
  */
 function delete_group_response() {
     $('#error_frame').html('');
+    var group_number = $('.groups > li:last').index() + 1;
     $('.groups > li:last').remove(); 
+    $('.g'+group_number).remove();
+    $('.gr'+group_number).remove();
 }
 
 /**
@@ -175,11 +214,15 @@ function leave_class_response(disconnect) {
     $design_icons.empty();
     $design_tab.hide();
     $view_tab.hide();
+    $('.error_class_input').hide();
+    document.getElementById("class_input").style.borderColor = null;
+    $('.class_input').val("");
+    $('.group_input').val("");
 
     if(!disconnect){
         sessionStorage.removeItem('admin_class_id');
     }
-    socket.get_classes($secret);
+    socket.get_classes($secret, localStorage.getItem('admin_id'));
 }
 
 /**
@@ -193,6 +236,7 @@ function leave_class_response(disconnect) {
  */
 function group_info_response(username, class_id, group_id, group, status) {
     var $people = $('.g' + group_id);
+    var $real_people = $('.gr' + group_id);
     //$people.html('');
     
     if (status) {
@@ -200,13 +244,18 @@ function group_info_response(username, class_id, group_id, group, status) {
             var member = '<li id="' + group[i].member_name +'"><ul><li>';
             member += group[i].member_name;
             member += '</li></ul></li>';
+
+            var real_member = '<p id="l' + group[i].member_name +'"style = "text-align : center; color: white;">'+group[i].member_name;+'</p>';
+            
             $people.append(member);
+            $real_people.append(real_member);
         }
     }
     else {
         username = username.replace(/&lt;/g, "<").replace(/&gt;/g, ">");
         username = escapeStr(username);
         $('li[id="' + username + '"]').remove();
+        $('p[id="l' + username + '"]').remove();
         console.log(group_id);
     }
 }
@@ -235,8 +284,7 @@ function get_classes_response(classes, secret){
     for (var i = 0; i < classes.length; i++) {
         //console.log(classes[i]);
         $('#get-classes').append('<button class="btn btn-primary" onclick=\'join_class("'
-            + classes[i].hashed_id + '")\'>Class: <span>' + classes[i].class_name + '</span> ID: <span>'
-            + classes[i].hashed_id + '</span></button>');
+            + classes[i].hashed_id + '")\'><span>' + classes[i].class_name + '</span></button>');
     }
 }
 
@@ -247,22 +295,33 @@ function get_classes_response(classes, secret){
  */
 function check_username_response(admin_id, check){
     
-    if(check == 0)
-        alert("Your username doesn't match any in the database");
+    if(check == 0){
 
-    else if (check == -1)
-        alert("Your password doesn't match your username");
-    else
-        {
-            $('.username').val("");
-            $('.password').val("");
+        document.getElementById("username").style.borderColor = "red";
+        $('.error_username').show();
+        $('.error_password').hide();
+        document.getElementById("password").style.borderColor = null;
+    }
 
-            var string = Math.random().toString(36).substr(2, 8).toLowerCase(); 
-            socket.create_session(admin_id, string);
-            localStorage.setItem("check", string);
-            localStorage.setItem("admin_id", admin_id);
-            socket.get_classes("ucd_247", admin_id);
-        }
+    else if (check == -1){
+
+        document.getElementById("password").style.borderColor = "red";
+        $('.error_password').show();
+        $('.error_username').hide();
+        document.getElementById("username").style.borderColor = null;
+    }
+
+    else{
+
+        $('.username').val("");
+        $('.password').val("");
+
+        var string = Math.random().toString(36).substr(2, 8).toLowerCase(); 
+        socket.create_session(admin_id, string);
+        localStorage.setItem("check", string);
+        localStorage.setItem("admin_id", admin_id);
+        socket.get_classes("ucd_247", admin_id);
+    }
 
 }
 
@@ -282,12 +341,16 @@ function check_session_response(admin_id, check){
         localStorage.setItem('admin_id', '');
         localStorage.setItem('check', '');
         sessionStorage.setItem('admin_secret', '');
+        console.log(-1);
+        $('.username_password_view').show();
     }
 
     if(check == 0 ){
         localStorage.setItem('admin_id', '');
         localStorage.setItem('check', '');
         sessionStorage.setItem('admin_secret', '');
+        console.log(0);
+        $('.username_password_view').show();
     }
 
 }
@@ -308,14 +371,14 @@ function ggbOnInit(arg) {
     console.log(arg);
     document[arg].evalCommand("CenterView[(0,0)]");
     document[arg].evalCommand("ZoomOut[4,(0,0)]");
-    document[arg].setCustomToolBar('');
+    //document[arg].setCustomToolBar('0 | 1 501 67 , 5 19 , 72 75 76 | 2 15 45 , 18 65 , 7 37 | 4 3 8 9 , 13 44 , 58 , 47 | 16 51 64 , 70 | 10 34 53 11 , 24  20 22 , 21 23 | 55 56 57 , 12 | 36 46 , 38 49  50 , 71 | 30 29 54 32 31 33 | 17 26 62 73 , 14 68 | 25 52 60 61 | 40 41 42 , 27 28 35 , 6');
 
     if (index != -1){
         num = arg.slice(index);
         name = arg.slice(0, index);
         if (name == "applet" && num <= $('ul.groups div').length){
-            var classname = $('.class_name').html().split(' ').pop();
-            socket.get_xml('admin', classname, num);
+            var class_id = sessionStorage.getItem('admin_class_id');
+            socket.get_xml('admin', class_id, num);
         }
     }
 }

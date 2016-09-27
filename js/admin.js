@@ -2,6 +2,7 @@
 $(function() {
 
     // Initialize variables
+    var $container = $('.container');
     var $create_user_view = $('.create_user_view'); // Div holding user creation view
     var $username_password = $('.username_password_view'); // Div holding user creation view
     var $create_view = $('.create_view'); // Div holding class creation view
@@ -67,7 +68,15 @@ $(function() {
             socket.check_session(localStorage.getItem('admin_id'), localStorage.getItem('check'));
         }
     }
+    else{
+        $username_password.show();
+    }
+
+    $container.show();
+
     
+
+
 
     //
     // SECRET INPUT
@@ -104,6 +113,11 @@ $(function() {
         $('.re_new_password').val("");
         $('.Secret').val("");
 
+        $('.error_new_username').hide();
+        document.getElementById("new_username").style.borderColor = null;
+        $('.error_re_new_password').hide();
+        document.getElementById("re_new_password").style.borderColor = null;
+
     });
 
     //
@@ -128,8 +142,11 @@ $(function() {
 
         if($new_password.val() == $re_new_password.val())
             socket.create_admin($new_username.val(), $new_password.val(),  $Secret.val());
-        else
-            alert(" Both your passwords dont match each other");
+        else{
+            document.getElementById("re_new_password").style.borderColor = "red";
+            $('.error_re_new_password').show();
+        }
+            
     });
 
     //
@@ -274,6 +291,15 @@ $(function() {
         localStorage.setItem('admin_id', '');
         localStorage.setItem('check', '');
         sessionStorage.setItem('admin_secret', '');
+        $('.error_password').hide();
+        $('.error_username').hide();
+        $('.error_class_input').hide();
+        document.getElementById("password").style.borderColor = null;
+        document.getElementById("username").style.borderColor = null;
+        document.getElementById("class_input").style.borderColor = null;
+        $('.class_input').val("");
+        $('.group_input').val("");
+
     });
 
     // 
@@ -314,17 +340,17 @@ $(function() {
         //alert(tab);
         if(tab == 'design'){
 
-            var params = {
+                var params = {
                 "container":"appletContainer",
                 "id":"applet",
-                "width":1000,
+                "width":800,
                 "height":600,
-                "perspective":"",
-                "showAlgebraInput":false,
+                "perspective":"AG",
+                "showAlgebraInput":true,
                 "showToolBarHelp":false,
-                "showMenubar":false,
+                "showMenubar":true,
                 "enableLabelDrags":false,
-                "showResetIcon":false,
+                "showResetIcon":true,
                 "showToolbar":true,
                 "allowStyleBar":false,
                 "useBrowserForJS":true,
@@ -336,7 +362,7 @@ $(function() {
                 "isPreloader":false,
                 "screenshotGenerator":false,
                 "preventFocus":false
-            };
+    };
             
             getToolbarIcons();
             appletInit(params);
@@ -375,7 +401,6 @@ $(function() {
                 };
                 appletInit(params);
             });
-
             socket.get_toolbars(sessionStorage.getItem('admin_class_id'));
 
         }else if (tab == 'view'){

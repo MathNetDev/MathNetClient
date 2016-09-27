@@ -14,8 +14,8 @@
   <link rel="stylesheet" type="text/css" href="js/jquery-ui/jquery-ui.min.css">
 </head>
 
-<body>
-  <div class="container">
+<body id="body">
+  <div class="container" hidden>
   <!-- Nav tabs -->
     <ul class="nav nav-tabs" role="tablist">
       <li role="presentation" class="active"><a href="#admin" aria-controls="design" role="tab" data-toggle="tab" id="admin_tab">Admin</a></li>
@@ -31,7 +31,7 @@
         <div class="col-md-12">
 
           <!-- Main View Begins-->
-          <div class="username_password_view">
+          <div class="username_password_view" hidden>
 
             <!-- Title -->
             <div class="col-md-12 col-sm-12">
@@ -46,9 +46,10 @@
             <div class="col-md-12 col-sm-12">
               <div class="col-md-4 col-sm-4"></div>
               <div class="col-md-4 col-sm-4">
-                <input type="text" class="form-control username" id="user_id" name="user_id" required="" placeholder="User ID"/><br/>
-                <input type="password" class="form-control password" id="password" name="password" required="" placeholder="Password"/><br/>
-                <input class="btn btn-lg btn-primary btn-block login_button" type="submit" value="Login" id="login"/><br/>
+                <input type="text" class="form-control username" id="username" name="user_id" required="" placeholder="User ID"/>
+                <p class = "error error_username" hidden> User ID does not exist </p> <br/>
+                <input type="password" class="form-control password" id="password" name="password" required="" placeholder="Password"/>
+                <p class = "error error_password" hidden> Wrong Password Try Again </p> <br/>
               </div>
               <div class="col-md-4 col-sm-4"></div>
             </div>
@@ -57,6 +58,7 @@
             <div class="col-md-12 col-sm-12">
                 <div class="col-md-4 col-sm-4"></div>
                 <div class="col-md-4 col-sm-4">
+                  <input class="btn btn-lg btn-primary btn-block login_button" type="submit" value="Login" id="login"/><br/>
                   <p style="text-align: center"> New to Math Net? </p>
                 </div>
               <div class="col-md-4 col-sm-4"></div>
@@ -64,9 +66,9 @@
 
             <!-- New user button -->
             <div class="col-md-12 col-sm-12">
-              <div class="col-md-5 col-sm-4"></div>
-              <div class="col-md-4 col-sm-4">
-                <input class="btn btn-default new_user" style="align: center"ype="button" value="Click Here" /><br/><br/>
+              <div class="col-md-4 col-sm-4"></div>
+              <div class="col-md-4 col-sm-4" style="text-align: center">
+                <input class="btn btn-default new_user" type="button" value="Click Here" /><br/><br/>
               </div>
               <div class="col-md-4 col-sm-4"></div>
             </div>  
@@ -75,7 +77,7 @@
           <!-- Main View  Ends-->
 
           <!-- Username View Begins -->
-          <div class="create_user_view">
+          <div class="create_user_view" hidden>
 
             <!-- Title -->
             <div class="col-md-12 col-sm-12">
@@ -90,9 +92,14 @@
             <div class="col-md-12 col-sm-12">
               <div class="col-md-4 col-sm-4"></div>
               <div class="col-md-4 col-sm-4">
-                <input type="text" class="form-control new_username" id="user_id" name="user_id" required="" placeholder="New Username"/><br/>
-                <input type="password" class="form-control new_password" id="password" name="password" required="" placeholder="Password"/><br/>
-                <input type="password" class="form-control re_new_password" id="password" name="password" required="" placeholder="Re-Type Password"/><br/>
+
+                <input type="text" class="form-control new_username" id="new_username" name="new_username" required="" placeholder="New Username"/>
+                <p class = "error error_new_username" hidden> Username Already Exists </p> <br/>
+
+                <input type="password" class="form-control new_password" id="new_password" name="new_password" required="" placeholder="Password"/><br/>
+                <input type="password" class="form-control re_new_password" id="re_new_password" name="re_new_password" required="" placeholder="Re-Type Password"/>
+                <p class = "error error_re_new_password" hidden> Both Passwords Do Not Match </p> <br/>
+
                 <input type="password" class="form-control Secret" id="password" name="password" required="" placeholder="Secret Code"/><br/>
                 <input class="btn btn-lg btn-primary btn-block create_admin_button" type="submit" value="Create Admin"/><br/>
               </div>
@@ -100,39 +107,113 @@
             </div>
             <input class="btn btn-default create_admin_back" type="submit" value="Back"/><br/><br/>
           </div>
-
+          <!-- Username View Ends -->
 
           <!-- This div appears when an admin leaves a class or has not made on yet -->
           <div class="create_view" style="display:none">
-            <h3>Click To Join A Past Class</h3>
+
+            <!-- Heading for classes view -->
+            <div class="col-md-12 col-sm-12">
+              <div class="col-md-4 col-sm-4"></div>
+                <div class="col-md-4 col-sm-4">
+                  <h2 style="text-align: center"> Click To Join A Class </h2></div>
+                <div class="col-md-4 col-sm-4"></div>
+            </div>
+            <!-- All classes -->
             <div>
               <h3 id="get-classes-head"></h3>
               <div class="col-md-12 col-lg-12 col-xs-12 col-sm-12" id="get-classes"></div>
             </div>
-            <h3> or Create a new Class</h3>
-            <h4>Class Name</h4>
-            <input class="class_input" type="text" placeholder="Class Name">
-            <h4>Number of Groups</h4>
-            <input class="group_input" type="number" value="0">
-            <input class="btn btn-default create_button" type="button" value="Create Class">  <br>
-            <input id = "logout_class_button" class="btn btn-default logout_class_button" type="button" value="Logout">
+
+            <!-- Line Break -->
+            <table width="100%">
+              <td><hr/></td>
+                <td style="width:1px; padding: 0 10px; white-space: nowrap;">OR</td>
+              <td><hr /></td>
+            </table>​
+
+            <!-- New Class heading -->
+            <div class="col-md-12 col-sm-12">
+              <div class="col-md-4 col-sm-4"></div>
+                <div class="col-md-4 col-sm-4">
+                  <h3 style="text-align: center"> Create New Class</h3></div>
+                <div class="col-md-4 col-sm-4"></div>
+            </div>
+
+            <!-- New Class -->
+            <div class="col-md-12 col-sm-12">
+              <div class="col-md-4 col-sm-4"></div>
+              <div class="col-md-4 col-sm-4">
+                <input type="text" class="form-control class_input" id="class_input" name="class_input" required="" placeholder="Class Name"/> 
+                <p class = "error error_class_input" hidden> Class Name Already Exists </p> <br/>
+                <input type="number" class="form-control group_input" id="group_input" name="group_input" required="" placeholder="Number Of Groups"/><br/>
+              </div>
+              <div class="col-md-4 col-sm-4"></div>
+            </div>    
+            <!-- The buttons -->
+            <div class="col-md-12 col-sm-12">
+              <div class="col-md-4 col-sm-4"></div>
+              <div class="col-md-4 col-sm-4" style="text-align: center">
+                <input class="btn btn-primary btn-block create_button" type="button" value="Create Class" /><br/><br/>
+                <input id = "logout_class_button" class="btn btn-default btn-danger logout_class_button" type="button" value="Logout">
+              </div>
+              <div class="col-md-4 col-sm-4"></div>
+            </div>  
+            <!-- End Of Buttons -->
+
           </div>
 
 
           <!-- This div appears once an admin has created a class -->
           <div class="class_view" style="display:none">
-            <header>
-              <h3 class="class_name"></h3>
-            </header>
-
-            <input class="btn btn-default add_button" type="button" value="Add Group"> 
-            <input class="btn btn-default delete_button" type="button" value="Delete Group">
-            <input class="btn btn-default leave_button" type="button" value="Leave Class">
-            <input id = "delete_class_button" class="btn btn-default delete_class_button" type="button" value="Delete Class">
-            
-            <div class="manage_view">
-              <ul class="groups"></ul>
+            <!-- Title -->
+            <div class="col-md-12 col-sm-12">
+              <div class="col-md-4 col-sm-4"></div>
+              <div class="col-md-4 col-sm-4">
+                <h1 class = "class_name" style = "text-align: center"></h1>
+              </div>
+              <div class="col-md-4 col-sm-4"></div>
             </div>
+
+            <!-- Title -->
+            <div class="col-md-12 col-sm-12">
+              <div class="col-md-4 col-sm-4">
+                <input class="btn btn-default btn-danger leave_button" type="button" value="Leave Class">
+              </div>
+              <div class="col-md-4 col-sm-4">
+                <h3 class = "class_id" style = "text-align: center"></h3><br/>
+              </div>
+              <div class="col-md-4 col-sm-4"></div>
+            </div>
+
+
+            <div class="col-md-12 col-sm-12">
+              <div class="col-md-2 col-sm-2"></div>
+              <div class="col-md-8 col-sm-8" style = "text-align: center">
+                <input class="btn btn-primary add_button" type="button" value="Add Group"> &emsp;&emsp;&emsp;
+                <input class="btn btn-primary delete_button" type="button" value="Delete Group"> &emsp;&emsp;&emsp;
+                <input id = "delete_class_button" class="btn btn-danger delete_class_button" type="button" value="Delete Class"> <br/><br/>
+              </div>
+              <div class="col-md-2 col-sm-2"></div>
+            </div>  
+
+            <!-- The place to store the lists -->
+            <div class="manage_view" hidden>
+              <ul class="groups" ></ul>
+            </div>
+
+                        <!-- Line Break -->
+            <table width="100%">
+              <td><hr/></td>
+                <td style="width:1px; padding: 0 10px; white-space: nowrap;">GROUPS AND STUDENTS</td>
+              <td><hr /></td>
+            </table>​ <br/>
+
+            <div class="col-md-12 lists" style="align: center">
+          </div> 
+
+
+
 
             <div class="settings_view">
               <h4>Settings</h4>
@@ -144,6 +225,7 @@
           </div>
         </div>
       </div>
+
       <div role="tabpanel" class="tab-pane" id="design">
         <div class="col-md-12">
           <h3>Activity Designer</h3>
@@ -185,7 +267,7 @@
             <button id = "trash" class = "btn-trash" type="button" style="border: 0; background: transparent">
               <span class="glyphicon glyphicon-trash" aria-hidden="true" style= "height:10px"></span>
             </button>
-          </div>
+          </div> <br/><br/><br/>
           <div class="javascriptapplet">
             <div class="geogebrawebapplet" id="appletContainer" style="width:100%;height:650px;display: block;"></div>
           </div> 
@@ -218,6 +300,9 @@
   <script src="js/ggbapplet_functions.js"></script>
 
   <script>
+    $(document).ready(function() {
+    $('#body').show();
+    });
     var x2js = new X2JS();
     var socket = Admin.Socket(io(host));
   </script>

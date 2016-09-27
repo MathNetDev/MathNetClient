@@ -14,10 +14,23 @@ function server_error(error) {
     var $login_view = $('.login_view');
     var $class_view = $('.class_view');
     var $group_view = $('.group_view');
+    var str = error;
 
-    console.log(error);
-    sessionStorage.setItem('error', error);
-    location.reload();
+    if (str.indexOf("Invalid username") !== -1) {
+        document.getElementById("class_id").style.borderColor = "red";
+        $('.error_class_id').show();
+        console.log("logout");
+    }
+
+    else if (str.indexOf("invalid.") !== -1) {
+        document.getElementById("nickname").style.borderColor = "red";
+        $('.error_nickname').show();
+    }
+    else {
+        console.log(error);
+        sessionStorage.setItem('error', error);
+        location.reload();
+    }
 }
 
 //shows class_view and sets sessionStorage for class_id and username, then calls groups_get
@@ -48,6 +61,13 @@ function logout_response(disconnect) {
     $class_view.hide();
     $group_view.hide();
 
+
+    $('.error_nickname').hide();
+    $('.error_class_id').hide();
+    document.getElementById("class_id").style.borderColor = null;
+    document.getElementById("nickname").style.borderColor = null;
+    $('.nickname').val("");
+    $('.class_id').val("");
     if(!disconnect){
         sessionStorage.removeItem('class_id');
         sessionStorage.removeItem('username');
@@ -59,13 +79,11 @@ function groups_get_response(username, class_id, groups) {
     var $groups = $('#buttons');
     var current_user = sessionStorage.getItem('username');
     var current_class = sessionStorage.getItem('class_id');
-
     $groups.empty();
-
     for (var i in groups){
-        var button = '<li><input type="button" id="grp' + groups[i].grp_name + '" value="Group ';
+        var button = '<input type="button" class="btn btn-md btn-primary " style="margin: 0em 1em 1em 0em" id="grp' + groups[i].grp_name + '" value="Group ';
         button += groups[i].grp_name + ' - '+ groups[i].num;
-        button += '" /></li>';
+        button += '" />';
         $groups.append(button);
     }
 }
@@ -221,17 +239,16 @@ function get_settings_response(class_id, settings) {
 //adds a new group button
 function add_group_response() {
     var $groups = $('#buttons');
-    var group_number = $('#buttons > li:last').index() + 2;
-    var button = '<li><input type="button" id="grp' + group_number + '" value="Group ';
-
+    var group_number = $groups.children().length + 1;
+    var button = '<input type="button" class="btn btn-md btn-primary " style="margin: 0em 1em 1em 0em" id="grp' + group_number + '" value="Group ';
     button += group_number + ' - '+ 0;
-    button += '" /></li>';
-    
+    button += '" />';
     $groups.append(button);
 }
 
 //removes last group button
 function delete_group_response() {
+    $('#buttons input').last().remove();
     $('#buttons > li:last').remove();
 }
 

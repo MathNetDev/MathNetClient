@@ -1,3 +1,12 @@
+hr { 
+    display: block;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    margin-left: auto;
+    margin-right: auto;
+    border-style: inset;
+    border-width: 1px;
+}
 .axis path,
 .axis line{
   fill: none;
@@ -12,14 +21,34 @@
   margin-top: 5px;
   margin-bottom: 5px;
 }
-
-#delete_class_button {
-  color: red;
+.info_box{
+  background-color: #428bca;
+  width: 200px;
+  min-height: 67px;
+  max-height:210px;
+  overflow-y:scroll;
+  display:block;
+  overflow:auto;
 }
 
-#logout_class_button{
-  background-color: red;
-  color: white;
+.info_box1{
+  background-color: #5cb85c;
+  width: 200px;
+  min-height: 67px;
+  max-height:210px;
+  overflow-y:scroll;
+  display:block;
+  overflow:auto;
+}
+
+.info_box2{
+  background-color: #5bc0de;
+  width: 200px;
+  min-height: 67px;
+  max-height:210px;
+  overflow-y:scroll;
+  display:block;
+  overflow:auto;
 }
 
 #get-classes{
@@ -36,6 +65,11 @@
 #get-classes div:hover{
   background-color: rgba(211, 214, 34, 0.42);
 }
+
+.leave_button{
+  position:  relative;
+  top: 15px; 
+}
 .settings_view{
   margin:4em 0 0 0;
 }
@@ -45,6 +79,10 @@
 .settings_view input[type=checkbox]{
   margin:0 .5em 0 0;
 }
+.error{
+  color: red;
+}
+
 .toolbox{
   margin:1em 0;
   padding:.5em;

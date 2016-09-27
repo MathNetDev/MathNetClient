@@ -18,7 +18,9 @@ $(function() {
             socket.group_join(sessionStorage.getItem('username'), sessionStorage.getItem('class_id'), 
                               sessionStorage.getItem('group_id'));          
         }//emit group_join if there is an group_id
-    }//emit login if there is a class_id 
+    }//emit login if there is a class_id
+    else
+        $login_view.show(); 
 
     $login_button.bind('click', function() {
         socket.login($username.val().trim(), $class_id.val().trim());
@@ -32,6 +34,8 @@ $(function() {
                      sessionStorage.removeItem('group_id');
                      sessionStorage.removeItem('username');
                  });
+
+    $('.everything').show();
 
 });
 
