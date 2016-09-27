@@ -240,7 +240,7 @@ function get_settings_response(class_id, settings) {
 function add_group_response() {
     var $groups = $('#buttons');
     var group_number = $groups.children().length + 1;
-    var button = '<input type="button" class="btn btn-sm btn-default" style="margin: 0em 0.5em 0.5em 0em" id="grp' + group_number + '" value="Group ';
+    var button = '<input type="button" class="btn btn-md btn-primary " style="margin: 0em 1em 1em 0em" id="grp' + group_number + '" value="Group ';
     button += group_number + ' - '+ 0;
     button += '" />';
     $groups.append(button);
@@ -248,6 +248,7 @@ function add_group_response() {
 
 //removes last group button
 function delete_group_response() {
+    $('#buttons input').last().remove();
     $('#buttons > li:last').remove();
 }
 

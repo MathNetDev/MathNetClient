@@ -63,8 +63,12 @@ function add_class_response(class_id, class_name, group_count) {
     var lists_html = "";
     var group_number = parseInt(group_count);
     for (var group=1; group < group_number+1; group++) {
-        lists_html += "<div class = 'info_box "+ group +"'> </div>";
-
+        if(group%3 == 0)
+            lists_html += "<div style='margin-left: 1em; margin-bottom: 1em;' class='col-md-2 info_box1 gr"+ group +"'><h3 style = 'text-align: center; color: white;'>Group "+ group + "</h3></div>";
+        else if(group%3 == 1 )
+            lists_html += "<div style='margin-left: 1em; margin-bottom: 1em;' class='col-md-2 info_box gr"+ group +"'><h3 style = 'text-align: center; color: white;'>Group "+ group + "</h3></div>";
+        else
+             lists_html += "<div style='margin-left: 1em; margin-bottom: 1em;' class='col-md-2 info_box2 gr"+ group +"'><h3 style = 'text-align: center; color: white;'>Group "+ group + "</h3></div>";
         // $lists.append($("<div class = '"+group+" g'>"+ group +"</div>").attr('id', 'well')); //create new div
         groups_html += "<li>Group " + group;
         groups_html += "<div class='g" + group + "'></div></li>";
@@ -112,13 +116,23 @@ function add_class_response(class_id, class_name, group_count) {
  */
 function add_group_response() {
     var $groups = $('.groups');
+    var $lists = $('.lists');
     
     $('#error_frame').html('');
     var new_group = "";
+    var lists_html = "";
     var group_number = $('.groups > li:last').index() + 2;
     new_group += "<li>Group " + group_number;
     new_group += "<div class='g" + group_number + "'></div></li>";
+
+    if(group_number%3 == 0)
+        lists_html += "<div style='margin-left: 1em; margin-bottom: 1em;' class=' col-md-2 info_box1 gr"+ group_number +"'><h3 style = 'text-align: center; color: white;'>Group "+ group_number + "</h3></div>";
+    else if(group_number%3 == 1 )
+        lists_html += "<div style='margin-left: 1em; margin-bottom: 1em;' class='col-md-2 info_box gr"+ group_number +"'><h3 style = 'text-align: center; color: white;'>Group "+ group_number + "</h3></div>";
+    else
+         lists_html += "<div style='margin-left: 1em; margin-bottom: 1em;' class='col-md-2 info_box2 gr"+ group_number +"'><h3 style = 'text-align: center; color: white;'>Group "+ group_number + "</h3></div>";
     $groups.append(new_group);
+    $lists.append(lists_html);
 }
 
 /**
@@ -162,7 +176,10 @@ function delete_toolbar_response(response) {
  */
 function delete_group_response() {
     $('#error_frame').html('');
+    var group_number = $('.groups > li:last').index() + 1;
     $('.groups > li:last').remove(); 
+    $('.g'+group_number).remove();
+    $('.gr'+group_number).remove();
 }
 
 /**
@@ -219,6 +236,7 @@ function leave_class_response(disconnect) {
  */
 function group_info_response(username, class_id, group_id, group, status) {
     var $people = $('.g' + group_id);
+    var $real_people = $('.gr' + group_id);
     //$people.html('');
     
     if (status) {
@@ -226,13 +244,18 @@ function group_info_response(username, class_id, group_id, group, status) {
             var member = '<li id="' + group[i].member_name +'"><ul><li>';
             member += group[i].member_name;
             member += '</li></ul></li>';
+
+            var real_member = '<p id="l' + group[i].member_name +'"style = "text-align : center; color: white;">'+group[i].member_name;+'</p>';
+            
             $people.append(member);
+            $real_people.append(real_member);
         }
     }
     else {
         username = username.replace(/&lt;/g, "<").replace(/&gt;/g, ">");
         username = escapeStr(username);
         $('li[id="' + username + '"]').remove();
+        $('p[id="l' + username + '"]').remove();
         console.log(group_id);
     }
 }
@@ -348,7 +371,7 @@ function ggbOnInit(arg) {
     console.log(arg);
     document[arg].evalCommand("CenterView[(0,0)]");
     document[arg].evalCommand("ZoomOut[4,(0,0)]");
-    document[arg].setCustomToolBar('');
+    //document[arg].setCustomToolBar('0 | 1 501 67 , 5 19 , 72 75 76 | 2 15 45 , 18 65 , 7 37 | 4 3 8 9 , 13 44 , 58 , 47 | 16 51 64 , 70 | 10 34 53 11 , 24  20 22 , 21 23 | 55 56 57 , 12 | 36 46 , 38 49  50 , 71 | 30 29 54 32 31 33 | 17 26 62 73 , 14 68 | 25 52 60 61 | 40 41 42 , 27 28 35 , 6');
 
     if (index != -1){
         num = arg.slice(index);

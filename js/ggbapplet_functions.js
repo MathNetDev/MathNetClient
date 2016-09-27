@@ -5,6 +5,8 @@ appletName = document.applet;
 //This function takes the new XML, changes it and the old XML to a JSON format, and then 
 // parses it, and changes it back to XML to be set in the geogebra applet.
 function appletSetExtXML(xml, toolbar, id){
+
+    console.log("setXml");
     var appletName = document.applet;
     console.log('appletSetExtXML id param: ' + id);
     if (typeof document['applet' + id] !== 'undefined'){

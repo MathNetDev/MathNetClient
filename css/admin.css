@@ -22,11 +22,34 @@ hr {
   margin-bottom: 5px;
 }
 .info_box{
-  height: 100px;
-  width: 100px;
-  border-style: solid;
+  background-color: #428bca;
+  width: 200px;
+  min-height: 67px;
+  max-height:210px;
+  overflow-y:scroll;
+  display:block;
+  overflow:auto;
 }
 
+.info_box1{
+  background-color: #5cb85c;
+  width: 200px;
+  min-height: 67px;
+  max-height:210px;
+  overflow-y:scroll;
+  display:block;
+  overflow:auto;
+}
+
+.info_box2{
+  background-color: #5bc0de;
+  width: 200px;
+  min-height: 67px;
+  max-height:210px;
+  overflow-y:scroll;
+  display:block;
+  overflow:auto;
+}
 
 #get-classes{
     margin-bottom: 2em;

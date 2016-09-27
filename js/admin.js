@@ -340,11 +340,11 @@ $(function() {
         //alert(tab);
         if(tab == 'design'){
 
-            var params = {
+                var params = {
                 "container":"appletContainer",
                 "id":"applet",
-                "width":1000,
-                "height":730,
+                "width":800,
+                "height":600,
                 "perspective":"AG",
                 "showAlgebraInput":true,
                 "showToolBarHelp":false,
@@ -362,11 +362,10 @@ $(function() {
                 "isPreloader":false,
                 "screenshotGenerator":false,
                 "preventFocus":false
-            };
+    };
             
             getToolbarIcons();
             appletInit(params);
-
 
             $(".toolbar-target").droppable({
                 drop: function( event, ui ) {
