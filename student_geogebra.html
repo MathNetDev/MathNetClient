@@ -143,6 +143,11 @@
       <script src="js/class.js"></script>
       <script src="js/groups.js"></script>
       <script>
+        $(document).ready(function() {
+          $(".javascriptapplet").mouseup(function(){
+            check_xml(document.applet.getXML(), socket);
+          });        
+        });
         var x2js = new X2JS();
         var socket = Student.Socket(io(host));
       </script>
