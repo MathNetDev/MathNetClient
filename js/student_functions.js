@@ -177,7 +177,7 @@ function group_info_response(username, class_id, group_id, members, status) {
                 member += members[i].member_name + '</li>';
             }
             else {
-                $group_name.html('Group: ' + current_group); //only update this for the new member
+                $group_name.html('Group: ' + current_group + ', ' + members[i].member_name); //only update this for the new member
                 var member = '<li id="' + members[i].member_name + '">';
                 member += members[i].member_name + ' (You)</li>';
             }
