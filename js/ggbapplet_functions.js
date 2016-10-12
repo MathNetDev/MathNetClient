@@ -218,7 +218,9 @@ function checkUser(object){
 
     if (username !== ggb_user && move){
         document.applet.setFixed(object, true);
-    } 
+    }
+    // on update of Geogebra view, send clients updated XML
+    check_xml(document.applet.getXML(), socket);
 }
 
 //This function appends a set of button toolbar items to a container
