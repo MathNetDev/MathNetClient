@@ -385,7 +385,9 @@ function ggbOnInit(arg) {
 
 //handler for xml_change response, appends message to chatbox, and calls appletSetExtXML()
 function xml_change_response(username, class_id, group_id, xml, toolbar) {
-    appletSetExtXML(xml, toolbar, group_id);
+    var tab = $('a[data-toggle="tab"][aria-expanded=true]').html();
+    if(tab == "View")
+        appletSetExtXML(xml, toolbar, group_id);
     //ggbOnInit();
 }
 
