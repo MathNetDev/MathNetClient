@@ -274,10 +274,6 @@ function get_classes_response(classes, secret){
     $create_view.show();
     $class_view.hide();
 
-    $username_password_view.hide();
-    $create_view.show();
-    $class_view.hide();
-
     sessionStorage.setItem('admin_secret', secret);
 
     $('#get-classes').html('');
@@ -342,7 +338,6 @@ function check_session_response(admin_id, check){
         localStorage.setItem('check', '');
         sessionStorage.setItem('admin_secret', '');
         console.log(-1);
-        $('.username_password_view').show();
     }
 
     if(check == 0 ){
@@ -350,7 +345,6 @@ function check_session_response(admin_id, check){
         localStorage.setItem('check', '');
         sessionStorage.setItem('admin_secret', '');
         console.log(0);
-        $('.username_password_view').show();
     }
 
 }

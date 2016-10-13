@@ -68,10 +68,8 @@ $(function() {
             socket.check_session(localStorage.getItem('admin_id'), localStorage.getItem('check'));
         }
     }
-    else{
-        $username_password.show();
-    }
-
+    
+    $username_password.show();
     $container.show();
 
     
