@@ -64,9 +64,9 @@ function add_class_response(class_id, class_name, group_count) {
     var group_number = parseInt(group_count);
     for (var group=1; group < group_number+1; group++) {
         if(group%3 == 0)
-            lists_html += "<div style='margin-left: 1em; margin-bottom: 1em;' class='col-md-2 info_box1 gr"+ group +"'><h3 style = 'text-align: center; color: white;'>Group "+ group + "</h3></div>";
+            lists_html += "<div style='margin-left: 1em; margin-bottom: 1em;' class=' col-md-2 info_box1 gr"+ group+"'><h3 style = 'text-align: center; color: white;'>Group "+ group + "</h3></div>";
         else if(group%3 == 1 )
-            lists_html += "<div style='margin-left: 1em; margin-bottom: 1em;' class='col-md-2 info_box gr"+ group +"'><h3 style = 'text-align: center; color: white;'>Group "+ group + "</h3></div>";
+            lists_html += "<div style='margin-left: 1em; margin-bottom: 1em;' class='col-md-2 info_box gr"+ group+"'><h3 style = 'text-align: center; color: white;'>Group "+ group + "</h3></div>";
         else
              lists_html += "<div style='margin-left: 1em; margin-bottom: 1em;' class='col-md-2 info_box2 gr"+ group +"'><h3 style = 'text-align: center; color: white;'>Group "+ group + "</h3></div>";
         // $lists.append($("<div class = '"+group+" g'>"+ group +"</div>").attr('id', 'well')); //create new div
@@ -355,6 +355,9 @@ function check_session_response(admin_id, check){
 
 }
 
+function delete_it(form) {
+        console.log(form.choices);
+    }
 /**
  * @function join_class
  * @param class_id

@@ -128,10 +128,16 @@ hr {
 }
 .btn-trash {
   border:0;
-  background:transparent.
+  background:transparent;
 
 }
+.btn-clear {
+  margin:.50em 11em;
+  height:2em;
+  width: 1em;
+  text-align: center;
 
+}
 .btn-sendtoolbar{
   margin:.5em 1em;
 }
