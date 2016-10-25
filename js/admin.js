@@ -213,14 +213,18 @@ $(function() {
     // Clearing the group
     //
     $clear_group_button.bind('click', function(){
-        $(".choices").show();
-        var numgroups = ($('ul.groups div').length)+1;
-        var list = "";
-        for(var i = 1; i < numgroups; i++){
-           list += '<input type="checkbox" value = "' + i + '"> Group ' + i +' <br>';
+        if($(".choices").is(":visible")){
+            $(".choices").hide();
+        } else {
+            $(".choices").show();
+            var numgroups = ($('ul.groups div').length)+1;
+            var list = "<div class='panel panel-default'><div class='panel-body'>";
+            for(var i = 1; i < numgroups; i++){
+               list += '<input type="checkbox" value = "' + i + '"> Group ' + i +' <br>';
+            }
+            list += '<br/><input type="submit" value = "Clear Selected Groups"></div></div>'
+             $('.choices').html(list);
         }
-        list += '<input type="submit" value = "Delete Selected Groups">'
-         $('.choices').html(list);
     });
 
 
