@@ -418,6 +418,7 @@ function views_change(event){
 function view_merge(event){
     $('.mergeview_button').hide();
     $('.unmergeview_button').show();
+    $('#clear_buttons').hide();
 
     var XMLs = {};
     var array = $('#views_checkboxes :checked');
@@ -501,6 +502,7 @@ function unmerge_views(event){
     $('.mergeview_button').show();
     $('.unmergeview_button').hide();
     $('.merge_group').hide();
+    $('#clear_buttons').show();
 
     var array = $('#views_checkboxes :checked');
     for (var i = 0; i < array.length; i++){
