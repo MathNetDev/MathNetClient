@@ -64,11 +64,11 @@ function add_class_response(class_id, class_name, group_count) {
     var group_number = parseInt(group_count);
     for (var group=1; group < group_number+1; group++) {
         if(group%3 == 0)
-            lists_html += "<div style='margin-left: 1em; margin-bottom: 1em;' class=' col-md-2 info_box1 gr"+ group+"'><h3 style = 'text-align: center; color: white;'>Group "+ group + "</h3></div>";
+            lists_html += "<div class='col-md-2 info_box1 gr"+ group+"'><h3 style = 'text-align: center; color: white;'>Group "+ group + "</h3></div>";
         else if(group%3 == 1 )
-            lists_html += "<div style='margin-left: 1em; margin-bottom: 1em;' class='col-md-2 info_box gr"+ group+"'><h3 style = 'text-align: center; color: white;'>Group "+ group + "</h3></div>";
+            lists_html += "<div class='col-md-2 info_box gr"+ group+"'><h3 style = 'text-align: center; color: white;'>Group "+ group + "</h3></div>";
         else
-             lists_html += "<div style='margin-left: 1em; margin-bottom: 1em;' class='col-md-2 info_box2 gr"+ group +"'><h3 style = 'text-align: center; color: white;'>Group "+ group + "</h3></div>";
+            lists_html += "<div class='col-md-2 info_box2 gr"+ group +"'><h3 style = 'text-align: center; color: white;'>Group "+ group + "</h3></div>";
         // $lists.append($("<div class = '"+group+" g'>"+ group +"</div>").attr('id', 'well')); //create new div
         groups_html += "<li>Group " + group;
         groups_html += "<div class='g" + group + "'></div></li>";
@@ -126,11 +126,11 @@ function add_group_response() {
     new_group += "<div class='g" + group_number + "'></div></li>";
 
     if(group_number%3 == 0)
-        lists_html += "<div style='margin-left: 1em; margin-bottom: 1em;' class=' col-md-2 info_box1 gr"+ group_number +"'><h3 style = 'text-align: center; color: white;'>Group "+ group_number + "</h3></div>";
+        lists_html += "<div class='col-md-2 info_box1 gr"+ group_number +"'><h3 style = 'text-align: center; color: white;'>Group "+ group_number + "</h3></div>";
     else if(group_number%3 == 1 )
-        lists_html += "<div style='margin-left: 1em; margin-bottom: 1em;' class='col-md-2 info_box gr"+ group_number +"'><h3 style = 'text-align: center; color: white;'>Group "+ group_number + "</h3></div>";
+        lists_html += "<div class='col-md-2 info_box gr"+ group_number +"'><h3 style = 'text-align: center; color: white;'>Group "+ group_number + "</h3></div>";
     else
-         lists_html += "<div style='margin-left: 1em; margin-bottom: 1em;' class='col-md-2 info_box2 gr"+ group_number +"'><h3 style = 'text-align: center; color: white;'>Group "+ group_number + "</h3></div>";
+        lists_html += "<div class='col-md-2 info_box2 gr"+ group_number +"'><h3 style = 'text-align: center; color: white;'>Group "+ group_number + "</h3></div>";
     $groups.append(new_group);
     $lists.append(lists_html);
 }
