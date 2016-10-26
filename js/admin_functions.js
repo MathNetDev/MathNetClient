@@ -439,7 +439,8 @@ function view_merge(event){
     final_xml = JSON.stringify(final_xml);
     
     appletSetExtXML(final_xml, '', numgroups);
-
+    var applet = document['applet' + numgroups];
+    applet.setPerspective('G');
     $('#views_checkboxes :checkbox').hide();
     $('.merge_group').show();
 }
