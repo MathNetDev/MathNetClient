@@ -126,18 +126,18 @@ hr {
   top:-.25em;
   right:-.5em;
 }
-.btn-trash {
+/*.btn-trash {
   border:0;
   background:transparent.
 
-}
+}*/
 
-.btn-sendtoolbar{
+/*.btn-sendtoolbar{
   margin:.5em 1em;
-}
+}*/
 .ggbtoolbar{
   display: block;
-  width: 1000px;
+  /*width: 1000px;*/
   min-height: 50px;
   background: none;
   z-index: 10000;
@@ -185,11 +185,11 @@ hr {
 .tick line{
   opacity: 0.2;
 }
-#trash{
+/*#trash{
   position : relative;
   top : 5px;
   left : 5px;
-}
+}*/
 
 #field-svg {
   border-style: solid;
