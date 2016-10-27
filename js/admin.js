@@ -40,6 +40,7 @@ $(function() {
     var $login_button = $('.login_button'); // Login button
     var $new_user = $('.new_user'); // new username field
     var $sendtoolbar_button = $('.btn-sendtoolbar'); // Sending the toolbar to everyone
+    var $sendconstruction_button = $('.btn-sendconstruction'); // Sending the toolbar to everyone
     var $savetoolbar_button = $('.btn-savetoolbar'); // Saving the toolbar
     var $deletetoolbar_button = $('.btn-deletetoolbar'); // Deleting toolbars
     var $usetoolbar_button = $('.btn-usetoolbar');
@@ -71,10 +72,8 @@ $(function() {
             socket.check_session(localStorage.getItem('admin_id'), localStorage.getItem('check'));
         }
     }
-    else{
-        $username_password.show();
-    }
-
+    
+    $username_password.show();
     $container.show();
 
     
@@ -194,7 +193,14 @@ $(function() {
         var toolbar_str = toolbar_locs.join('|');
         console.log(toolbar_str);
         for(var i = 1; i < numgroups; i++){
-            socket.xml_change('admin', sessionStorage.getItem('admin_class_id'), i, document.applet.getXML(), toolbar_str);
+            socket.xml_change('admin', sessionStorage.getItem('admin_class_id'), i, '', toolbar_str);
+        }
+    });
+
+    $sendconstruction_button.bind('click', function(){
+        var numgroups = ($('ul.groups div').length)+1;
+        for(var i = 1; i < numgroups; i++){
+            socket.xml_change('admin', sessionStorage.getItem('admin_class_id'), i, document.applet.getXML(), '');
         }
     });
 
@@ -325,16 +331,13 @@ $(function() {
     // DELETING A TOOLBAR
     //
     $deletetoolbar_button.bind('click', function(){
+        var result = confirm("Are you sure you want to delete this toolbar?");
+        if (result) {
+            var select = document.getElementById("mySelect");
+            var id = select.selectedIndex;
 
-    var result = confirm("Are you sure you want to delete this toolbar?");
-    if (result) {
-    
-        var select = document.getElementById("mySelect");
-        var id = select.selectedIndex;
-        socket.delete_toolbar(sessionStorage.getItem('admin_class_id'), select[id].text);
-
-
-    }
+            socket.delete_toolbar(sessionStorage.getItem('admin_class_id'), select[id].text);
+        }
      });
 
     //

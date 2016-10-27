@@ -1,6 +1,7 @@
 //all document.applet (geogebra) calls are documented at http://www.geogebra.org/manual/en/Reference:JavaScript
 var cur_xml = '<xml/>';
 appletName = document.applet;
+var timeoutHandle;
 
 //This function takes the new XML, changes it and the old XML to a JSON format, and then 
 // parses it, and changes it back to XML to be set in the geogebra applet.
@@ -26,7 +27,8 @@ function appletSetExtXML(xml, toolbar, id){
     var cur_json = x2js.xml_str2json(cur_xml);
     var new_json = x2js.xml_str2json(xml);
     var commandString = "";
-
+    //debugger;
+    console.log(new_json);
     if(new_json === null){
         return;
     }
@@ -68,6 +70,9 @@ function commandParsing(new_json){
 
     for (var i = 0; i < array.length; i++){
         //console.log(array[i]);
+        // if (array[i]._name == 'Point'){
+        //     continue;
+        // }
         commandString += array[i]._name + "[ ";
         for (var point in array[i].input){
             commandString += array[i]["input"][point] + ",";
@@ -77,6 +82,8 @@ function commandParsing(new_json){
             var stack = [];
             var label = array[i]["output"][point];
             var len = new_json.geogebra.construction.element.length;
+
+
 
             for (var j = 0; j < len; j++){
                 if (label == new_json["geogebra"]["construction"]["element"][j]["_label"]){
@@ -184,15 +191,23 @@ function checkLabels(appletName){
 //This function sends the socket call that there was a XML change,
 // and takes the new XML, and the socket that the call will go through. 
 function check_xml(xml, socket){
-    cur_xml = xml;
-    var $messages = $("#messages");
-    var username = sessionStorage.getItem('username');
-    var class_id = sessionStorage.getItem('class_id');
-    var group_id = sessionStorage.getItem('group_id');
-    var toolbar = sessionStorage.getItem('toolbar');
 
-    $messages.prepend(sessionStorage.getItem("username") + ' has changed the xml.<br/>');
-    socket.xml_change(username, class_id, group_id, cur_xml, toolbar);
+    if (timeoutHandle != undefined){
+        
+        window.clearTimeout(timeoutHandle);
+    }
+    timeoutHandle = window.setTimeout(function(){
+        cur_xml = xml;
+        var $messages = $("#messages");
+        var username = sessionStorage.getItem('username');
+        var class_id = sessionStorage.getItem('class_id');
+        var group_id = sessionStorage.getItem('group_id');
+        var toolbar = sessionStorage.getItem('toolbar');
+
+        $messages.prepend(sessionStorage.getItem("username") + ' has changed the xml.<br/>');
+        socket.xml_change(username, class_id, group_id, cur_xml, toolbar);
+
+    }, 1000);
 }
 
 //This function is an add listener added in gbbOnInit()
