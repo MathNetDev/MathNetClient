@@ -29,6 +29,8 @@ hr {
   overflow-y:scroll;
   display:block;
   overflow:auto;
+  margin-left: 1em;
+  margin-bottom: 1em;
 }
 
 .info_box1{
@@ -39,6 +41,8 @@ hr {
   overflow-y:scroll;
   display:block;
   overflow:auto;
+  margin-left: 1em;
+  margin-bottom: 1em;
 }
 
 .info_box2{
@@ -49,6 +53,8 @@ hr {
   overflow-y:scroll;
   display:block;
   overflow:auto;
+  margin-left: 1em;
+  margin-bottom: 1em;
 }
 
 #get-classes{
@@ -128,11 +134,19 @@ hr {
 }
 /*.btn-trash {
   border:0;
-  background:transparent.
-
+  background:transparent;
 }*/
 
 /*.btn-sendtoolbar{
+}
+.btn-clear {
+  margin:.50em 11em;
+  height:2em;
+  width: 1em;
+  text-align: center;
+
+}
+.btn-sendtoolbar{
   margin:.5em 1em;
 }*/
 .ggbtoolbar{

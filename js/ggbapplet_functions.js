@@ -19,7 +19,7 @@ function appletSetExtXML(xml, toolbar, id){
         console.log('setting ' + appletName.id + ' custom toolbar to: ' + toolbar);
         appletName.setCustomToolBar(toolbar);
     }
-
+    console.log(xml);
     cur_xml = appletName.getXML();
     xml = xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>');
     xml = JSON.parse(xml);

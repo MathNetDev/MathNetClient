@@ -64,11 +64,11 @@ function add_class_response(class_id, class_name, group_count) {
     var group_number = parseInt(group_count);
     for (var group=1; group < group_number+1; group++) {
         if(group%3 == 0)
-            lists_html += "<div style='margin-left: 1em; margin-bottom: 1em;' class='col-md-2 info_box1 gr"+ group +"'><h3 style = 'text-align: center; color: white;'>Group "+ group + "</h3></div>";
+            lists_html += "<div class='col-md-2 info_box1 gr"+ group+"'><h3 style = 'text-align: center; color: white;'>Group "+ group + "</h3></div>";
         else if(group%3 == 1 )
-            lists_html += "<div style='margin-left: 1em; margin-bottom: 1em;' class='col-md-2 info_box gr"+ group +"'><h3 style = 'text-align: center; color: white;'>Group "+ group + "</h3></div>";
+            lists_html += "<div class='col-md-2 info_box gr"+ group+"'><h3 style = 'text-align: center; color: white;'>Group "+ group + "</h3></div>";
         else
-             lists_html += "<div style='margin-left: 1em; margin-bottom: 1em;' class='col-md-2 info_box2 gr"+ group +"'><h3 style = 'text-align: center; color: white;'>Group "+ group + "</h3></div>";
+            lists_html += "<div class='col-md-2 info_box2 gr"+ group +"'><h3 style = 'text-align: center; color: white;'>Group "+ group + "</h3></div>";
         // $lists.append($("<div class = '"+group+" g'>"+ group +"</div>").attr('id', 'well')); //create new div
         groups_html += "<li>Group " + group;
         groups_html += "<div class='g" + group + "'></div></li>";
@@ -126,11 +126,11 @@ function add_group_response() {
     new_group += "<div class='g" + group_number + "'></div></li>";
 
     if(group_number%3 == 0)
-        lists_html += "<div style='margin-left: 1em; margin-bottom: 1em;' class=' col-md-2 info_box1 gr"+ group_number +"'><h3 style = 'text-align: center; color: white;'>Group "+ group_number + "</h3></div>";
+        lists_html += "<div class='col-md-2 info_box1 gr"+ group_number +"'><h3 style = 'text-align: center; color: white;'>Group "+ group_number + "</h3></div>";
     else if(group_number%3 == 1 )
-        lists_html += "<div style='margin-left: 1em; margin-bottom: 1em;' class='col-md-2 info_box gr"+ group_number +"'><h3 style = 'text-align: center; color: white;'>Group "+ group_number + "</h3></div>";
+        lists_html += "<div class='col-md-2 info_box gr"+ group_number +"'><h3 style = 'text-align: center; color: white;'>Group "+ group_number + "</h3></div>";
     else
-         lists_html += "<div style='margin-left: 1em; margin-bottom: 1em;' class='col-md-2 info_box2 gr"+ group_number +"'><h3 style = 'text-align: center; color: white;'>Group "+ group_number + "</h3></div>";
+        lists_html += "<div class='col-md-2 info_box2 gr"+ group_number +"'><h3 style = 'text-align: center; color: white;'>Group "+ group_number + "</h3></div>";
     $groups.append(new_group);
     $lists.append(lists_html);
 }
@@ -349,6 +349,9 @@ function check_session_response(admin_id, check){
 
 }
 
+function delete_it(form) {
+        console.log(form.choices);
+    }
 /**
  * @function join_class
  * @param class_id
@@ -411,6 +414,7 @@ function views_change(event){
 function view_merge(event){
     $('.mergeview_button').hide();
     $('.unmergeview_button').show();
+    $('#clear_buttons').hide();
 
     var XMLs = {};
     var array = $('#views_checkboxes :checked');
@@ -435,7 +439,8 @@ function view_merge(event){
     final_xml = JSON.stringify(final_xml);
     
     appletSetExtXML(final_xml, '', numgroups);
-
+    var applet = document['applet' + numgroups];
+    applet.setPerspective('G');
     $('#views_checkboxes :checkbox').hide();
     $('.merge_group').show();
 }
@@ -494,6 +499,7 @@ function unmerge_views(event){
     $('.mergeview_button').show();
     $('.unmergeview_button').hide();
     $('.merge_group').hide();
+    $('#clear_buttons').show();
 
     var array = $('#views_checkboxes :checked');
     for (var i = 0; i < array.length; i++){
