@@ -66,7 +66,7 @@ function add_class_response(class_id, class_name, group_count) {
         if(group%3 == 0)
             lists_html += "<div class='col-md-2 info_box1 gr"+ group+"'><h3 style = 'text-align: center; color: white;'>Group "+ group + "</h3></div>";
         else if(group%3 == 1 )
-            lists_html += "<div class='col-md-2 info_box gr"+ group+"'><h3 style = 'text-align: center; color: white;'>Group "+ group + "</h3></div>";
+            lists_html += "<div class='col-md-2 info_box  gr"+ group+"'><h3 style = 'text-align: center; color: white;'>Group "+ group + "</h3></div>";
         else
             lists_html += "<div class='col-md-2 info_box2 gr"+ group +"'><h3 style = 'text-align: center; color: white;'>Group "+ group + "</h3></div>";
         // $lists.append($("<div class = '"+group+" g'>"+ group +"</div>").attr('id', 'well')); //create new div
@@ -128,7 +128,7 @@ function add_group_response() {
     if(group_number%3 == 0)
         lists_html += "<div class='col-md-2 info_box1 gr"+ group_number +"'><h3 style = 'text-align: center; color: white;'>Group "+ group_number + "</h3></div>";
     else if(group_number%3 == 1 )
-        lists_html += "<div class='col-md-2 info_box gr"+ group_number +"'><h3 style = 'text-align: center; color: white;'>Group "+ group_number + "</h3></div>";
+        lists_html += "<div class='col-md-2 info_box  gr"+ group_number +"'><h3 style = 'text-align: center; color: white;'>Group "+ group_number + "</h3></div>";
     else
         lists_html += "<div class='col-md-2 info_box2 gr"+ group_number +"'><h3 style = 'text-align: center; color: white;'>Group "+ group_number + "</h3></div>";
     $groups.append(new_group);
@@ -215,6 +215,7 @@ function leave_class_response(disconnect) {
     $design_tab.hide();
     $view_tab.hide();
     $('.error_class_input').hide();
+    $('.empty_class_input').hide();
     document.getElementById("class_input").style.borderColor = null;
     $('.class_input').val("");
     $('.group_input').val("");
