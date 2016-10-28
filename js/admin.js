@@ -101,7 +101,13 @@ $(function() {
     $create_button.bind('click', function() {
         // Tell the server to create a class in the database
         //console.log(sessionStorage.getItem('admin_id'));
+        if ($class_input.val().trim() == "") {
+            document.getElementById("class_input").style.borderColor = "red";
+            $('.empty_class_input').show();
+        }
+        else{
         socket.add_class($class_input.val().trim(), parseInt($group_input.val().trim()), $secret, localStorage.getItem('admin_id'));
+        }
     });
 
     //
