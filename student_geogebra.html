@@ -27,31 +27,27 @@
       
         <div class="login_view" hidden>
           
-          <div class="col-md-4">
+          <div class="col-md-12 col-sm-12">
             <h4 id="error_frame"></h4>
           </div>
           <!-- Title -->
           <div class="col-md-12 col-sm-12">
-            <div class="col-md-4 col-sm-4"></div>
-            <div class="col-md-4 col-sm-4">
+            <div class="col-md-4 col-sm-4 col-md-offset-4 col-sm-offset-4">
               <h2 style="text-align: center"> Student Login </h2>
             </div>
-            <div class="col-md-4 col-sm-4"></div>
           </div>
 
           <br/>
 
           <!-- Text Fields and Login Button -->
           <div class="col-md-12 col-sm-12">
-            <div class="col-md-4 col-sm-4"></div>
-            <div class="col-md-4 col-sm-4">
+            <div class="col-md-4 col-sm-4 col-md-offset-4 col-sm-offset-4">
               <input type="text" class="form-control class_id" id="class_id" name="class_id" required="" placeholder="Class ID"/>
               <p class = "error error_class_id" hidden> Class ID does not exist </p> <br/>
               <input type="text" class="form-control nickname" id="nickname" name="nickname" required="" placeholder="Nickname"/>
               <p class = "error error_nickname" hidden> Nickname already taken </p> <br/>
               <input class="btn btn-lg btn-primary btn-block login" type="submit" value="Login" id="login"/><br/>
             </div>
-            <div class="col-md-4 col-sm-4"></div>
           </div>
         </div>
         
@@ -60,31 +56,25 @@
 
         <!-- Title -->
         <div class="col-md-12 col-sm-12">
-          <div class="col-md-4 col-sm-4"></div>
-          <div class="col-md-4 col-sm-4">
+          <div class="col-md-4 col-sm-4 col-md-offset-4 col-sm-offset-4">
             <h3> Student Groups </h3>
           </div>
-          <div class="col-md-4 col-sm-4"></div>
         </div>
 
         <!-- Group Buttons -->
         <div class="col-md-12 col-sm-12">
-          <div class="col-md-3 col-sm-3"></div>
-          <div class="col-md-6 col-sm-6">
+          <div class="col-md-6 col-sm-6 col-md-offset-3 col-sm-offset-3">
             <!-- add in class name, display buttons based on the class's groups to enter the individual groups  -->
             <h3 id="buttons"> </h3>
           </div>
-          <div class="col-md-3 col-sm-3"></div>
         </div>
 
         <!-- Log Out button -->
         <div class="col-md-12 col-sm-12">
-          <div class="col-md-4 col-sm-4"></div>
-          <div class="col-md-4 col-sm-4">
+          <div class="col-md-4 col-sm-4 col-md-offset-4 col-sm-offset-4">
             <!-- foreach group, create a html button with onclick to emit action to a group -->
             <input type="button" class="btn btn-danger" style="margin-bottom: 1em" value="Log Out" id="logout" />
           </div>
-          <div class="col-md-4 col-sm-4"></div>
         </div>
 
       </div> <!-- ***** End of class_view ***** -->
@@ -107,20 +97,6 @@
                    <button class="btn btn-warning" id="randomizeColors_button">Randomize Colors</button>
                 </div>
             </div>
-            <!-- <div class="col-md-6 col-lg-6 col-sm-6">
-              <h3>People</h3>
-              <ul id="people"></ul>
-              <input type="button" value="←" class="btn btn-default change_coord" data-x=-1 data-y=0 />
-              <input type="button" value="↑" class="btn btn-default change_coord" data-x=0 data-y=1 />
-              <input type="button" value="↓" class="btn btn-default change_coord" data-x=0 data-y=-1 />
-              <input type="button" value="→" class="btn btn-default change_coord" data-x=1 data-y=0 />
-              <br/>
-              this is hiding buttons so others can be shown
-              <br><br>
-
-              <ul id="settings"></ul>
-              <div id="messages"></div>
--->
           </div>
         </div>
       </div>
