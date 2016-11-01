@@ -7,7 +7,7 @@ var timeoutHandle;
 // parses it, and changes it back to XML to be set in the geogebra applet.
 function appletSetExtXML(xml, toolbar, id){
 
-    console.log("setXml");
+    //console.log("setXml");
     var appletName = document.applet;
     console.log('appletSetExtXML id param: ' + id);
     if (typeof document['applet' + id] !== 'undefined'){
@@ -15,11 +15,11 @@ function appletSetExtXML(xml, toolbar, id){
         appletName = document['applet' + id];
         console.log(appletName);
     }
-    if (!(toolbar == '' || toolbar == 'undefined')){
+    if (!(toolbar == '' || toolbar == 'undefined' || toolbar == 'null')){
         console.log('setting ' + appletName.id + ' custom toolbar to: ' + toolbar);
         appletName.setCustomToolBar(toolbar);
     }
-    console.log(xml);
+    //console.log(xml);
     cur_xml = appletName.getXML();
     xml = xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>');
     xml = JSON.parse(xml);
@@ -28,7 +28,7 @@ function appletSetExtXML(xml, toolbar, id){
     var new_json = x2js.xml_str2json(xml);
     var commandString = "";
     //debugger;
-    console.log(new_json);
+    //console.log(new_json);
     if(new_json === null){
         return;
     }
@@ -43,7 +43,7 @@ function appletSetExtXML(xml, toolbar, id){
     $("#xmlView").val(xml);
     
     var final_xml = x2js.json2xml_str(cur_json);
-    console.log(toolbar);
+    //console.log(toolbar);
 
     appletName.setXML(final_xml);
 

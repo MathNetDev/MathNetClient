@@ -11,9 +11,6 @@ function escapeStr(str)
 
 //displays server error on client side
 function server_error(error) {
-    var $login_view = $('.login_view');
-    var $class_view = $('.class_view');
-    var $group_view = $('.group_view');
     var str = error;
 
     if (str.indexOf("Invalid username") !== -1) {
@@ -77,8 +74,6 @@ function logout_response(disconnect) {
 //populates $groups with buttons with info from groups.
 function groups_get_response(username, class_id, groups) {
     var $groups = $('#buttons');
-    var current_user = sessionStorage.getItem('username');
-    var current_class = sessionStorage.getItem('class_id');
     $groups.empty();
     for (var i in groups){
         var button = '<input type="button" class="btn btn-md btn-primary " style="margin: 0em 1em 1em 0em" id="grp' + groups[i].grp_name + '" value="Group ';
@@ -100,9 +95,7 @@ function group_join_response(username, class_id, group_id, group_size) {
     var $login_view = $('.login_view');
     var $class_view = $('.class_view');
     var $group_view = $('.group_view');
-    var $messages = $('#messages');
 
-    $messages.html('');
     $("#people").html('');
 
     $login_view.hide();
@@ -153,10 +146,7 @@ function group_leave_response(username, class_id, group_id, disconnect) {
     $group_view.hide();
     if(!disconnect){
         sessionStorage.removeItem('group_id');
-    }
-    
-    clearApplet();
-    
+    }    
 }
 
 // populates $people with members array values, and appends join/leave message
@@ -165,34 +155,16 @@ function group_info_response(username, class_id, group_id, members, status) {
     var current_user = sessionStorage.getItem('username');
     var current_group = sessionStorage.getItem('group_id');
     var $group_name = $('#number');
-    var $people = $('#people');
-    //$people.html('');
+    
     if(status){
         for (var i in members) {
             members[i].member_info = JSON.parse(members[i].member_info);
             var member = members[i].member_name.replace(/&lt;/g,'<').replace(/&gt;/g, '>');
-
-            if(member != current_user) {
-                var member = '<li id="' + members[i].member_name + '">';
-                member += members[i].member_name + '</li>';
-            }
-            else {
+            if(member == current_user) {
                 $group_name.html('Group: ' + current_group + ', ' + members[i].member_name); //only update this for the new member
-                var member = '<li id="' + members[i].member_name + '">';
-                member += members[i].member_name + ' (You)</li>';
             }
-
-            $people.append(member);
         }
-    
-        $('#messages').prepend(username + ' has joined the group<br/>');
-    } else {
-        var escUsername = username.replace(/&lt;/g,'<').replace(/&gt;/g, '>');
-        escUsername = escapeStr(escUsername);
-
-        $("#" + escUsername).remove();
-        $('#messages').prepend(username + ' has left the group<br/>');
-    }
+    } 
 }//members is undefined if group_info_response is triggered by group_leave, so short circuit it on status.
 
 //handler for xml_change response, appends message to chatbox, and calls appletSetExtXML()
@@ -225,12 +197,10 @@ function get_settings_response(class_id, settings) {
         if (setting == "Hide Options" ){
             settings[setting] ? (
                 $("#display-settings").hide(), 
-                $('#messages').prepend('Admin has turned off options.<br/>'),
                 $("#display-settings input:checkbox").prop('checked', ''),
                 $("#display-settings #show_points").prop('checked', true)
             ) : (
-                $("#display-settings").show(),
-                $('#messages').prepend('Admin has turned on options.<br/>')
+                $("#display-settings").show()
             );//hide display options if certain global is turned on.
         }
     }
