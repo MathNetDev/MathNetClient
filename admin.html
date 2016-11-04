@@ -225,7 +225,9 @@
 
       <div role="tabpanel" class="tab-pane" id="design">
         <div class="col-md-12 col-sm-12">
-          <h3>Activity Designer</h3>
+          <h3> Designer</h3>
+          <button class="btn btn-primary accordion">Toolbar Designer</button>
+          <div class="panel">
           <div class="row" style="margin-left:0px;">
             <div class="toolbox col-md-8 col-sm-12"></div>
             <div class="col-md-4 col-sm-12">
@@ -262,17 +264,26 @@
               <div id = "toolbar-target-11" class="col-md-1 col-sm-1 toolbar-target"></div> 
             </div>
             <div class="col-md-4 col-sm-12">
-              <button class="btn btn-primary btn-sendconstruction">Send View</button>
-              <button class="btn btn-primary btn-sendtoolbar">Send Tools</button>
-              <button class="btn btn-primary btn-savetoolbar">Save Tools</button>
-              <button id="trash" class ="btn-trash btn btn-default" type="button" >
-                <span class="glyphicon glyphicon-trash" aria-hidden="true" style= "height:10px"></span>
-              </button>
+              <div class = "shifted">
+                <button class="btn btn-primary btn-sendtoolbar">Send Tools</button>
+                <button class="btn btn-primary btn-savetoolbar">Save Tools</button>
+                <button id="trash" class ="btn-trash btn btn-default" type="button" >
+                  <span class="glyphicon glyphicon-trash" aria-hidden="true" style= "height:10px"></span>
+                </button>
+              </div>
             </div>
-          </div> <br/><br/><br/>
-          <div class="javascriptapplet">
-            <div class="geogebrawebapplet" id="appletContainer" style="width:100%;height:650px;display: block;"></div>
-          </div> 
+          </div>
+          <br/><br/><br/>
+          </div>
+          <button class="accordion">Activity Desginer</button>
+            <div class="panel">
+                <br/>
+                <button class="btn btn-primary btn-sendconstruction">Send View</button>
+                <div class="javascriptapplet">
+                  <div class="geogebrawebapplet" id="appletContainer" style="width:100%;height:650px;display: block;"></div> 
+                </div>
+                <br/><br/><br/>
+            </div>
         </div>
       </div>
       <div role="tabpanel" class="tab-pane" id="view">
@@ -311,6 +322,14 @@
     });
     var x2js = new X2JS();
     var socket = Admin.Socket(io(host));
+
+    var acc = document.getElementsByClassName("accordion");
+    for (var i = 0; i < acc.length; i++) {
+        acc[i].onclick = function() {
+            this.classList.toggle("active");
+            this.nextElementSibling.classList.toggle("show");
+      }
+    }
   </script>
 </footer>
   
