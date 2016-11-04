@@ -151,11 +151,8 @@ hr {
 }*/
 .ggbtoolbar{
   display: block;
-  /*width: 1000px;*/
   min-height: 50px;
   background: none;
-  z-index: 10000;
-  position: absolute;
 }
 
 .toolbar-target{
