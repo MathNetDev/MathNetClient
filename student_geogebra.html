@@ -3,7 +3,6 @@
 <html>
 
   <head>
-    
     <meta charset="UTF-8"> 
     <title>MathNet Student View</title>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
@@ -13,28 +12,26 @@
     <link rel="stylesheet" href="css/style.css"/>
     <link rel="stylesheet" href="css/student.css"/>
     <link type="text/css" rel="stylesheet" href="css/groupgraph.css" />
-    <style type="text/css">
-      .textarea{
-        height:200px;
-        width: 300px;
-      }
-    </style>
   </head>
-  <body class= "everything" hidden>
-    <div class="container" id="main">
 
+  <body hidden>
+    <div class="container" id="main">
       <div class="row">
       
+
+
+        <!-- Login View -->
         <div class="login_view" hidden>
-          
+
           <div class="col-md-4">
             <h4 id="error_frame"></h4>
           </div>
+
           <!-- Title -->
           <div class="col-md-12 col-sm-12">
             <div class="col-md-4 col-sm-4"></div>
             <div class="col-md-4 col-sm-4">
-              <h2 style="text-align: center"> Student Login </h2>
+              <h2 id="login_title"> Student Login </h2>
             </div>
             <div class="col-md-4 col-sm-4"></div>
           </div>
@@ -53,78 +50,76 @@
             </div>
             <div class="col-md-4 col-sm-4"></div>
           </div>
-        </div>
+        </div> <!-- ***** End of login_view ***** -->
         
-        <div class="col-md-12">
-          <div class="class_view" style="display:none; text-align: center">
 
-        <!-- Title -->
-        <div class="col-md-12 col-sm-12">
-          <div class="col-md-4 col-sm-4"></div>
-          <div class="col-md-4 col-sm-4">
-            <h3> Student Groups </h3>
-          </div>
-          <div class="col-md-4 col-sm-4"></div>
-        </div>
 
-        <!-- Group Buttons -->
-        <div class="col-md-12 col-sm-12">
-          <div class="col-md-3 col-sm-3"></div>
-          <div class="col-md-6 col-sm-6">
-            <!-- add in class name, display buttons based on the class's groups to enter the individual groups  -->
-            <h3 id="buttons"> </h3>
-          </div>
-          <div class="col-md-3 col-sm-3"></div>
-        </div>
-
-        <!-- Log Out button -->
-        <div class="col-md-12 col-sm-12">
-          <div class="col-md-4 col-sm-4"></div>
-          <div class="col-md-4 col-sm-4">
-            <!-- foreach group, create a html button with onclick to emit action to a group -->
-            <input type="button" class="btn btn-danger" style="margin-bottom: 1em" value="Log Out" id="logout" />
-          </div>
-          <div class="col-md-4 col-sm-4"></div>
-        </div>
-
-      </div> <!-- ***** End of class_view ***** -->
-          </div>
-
-          <div class="group_view" style="display:none">
-            <div class="col-md-12 col-lg-12 col-sm-12">
-
-              <h2> 
-                <span id="number">Group</span> 
-                <input style="margin-left: 2em" class="btn btn-danger" type="button" value="Leave Group" id="leave_group"/>
-              </h2>
-              <!-- add in class name, display buttons based on the class's groups to enter the individual groups  -->
-              <!-- foreach group, create a html button with onclick to emit action to a group -->
-              <div class="javascriptapplet"><div class="geogebrawebapplet" id="appletContainer" style="min-width:800px;min-height:600px"></div></div>
-
-                <div class="col-md-6 col-lg-6 col-sm-6">
-                  <br/>
-                   <button class="btn btn-primary" id="update_xml_button" >Update XML</button>
-                   <button class="btn btn-warning" id="randomizeColors_button">Randomize Colors</button>
-                </div>
+        <!-- ***** Class View ***** -->
+        <div class="class_view">
+          <div class="col-md-12">
+        
+            <!-- Title -->
+            <div class="col-md-12 col-sm-12">
+              <div class="col-md-4 col-sm-4"></div>
+              <div class="col-md-4 col-sm-4">
+                <h3> Student Groups </h3>
+              </div>
+              <div class="col-md-4 col-sm-4"></div>
             </div>
-            <!-- <div class="col-md-6 col-lg-6 col-sm-6">
-              <h3>People</h3>
-              <ul id="people"></ul>
-              <input type="button" value="←" class="btn btn-default change_coord" data-x=-1 data-y=0 />
-              <input type="button" value="↑" class="btn btn-default change_coord" data-x=0 data-y=1 />
-              <input type="button" value="↓" class="btn btn-default change_coord" data-x=0 data-y=-1 />
-              <input type="button" value="→" class="btn btn-default change_coord" data-x=1 data-y=0 />
-              <br/>
-              this is hiding buttons so others can be shown
-              <br><br>
 
-              <ul id="settings"></ul>
-              <div id="messages"></div>
--->
+            <!-- Group Buttons -->
+            <div class="col-md-12 col-sm-12">
+              <div class="col-md-3 col-sm-3"></div>
+              <div class="col-md-6 col-sm-6">
+                <!-- add in class name, display buttons based on the class's groups to enter the individual groups  -->
+                <h3 id="buttons"> </h3>
+              </div>
+              <div class="col-md-3 col-sm-3"></div>
+            </div>
+
+            <!-- Log Out button -->
+            <div class="col-md-12 col-sm-12">
+              <div class="col-md-4 col-sm-4"></div>
+              <div class="col-md-4 col-sm-4">
+                <!-- foreach group, create a html button with onclick to emit action to a group -->
+                <input type="button" class="btn btn-danger" value="Log Out" id="logout" />
+              </div>
+              <div class="col-md-4 col-sm-4"></div>
+            </div>
+
           </div>
+        </div> <!-- ***** End of class_view ***** -->
+        
+
+
+        <!-- ***** Group View ***** -->
+        <div class="group_view">
+          <div class="col-md-12 col-lg-12 col-sm-12">
+
+            <h2> 
+              <span id="number">Group</span> 
+              <input class="btn btn-danger" type="button" value="Leave Group" id="leave_group"/>
+            </h2>
+
+            <!-- add in class name, display buttons based on the class's groups to enter the individual groups  -->
+            <!-- foreach group, create a html button with onclick to emit action to a group -->
+            <div class="javascriptapplet">
+              <div class="geogebrawebapplet" id="appletContainer">
+              </div>
+            </div>
+
+            <div class="col-md-6 col-lg-6 col-sm-6"><br/>
+              <button class="btn btn-primary" id="update_xml_button" >Update XML</button>
+              <button class="btn btn-warning" id="randomizeColors_button">Randomize Colors</button>
+            </div>
+
+          </div>
+        </div> <!-- ***** End of group_view ***** -->
+
+
         </div>
       </div>
-    </div>
+    </div> <!-- End of Body -->
 
     <footer>
       <!-- normal communications library stuff -->
