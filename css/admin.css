@@ -258,7 +258,7 @@ button.accordion.active:after {
     content: "\2796";
 }
 
-div.panel {
+div.panel-accordion {
     padding: 0 18px;
     background-color: white;
     max-height: 0;
@@ -267,12 +267,7 @@ div.panel {
     opacity: 0;
 }
 
-div.panel.show {
+div.panel-accordion.show {
     opacity: 1;
     max-height: 1000px;
-}
-
-.shifted{
-  position: relative;
-  left: -29px;
 }
