@@ -1,3 +1,12 @@
+hr { 
+    display: block;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    margin-left: auto;
+    margin-right: auto;
+    border-style: inset;
+    border-width: 1px;
+}
 .axis path,
 .axis line{
   fill: none;
@@ -12,18 +21,60 @@
   margin-top: 5px;
   margin-bottom: 5px;
 }
+.info_box{
+  background-color: #428bca;
+  width: 200px;
+  min-height: 67px;
+  max-height:210px;
+  overflow-y:scroll;
+  display:block;
+  overflow:auto;
+  margin-left: 1em;
+  margin-bottom: 1em;
+}
+
+.info_box1{
+  background-color: #5cb85c;
+  width: 200px;
+  min-height: 67px;
+  max-height:210px;
+  overflow-y:scroll;
+  display:block;
+  overflow:auto;
+  margin-left: 1em;
+  margin-bottom: 1em;
+}
+
+.info_box2{
+  background-color: #5bc0de;
+  width: 200px;
+  min-height: 67px;
+  max-height:210px;
+  overflow-y:scroll;
+  display:block;
+  overflow:auto;
+  margin-left: 1em;
+  margin-bottom: 1em;
+}
 
 #get-classes{
     margin-bottom: 2em;
     max-height:300px; 
     overflow:auto;
+    text-align: center;
 }
 #get-classes button{
-  margin: 0 .5em;
+  margin: .25em;
+  width:20%
 }
 
 #get-classes div:hover{
   background-color: rgba(211, 214, 34, 0.42);
+}
+
+.leave_button{
+  position:  relative;
+  top: 15px; 
 }
 .settings_view{
   margin:4em 0 0 0;
@@ -33,6 +84,106 @@
 }
 .settings_view input[type=checkbox]{
   margin:0 .5em 0 0;
+}
+.error{
+  color: red;
+}
+
+.toolbox{
+  margin:1em 0;
+  padding:.5em;
+  display:block;
+  border:1px solid #abc;
+}
+.btn-toolbox{
+  height: 40px;
+  width: 40px;
+  margin: 2px;
+  display:inline-block;
+  background: #fff;
+  border:1px solid #ccc;
+  border-radius:4px;
+  text-align: center;
+  vertical-align: middle;
+  position: relative;
+  z-index:10001;
+}
+.btn-toolbox img{
+  height: 40px;
+  width: 40px;
+  position: absolute;
+  top: 0;
+  left: 0
+}
+.btn-toolbox button{
+  position: absolute;
+  border-radius:50%;
+  border:none;
+  font-size:.8em;
+  font-weight:bold;
+  font-family: sans-serif;
+  height:1.5em;
+  width:1.5em;
+  background: #ff3300;
+  color:#fff;
+  text-align: center;
+  vertical-align: middle;
+  padding: 0;
+  top:-.25em;
+  right:-.5em;
+}
+/*.btn-trash {
+  border:0;
+  background:transparent;
+}*/
+
+/*.btn-sendtoolbar{
+}
+.btn-clear {
+  margin:.50em 11em;
+  height:2em;
+  width: 1em;
+  text-align: center;
+
+}
+.btn-sendtoolbar{
+  margin:.5em 1em;
+}*/
+.ggbtoolbar{
+  display: block;
+  min-height: 50px;
+  background: none;
+}
+
+.toolbar-target{
+  border: 1px solid #d2d2d2;
+  display: inline-block;
+  min-height: 52px;
+  padding: 0;
+  width: 50px;
+  text-align: center;
+  background: #eee;
+}
+.toolbar-target div.btn-toolbox{
+  top:0!important;
+  left:0!important;
+}
+#views_checkboxes label{
+  margin:0 1.5em 0 0;
+}
+#views_checkboxes label input{
+  margin: 0 .25em 0 0;
+}
+.nav-tabs>li.active>a, 
+.nav-tabs>li.active>a:focus, 
+.nav-tabs>li.active>a:hover{
+  border:1px solid transparent;
+}
+.groups li{
+  margin-bottom: 1em;
+}
+.groups div{
+  margin:0 0 0 2em;
 }
 .list{
 
@@ -45,8 +196,11 @@
 .tick line{
   opacity: 0.2;
 }
-
-
+/*#trash{
+  position : relative;
+  top : 5px;
+  left : 5px;
+}*/
 
 #field-svg {
   border-style: solid;
@@ -63,4 +217,62 @@ circle {
   cursor: move;
   stroke: steelblue;
   stroke-width: 1.5px;
+}
+#mySelect{
+
+  width:60%;
+  height:100px;
+}
+
+#hello{
+  position: relative;
+  top: 11px;
+}
+
+button.accordion {
+    background-color: #337ab7;
+    color: white;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 15px;
+    transition: 0.4s;
+}
+
+/*button.accordion.active, button.accordion:hover {
+    background-color: #ddd;
+}
+*/
+button.accordion:after {
+    content: '\02795';
+    font-size: 13px;
+    color: #777;
+    float: right;
+    margin-left: 5px;
+}
+
+button.accordion.active:after {
+    content: "\2796";
+}
+
+div.panel {
+    padding: 0 18px;
+    background-color: white;
+    max-height: 0;
+    overflow: hidden;
+    transition: 0.6s ease-in-out;
+    opacity: 0;
+}
+
+div.panel.show {
+    opacity: 1;
+    max-height: 1000px;
+}
+
+.shifted{
+  position: relative;
+  left: -29px;
 }

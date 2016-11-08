@@ -1,9 +1,5 @@
 "use strict";
 
-var d3app = $("#field-container");
-var geogebra = $("#ging");
-var geogebra_full = $(".javascriptapplet");
-
 //escapes most strings to not break general forms
 function escapeStr(str) 
 {
@@ -18,10 +14,23 @@ function server_error(error) {
     var $login_view = $('.login_view');
     var $class_view = $('.class_view');
     var $group_view = $('.group_view');
+    var str = error;
 
-    console.log(error);
-    sessionStorage.setItem('error', error);
-    location.reload();
+    if (str.indexOf("Invalid username") !== -1) {
+        document.getElementById("class_id").style.borderColor = "red";
+        $('.error_class_id').show();
+        console.log("logout");
+    }
+
+    else if (str.indexOf("invalid.") !== -1) {
+        document.getElementById("nickname").style.borderColor = "red";
+        $('.error_nickname').show();
+    }
+    else {
+        console.log(error);
+        sessionStorage.setItem('error', error);
+        location.reload();
+    }
 }
 
 //shows class_view and sets sessionStorage for class_id and username, then calls groups_get
@@ -51,6 +60,14 @@ function logout_response(disconnect) {
     $login_view.show();
     $class_view.hide();
     $group_view.hide();
+
+
+    $('.error_nickname').hide();
+    $('.error_class_id').hide();
+    document.getElementById("class_id").style.borderColor = null;
+    document.getElementById("nickname").style.borderColor = null;
+    $('.nickname').val("");
+    $('.class_id').val("");
     if(!disconnect){
         sessionStorage.removeItem('class_id');
         sessionStorage.removeItem('username');
@@ -64,9 +81,9 @@ function groups_get_response(username, class_id, groups) {
     var current_class = sessionStorage.getItem('class_id');
     $groups.empty();
     for (var i in groups){
-        var button = '<li><input type="button" id="grp' + groups[i].grp_name + '" value="Group ';
+        var button = '<input type="button" class="btn btn-md btn-primary " style="margin: 0em 1em 1em 0em" id="grp' + groups[i].grp_name + '" value="Group ';
         button += groups[i].grp_name + ' - '+ groups[i].num;
-        button += '" /></li>';
+        button += '" />';
         $groups.append(button);
     }
 }
@@ -91,21 +108,32 @@ function group_join_response(username, class_id, group_id, group_size) {
     $login_view.hide();
     $class_view.hide();
     $group_view.show();
-    appletInit();
-    // Clear points and redraw
-    if (d3app.length != 0){
-        users = []; 
-        remove_drawn_vectors();
-    } else if (geogebra.length != 0){
-        
-    } else if (geogebra_full.length != 0){
 
-        if (group_size > 1){
-            //socket.get_xml(username, class_id, group_id);
-        } else {
-            
-        }
-    }
+    var params = {
+                "container":"appletContainer",
+                "id":"applet",
+                "width":800,
+                "height":600,
+                "perspective":"AG",
+                "showAlgebraInput":true,
+                "showToolBarHelp":false,
+                "showMenubar":true,
+                "enableLabelDrags":false,
+                "showResetIcon":true,
+                "showToolbar":true,
+                "allowStyleBar":false,
+                "useBrowserForJS":true,
+                "enableShiftDragZoom":true,
+                "errorDialogsActive":true,
+                "enableRightClick":false,
+                "enableCAS":false,
+                "enable3d":false,
+                "isPreloader":false,
+                "screenshotGenerator":false,
+                "preventFocus":false
+    };
+
+    appletInit(params);
     
     sessionStorage.setItem('group_id', group_id);
 
@@ -126,12 +154,9 @@ function group_leave_response(username, class_id, group_id, disconnect) {
     if(!disconnect){
         sessionStorage.removeItem('group_id');
     }
-    if (d3app.length != 0){
-        field_remove_user(username);
-    } else if (geogebra_full.length != 0){
-        clearApplet();
-    }
-    //socket.group_info(username, class_id, group_id, false);
+    
+    clearApplet();
+    
 }
 
 // populates $people with members array values, and appends join/leave message
@@ -145,107 +170,48 @@ function group_info_response(username, class_id, group_id, members, status) {
     if(status){
         for (var i in members) {
             members[i].member_info = JSON.parse(members[i].member_info);
-            if(members[i].member_name.replace(/&lt;/g,'<').replace(/&gt;/g, '>') != current_user) {
+            var member = members[i].member_name.replace(/&lt;/g,'<').replace(/&gt;/g, '>');
+
+            if(member != current_user) {
                 var member = '<li id="' + members[i].member_name + '">';
-                member += members[i].member_name;
-                member += ' - (<span class="x">' + members[i].member_x + '</span>, ';
-                member += '<span class="y">' + members[i].member_y + '</span>) </li>';
+                member += members[i].member_name + '</li>';
             }
             else {
-                $group_name.html('Group: ' + current_group); //only update this for the new member
+                $group_name.html('Group: ' + current_group + ', ' + members[i].member_name); //only update this for the new member
                 var member = '<li id="' + members[i].member_name + '">';
-                member += members[i].member_name + ' (You)';
-                member += ' - (<span class="x">' + members[i].member_x + '</span>, ';
-                member += '<span class="y">' + members[i].member_y + '</span>) </li>';
+                member += members[i].member_name + ' (You)</li>';
             }
+
             $people.append(member);
-            
         }
     
-        $('#messages').append(username + ' has joined the group<br/>');
+        $('#messages').prepend(username + ' has joined the group<br/>');
     } else {
         var escUsername = username.replace(/&lt;/g,'<').replace(/&gt;/g, '>');
         escUsername = escapeStr(escUsername);
-        $("#" + escUsername).remove();
-        $('#messages').append(username + ' has left the group<br/>');
-        if(d3app.length != 0){
-            field_remove_user(username);
-        } else if (geogebra.length != 0){
-            var fields = {x: 0,
-                          y: 0, 
-                          username: "B"};
-            handle_partner_leave(fields);
-        }
-    }
 
-    if (d3app.length != 0){
-        field_sync_users(members);
-    } else if (geogebra.length != 0){
-        if(username == sessionStorage.getItem("username") ){
-            sessionStorage.setItem("x1", 0);
-            sessionStorage.setItem("y1", 0);
-            ggbOnInit();
-        } else {
-            
-        }
-        if(status && (members.length != 0) ){
-            var fields = {username: members[0].member_name, x: members[0].member_x, y: members[0].member_y};
-            handle_show_partner(fields);
-            if(members[0].member_info.length != 0 && members[0].member_info != "{}" ){
-                var info = members[0].member_info;
-                if(info.mark == true){
-                    fields.info = info;
-                    handle_mark_partner(fields);
-                }
-            }
-        }
-    } else if (geogebra_full.length != 0){
-        if(username == sessionStorage.getItem('username') && members.length == 1){
-            var xml = document.applet.getXML();
-            //socket.xml_change(username, class_id, group_id, xml);
-        }
+        $("#" + escUsername).remove();
+        $('#messages').prepend(username + ' has left the group<br/>');
     }
 }//members is undefined if group_info_response is triggered by group_leave, so short circuit it on status.
 
-// set #username.(x/y) with the respective coordinates, and adds relavent message
-function coordinate_change_response(username, class_id, group_id, x, y, info) {
-    var $messages = $('#messages');
-    var escUsername = username.replace(/&lt;/g,'<').replace(/&gt;/g, '>');
-    escUsername = escapeStr(escUsername);
-    $('#' + escUsername + ' .x').html(x);
-    $('#' + escUsername + ' .y').html(y);
-
-    $messages.append(username + ' has moved their point to (' 
-                          + x + ', ' + y +')<br/>');
-    if (d3app.length != 0){
-        info = JSON.parse(info);
-        field_move_users(username, x, y, info);
-    } else if (geogebra.length != 0) {
-        if(username != sessionStorage.getItem("username")){
-            var fields = {username: username, x: x, y: y}; //this doesn't work as well as group_join, why things undefined?
-            handle_show_partner(fields);
-            if(info.length != 0 && info != "{}"){
-                info = JSON.parse(info);
-                if(info.mark == true){
-                    fields.info = info;
-                    handle_mark_partner(fields);
-                }
-            }
-        }//if there is a partner in the group mark them
-        //look call handler to look through info a la netlogo
-    }
-}
-
 //handler for xml_change response, appends message to chatbox, and calls appletSetExtXML()
-function xml_change_response(username, class_id, group_id, xml) {
+function xml_change_response(username, class_id, group_id, xml, toolbar) {
     var $messages = $('#messages');
-    $messages.append(username + ' has changed the xml.<br/>');
-    appletSetExtXML(xml);
+    $messages.prepend(username + ' has changed the xml.<br/>');
+
+    appletSetExtXML(xml, toolbar);
+    ggbOnInit('socket_call');
 }
 
 //calls appletSetExtXML() to update the local geogebra applet.
-function get_xml_response(username, class_id, group_id, xml){
-    appletSetExtXML(xml);
+function get_xml_response(username, class_id, group_id, xml,toolbar){
+    if(xml == undefined){
+        xml = '{}';
+    }
+    sessionStorage.setItem('toolbar', toolbar);
+    appletSetExtXML(xml, toolbar);
+    ggbOnInit('socket_call')
 }
 
 // updates $class_settings based on settings array
@@ -259,35 +225,47 @@ function get_settings_response(class_id, settings) {
         if (setting == "Hide Options" ){
             settings[setting] ? (
                 $("#display-settings").hide(), 
-                $('#messages').append('Admin has turned off options.<br/>'),
+                $('#messages').prepend('Admin has turned off options.<br/>'),
                 $("#display-settings input:checkbox").prop('checked', ''),
                 $("#display-settings #show_points").prop('checked', true)
             ) : (
                 $("#display-settings").show(),
-                $('#messages').append('Admin has turned on options.<br/>')
+                $('#messages').prepend('Admin has turned on options.<br/>')
             );//hide display options if certain global is turned on.
-            
-            if (d3app.length != 0){
-                update_display_settings();
-            }
         }
-        //if setting == "whateveroption"
-        //  enableOptionInApp(settings[setting]);
     }
 }
 
 //adds a new group button
 function add_group_response() {
     var $groups = $('#buttons');
-    var group_number = $('#buttons > li:last').index() + 2;
-    var button = '<li><input type="button" id="grp' + group_number + '" value="Group ';
+    var group_number = $groups.children().length + 1;
+    var button = '<input type="button" class="btn btn-md btn-primary " style="margin: 0em 1em 1em 0em" id="grp' + group_number + '" value="Group ';
     button += group_number + ' - '+ 0;
-    button += '" /></li>';
+    button += '" />';
     $groups.append(button);
 }
 
 //removes last group button
 function delete_group_response() {
+    $('#buttons input').last().remove();
     $('#buttons > li:last').remove();
 }
+
+function delete_student_class_response() {
+    delete sessionStorage.class_id;
+    delete sessionStorage.group_id;
+    delete sessionStorage.username;
+}
+//This function registers listeners on geogebra initialization 
+function ggbOnInit(arg) {
+    document.applet.registerAddListener("addLock");
+    document.applet.registerUpdateListener("checkUser");
+    console.log(arg);
+    if(arg != 'socket_call'){
+        socket.get_xml(sessionStorage.getItem('username'),sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'));
+    }
+}
+
+
 

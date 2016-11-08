@@ -1,0 +1,43 @@
+#appletContainer{
+	min-width: 800px;
+	min-height: 600px;
+}
+#graphing_box{
+	width: 65%;
+	float: left;
+}
+#login_title{
+	text-align: center;
+}
+#log{
+	width: 35%;
+	float: right;
+}
+#messages{
+	border-style: solid;
+	border-width: 1px;
+	padding-left: 10px;
+	padding-top: 5px;
+}
+#leave_group{
+	margin-left: 2em;
+}
+#logout{
+	margin-bottom: 1em;
+}
+
+.class_view{
+	display:none; 
+	text-align: center;
+}
+.group_view{
+	display: none;
+}
+.row{
+    background-color: rgba(255, 255, 255,1.0);
+    border: 5px solid aliceblue;
+    border-radius: 10px;
+}
+.error{
+  color: red;
+}
