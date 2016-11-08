@@ -447,11 +447,8 @@ $(function() {
                     var toolbar_tool = ui.draggable.clone();
                     button.html('-');
                     button.bind('click', function(){
-                        //alert('toolbar_locs[' + location + '][' + tb_index + ']');
-                        toolbar_locs[location].splice(tb_index,1);
-                        console.log(tb_index);
-                        //console.log(toolbar_locs);
                         var tool = $(this).parent();
+                        toolbar_locs[tool.parent().index(0)].splice(tool.index(0),1);
                         $('.toolbox').append(tool);
                         tool.remove();
                     });
