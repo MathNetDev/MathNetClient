@@ -43,21 +43,23 @@ $(function() {
     var $sendconstruction_button = $('.btn-sendconstruction'); // Sending the toolbar to everyone
     var $savetoolbar_button = $('.btn-savetoolbar'); // Saving the toolbar
     var $deletetoolbar_button = $('.btn-deletetoolbar'); // Deleting toolbars
-    var $usetoolbar_button = $('.btn-usetoolbar');
+    var $usetoolbar_button = $('.btn-usetoolbar'); // Using the saved toolbars to send to students
 
-    var $design_tab = $('#design-tab');
+    var $design_tab = $('#design-tab'); // When the design tab is pressed
     var $design_toolbox = $('.toolbox'); //design view tool container
     var $trash_button = $('.btn-trash');
     var $clear_group_button = $('.clear_group_button');
+
+
     
-    var toolbar_locs = [];
+    var toolbar_locs = []; // The array that stores all the toolbars
         while(toolbar_locs.push([]) < 12);
     
     // Connect to the server using the Admin.Socket object constructor
     
-    var class_id;
+    var class_id; // Declaring class id globally in this file
 
-    var $secret = "ucd_247";
+    var $secret = "ucd_247"; // Setting the secret up for further destruction
     
     // Holds    
     
@@ -66,7 +68,9 @@ $(function() {
     $class_view.hide();
     $create_user_view.hide();
 
-    //secret rejoin cookie
+    //
+    // Called to check if user is logged in
+    //
     if(localStorage.getItem('admin_id')){
         if(localStorage.getItem('check')){
             socket.check_session(localStorage.getItem('admin_id'), localStorage.getItem('check'));
@@ -76,12 +80,9 @@ $(function() {
     $username_password.show();
     $container.show();
 
-    
-
-
 
     //
-    // SECRET INPUT
+    // CHECKING THE USERNAME AND PASSWORD COMBINATION
     //
     $login_button.bind('click', function() {
         socket.check_username($username.val(), $password.val(), $secret);

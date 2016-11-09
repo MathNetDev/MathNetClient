@@ -23,8 +23,8 @@ function server_error(error) {
         $('#error_frame').html(JSON.stringify(error)); 
     else {
 
-        document.getElementById("class_input").style.borderColor = "red";
-        $('.error_class_input').show();
+       // document.getElementById("class_input").style.borderColor = "red";
+        //$('.error_class_input').show();
     }
 }
 
@@ -369,13 +369,14 @@ function ggbOnInit(arg) {
     console.log(arg);
     document[arg].evalCommand("CenterView[(0,0)]");
     document[arg].evalCommand("ZoomOut[4,(0,0)]");
-    //document[arg].setCustomToolBar('0 | 1 501 67 , 5 19 , 72 75 76 | 2 15 45 , 18 65 , 7 37 | 4 3 8 9 , 13 44 , 58 , 47 | 16 51 64 , 70 | 10 34 53 11 , 24  20 22 , 21 23 | 55 56 57 , 12 | 36 46 , 38 49  50 , 71 | 30 29 54 32 31 33 | 17 26 62 73 , 14 68 | 25 52 60 61 | 40 41 42 , 27 28 35 , 6');
+    document.applet.registerAddListener("addLock");
+                            
 
     if (index != -1){
         num = arg.slice(index);
         name = arg.slice(0, index);
         if (name == "applet" && num <= $('ul.groups div').length){
-            var class_id = sessionStorage.getItem('admin_class_id');
+            var class_id = sessionStorage.getItem('admin_class_id');        
             socket.get_xml('admin', class_id, num);
         }
     }
@@ -419,14 +420,24 @@ function view_merge(event){
 
     var XMLs = {};
     var array = $('#views_checkboxes :checked');
+    var counter = 0, count = 0; // for checking and not deleteing the first admin objects
 
     for (var i = 0; i < array.length; i++){
         var value = array[i]["value"];
         var parsing = document[value].getXML();
         var obj = x2js.xml_str2json(parsing);
-        var num = array[i]["value"].substr(-1, 1);
+        var num = array[i]["value"].substr(value.lastIndexOf('t') + 1 , value.length - value.lastIndexOf('t'));
 
-        obj = rename_labels(obj, num);
+        console.log(num);
+
+        obj,counter = rename_labels(obj, num, counter);
+        if (counter == 1 && count == 0) // if these are the first admin objects dont delete them
+            count++;
+        else if(counter == 1)  // if these are not the first admin objects delete them 
+            obj = remove_admin_objects(obj);
+
+        console.log(counter);
+
         _.mergeWith(XMLs, obj, function (a, b) {
           if (_.isArray(a)) {
             return a.concat(b);
@@ -449,7 +460,62 @@ function view_merge(event){
 //this is used to rename all object labels within the given XML to 
 //have their group number added onto the end, preventing conflicts
 //when merging multiple XMLs together
-function rename_labels(xml, num){
+function remove_admin_objects(xml, counter){
+    console.log(xml);
+    if((xml.geogebra).hasOwnProperty('construction')){
+        if((xml.geogebra.construction).hasOwnProperty('element')){
+            var array = xml.geogebra.construction.element;
+
+            if(array !== null && typeof array === 'object' && !(array instanceof Array)){
+                var temp = array;
+                array = [];
+                array.push(temp);
+            }
+            var deleted_array = [];
+            for (var i = array.length - 1; i >= 0; i--){
+                if(array[i]["_type"] === 'point'){
+                    if ("caption" in array[i]){
+                        var elem = array[i]["caption"]["_val"];
+                        if(elem.includes("admin")){
+                           deleted_array.push(array[i]["_label"]);
+                           array.splice(i,1);
+                        }
+                    }
+                }
+            }
+            xml.geogebra.construction.element = array;
+        }
+
+        //console.log(deleted_array);
+        if((xml.geogebra.construction).hasOwnProperty('command')){
+            var array = xml.geogebra.construction.command;
+
+            if(array !== null && typeof array === 'object' && !(array instanceof Array)){
+                var temp = array;
+                array = [];
+                array.push(temp);
+            }
+
+            for (var i = array.length - 1; i >= 0 ; i--){
+                for (var point in array[i].input){
+                    if(deleted_array.includes(array[i]["input"][point]))
+                    {
+                        array.splice(i,1);
+                        break;
+                    }
+                }
+            }
+            xml.geogebra.construction.command = array;
+        }     
+    }
+    console.log(xml);
+    return xml;
+}
+
+//this is used to rename all object labels within the given XML to 
+//have their group number added onto the end, preventing conflicts
+//when merging multiple XMLs together
+function rename_labels(xml, num, counter){
     console.log(xml);
     if((xml.geogebra).hasOwnProperty('construction')){
         if((xml.geogebra.construction).hasOwnProperty('element')){
@@ -466,7 +532,10 @@ function rename_labels(xml, num){
                     array[i]["_label"] = array[i]["_label"] + 'g' + num;
                     if ("caption" in array[i]){
                         var elem = array[i]["caption"]["_val"];
-                        array[i]["caption"]["_val"] = elem + "g" + num;
+                        array[i]["caption"]["_val"] = elem + 'g' + num;
+                    }
+                    if(elem.includes("admin")){
+                            counter = 1;
                     }
                 }
             }
@@ -490,7 +559,7 @@ function rename_labels(xml, num){
             xml.geogebra.construction.command = array;
         }
     }
-    return xml;
+    return xml, counter;
 }
 
 //this is called when the unmerge views button is pressed.
