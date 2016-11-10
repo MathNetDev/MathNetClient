@@ -1,3 +1,12 @@
+hr { 
+    display: block;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    margin-left: auto;
+    margin-right: auto;
+    border-style: inset;
+    border-width: 1px;
+}
 .row{
     background-color: rgba(255, 255, 255,1.0);
     border: 5px solid aliceblue;
