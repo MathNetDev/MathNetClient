@@ -35,7 +35,7 @@ $(function() {
                      sessionStorage.removeItem('username');
                  });
 
-    $('.everything').show();
+    $('body').show();
 
 });
 

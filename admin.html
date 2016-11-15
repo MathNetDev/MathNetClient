@@ -76,6 +76,8 @@
           </div>
           <!-- Main View  Ends-->
 
+
+
           <!-- Username View Begins -->
           <div class="create_user_view" hidden>
 
@@ -108,6 +110,8 @@
             <input class="btn btn-default create_admin_back" type="submit" value="Back"/><br/><br/>
           </div>
           <!-- Username View Ends -->
+
+
 
           <!-- This div appears when an admin leaves a class or has not made on yet -->
           <div class="create_view" style="display:none">
@@ -161,8 +165,8 @@
               <div class="col-md-4 col-sm-4"></div>
             </div>  
             <!-- End Of Buttons -->
-
           </div>
+
 
 
           <!-- This div appears once an admin has created a class -->
@@ -203,7 +207,7 @@
               <ul class="groups" ></ul>
             </div>
 
-                        <!-- Line Break -->
+            <!-- Line Break -->
             <table width="100%">
               <td><hr/></td>
                 <td style="width:1px; padding: 0 10px; white-space: nowrap;">GROUPS AND STUDENTS</td>
@@ -223,10 +227,14 @@
         </div>
       </div>
 
+
+
       <div role="tabpanel" class="tab-pane" id="design">
         <div class="col-md-12 col-sm-12">
-          <h3>Activity Designer</h3>
-          <div class="row" style="margin-left:0px;">
+          <h3> Designer</h3>
+          <button class="btn btn-primary accordion">Toolbar Designer</button>
+          <div class="panel panel-accordion">
+          <div class="row">
             <div class="toolbox col-md-8 col-sm-12"></div>
             <div class="col-md-4 col-sm-12">
               <div class="checkbox">
@@ -234,7 +242,7 @@
                   <input type="checkbox" id="toggle-menu-bar" value="1"> Show menu bar
                 </label>
                 <div>
-                  <p id = "hello">  Select Default ToolBar </p>
+                  <p id="hello">  Select Default ToolBar </p>
                   <select id="mySelect" size="1000">
                   </select>
                   <div>
@@ -246,7 +254,7 @@
             </div>
           </div>
           
-          <div class="ggbtoolbar col-md-12 col-sm-12">
+          <div class="ggbtoolbar row">
             <div class="col-md-8 col-sm-12">
               <div id = "toolbar-target-0" class="col-md-1 col-sm-1 toolbar-target"></div>
               <div id = "toolbar-target-1" class="col-md-1 col-sm-1 toolbar-target"></div>
@@ -262,17 +270,26 @@
               <div id = "toolbar-target-11" class="col-md-1 col-sm-1 toolbar-target"></div> 
             </div>
             <div class="col-md-4 col-sm-12">
-              <button class="btn btn-primary btn-sendconstruction">Send View</button>
-              <button class="btn btn-primary btn-sendtoolbar">Send Tools</button>
-              <button class="btn btn-primary btn-savetoolbar">Save Tools</button>
-              <button id="trash" class ="btn-trash btn btn-default" type="button" >
-                <span class="glyphicon glyphicon-trash" aria-hidden="true" style= "height:10px"></span>
-              </button>
+              <div class = "shifted">
+                <button class="btn btn-primary btn-sendtoolbar">Send Tools</button>
+                <button class="btn btn-primary btn-savetoolbar">Save Tools</button>
+                <button id="trash" class ="btn-trash btn btn-default" type="button" >
+                  <span class="glyphicon glyphicon-trash" aria-hidden="true" style= "height:10px"></span>
+                </button>
+              </div>
             </div>
-          </div> <br/><br/><br/>
-          <div class="javascriptapplet">
-            <div class="geogebrawebapplet" id="appletContainer" style="width:100%;height:650px;display: block;"></div>
-          </div> 
+          </div>
+          <br/><br/><br/>
+          </div>
+          <button class="accordion">Activity Desginer</button>
+            <div class="panel panel-accordion">
+                <br/>
+                <button class="btn btn-primary btn-sendconstruction">Send View</button>
+                <div class="javascriptapplet">
+                  <div class="geogebrawebapplet" id="appletContainer" style="width:100%;height:650px;display: block;"></div> 
+                </div>
+                <br/><br/><br/>
+            </div>
         </div>
       </div>
       <div role="tabpanel" class="tab-pane" id="view">
@@ -311,7 +328,24 @@
     });
     var x2js = new X2JS();
     var socket = Admin.Socket(io(host));
-  </script>
+
+    var acc = document.getElementsByClassName("accordion");
+    for (var i = 0; i < acc.length; i++) {
+        acc[i].onclick = function() {
+            this.classList.toggle("active");
+            this.nextElementSibling.classList.toggle("show");
+      }
+    }
+
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-87061901-2', 'auto');
+  ga('send', 'pageview');
+
+</script>
 </footer>
   
 </body>
