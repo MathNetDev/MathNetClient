@@ -45,7 +45,8 @@ $(function() {
     var $deletetoolbar_button = $('.btn-deletetoolbar'); // Deleting toolbars
     var $usetoolbar_button = $('.btn-usetoolbar'); // Using the saved toolbars to send to students
 
-    var $design_tab = $('#design-tab'); // When the design tab is pressed
+    var $design_tab = $('#design-tab');
+    var $applet_activity_designer = $('.applet-activity-designer');
     var $design_toolbox = $('.toolbox'); //design view tool container
     var $trash_button = $('.btn-trash');
     var $clear_group_button = $('.clear_group_button');
@@ -414,7 +415,7 @@ $(function() {
                 var params = {
                 "container":"appletContainer",
                 "id":"applet",
-                "width":800,
+                "width":$applet_activity_designer.innerWidth(),
                 "height":600,
                 "perspective":"AG",
                 "showAlgebraInput":true,
