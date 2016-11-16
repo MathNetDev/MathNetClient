@@ -76,9 +76,6 @@ $(function() {
     $username_password.show();
     $container.show();
 
-    
-
-
 
     //
     // SECRET INPUT
@@ -86,6 +83,26 @@ $(function() {
     $login_button.bind('click', function() {
         socket.check_username($username.val(), $password.val(), $secret);
     });
+
+
+    //
+    // SUBMIT PASSWORD HITTING ENTER KEY
+    //
+    $password.keypress(function(e) {
+        if (e.which == 13) {
+            socket.check_username($username.val(), $password.val(), $secret);
+        }
+    });
+
+    //
+    // SUBMIT USERNAME HITTING ENTER KEY
+    //
+    $username.keypress(function(e) {
+        if (e.which == 13) {
+            socket.check_username($username.val(), $password.val(), $secret);
+        }
+    });
+    
 
     //
     // TO CREATE NEW USER
