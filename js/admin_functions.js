@@ -36,18 +36,7 @@ function server_error(error) {
  * @description creates the starting group svgs for the admin view
  */
 function add_class_response(class_id, class_name, group_count) {
-    var $secret_view = $('.secret_view');
-    var $create_view = $('.create_view');
-    var $manage_view = $('.manage_view');
-    var $class_view = $('.class_view');
-    var $settings_view = $('.settings_view');
-    var $class_name = $('.class_name');
-    var $class_id = $('.class_id');
-    var $groups = $('.groups');
-    var $design_tab = $('#design_tab');
-    var $view_tab = $('#view_tab');
-    var $lists = $('.lists')
-
+    
     sessionStorage.setItem('admin_class_id', class_id);
     $('#error_frame').html('');
 
@@ -98,8 +87,7 @@ function add_class_response(class_id, class_name, group_count) {
         $('.re_new_password').val("");
         $('.Secret').val("");
         alert("user created");
-        var $create_user_view = $('.create_user_view'); // Div holding user creation view
-        var $username_password_view = $('.username_password_view'); // Div holding user creation view
+
         $create_user_view.hide();
         $username_password_view.show();
 
@@ -114,10 +102,7 @@ function add_class_response(class_id, class_name, group_count) {
  * @function add_group_response
  * @description adds a group to the end of the list
  */
-function add_group_response() {
-    var $groups = $('.groups');
-    var $lists = $('.lists');
-    
+function add_group_response() {    
     $('#error_frame').html('');
     var new_group = "";
     var lists_html = "";
@@ -199,13 +184,6 @@ function delete_class_response(class_id) {
  * @description changes the admin view from a class to the login page
  */
 function leave_class_response(disconnect) {
-    var $secret_view = $('.secret_view');
-    var $create_view = $('.create_view');
-    var $class_view = $('.class_view');
-    var $secret = 'ucd_247';
-    var $design_tab = $('#design_tab');
-    var $design_icons = $('.toolbar-target');
-    var $view_tab = $('#view_tab');
     $('#error_frame').html('');
     
     $secret_view.hide();
@@ -267,9 +245,6 @@ function group_info_response(username, class_id, group_id, group, status) {
  * @description appends list objects of Classes and their IDs to an unordered list in admin.html
  */
 function get_classes_response(classes, secret){
-    var $username_password_view = $('.username_password_view');
-    var $create_view = $('.create_view');
-    var $class_view = $('.class_view');
     
     $username_password_view.hide();
     $create_view.show();
@@ -359,7 +334,6 @@ function delete_it(form) {
  * @description for letting student join class
  */
 function join_class(class_id){
-    var $secret = 'ucd_247'; 
     socket.join_class(class_id, $secret);
 }
 
