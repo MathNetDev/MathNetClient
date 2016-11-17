@@ -1,10 +1,5 @@
 "use strict";
 $(function() {
-
-    var $leave_group_button = $('#leave_group');
-    var $update_xml_button = $('#update_xml_button');
-    var $randomizeColors_button = $('#randomizeColors_button');
-    
     $leave_group_button.bind('click', function() {
         socket.group_leave(sessionStorage.getItem('username'),
                            sessionStorage.getItem('class_id'),

@@ -1,7 +1,5 @@
 "use strict";
 $(function() {
-    var $logout_button = $('#logout');
-
     $logout_button.bind('click', function() {
         socket.logout(sessionStorage.getItem('username'), 
                       sessionStorage.getItem('class_id'),

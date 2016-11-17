@@ -32,10 +32,6 @@ function server_error(error) {
 
 //shows class_view and sets sessionStorage for class_id and username, then calls groups_get
 function login_response(username, class_id) {
-    var $login_view = $('.login_view');
-    var $class_view = $('.class_view');
-    var $group_view = $('.group_view');
-
     $login_view.hide();
     $class_view.show();
     $group_view.hide();
@@ -50,10 +46,6 @@ function login_response(username, class_id) {
 //shows login_view, and removes class_id and username from sessionStorage 
 //if logout was not a disconnect
 function logout_response(disconnect) {
-    var $login_view = $('.login_view');
-    var $class_view = $('.class_view');
-    var $group_view = $('.group_view');
-
     $login_view.show();
     $class_view.hide();
     $group_view.hide();
@@ -73,7 +65,6 @@ function logout_response(disconnect) {
 
 //populates $groups with buttons with info from groups.
 function groups_get_response(username, class_id, groups) {
-    var $groups = $('#buttons');
     $groups.empty();
     for (var i in groups){
         var button = '<input type="button" class="btn btn-md btn-primary " style="margin: 0em 1em 1em 0em" id="grp' + groups[i].grp_name + '" value="Group ';
@@ -92,10 +83,6 @@ function group_numbers_response(username, class_id, group_id, status, group_size
 //resets $messages and $people, sets group_id in sessionStorage, then calls group_info
 // and get_settings
 function group_join_response(username, class_id, group_id, group_size) {
-    var $login_view = $('.login_view');
-    var $class_view = $('.class_view');
-    var $group_view = $('.group_view');
-
     $("#people").html('');
 
     $login_view.hide();
@@ -137,9 +124,6 @@ function group_join_response(username, class_id, group_id, group_size) {
 // shows class_view, and removes group_id from sessionStorage if disconnect is not true
 function group_leave_response(username, class_id, group_id, disconnect) {
     // This function must call socket.groups_get(username, class_id)
-    var $login_view = $('.login_view');
-    var $class_view = $('.class_view');
-    var $group_view = $('.group_view');
 
     $login_view.hide();
     $class_view.show();
@@ -154,7 +138,6 @@ function group_leave_response(username, class_id, group_id, disconnect) {
 function group_info_response(username, class_id, group_id, members, status) {
     var current_user = sessionStorage.getItem('username');
     var current_group = sessionStorage.getItem('group_id');
-    var $group_name = $('#number');
     
     if(status){
         for (var i in members) {
@@ -169,9 +152,6 @@ function group_info_response(username, class_id, group_id, members, status) {
 
 //handler for xml_change response, appends message to chatbox, and calls appletSetExtXML()
 function xml_change_response(username, class_id, group_id, xml, toolbar) {
-    var $messages = $('#messages');
-    $messages.prepend(username + ' has changed the xml.<br/>');
-
     appletSetExtXML(xml, toolbar);
     ggbOnInit('socket_call');
 }
@@ -188,7 +168,6 @@ function get_xml_response(username, class_id, group_id, xml,toolbar){
 
 // updates $class_settings based on settings array
 function get_settings_response(class_id, settings) {
-    var $class_settings = $('#settings');
     $class_settings.html('');
 
     for (var setting in settings) {
@@ -208,7 +187,6 @@ function get_settings_response(class_id, settings) {
 
 //adds a new group button
 function add_group_response() {
-    var $groups = $('#buttons');
     var group_number = $groups.children().length + 1;
     var button = '<input type="button" class="btn btn-md btn-primary " style="margin: 0em 1em 1em 0em" id="grp' + group_number + '" value="Group ';
     button += group_number + ' - '+ 0;

@@ -15,7 +15,7 @@ function appletSetExtXML(xml, toolbar, id){
         appletName = document['applet' + id];
         console.log(appletName);
     }
-    if (!(toolbar == '' || toolbar == 'undefined' || toolbar == 'null')){
+    if (!(toolbar == '' || typeof toolbar == 'undefined' || toolbar == 'null')){
         console.log('setting ' + appletName.id + ' custom toolbar to: ' + toolbar);
         appletName.setCustomToolBar(toolbar);
     }

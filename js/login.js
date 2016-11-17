@@ -1,14 +1,5 @@
 "use strict";
 $(function() {
-    var $login_button = $('#login');
-    var $class_id = $('#class_id');
-    var $username = $('#nickname');
-    var $error_header = $('#error_frame');
-
-    var $login_view = $('.login_view');
-    var $class_view = $('.class_view');
-    var $group_view = $('.group_view');
-
     $class_view.hide();
     $group_view.hide();
 
