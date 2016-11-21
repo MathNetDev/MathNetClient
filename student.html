@@ -104,22 +104,29 @@
             <!-- add in class name, display buttons based on the class's groups to enter the individual groups  -->
             <!-- foreach group, create a html button with onclick to emit action to a group -->
             <div class="javascriptapplet">
-              <div class="geogebrawebapplet" id="appletContainer">
+              <div class="geogebrawebapplet applet-student" id="appletContainer">
               </div>
             </div>
 
-            <div class="col-md-6 col-lg-6 col-sm-6"><br/>
+            <div class="col-md-4 col-lg-6 col-sm-6">
+              <br/>
               <button class="btn btn-primary" id="update_xml_button" >Update XML</button>
-              <button class="btn btn-warning" id="randomizeColors_button">Randomize Colors</button>
+              <button class="btn btn-warning" id="randomizeColors_button">Randomize Colors</button> 
+              </br></br>
+              <div class="onoffswitch">
+                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked> </input>
+                <label class="onoffswitch-label" for="myonoffswitch"> 
+                  <span class="onoffswitch-inner"></span>
+                  <span class="onoffswitch-switch"></span>
+                </label>
+              </div>
             </div>
 
           </div>
-        </div> <!-- ***** End of group_view ***** -->
+        </div><!-- ***** End of group_view ***** -->
 
-
-        </div>
       </div>
-    </div> <!-- End of Body -->
+    </div> <!-- End of Container -->
 
     <footer>
       <!-- normal communications library stuff -->
@@ -140,6 +147,13 @@
       <script>
         var x2js = new X2JS();
         var socket = Student.Socket(io(host));
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-87061901-2', 'auto');
+        ga('send', 'pageview');
       </script>
     </footer>
   </body>
