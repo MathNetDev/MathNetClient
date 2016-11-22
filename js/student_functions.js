@@ -93,8 +93,8 @@ function group_join_response(username, class_id, group_id, group_size) {
     var params = {
                 "container":"appletContainer",
                 "id":"applet",
-                "width":800,
-                "height":600,
+                "width":$applet.innerWidth(),
+                "height":$(window).height()/1.3,
                 "perspective":"AG",
                 "showAlgebraInput":true,
                 "showToolBarHelp":false,
@@ -214,6 +214,10 @@ function ggbOnInit(arg) {
     if(arg != 'socket_call'){
         socket.get_xml(sessionStorage.getItem('username'),sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'));
     }
+    $(window).resize(function() {
+        console.log("Resizing");
+        document.applet.setHeight($(window).height()/1.3);
+    });
 }
 
 

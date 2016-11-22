@@ -163,7 +163,8 @@ function checkLocks(appletName){
         var ggb_user = appletName.getCaption(name);
         var username = sessionStorage.getItem('username');
 
-        if (username !== ggb_user){
+        console.log(ggb_user);
+        if ((username !== ggb_user) && ggb_user != "admin"){
             appletName.setFixed(name, true);
         } else if (username === ggb_user ){
             appletName.setFixed(name, false);
@@ -203,7 +204,7 @@ function check_xml(xml, socket){
         var class_id = sessionStorage.getItem('class_id');
         var group_id = sessionStorage.getItem('group_id');
         var toolbar = sessionStorage.getItem('toolbar');
-        
+
         socket.xml_change(username, class_id, group_id, cur_xml, toolbar);
 
     }, 1000);
@@ -213,7 +214,13 @@ function check_xml(xml, socket){
 //It adds a caption to the new object with the local user's class username,
 // and can add a lock onto it.
 function addLock(object){
-    var username = sessionStorage.getItem('username');
+
+    var username;
+    if(sessionStorage.getItem('username') != null)
+        username = sessionStorage.getItem('username');
+    else
+        username = "admin";
+
     document.applet.setCaption(object, username);
     var type = document.applet.getObjectType(object);
     if (type === 'point'){
@@ -230,12 +237,17 @@ function checkUser(object){
     var username = sessionStorage.getItem('username');
     var move = document.applet.isMoveable(object);
 
-    if (username !== ggb_user && move){
+    if ((username !== ggb_user && move) && ggb_user != "admin"){
         document.applet.setFixed(object, true);
+    }
+
+    if(($('#myonoffswitch').is(':checked')) && ggb_user == "admin" ){
+        document.applet.setCaption(object, username);
     }
     // on update of Geogebra view, send clients updated XML
     check_xml(document.applet.getXML(), socket);
 }
+
 
 //This function appends a set of button toolbar items to a container
 function getToolbarIcons(container){
