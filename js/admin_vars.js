@@ -58,6 +58,7 @@ var $choices = $('.choices');
 var $my_select = $('#my_select');
 var $my_select_opt = $('#my_select option');
 var $views_jsapp = $('#views_jsapp');
+var $applet_activity_designer = $('.applet-activity-designer');
 
 var $clear_buttons = $('#clear_buttons');
 

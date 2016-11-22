@@ -20,6 +20,7 @@ var $error_username = $('.error_nickname');
 var $error_class_id = $('.error_class_id');
 
 var $leave_group_button = $('#leave_group');
+var $applet = $('.applet-student');
 var $update_xml_button = $('#update_xml_button');
 var $randomizeColors_button = $('#randomizeColors_button');
 
