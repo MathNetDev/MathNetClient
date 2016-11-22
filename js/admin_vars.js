@@ -39,6 +39,7 @@ var $clear_class_button = $('.clear_class_button'); //Button for clearing all th
 
 var $save_button = $('.save_button'); // Button for saving class settings
 var $settings = $('.setting'); // Button for settings
+var $get_classes = $('#get-classes');
 var $get_classes_button = $('.get_classes_button'); // Getting all the classes
 var $login_button = $('.login_button'); // Login button
 var $new_user = $('.new_user'); // new username field
@@ -53,4 +54,16 @@ var $design_toolbox = $('.toolbox'); //design view tool container
 var $design_icons = $('.toolbar-target');
 var $trash_button = $('.btn-trash');
 var $clear_group_button = $('.clear_group_button');
+var $choices = $('.choices');
+var $my_select = $('#my_select');
+var $my_select_opt = $('#my_select option');
+var $views_jsapp = $('#views_jsapp');
 
+var $clear_buttons = $('#clear_buttons');
+
+var $error_frame = $('#error_frame');
+var $error_new_username = $('.error_new_username');
+var $error_re_new_password = $('.error_re_new_password');
+var $error_class_input = $('.error_class_input');
+
+var $empty_class_input = $('.empty_class_input');

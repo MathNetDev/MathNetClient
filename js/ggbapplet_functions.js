@@ -203,8 +203,7 @@ function check_xml(xml, socket){
         var class_id = sessionStorage.getItem('class_id');
         var group_id = sessionStorage.getItem('group_id');
         var toolbar = sessionStorage.getItem('toolbar');
-
-        $messages.prepend(sessionStorage.getItem("username") + ' has changed the xml.<br/>');
+        
         socket.xml_change(username, class_id, group_id, cur_xml, toolbar);
 
     }, 1000);

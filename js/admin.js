@@ -12,9 +12,7 @@ $(function() {
     var class_id;
 
     var $secret = "ucd_247";
-    
-    // Holds    
-    
+        
     // Start with secret view visible and create/manage/settings view hidden
     $create_view.hide();
     $class_view.hide();
@@ -29,10 +27,6 @@ $(function() {
     
     $username_password_view.show();
     $container.show();
-
-    
-
-
 
     //
     // SECRET INPUT
@@ -56,8 +50,8 @@ $(function() {
         // Tell the server to create a class in the database
         //console.log(sessionStorage.getItem('admin_id'));
         if ($class_input.val().trim() == "") {
-            document.getElementById("class_input").style.borderColor = "red";
-            $('.empty_class_input').show();
+            $class_input.css("border-color", "red");
+            $empty_class_input.show();
         }
         else{
         socket.add_class($class_input.val().trim(), parseInt($group_input.val().trim()), $secret, localStorage.getItem('admin_id'));
@@ -70,15 +64,15 @@ $(function() {
     $create_admin_back.bind('click', function() {
         $create_user_view.hide();
         $username_password_view.show();
-        $('.new_username').val("");
-        $('.new_password').val("");
-        $('.re_new_password').val("");
-        $('.Secret').val("");
+        $new_username.val("");
+        $new_password.val("");
+        $re_new_password.val("");
+        $Secret.val("");
 
-        $('.error_new_username').hide();
-        document.getElementById("new_username").style.borderColor = null;
-        $('.error_re_new_password').hide();
-        document.getElementById("re_new_password").style.borderColor = null;
+        $error_new_username.hide();
+        $new_username.css("border-color", null);
+        $error_re_new_password.hide();
+        $re_new_password.css("border-color", null);
 
     });
 
@@ -105,8 +99,8 @@ $(function() {
         if($new_password.val() == $re_new_password.val())
             socket.create_admin($new_username.val(), $new_password.val(),  $Secret.val());
         else{
-            document.getElementById("re_new_password").style.borderColor = "red";
-            $('.error_re_new_password').show();
+            $re_new_password.css("border-color", "red");
+            $error_re_new_password.show();
         }
             
     });
@@ -180,22 +174,22 @@ $(function() {
     // Clearing the group
     //
     $clear_group_button.bind('click', function(){
-        if($(".choices").is(":visible")){
-            $(".choices").hide();
+        if($choices.is(":visible")){
+            $choices.hide();
         } else {
-            $(".choices").show();
+            $choices.show();
             var numgroups = ($('ul.groups div').length)+1;
             var list = "<div class='panel panel-default'><div class='panel-body'>";
             for(var i = 1; i < numgroups; i++){
                list += '<input type="checkbox" value = "' + i + '"> Group ' + i +' <br>';
             }
             list += '<br/><input type="submit" value = "Clear Selected Groups"></div></div>'
-             $('.choices').html(list);
+             $choices.html(list);
         }
     });
 
 
-    $(".choices").submit(function(e){
+    $choices.submit(function(e){
 
         // array that will store all the values for checked ones
         var allVals = [];
@@ -213,7 +207,7 @@ $(function() {
             //console.log(allVals[i]);
             socket.xml_change('admin', sessionStorage.getItem('admin_class_id'), allVals[i], xml);
         }
-        $(".choices").hide();
+        $choices.hide();
         e.preventDefault();
     });
 
@@ -224,11 +218,11 @@ $(function() {
 
         var tools = toolbar_locs.join('|');
         var toolbar_name = prompt("Enter toolbar name");
-        var len = document.getElementById("mySelect").options.length;
+        var len = $my_select_opt.length;
 
         for(var i = 0; i < len; i++)
         {
-            if(document.getElementById("mySelect")[i].text == toolbar_name)
+            if($my_select_opt[i].text == toolbar_name)
                 break;
         }
         
@@ -244,7 +238,7 @@ $(function() {
     //
     $usetoolbar_button.bind('click', function(){
 
-        var select = document.getElementById("mySelect");
+        var select = $my_select[0];
         var id = select.selectedIndex;
         var array = select[id].tool.split('|');
         var i,j;
@@ -265,7 +259,7 @@ $(function() {
                 if(temp[j] != ""){
                     var this_tool = $("div[data-mode='" + temp[j] + "']");
                     var target = $('#toolbar-target-'+i);
-                    var location = $(".toolbar-target").index(target);
+                    var location = $design_icons.index(target);
                     var mode = this_tool.attr("data-mode");
                     var button = $('<button>');
                     var tb_index = toolbar_locs[location].push(mode) - 1;
@@ -277,7 +271,7 @@ $(function() {
                         toolbar_locs[tool.parent().index(0)].splice(tool.index(0),1);
 
                         console.log(toolbar_locs);
-                        $('.toolbox').append(tool);
+                        $design_toolbox.append(tool);
                         tool.remove();
                     });
                     toolbar_tool.append(button);
@@ -295,7 +289,7 @@ $(function() {
     $deletetoolbar_button.bind('click', function(){
         var result = confirm("Are you sure you want to delete this toolbar?");
         if (result) {
-            var select = document.getElementById("mySelect");
+            var select = $my_select[0];
             var id = select.selectedIndex;
 
             socket.delete_toolbar(sessionStorage.getItem('admin_class_id'), select[id].text);
@@ -318,11 +312,11 @@ $(function() {
         $('.error_password').hide();
         $('.error_username').hide();
         $('.error_class_input').hide();
-        document.getElementById("password").style.borderColor = null;
-        document.getElementById("username").style.borderColor = null;
-        document.getElementById("class_input").style.borderColor = null;
-        $('.class_input').val("");
-        $('.group_input').val("");
+        $password.css("border-color", null);
+        $username.css("border-color", null);
+        $class_input.css("border-color", null);
+        $class_input.val("");
+        $group_input.val("");
 
 
 
@@ -393,10 +387,10 @@ $(function() {
             getToolbarIcons();
             appletInit(params);
 
-            $(".toolbar-target").droppable({
+            $design_icons.droppable({
                 drop: function( event, ui ) {
                     var target = $(this);
-                    var location = $(".toolbar-target").index(target);
+                    var location = $design_icons.index(target);
                     var mode = ui.draggable.attr("data-mode");
                     var button = $('<button>');
                     var tb_index = toolbar_locs[location].push(mode) - 1;
@@ -431,7 +425,7 @@ $(function() {
 
         }else if (tab == 'view'){
             $design_toolbox.empty();
-            $('#views_jsapp').empty();
+            $views_jsapp.empty();
             $('#views_checkboxes').html('<div class="panel-heading"><h3 class="panel-title">Show Groups</h3></div><div class="panel-body"></div>');
             var numgroups = ($('ul.groups div').length)+1;
             
@@ -467,7 +461,7 @@ $(function() {
                 var checkbox = '<label><input checked type="checkbox" onchange="views_change(this)" value="applet'+i+'" name="views_group_'+ i
                 + '">Group '+ i + '</label>';
 
-                $('#views_jsapp').append(newgroup);
+                $views_jsapp.append(newgroup);
                 $('#views_checkboxes .panel-body').append(checkbox);
                 appletInit(params);                
             }
@@ -502,7 +496,7 @@ $(function() {
                 ' type="button" value="Merge Checked Views"><input class="btn btn-default unmergeview_button" onclick="unmerge_views(this)"'+
                 ' type="button" value="Unmerge Views" style="display:none;">';
             $('#views_checkboxes .panel-body').append(mergebutton);
-            $('#views_jsapp').append(mergegroup);
+            $views_jsapp.append(mergegroup);
             appletInit(params); 
 
         } else {
