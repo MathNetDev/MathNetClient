@@ -14,7 +14,10 @@ var $logout_button = $('#logout');
 
 var $class_id = $('#class_id');
 var $username = $('#nickname');
+
 var $error_header = $('#error_frame');
+var $error_username = $('.error_nickname');
+var $error_class_id = $('.error_class_id');
 
 var $leave_group_button = $('#leave_group');
 var $update_xml_button = $('#update_xml_button');

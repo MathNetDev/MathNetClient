@@ -7,7 +7,7 @@ $(function() {
                      );
     });
 
-    $('#buttons').bind('click', function(event) {
+    $groups.bind('click', function(event) {
         socket.group_join(sessionStorage.getItem('username'), 
             sessionStorage.getItem('class_id'),
             $(event.target).index('#buttons :input') + 1

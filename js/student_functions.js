@@ -14,14 +14,14 @@ function server_error(error) {
     var str = error;
 
     if (str.indexOf("Invalid username") !== -1) {
-        document.getElementById("class_id").style.borderColor = "red";
-        $('.error_class_id').show();
+        $username.css("border-color", "red");
+        $error_username.show();
         console.log("logout");
     }
 
     else if (str.indexOf("invalid.") !== -1) {
-        document.getElementById("nickname").style.borderColor = "red";
-        $('.error_nickname').show();
+        $class_id.css("border-color", "red");
+        $error_class_id.show();
     }
     else {
         console.log(error);
@@ -51,12 +51,15 @@ function logout_response(disconnect) {
     $group_view.hide();
 
 
-    $('.error_nickname').hide();
-    $('.error_class_id').hide();
-    document.getElementById("class_id").style.borderColor = null;
-    document.getElementById("nickname").style.borderColor = null;
-    $('.nickname').val("");
-    $('.class_id').val("");
+    $error_username.hide();
+    $error_class_id.hide();
+
+    $class_id.css("border-color", null);
+    $username.css("border-color", null);
+
+    $class_id.val("");
+    $username.val("");
+    
     if(!disconnect){
         sessionStorage.removeItem('class_id');
         sessionStorage.removeItem('username');
@@ -83,8 +86,6 @@ function group_numbers_response(username, class_id, group_id, status, group_size
 //resets $messages and $people, sets group_id in sessionStorage, then calls group_info
 // and get_settings
 function group_join_response(username, class_id, group_id, group_size) {
-    $("#people").html('');
-
     $login_view.hide();
     $class_view.hide();
     $group_view.show();
