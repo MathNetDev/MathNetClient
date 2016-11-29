@@ -3,12 +3,10 @@
     border: 5px solid aliceblue;
     border-radius: 10px;
 }
-
 #appletContainer{
 	min-width: 800px;
 	min-height: 600px;
 }
-
 #graphing_box{
 	width: 65%;
 	float: left;

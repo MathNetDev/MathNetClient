@@ -1,7 +1,7 @@
 "use strict";
 $(function() {
     var query = window.location.search;
-
+    
     $class_view.hide();
     $group_view.hide();
 
