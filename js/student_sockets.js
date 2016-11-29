@@ -48,13 +48,6 @@
             socket.emit('group_info', username, class_id, group_id, status);
         }
 
-        //This function takes a username, class_id, group_id, x, y, and info
-        //It then emits a socket event to change the username's coordinates and info in group_id
-        //given x, y, and info.
-        var coordinate_change = function(username, class_id, group_id, x, y, info) {
-            socket.emit('coordinate_change', username, class_id, group_id, x, y, info);
-        }
-
         //This function takes a username, class_id, group_id, and XML
         //It then emits a socket event to change the class's XML in the datastructure
         //based on the given XML, group_id, and class_id
@@ -114,11 +107,6 @@
             group_info_response(data.username, data.class_id, data.group_id, 
                                 data.other_members, data.status);
         });
-
-        socket.on('coordinate_change_response', function(data) {
-            coordinate_change_response(data.username, data.class_id, 
-                                       data.group_id, data.x, data.y, data.info);
-        });
         
         socket.on('xml_change_response', function(data) {
             xml_change_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar);
@@ -157,7 +145,6 @@
             group_join: group_join,
             group_leave: group_leave,
             group_info: group_info,
-            coordinate_change: coordinate_change,
             xml_change: xml_change,
             get_xml: get_xml,
             get_settings: get_settings,

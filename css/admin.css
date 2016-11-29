@@ -71,15 +71,15 @@ hr {
 #get-classes div:hover{
   background-color: rgba(211, 214, 34, 0.42);
 }
-
 #redirect_modal .modal-title {
   text-align: center;
 }
 
-.leave_button{
+/*.leave_button{
   position:  relative;
   top: 15px; 
-}
+}*/
+
 .settings_view{
   margin:4em 0 0 0;
 }
@@ -222,7 +222,7 @@ circle {
   stroke: steelblue;
   stroke-width: 1.5px;
 }
-#mySelect{
+#my_select{
 
   width:60%;
   height:100px;
