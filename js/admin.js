@@ -51,6 +51,9 @@ $(function() {
     var $trash_button = $('.btn-trash');
     var $clear_group_button = $('.clear_group_button');
 
+    var $redirect_modal = $('#redirect_modal');
+    var $redirect_login_button = $('#redirect_login');
+    var $redirect_username = $('#redirect_username');
 
     
     var toolbar_locs = []; // The array that stores all the toolbars
@@ -421,6 +424,13 @@ $(function() {
         }
     });
 
+    // 
+    // MODAL LOGIN BUTTON
+    //
+    $redirect_login_button.bind('click', function() {
+        redirect_modal_submit($redirect_modal.attr("group_id"), $redirect_username.val());
+    });
+
 
     //
     // TAB CHANGES
@@ -523,7 +533,7 @@ $(function() {
                     "screenshotGenerator":false,
                     "preventFocus":true
                 };
-                var newgroup = '<div class="views_group_'+i+' col-md-4 col-sm-5 col-lg-4" ><h4> Group ' + i + 
+                var newgroup = '<div class="views_group_'+i+' col-md-4 col-sm-5 col-lg-4" ><h4><a href="javascript:redirect('+i+')"> Group ' + i + 
                     '</h4><div class="geogebrawebapplet" id="appletContainer'+ i + 
                     '"style="width:100%;height:650px;display:block;"></div></div>';
 

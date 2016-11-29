@@ -576,3 +576,24 @@ function unmerge_views(event){
         $("." + array[i]["name"]).show();
     }
 }
+
+//this is called when a user presses the hyperlink for group i
+//in the View tab
+function redirect(i){
+    $('#redirect_modal').attr("group_id", i);
+    $('#redirect_modal').modal('show');
+}
+
+//this is called when the user submits a username after the
+//redirect modal is opened
+function redirect_modal_submit(group, username) {
+    $('#redirect_username').val("");
+    var class_id = "class_id=" + sessionStorage.getItem('admin_class_id');
+    var group_id = "group_id=" + group;
+    var user_id = "username=" + username;
+    var data = [class_id, group_id, user_id];
+    var packed = data[0];
+    for (var i = 1; i < data.length; i++) 
+        packed += "," + escape(data[i]);
+    window.open("student.html?" + packed, "_blank","toolbar=yes,menubar=yes,scrollbars=yes,resizable=yes,width=" + window.outerWidth + ",height=" + window.outerHeight);
+}
