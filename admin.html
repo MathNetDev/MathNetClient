@@ -274,6 +274,36 @@
     </div>
   </div>
 
+    <!-- Redirect Modal -->
+  <div id="redirect_modal" class="modal fad" tabindex="-1" role="dialog" aria-labelledby="modal_redirect_label">
+    <div class="modal-dialog">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h4 class="modal-title" id="modal_redirect_label"> Enter a Username </h4>
+        </div> <!-- modal-header -->
+
+        <div class="modal-body">
+          <div class="col-md-12">
+            <div class="col-md-4"></div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="redirect_username" name="user_id" required="" placeholder="Username"/>
+            </div>
+          </div>
+          <br/><br/>
+          <div class="col-md-12">
+            <div class="col-md-4"></div>
+            <div class="col-md-4">
+              <input class="btn btn-md btn-primary btn-block" type="submit" value="Login" id="redirect_login" data-dismiss="modal"/><br/>
+            </div>
+          </div>
+          <br/><br/>
+        </div> <!-- modal-body -->
+
+      </div> <!-- modal-content -->
+    </div> <!-- modal-dialog -->
+  </div> <!-- Redirect Modal -->
+
 <footer>
   <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
   <script src="https://cdn.socket.io/socket.io-1.3.5.js"></script>
@@ -293,7 +323,7 @@
 
   <script>
     $(document).ready(function() {
-    $('#body').show();
+      $('#body').show();
     });
     var x2js = new X2JS();
     var socket = Admin.Socket(io(host));

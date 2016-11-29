@@ -72,10 +72,16 @@ hr {
   background-color: rgba(211, 214, 34, 0.42);
 }
 
+
+#redirect_modal .modal-title {
+  text-align: center;
+}
+
 /*.leave_button{
   position:  relative;
   top: 15px; 
 }*/
+
 .settings_view{
   margin:4em 0 0 0;
 }

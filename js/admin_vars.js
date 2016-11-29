@@ -68,3 +68,7 @@ var $error_re_new_password = $('.error_re_new_password');
 var $error_class_input = $('.error_class_input');
 
 var $empty_class_input = $('.empty_class_input');
+
+var $redirect_modal = $('#redirect_modal');
+var $redirect_login_button = $('#redirect_login');
+var $redirect_username = $('#redirect_username');
