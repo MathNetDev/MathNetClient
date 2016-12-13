@@ -6,42 +6,43 @@ $(function() {
     $group_view.hide();
 
     if (query.substring(0,1) == '?') {
+        sessionStorage.clear();
         query = unescape(query.substring(1));
-        var data = query.split(',');
+        var data = query.split('&');
 
-        var class_id, group_id, username = "admin";
+        var url_class_id, url_group_id, url_username = "admin";
         var i;
         for (i = 0; i < data.length; i++)
             data[i] = unescape(data[i]);
         for (i = 0; i < data.length; i++) {
             if (data[i].startsWith("class_id="))
-                class_id = data[i].substring(9);
+                url_class_id = data[i].substring(9);
             else if (data[i].startsWith("group_id="))
-                group_id = data[i].substring(9);
+                url_group_id = data[i].substring(9);
             else if (data[i].startsWith("username="))
-                username = data[i].substring(9);
+                url_username = data[i].substring(9).trim();
         }
-        if (class_id !== undefined) {
-            sessionStorage.setItem("class_id", class_id);
-            sessionStorage.setItem("username", username);
-            if (group_id !== undefined)
-                sessionStorage.setItem("group_id", group_id);
+        if (url_class_id && valid_username(url_username)) {
+            socket.login(url_username, url_class_id);
+            wait_for_login(url_group_id);
         }
-        //window.history.pushState(null, "MathNet Student", "./student.html");
     }
-
-    if (sessionStorage.getItem('class_id')){
+    else if (sessionStorage.getItem('class_id')){
         socket.login(sessionStorage.getItem('username'), sessionStorage.getItem('class_id'));
-        if(sessionStorage.getItem('group_id')){
+        if (sessionStorage.getItem('group_id')){
             socket.group_join(sessionStorage.getItem('username'), sessionStorage.getItem('class_id'), 
                               sessionStorage.getItem('group_id'));          
         }//emit group_join if there is an group_id
     }//emit login if there is a class_id
-    else
+    else {
         $login_view.show(); 
+    }
 
     $login_button.bind('click', function() {
-        socket.login($username.val().trim(), $class_id.val().trim());
+        if (valid_username($username.val().trim())) {
+            socket.login($username.val().trim(), $class_id.val().trim());
+            $username.val(""); $class_id.val(""); $error_header.hide();
+        }
     });
 
     $error_header.html(sessionStorage.getItem('error'))
@@ -55,5 +56,39 @@ $(function() {
 
     $('body').show();
 
+    function valid_username(username) { 
+        var alphanum = /^[A-Za-z][A-Za-z0-9]*$/;
+        if (username.match(alphanum) && username.length < 9) {  
+            return true;  
+        }
+        else {   
+            alert("Username must be alphanumeric and less than or equal to 8 characters.");
+            return false;
+        }  
+    }
+
+    function wait_for_login(group_id) {
+        var id = setInterval(attempt_join_group, 50);
+        var maxAttempts = 10;
+        var numAttempts = 0;
+        function attempt_join_group() {
+            if (numAttempts < maxAttempts) {
+                if (sessionStorage.getItem("username")) {
+                    socket.group_join(sessionStorage.getItem("username"), sessionStorage.getItem("class_id"), 
+                                        group_id);
+                    clearInterval(id);
+                }
+                else if (sessionStorage.getItem("error")) {
+                    error = sessionStorage.getItem("error");
+                    if (error && (!(error.indexOf("Username ") !== -1) || !(error.indexOf(" is already taken") !== -1))) {
+                        clearInterval(id);
+                    }
+                }
+            }
+            else {
+                clearInterval(id);
+            }
+        }
+    }
 });
 

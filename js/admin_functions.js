@@ -547,8 +547,8 @@ function redirect_modal_submit(group, username) {
     var group_id = "group_id=" + group;
     var user_id = "username=" + username;
     var data = [class_id, group_id, user_id];
-    var packed = data[0];
+    var packed = escape(data[0]);
     for (var i = 1; i < data.length; i++) 
-        packed += "," + escape(data[i]);
+        packed += "&" + escape(data[i]);
     window.open("student.html?" + packed, "_blank","toolbar=yes,menubar=yes,scrollbars=yes,resizable=yes,width=" + window.outerWidth + ",height=" + window.outerHeight);
 }
