@@ -5,7 +5,7 @@ $(function() {
     $class_view.hide();
     $group_view.hide();
 
-    if (query.substring(0,1) == '?') {
+    if (query.substring(0,1) == '?' && !sessionStorage.getItem("error")) { // login through url and no error has occurred
         sessionStorage.clear();
         query = unescape(query.substring(1));
         var data = query.split('&');
@@ -24,7 +24,9 @@ $(function() {
         }
         if (url_class_id && valid_username(url_username)) {
             socket.login(url_username, url_class_id);
-            wait_for_login(url_group_id);
+            if (url_class_id) {
+                wait_for_login(url_group_id);
+            }
         }
     }
     else if (sessionStorage.getItem('class_id')){
@@ -59,6 +61,10 @@ $(function() {
     function valid_username(username) { 
         var alphanum = /^[A-Za-z][A-Za-z0-9]*$/;
         if (username.match(alphanum) && username.length < 9) {  
+            if (username == "admin") {
+                alert("Username 'admin' is restricted.");
+                return false;
+            }
             return true;  
         }
         else {   
@@ -79,8 +85,8 @@ $(function() {
                     clearInterval(id);
                 }
                 else if (sessionStorage.getItem("error")) {
-                    error = sessionStorage.getItem("error");
-                    if (error && (!(error.indexOf("Username ") !== -1) || !(error.indexOf(" is already taken") !== -1))) {
+                    var error = sessionStorage.getItem("error");
+                    if (error && error.indexOf("Username ") !== -1 && error.indexOf(" is already taken") !== -1) {
                         clearInterval(id);
                     }
                 }
