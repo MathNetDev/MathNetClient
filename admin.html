@@ -284,6 +284,20 @@
         </div> <!-- modal-header -->
 
         <div class="modal-body">
+
+          <div class="col-md-12">
+            <div class="col-md-4"></div>
+            <div class="error col-md-4" id="redirect_username_error_admin" hidden>
+              <p> Username <strong>admin</strong> not allowed. </p>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="col-md-4"></div>
+            <div class="error col-md-4" id="redirect_username_error" hidden>
+              <p> Username must be less than or equal to 8 characters long and must start with an alphabetic character. </p>
+            </div>
+          </div>
+
           <div class="col-md-12">
             <div class="col-md-4"></div>
             <div class="col-md-4">
@@ -294,7 +308,7 @@
           <div class="col-md-12">
             <div class="col-md-4"></div>
             <div class="col-md-4">
-              <input class="btn btn-md btn-primary btn-block" type="submit" value="Login" id="redirect_login" data-dismiss="modal"/><br/>
+              <input class="btn btn-md btn-primary btn-block" type="submit" value="Login" id="redirect_login"/><br/>
             </div>
           </div>
           <br/><br/>

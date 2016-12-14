@@ -543,7 +543,7 @@ function redirect(i){
 //redirect modal is opened
 function redirect_modal_submit(group, username) {
     username = username.trim();
-    $('#redirect_username').val("");
+    if (username == "") return;
     if (!valid_username(username)) {
         if (username == "admin") {
             $('#redirect_username_error_admin').show();
@@ -553,14 +553,15 @@ function redirect_modal_submit(group, username) {
             $('#redirect_username_error_admin').hide();
             $('#redirect_username_error').show();
         }
-        $('#redirect_username').css("border-color", "red")
+        $('#redirect_username').css("border-color", "red");
+        $('#redirect_modal').modal('show');
         return;
     }
-    else {
-        $('#redirect_username_error_admin').hide();
-        $('#redirect_username_error').hide();
-        $('#redirect_username').css("border-color", "rgb(204,204,204)")
-    }
+    $('#redirect_username_error_admin').hide();
+    $('#redirect_username_error').hide();
+    $('#redirect_username').css("border-color", "rgb(204,204,204)");
+    $('#redirect_modal').modal('hide');
+    $('#redirect_username').val("");
 
     var class_id = "class_id=" + sessionStorage.getItem('admin_class_id');
     var group_id = "group_id=" + group;
