@@ -48,6 +48,7 @@ var $sendconstruction_button = $('.btn-sendconstruction'); // Sending the toolba
 var $savetoolbar_button = $('.btn-savetoolbar'); // Saving the toolbar
 var $deletetoolbar_button = $('.btn-deletetoolbar'); // Deleting toolbars
 var $usetoolbar_button = $('.btn-usetoolbar'); // Using the saved toolbars to send to students
+var $default_toolset_name = 'Default toolset';
 
 var $design_tab = $('#design_tab'); // When the design tab is pressed
 var $design_toolbox = $('.toolbox'); //design view tool container
