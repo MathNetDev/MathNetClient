@@ -5,7 +5,7 @@ $(function() {
     $class_view.hide();
     $group_view.hide();
 
-    if (query.substring(0,1) == '?' && !sessionStorage.getItem("error")) { // login through url and no error has occurred
+    if (query.substring(0,1) == '?' && !sessionStorage.getItem("error") && !sessionStorage.getItem("group_id")) { // login through url and no error has occurred
         sessionStorage.clear();
         query = unescape(query.substring(1));
         var data = query.split('&');
@@ -22,7 +22,7 @@ $(function() {
             else if (data[i].startsWith("username="))
                 url_username = data[i].substring(9).trim();
         }
-        if (url_class_id && valid_username(url_username)) {
+        if (url_class_id) {
             socket.login(url_username, url_class_id);
             if (url_class_id) {
                 wait_for_login(url_group_id);
@@ -44,6 +44,9 @@ $(function() {
         if (valid_username($username.val().trim())) {
             socket.login($username.val().trim(), $class_id.val().trim());
             $username.val(""); $class_id.val(""); $error_header.hide();
+        }
+        else {
+            
         }
     });
 
