@@ -48,6 +48,8 @@ var $sendconstruction_button = $('.btn-sendconstruction'); // Sending the toolba
 var $savetoolbar_button = $('.btn-savetoolbar'); // Saving the toolbar
 var $deletetoolbar_button = $('.btn-deletetoolbar'); // Deleting toolbars
 var $usetoolbar_button = $('.btn-usetoolbar'); // Using the saved toolbars to send to students
+var $default_toolset_name = 'Default toolset';
+var $default_toolset = '0|1,501,67,5,19,72,75,76|2,15,45,18,65,7,37|4,3,8,9,13,44,58,47|16,51,64,70|10,34,53,11,24,20,22,21,23|55,56,57,12|36,46,38,49,50,71|30,29,54,32,31,33|17,26,62,73,14,68|25,52,60,61|40,41,42,27,28,35,6';
 
 var $design_tab = $('#design_tab'); // When the design tab is pressed
 var $design_toolbox = $('.toolbox'); //design view tool container

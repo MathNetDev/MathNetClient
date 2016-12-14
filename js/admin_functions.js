@@ -126,11 +126,16 @@ function add_group_response() {
  * @description refreshes the selection list of all the default toolbars
  */
 function get_toolbar_response(response) {
-
     $my_select.html('');
     $my_select_opt.length = 0;
     var selection_list = $my_select[0];
-
+    var default_tools = {};
+    default_tools.name = $default_toolset_name;
+    default_tools.tools = $default_toolset;
+    var default_option = document.createElement("option");
+    default_option.text = default_tools.name;
+    default_option.tool = default_tools.tools;
+    selection_list.add(default_option);
     for (var i = 0; i < response.toolbars.length; i++){
         var option = document.createElement("option");
         option.text = response.toolbars[i].toolbar_name;
@@ -147,8 +152,11 @@ function get_toolbar_response(response) {
 function delete_toolbar_response(response) {
     var select = $my_select[0];
     var id = select.selectedIndex;
-
-    $my_select[0][id].remove();
+    if($my_select[0].options[id].text != $default_toolset_name){
+        $my_select[0][id].remove();    
+    }else{
+        alert("The default toolset cannot be deleted.");
+    }
 }
 
 /**
