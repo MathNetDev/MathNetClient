@@ -542,13 +542,47 @@ function redirect(i){
 //this is called when the user submits a username after the
 //redirect modal is opened
 function redirect_modal_submit(group, username) {
+    username = username.trim();
+    if (username == "") return;
+    if (!valid_username(username)) {
+        if (username == "admin") {
+            $('#redirect_username_error_admin').show();
+            $('#redirect_username_error').hide();
+        }
+        else {
+            $('#redirect_username_error_admin').hide();
+            $('#redirect_username_error').show();
+        }
+        $('#redirect_username').css("border-color", "red");
+        $('#redirect_modal').modal('show');
+        return;
+    }
+    $('#redirect_username_error_admin').hide();
+    $('#redirect_username_error').hide();
+    $('#redirect_username').css("border-color", "rgb(204,204,204)");
+    $('#redirect_modal').modal('hide');
     $('#redirect_username').val("");
+
     var class_id = "class_id=" + sessionStorage.getItem('admin_class_id');
     var group_id = "group_id=" + group;
     var user_id = "username=" + username;
     var data = [class_id, group_id, user_id];
-    var packed = data[0];
+    var packed = escape(data[0]);
     for (var i = 1; i < data.length; i++) 
-        packed += "," + escape(data[i]);
+        packed += "&" + escape(data[i]);
     window.open("student.html?" + packed, "_blank","toolbar=yes,menubar=yes,scrollbars=yes,resizable=yes,width=" + window.outerWidth + ",height=" + window.outerHeight);
+}
+
+//this function validates the username submitted to the redirect modal
+function valid_username(username) { 
+    var alphanum = /^[A-Za-z][A-Za-z0-9]*$/;
+    if (username.match(alphanum) && username.length < 9) {  
+        if (username == "admin") {
+            return false;
+        }
+        return true;  
+    }
+    else {   
+        return false;
+    }  
 }

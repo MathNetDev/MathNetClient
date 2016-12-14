@@ -274,3 +274,10 @@ div.panel-accordion.show {
     opacity: 1;
     max-height: 1000px;
 }
+
+.modal-body {
+    position: relative;
+    overflow-y: auto;
+    max-height: 400px;
+    padding: 15px;
+}

@@ -77,7 +77,7 @@ $(function() {
             $empty_class_input.show();
         }
         else{
-        socket.add_class($class_input.val().trim(), parseInt($group_input.val().trim()), $secret, localStorage.getItem('admin_id'));
+            socket.add_class($class_input.val().trim(), parseInt($group_input.val().trim()), $secret, localStorage.getItem('admin_id'));
         }
     });
 
@@ -379,6 +379,14 @@ $(function() {
         redirect_modal_submit($redirect_modal.attr("group_id"), $redirect_username.val());
     });
 
+    //
+    // SUBMIT USERNAME HITTING ENTER KEY FOR MODAL
+    //
+    $redirect_username.keypress(function(e) {
+        if (e.which == 13) {
+            redirect_modal_submit($redirect_modal.attr("group_id"), $redirect_username.val());
+        }
+    });
 
     //
     // TAB CHANGES

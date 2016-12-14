@@ -18,7 +18,6 @@ function server_error(error) {
         $error_username.show();
         console.log("logout");
     }
-
     else if (str.indexOf("invalid.") !== -1) {
         $class_id.css("border-color", "red");
         $error_class_id.show();
