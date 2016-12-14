@@ -16,8 +16,9 @@ function appletSetExtXML(xml, toolbar, id){
         appletName = document['applet' + id];
         console.log(appletName);
     }
-    if (toolbar && toolbar !== "undefined"){
+    if (toolbar && toolbar !== "undefined" && toolbar !== "null"){
         console.log('setting ' + appletName.id + ' custom toolbar to: ' + toolbar);
+        sessionStorage.setItem('toolbar', toolbar);
         appletName.setCustomToolBar(toolbar);
     }
     //console.log(xml);
@@ -204,9 +205,8 @@ function check_xml(xml, socket){
         var username = sessionStorage.getItem('username');
         var class_id = sessionStorage.getItem('class_id');
         var group_id = sessionStorage.getItem('group_id');
-        var toolbar = sessionStorage.getItem('toolbar');
 
-        socket.xml_change(username, class_id, group_id, cur_xml, toolbar);
+        socket.xml_change(username, class_id, group_id, cur_xml, '');
 
     }, 1000);
 }
