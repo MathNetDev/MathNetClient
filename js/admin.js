@@ -238,20 +238,25 @@ $(function() {
     // SAVING A TOOLBAR
     //
     $savetoolbar_button.bind('click', function(){
-
+        var $my_select_opt = $('#my_select option');
+        var index = $my_select[0].selectedIndex;
         var tools = toolbar_locs.join('|');
-        var toolbar_name = prompt("Enter toolbar name");
+        var toolbar_name = index > -1 ? $my_select[0][index].text : prompt("Enter toolbar name");
         var len = $my_select_opt.length;
-
+        
         for(var i = 0; i < len; i++)
         {
             if($my_select_opt[i].text == toolbar_name)
                 break;
         }
-        
-        if (i == len)
-            socket.save_toolbar(sessionStorage.getItem('admin_class_id'), toolbar_name, tools);
-        else
+        console.log(i + " " + len + " " + index);
+        if (i == len && index == -1)
+            socket.save_toolbar(sessionStorage.getItem('admin_class_id'), toolbar_name, tools, "insert");
+        else if (i != len && index != -1){
+            console.log("update update");
+            socket.save_toolbar(sessionStorage.getItem('admin_class_id'), toolbar_name, tools, "update");
+        }
+        else if (i != len && index == -1)
             alert("You already have a toolbox with that name");
 
     });

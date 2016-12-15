@@ -49,8 +49,8 @@
         // This function takes a class name provided by the user.
         // The socket then emits this data to the server to create a 
         // toolbar for the class.
-        var save_toolbar = function (class_id, toolbar_name, tools) {
-            socket.emit('save-toolbar', class_id, toolbar_name, tools);
+        var save_toolbar = function (class_id, toolbar_name, tools, action) {
+            socket.emit('save-toolbar', class_id, toolbar_name, tools, action);
         }
 
         // This function takes a class name provided by the user.

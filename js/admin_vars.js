@@ -57,7 +57,6 @@ var $trash_button = $('.btn-trash');
 var $clear_group_button = $('.clear_group_button');
 var $choices = $('.choices');
 var $my_select = $('#my_select');
-var $my_select_opt = $('#my_select option');
 var $views_jsapp = $('#views_jsapp');
 var $applet_activity_designer = $('.applet-activity-designer');
 
