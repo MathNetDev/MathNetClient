@@ -188,7 +188,7 @@ $(function() {
         var numgroups = ($('ul.groups div').length)+1;
         var xml = new_applet_xml;
         for(var i = 1; i < numgroups; i++){
-            socket.xml_change('admin', sessionStorage.getItem('admin_class_id'), i, xml);
+            socket.xml_change('admin', sessionStorage.getItem('admin_class_id'), i, xml, '');
         }
     });
 
@@ -228,7 +228,7 @@ $(function() {
         for(var i = 0; i<allVals.length; i++)
         {
             //console.log(allVals[i]);
-            socket.xml_change('admin', sessionStorage.getItem('admin_class_id'), allVals[i], xml);
+            socket.xml_change('admin', sessionStorage.getItem('admin_class_id'), allVals[i], xml, '');
         }
         $choices.hide();
         e.preventDefault();
