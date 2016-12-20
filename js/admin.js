@@ -325,6 +325,7 @@ $(function() {
     $logout_class_button.bind('click', function(){
         
         $create_view.hide();
+        $settings_tab.hide();
         $username_password_view.show();
         
         socket.delete_session(localStorage.getItem('admin_id'));
@@ -367,8 +368,27 @@ $(function() {
 
         if (password == $secret)
         {
-           alert('Correct!. The class has been deleted. Press Ok to continue');
+           alert('Correct! The class has been deleted. Press OK to continue.');
            socket.delete_class(sessionStorage.getItem('admin_class_id'), $secret, true);
+        }
+    });
+
+    //
+    // SETTINGS CHANGE PASSWORD BUTTON 
+    //
+    $change_password_button.bind('click', function() {
+        if ($changed_password.val() !== $retyped_changed_password.val()) {
+            $('.error_password_incorrect').hide();
+            $current_password.css('border-color',  '#CCCCCC'); 
+            $('.error_password_mismatch').show();
+            $changed_password.css('border-color', 'red'); 
+            $retyped_changed_password.css('border-color', 'red');
+        }
+        else {
+            $('.error_password_mismatch').hide();
+            $changed_password.css('border-color',  '#CCCCCC'); 
+            $retyped_changed_password.css('border-color', '#CCCCCC');
+            socket.change_password(localStorage.getItem('admin_id'), $current_password.val(), $changed_password.val(), $secret);
         }
     });
 

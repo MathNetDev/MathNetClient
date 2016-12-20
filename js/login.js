@@ -93,6 +93,9 @@ $(function() {
                         clearInterval(id);
                     }
                 }
+                else if (!$('.login_view').is(":visible")) {
+                    $('.login_view').show();
+                }
             }
             else {
                 clearInterval(id);

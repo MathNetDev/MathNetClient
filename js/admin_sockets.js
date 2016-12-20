@@ -14,10 +14,17 @@
     var init = function (socket) {
        // sock = socket;
 
-        // This funcrion takes a username and password provided by the user
+        // This function takes a username and password provided by the user
         // The socket then emits this data to the server to create the admin
         var create_admin = function(username, password, secret) {
             socket.emit('create-admin', username, password, secret);
+        };
+
+        // This function takes the admin_id, their current password, and a
+        // new password to change it to. The socket emits this data to
+        // the server to change the user's password
+        var change_password = function(admin_id, password, new_password, secret) {
+            socket.emit('change-password', admin_id, password, new_password, secret);
         };
 
         // Takes admin id and a normal string 
@@ -152,8 +159,12 @@
             add_group_response();
         });
 
-        socket.on('create-admin-response', function(data){
+        socket.on('create-admin-response', function(data) {
             create_admin_response(data.check);
+        });
+
+        socket.on('change-password-response', function(data) {
+            change_password_response(data.success);
         });
 
         socket.on('get-toolbar-response', function(data) {
@@ -207,6 +218,7 @@
         return {
             add_class: add_class,
             create_admin: create_admin,
+            change_password: change_password,
             create_session: create_session,
             join_class: join_class,
             add_group: add_group,

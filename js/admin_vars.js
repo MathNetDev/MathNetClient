@@ -1,7 +1,6 @@
 //admin_vars.js
 var $secret = 'ucd_247';
 
-var $secret_view = $('.secret_view');
 var $view_tab = $('#view_tab');
 var $lists = $('.lists');
 
@@ -11,8 +10,6 @@ var $create_user_view = $('.create_user_view'); // Div holding user creation vie
 var $username_password_view = $('.username_password_view'); // Div holding user creation view
 var $create_view = $('.create_view'); // Div holding class creation view
 var $class_view = $('.class_view'); // Div holding the class view
-var $manage_view = $('.manage_view'); // Div holding class management view
-var $settings_view = $('.settings_view'); // Div holding class settings view
 var $Secret = $('.Secret'); // Div asking for secret
 
 var $create_button = $('.create_button'); // Button for creation of class
@@ -73,3 +70,9 @@ var $empty_class_input = $('.empty_class_input');
 var $redirect_modal = $('#redirect_modal');
 var $redirect_login_button = $('#redirect_login');
 var $redirect_username = $('#redirect_username');
+
+var $settings_tab = $('#settings_tab');
+var $current_password = $('#current_password');
+var $changed_password = $('#changed_password');
+var $retyped_changed_password = $('#retyped_changed_password');
+var $change_password_button = $('#change_password_button');
