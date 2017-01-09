@@ -49,15 +49,15 @@
         // This function takes a class name provided by the user.
         // The socket then emits this data to the server to create a 
         // toolbar for the class.
-        var save_toolbar = function (class_id, toolbar_name, tools) {
-            socket.emit('save-toolbar', class_id, toolbar_name, tools);
+        var save_toolbar = function (admin_id, toolbar_name, tools) {
+            socket.emit('save-toolbar', admin_id, toolbar_name, tools);
         }
 
         // This function takes a class name provided by the user.
         // The socket then emits this data to the server to get all 
         // the toolbars for the class.
-        var get_toolbars = function (class_id) {
-            socket.emit('get-toolbars', class_id);
+        var get_toolbars = function (admin_id) {
+            socket.emit('get-toolbars', admin_id);
         }
 
         // This function takes a username and a password
@@ -69,8 +69,8 @@
         // This function takes a class id and the tools provided by the user.
         // The socket then emits this data to the server to delete a toolbar
         // from the class.
-        var delete_toolbar = function (class_id, toolbar_name) {
-            socket.emit('delete-toolbar', class_id, toolbar_name);
+        var delete_toolbar = function (admin_id, toolbar_name) {
+            socket.emit('delete-toolbar', admin_id, toolbar_name);
         }
 
         // This function takes a class id and group id provided by the user.
@@ -173,7 +173,6 @@
         });
 
         socket.on('leave-class-response', function(data) {
-            console.log("hello");
             leave_class_response(data.disconnect);
         });
 

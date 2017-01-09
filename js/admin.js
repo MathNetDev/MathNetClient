@@ -250,7 +250,7 @@ $(function() {
         }
         
         if (i == len)
-            socket.save_toolbar(sessionStorage.getItem('admin_class_id'), toolbar_name, tools);
+            socket.save_toolbar(localStorage.getItem('admin_id'), toolbar_name, tools);
         else
             alert("You already have a toolbox with that name");
 
@@ -315,7 +315,7 @@ $(function() {
             var select = $my_select[0];
             var id = select.selectedIndex;
 
-            socket.delete_toolbar(sessionStorage.getItem('admin_class_id'), select[id].text);
+            socket.delete_toolbar(localStorage.getItem('admin_id'), select[id].text);
         }
      });
 
@@ -398,7 +398,7 @@ $(function() {
         //alert(tab);
         if(tab == 'design'){
 
-                var params = {
+            var params = {
                 "container":"appletContainer",
                 "id":"applet",
                 "width":$applet_activity_designer.innerWidth(),
@@ -420,7 +420,7 @@ $(function() {
                 "isPreloader":false,
                 "screenshotGenerator":false,
                 "preventFocus":false
-    };
+            };
             
             getToolbarIcons();
             appletInit(params);
@@ -456,7 +456,7 @@ $(function() {
                 };
                 appletInit(params);
             });
-            socket.get_toolbars(sessionStorage.getItem('admin_class_id'));
+            socket.get_toolbars(localStorage.getItem('admin_id'));
 
         }else if (tab == 'view'){
             $design_toolbox.empty();
