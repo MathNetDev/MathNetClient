@@ -19,6 +19,7 @@
   <!-- Nav tabs -->
     <ul class="nav nav-tabs" role="tablist">
       <li role="presentation" class="active"><a href="#admin" aria-controls="design" role="tab" data-toggle="tab" id="admin_tab">Admin</a></li>
+      <li role="presentation"><a href="#settings" aria-controls="design" role="tab" data-toggle="tab" id="settings_tab" style="display:none">Settings</a></li>
       <li role="presentation"><a href="#design" aria-controls="design" role="tab" data-toggle="tab" id="design_tab" style="display:none">Design</a></li>
       <li role="presentation"><a href="#view" aria-controls="design" role="tab" data-toggle="tab" id="view_tab" style="display:none">View</a></li>
     </ul>
@@ -43,9 +44,9 @@
             <!-- Text Fields and Login Button -->
             <div class="col-md-12 col-sm-12">
               <div class="col-md-4 col-sm-4 col-md-offset-4 col-sm-offset-4">
-                <input type="text" class="form-control username" id="username" name="user_id" required="" placeholder="User ID"/>
+                <input type="text" class="form-control username" name="user_id" required="" placeholder="User ID"/>
                 <p class = "error error_username" hidden> User ID does not exist </p> <br/>
-                <input type="password" class="form-control password" id="password" name="password" required="" placeholder="Password"/>
+                <input type="password" class="form-control password" name="password" required="" placeholder="Password"/>
                 <p class = "error error_password" hidden> Wrong Password Try Again </p> <br/>
               </div>
             </div>
@@ -53,7 +54,7 @@
             <!-- New To Math Net -->
             <div class="col-md-12 col-sm-12">
                 <div class="col-md-4 col-sm-4 col-md-offset-4 col-sm-offset-4">
-                  <input class="btn btn-lg btn-primary btn-block login_button" type="submit" value="Login" id="login"/><br/>
+                  <input class="btn btn-lg btn-primary btn-block login_button" type="submit" value="Login"/><br/>
                   <p style="text-align: center"> New to Math Net? </p>
                 </div>
             </div>
@@ -180,21 +181,28 @@
               <td><hr/></td>
                 <td style="width:1px; padding: 0 10px; white-space: nowrap;">GROUPS AND STUDENTS</td>
               <td><hr /></td>
-            </table>​ <br/>
+            </table> <br/>
 
-            <div class="col-md-12 lists" style="align: center"></div> 
+            <div class="col-md-12 lists"></div> 
 
-            <div class="settings_view">
-              <h4>Settings</h4>
-              <p><input class="setting" type="checkbox" name="Hide Options" id="setting-hide-options"><label for="setting-hide-options">Hide Options</label></p>
-              <p><input class="setting" type="checkbox" name="Test2" id="setting-test2"><label for="setting-test2">Test2</label></p>
-              <p><input class="setting" type="checkbox" name="Test3" id="setting=test3"><label for="setting-test3">Test3</label></p>
-              <p><input class="btn btn-default save_button" type="button" value="Save Settings"></p>
-            </div>
           </div>
         </div>
-      </div>
+      </div> <!-- End of admin tab -->
 
+
+      <!-- Settings tab -->
+      <div role="tabpanel" class="tab-pane" id="settings">
+        <div class="col-md-12 col-sm-12">
+          <h3> Settings </h3>
+          <h4> Change Password </h4>
+          <p class="error error_password_mismatch" hidden> Passwords do not match <br/> </p> 
+          <p class="error error_password_incorrect" hidden> Incorrect password <br/> </p> 
+          <input type="password" class="form-control" id="current_password" name="password" required="" placeholder="Current password"/>
+          <input type="password" class="form-control" id="changed_password" name="password" required="" placeholder="New password"/>
+          <input type="password" class="form-control" id="retyped_changed_password" name="password" required="" placeholder="Retype new password"/>
+          <input class="btn btn-md btn-primary btn-block" type="submit" value="Submit" id="change_password_button"/>
+        </div>
+      </div> <!-- End of settings tab -->
 
 
       <div role="tabpanel" class="tab-pane" id="design">
@@ -258,7 +266,8 @@
                 <br/><br/><br/>
             </div>
         </div>
-      </div>
+      </div> <!-- End of design tab -->
+
       <div role="tabpanel" class="tab-pane" id="view">
         <div class="col-md-12">
           <h3>Class View</h3>
@@ -270,9 +279,10 @@
           </div>
           <div class="javascriptapplet" id="views_jsapp"></div> 
         </div>
-      </div>
-    </div>
-  </div>
+      </div> <!-- End of view tab -->
+
+    </div> <!-- End of table-content -->
+  </div> <!-- End of container -->
 
     <!-- Redirect Modal -->
   <div id="redirect_modal" class="modal fad" tabindex="-1" role="dialog" aria-labelledby="modal_redirect_label">

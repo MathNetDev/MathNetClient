@@ -41,8 +41,8 @@ function add_class_response(class_id, class_name, group_count) {
     sessionStorage.setItem('admin_class_id', class_id);
     $error_frame.html('');
 
-    $secret_view.hide();
     $create_view.hide();
+    $settings_tab.hide();
     $class_view.show();
     $design_tab.show();
     $view_tab.show();
@@ -72,7 +72,6 @@ function add_class_response(class_id, class_name, group_count) {
  * @function create_admin response
  * @description adds an admin
  */
-
  function create_admin_response( check ){
 
     if (check == 0) {
@@ -98,6 +97,27 @@ function add_class_response(class_id, class_name, group_count) {
         $re_new_password.css("border-color", null);
     }
  }
+
+/**
+ * @function change_password response
+ * @description tells the user if password was changed
+ */
+ function change_password_response(success) {
+    if (success) {
+        $current_password.val("");
+        $changed_password.val("");
+        $retyped_changed_password.val("");
+        alert("Your password has been updated.")
+    }
+    else {
+        $('.error_password_mismatch').hide();
+        $changed_password.css('border-color',  '#CCCCCC'); 
+        $retyped_changed_password.css('border-color', '#CCCCCC');
+        $('.error_password_incorrect').show();
+        $current_password.css('border-color',  'red'); 
+    }
+ }
+
 
 /**
  * @function add_group_response
@@ -188,8 +208,8 @@ function delete_class_response(class_id) {
 function leave_class_response(disconnect) {
     $error_frame.html('');
     
-    $secret_view.hide();
     $create_view.show();
+    $settings_tab.show();
     $class_view.hide();
     $design_icons.empty();
     $design_tab.hide();
@@ -250,6 +270,7 @@ function group_info_response(username, class_id, group_id, group, status) {
 function get_classes_response(classes, secret){
     $username_password_view.hide();
     $create_view.show();
+    $settings_tab.show();
     $class_view.hide();
 
     sessionStorage.setItem('admin_secret', secret);
