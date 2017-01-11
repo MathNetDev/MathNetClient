@@ -492,10 +492,10 @@ function rename_labels(xml, num, counter){
 
             for (var i = 0; i < array.length; i++){
                 if(array[i]["_type"] === 'point'){
-                    array[i]["_label"] = array[i]["_label"] + 'g' + num;
+                    array[i]["_label"] = array[i]["_label"];
                     if ("caption" in array[i]){
                         var elem = array[i]["caption"]["_val"];
-                        array[i]["caption"]["_val"] = elem + 'g' + num;
+                        array[i]["caption"]["_val"] = elem;
                     }
                     if(elem.includes("admin")){
                             counter = 1;
@@ -516,7 +516,7 @@ function rename_labels(xml, num, counter){
 
             for (var i = 0; i < array.length; i++){
                 for (var point in array[i].input){
-                    array[i]["input"][point] =  array[i]["input"][point] + 'g' + num;
+                    array[i]["input"][point] =  array[i]["input"][point];
                 }
             }
             xml.geogebra.construction.command = array;

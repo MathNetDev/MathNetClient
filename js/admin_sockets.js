@@ -29,8 +29,8 @@
         // This function takes a class name and group count provided by the 
         // user. The socket then emits this data to the server to create 
         // the class and groups. 
-        var add_class = function (class_name, group_count, secret, admin_id) {
-            socket.emit('add-class', class_name, group_count, secret, admin_id);
+        var add_class = function (class_name, group_count, secret, admin_id, group_colors) {
+            socket.emit('add-class', class_name, group_count, secret, admin_id, group_colors);
         };
 
         // This function takes a class id provided by the user. The socket then
@@ -42,8 +42,8 @@
         // This function takes a class name provided by the user.
         // The socket then emits this data to the server to create a 
         // group for the class.
-        var add_group = function (class_id, secret) {
-            socket.emit('add-group', class_id, secret);
+        var add_group = function (class_id, secret, colors) {
+            socket.emit('add-group', class_id, secret, colors);
         }
 
         // This function takes a class name provided by the user.

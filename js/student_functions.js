@@ -152,6 +152,7 @@ function group_info_response(username, class_id, group_id, members, status) {
 
 //handler for xml_change response, appends message to chatbox, and calls appletSetExtXML()
 function xml_change_response(username, class_id, group_id, xml, toolbar) {
+    socket.group_color(sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'));
     appletSetExtXML(xml, toolbar);
     ggbOnInit('socket_call');
 }
@@ -204,10 +205,17 @@ function delete_student_class_response() {
     delete sessionStorage.group_id;
     delete sessionStorage.username;
 }
+
+function group_color_response(colors) {
+    sessionStorage.setItem('group_colors', colors);
+}
+
 //This function registers listeners on geogebra initialization 
 function ggbOnInit(arg) {
     document.applet.registerAddListener("addLock");
     document.applet.registerUpdateListener("checkUser");
+    document.applet.registerAddListener("updateColors");
+    socket.group_color(sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'));
     console.log(arg);
     if(arg != 'socket_call'){
         socket.get_xml(sessionStorage.getItem('username'),sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'));

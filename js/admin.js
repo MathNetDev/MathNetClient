@@ -77,7 +77,19 @@ $(function() {
             $empty_class_input.show();
         }
         else{
-            socket.add_class($class_input.val().trim(), parseInt($group_input.val().trim()), $secret, localStorage.getItem('admin_id'));
+            var group_colors = [];
+
+            for(var i = 0; i < parseInt($group_input.val().trim()); i++) {
+                var colors = [], minimum = 0, maximum = 255;
+                colors.push(Math.floor(Math.random() * (maximum - minimum + 1)) + minimum);
+                colors.push(Math.floor(Math.random() * (maximum - minimum + 1)) + minimum);
+                colors.push(Math.floor(Math.random() * (maximum - minimum + 1)) + minimum);
+                var color = colors.join('-');
+                console.log(color);
+                group_colors[i] = color;
+
+            }
+            socket.add_class($class_input.val().trim(), parseInt($group_input.val().trim()), $secret, localStorage.getItem('admin_id'), group_colors);
         }
     });
 
@@ -111,7 +123,11 @@ $(function() {
     //
     $add_button.bind('click', function() {
         // Tell the server to create a new group for the class in the database
-        socket.add_group(sessionStorage.getItem('admin_class_id'), $secret);
+        var colors = [], minimum = 0, maximum = 255;
+        colors.push(Math.floor(Math.random() * (maximum - minimum + 1)) + minimum);
+        colors.push(Math.floor(Math.random() * (maximum - minimum + 1)) + minimum);
+        colors.push(Math.floor(Math.random() * (maximum - minimum + 1)) + minimum);
+        socket.add_group(sessionStorage.getItem('admin_class_id'), $secret, colors);
     });
 
     //

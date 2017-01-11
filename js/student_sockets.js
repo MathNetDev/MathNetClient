@@ -48,6 +48,13 @@
             socket.emit('group_info', username, class_id, group_id, status);
         }
 
+        //This function takes class_id and group_id,
+        // It then emits the socket event to get the color of the group
+        var group_color = function(class_id, group_id) {
+            socket.emit('group-color', class_id, group_id);
+        }
+
+
         //This function takes a username, class_id, group_id, and XML
         //It then emits a socket event to change the class's XML in the datastructure
         //based on the given XML, group_id, and class_id
@@ -107,6 +114,10 @@
             group_info_response(data.username, data.class_id, data.group_id, 
                                 data.other_members, data.status);
         });
+
+        socket.on('group-color-response', function(data) {
+            group_color_response(data[0].group_color);
+        });
         
         socket.on('xml_change_response', function(data) {
             xml_change_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar);
@@ -145,6 +156,7 @@
             group_join: group_join,
             group_leave: group_leave,
             group_info: group_info,
+            group_color: group_color,
             xml_change: xml_change,
             get_xml: get_xml,
             get_settings: get_settings,
