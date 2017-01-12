@@ -260,27 +260,21 @@ $(function() {
     // USING A TOOLBAR
     //
     $usetoolbar_button.bind('click', function(){
-
         var select = $my_select[0];
         var id = select.selectedIndex;
         var array = select[id].tool.split('|');
         var i,j;
 
-        for(i = 0; i < 12; i++ )
-        {
+        for(i = 0; i < 12; i++ ){
             $('#toolbar-target-' + i).empty();
             toolbar_locs[i] = [];
-            console.log(toolbar_locs);
         }
-
-        console.log(array);
-        for( i = 0; i < array.length; i++)
-        {
+        
+        for( i = 0; i < array.length; i++){
             var temp = array[i].split(',');
-            for ( j = 0; j < temp.length; j++ )
-            {
+            for ( j = 0; j < temp.length; j++ ){
                 if(temp[j] != ""){
-                    var this_tool = $("div[data-mode='" + temp[j] + "']");
+                    var this_tool = $(".toolbox div[data-mode='" + temp[j] + "']");
                     var target = $('#toolbar-target-'+i);
                     var location = $design_icons.index(target);
                     var mode = this_tool.attr("data-mode");
@@ -289,21 +283,16 @@ $(function() {
                     var toolbar_tool = this_tool.clone();
                     button.html('-');
                     button.bind('click', function(){
-                        //alert('toolbar_locs[' + location + '][' + tb_index + ']');
                         var tool = $(this).parent();
                         toolbar_locs[tool.parent().index(0)].splice(tool.index(0),1);
-
-                        console.log(toolbar_locs);
                         $design_toolbox.append(tool);
                         tool.remove();
                     });
                     toolbar_tool.append(button);
-                    
                     target.append(toolbar_tool);
                 }
             }
         }
-
     });
 
     //
