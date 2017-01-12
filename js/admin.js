@@ -241,7 +241,7 @@ $(function() {
         var $my_select_opt = $('#my_select option');
         var index = $my_select[0].selectedIndex;
         var tools = toolbar_locs.join('|');
-        var toolbar_name = index > -1 ? $my_select[0][index].text : prompt("Enter toolbar name");
+        var toolbar_name = index > -1 ? (confirm("This will save over the old toolbar."), $my_select[0][index].text) : prompt("Enter toolbar name");
         var len = $my_select_opt.length;
         
         for(var i = 0; i < len; i++)
