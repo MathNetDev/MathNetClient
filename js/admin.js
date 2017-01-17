@@ -285,7 +285,7 @@ $(function() {
             for ( j = 0; j < temp.length; j++ )
             {
                 if(temp[j] != ""){
-                    var this_tool = $("div[data-mode='" + temp[j] + "']");
+                    var this_tool = $(".toolbox div[data-mode='" + temp[j] + "']");
                     var target = $('#toolbar-target-'+i);
                     var location = $design_icons.index(target);
                     var mode = this_tool.attr("data-mode");
@@ -305,10 +305,11 @@ $(function() {
                     toolbar_tool.append(button);
                     
                     target.append(toolbar_tool);
+
                 }
             }
         }
-
+        $(select[id]).prop("selected", false);
     });
 
     //
