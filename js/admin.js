@@ -172,6 +172,7 @@ $(function() {
         for(var i = 1; i < numgroups; i++){
             socket.xml_change('admin', sessionStorage.getItem('admin_class_id'), i, '', toolbar_str);
         }
+        $("option:selected").prop("selected", false);
     });
 
     $sendconstruction_button.bind('click', function(){
@@ -251,10 +252,10 @@ $(function() {
         }
 
         if (i == len && index == -1)
-            socket.save_toolbar(sessionStorage.getItem('admin_class_id'), toolbar_name, tools, "insert");
+            socket.save_toolbar(localStorage.getItem('admin_id'), toolbar_name, tools, "insert");
         else if (i != len && index != -1){
             console.log("update update");
-            socket.save_toolbar(sessionStorage.getItem('admin_class_id'), toolbar_name, tools, "update");
+            socket.save_toolbar(localStorage.getItem('admin_id'), toolbar_name, tools, "update");
         }
         else if (i != len && index == -1)
             alert("You already have a toolbox with that name");
