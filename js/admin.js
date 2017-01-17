@@ -188,7 +188,7 @@ $(function() {
         var numgroups = ($('ul.groups div').length)+1;
         var xml = new_applet_xml;
         for(var i = 1; i < numgroups; i++){
-            socket.xml_change('admin', sessionStorage.getItem('admin_class_id'), i, xml);
+            socket.xml_change('admin', sessionStorage.getItem('admin_class_id'), i, xml, '');
         }
     });
 
@@ -228,7 +228,7 @@ $(function() {
         for(var i = 0; i<allVals.length; i++)
         {
             //console.log(allVals[i]);
-            socket.xml_change('admin', sessionStorage.getItem('admin_class_id'), allVals[i], xml);
+            socket.xml_change('admin', sessionStorage.getItem('admin_class_id'), allVals[i], xml, '');
         }
         $choices.hide();
         e.preventDefault();
@@ -249,7 +249,7 @@ $(function() {
             if($my_select_opt[i].text == toolbar_name)
                 break;
         }
-        console.log(i + " " + len + " " + index);
+
         if (i == len && index == -1)
             socket.save_toolbar(sessionStorage.getItem('admin_class_id'), toolbar_name, tools, "insert");
         else if (i != len && index != -1){
@@ -265,25 +265,19 @@ $(function() {
     // USING A TOOLBAR
     //
     $usetoolbar_button.bind('click', function(){
-
         var select = $my_select[0];
         var id = select.selectedIndex;
         var array = select[id].tool.split('|');
         var i,j;
 
-        for(i = 0; i < 12; i++ )
-        {
+        for(i = 0; i < 12; i++ ){
             $('#toolbar-target-' + i).empty();
             toolbar_locs[i] = [];
-            console.log(toolbar_locs);
         }
-
-        console.log(array);
-        for( i = 0; i < array.length; i++)
-        {
+        
+        for( i = 0; i < array.length; i++){
             var temp = array[i].split(',');
-            for ( j = 0; j < temp.length; j++ )
-            {
+            for ( j = 0; j < temp.length; j++ ){
                 if(temp[j] != ""){
                     var this_tool = $(".toolbox div[data-mode='" + temp[j] + "']");
                     var target = $('#toolbar-target-'+i);
@@ -294,16 +288,12 @@ $(function() {
                     var toolbar_tool = this_tool.clone();
                     button.html('-');
                     button.bind('click', function(){
-                        //alert('toolbar_locs[' + location + '][' + tb_index + ']');
                         var tool = $(this).parent();
                         toolbar_locs[tool.parent().index(0)].splice(tool.index(0),1);
-
-                        console.log(toolbar_locs);
                         $design_toolbox.append(tool);
                         tool.remove();
                     });
                     toolbar_tool.append(button);
-                    
                     target.append(toolbar_tool);
 
                 }
@@ -321,7 +311,7 @@ $(function() {
             var select = $my_select[0];
             var id = select.selectedIndex;
 
-            socket.delete_toolbar(sessionStorage.getItem('admin_class_id'), select[id].text);
+            socket.delete_toolbar(localStorage.getItem('admin_id'), select[id].text);
         }
      });
 
@@ -331,6 +321,7 @@ $(function() {
     $logout_class_button.bind('click', function(){
         
         $create_view.hide();
+        $settings_tab.hide();
         $username_password_view.show();
         
         socket.delete_session(localStorage.getItem('admin_id'));
@@ -373,8 +364,27 @@ $(function() {
 
         if (password == $secret)
         {
-           alert('Correct!. The class has been deleted. Press Ok to continue');
+           alert('Correct! The class has been deleted. Press OK to continue.');
            socket.delete_class(sessionStorage.getItem('admin_class_id'), $secret, true);
+        }
+    });
+
+    //
+    // SETTINGS CHANGE PASSWORD BUTTON 
+    //
+    $change_password_button.bind('click', function() {
+        if ($changed_password.val() !== $retyped_changed_password.val()) {
+            $('.error_password_incorrect').hide();
+            $current_password.css('border-color',  '#CCCCCC'); 
+            $('.error_password_mismatch').show();
+            $changed_password.css('border-color', 'red'); 
+            $retyped_changed_password.css('border-color', 'red');
+        }
+        else {
+            $('.error_password_mismatch').hide();
+            $changed_password.css('border-color',  '#CCCCCC'); 
+            $retyped_changed_password.css('border-color', '#CCCCCC');
+            socket.change_password(localStorage.getItem('admin_id'), $current_password.val(), $changed_password.val(), $secret);
         }
     });
 
@@ -404,7 +414,7 @@ $(function() {
         //alert(tab);
         if(tab == 'design'){
 
-                var params = {
+            var params = {
                 "container":"appletContainer",
                 "id":"applet",
                 "width":$applet_activity_designer.innerWidth(),
@@ -426,7 +436,7 @@ $(function() {
                 "isPreloader":false,
                 "screenshotGenerator":false,
                 "preventFocus":false
-    };
+            };
             
             getToolbarIcons();
             appletInit(params);
@@ -462,7 +472,7 @@ $(function() {
                 };
                 appletInit(params);
             });
-            socket.get_toolbars(sessionStorage.getItem('admin_class_id'));
+            socket.get_toolbars(localStorage.getItem('admin_id'));
 
         }else if (tab == 'view'){
             $design_toolbox.empty();
