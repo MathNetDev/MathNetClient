@@ -146,6 +146,7 @@ function add_group_response() {
  * @description refreshes the selection list of all the default toolbars
  */
 function get_toolbar_response(response) {
+    var $my_select_opt = $('#my_select option');
     $my_select.html('');
     $my_select_opt.length = 0;
     var selection_list = $my_select[0];
