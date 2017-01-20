@@ -437,6 +437,12 @@ function view_merge(event){
     
     appletSetExtXML(final_xml, '', numgroups);
     var applet = document['applet' + numgroups];
+    var numelems = applet.getObjectNumber();
+    for (i = 0; i < numelems; i++){
+        var name = applet.getObjectName(i);
+        applet.setFixed(name, false);
+    }
+    
     applet.setPerspective('G');
     $('#views_checkboxes :checkbox').hide();
     $('.merge_group').show();
