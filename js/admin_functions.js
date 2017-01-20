@@ -385,13 +385,13 @@ function view_merge(event){
     var array = $('#views_checkboxes :checked');
     var counter = 0, count = 0; // for checking and not deleteing the first admin objects
 
-    for (var i = 0; i < array.length; i++){
+    for (var i = 0; i < array.length ; i++){
         var value = array[i]["value"];
         var parsing = document[value].getXML();
         var obj = x2js.xml_str2json(parsing);
         var num = array[i]["value"].substr(value.lastIndexOf('t') + 1 , value.length - value.lastIndexOf('t'));
 
-        console.log(num);
+        //console.log(num);
 
         obj,counter = rename_labels(obj, num, counter);
         if (counter == 1 && count == 0) // if these are the first admin objects dont delete them
@@ -399,7 +399,7 @@ function view_merge(event){
         else if(counter == 1)  // if these are not the first admin objects delete them 
             obj = remove_admin_objects(obj);
 
-        console.log(counter);
+        //console.log(counter);
 
         _.mergeWith(XMLs, obj, function (a, b) {
           if (_.isArray(a)) {
@@ -419,6 +419,8 @@ function view_merge(event){
     $('#views_checkboxes :checkbox').hide();
     $('.merge_group').show();
 }
+
+
 
 //this is used to rename all object labels within the given XML to 
 //have their group number added onto the end, preventing conflicts
@@ -492,10 +494,10 @@ function rename_labels(xml, num, counter){
 
             for (var i = 0; i < array.length; i++){
                 if(array[i]["_type"] === 'point'){
-                    array[i]["_label"] = array[i]["_label"];
+                    array[i]["_label"] = array[i]["_label"] + 'g' + num;
                     if ("caption" in array[i]){
                         var elem = array[i]["caption"]["_val"];
-                        array[i]["caption"]["_val"] = elem;
+                        array[i]["caption"]["_val"] = elem + 'g' + num;
                     }
                     if(elem.includes("admin")){
                             counter = 1;
@@ -516,7 +518,7 @@ function rename_labels(xml, num, counter){
 
             for (var i = 0; i < array.length; i++){
                 for (var point in array[i].input){
-                    array[i]["input"][point] =  array[i]["input"][point];
+                    array[i]["input"][point] =  array[i]["input"][point] + 'g' + num;
                 }
             }
             xml.geogebra.construction.command = array;
