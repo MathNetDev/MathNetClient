@@ -14,10 +14,17 @@
     var init = function (socket) {
        // sock = socket;
 
-        // This funcrion takes a username and password provided by the user
+        // This function takes a username and password provided by the user
         // The socket then emits this data to the server to create the admin
         var create_admin = function(username, password, secret) {
             socket.emit('create-admin', username, password, secret);
+        };
+
+        // This function takes the admin_id, their current password, and a
+        // new password to change it to. The socket emits this data to
+        // the server to change the user's password
+        var change_password = function(admin_id, password, new_password, secret) {
+            socket.emit('change-password', admin_id, password, new_password, secret);
         };
 
         // Takes admin id and a normal string 
@@ -49,15 +56,15 @@
         // This function takes a class name provided by the user.
         // The socket then emits this data to the server to create a 
         // toolbar for the class.
-        var save_toolbar = function (class_id, toolbar_name, tools) {
-            socket.emit('save-toolbar', class_id, toolbar_name, tools);
+        var save_toolbar = function (admin_id, toolbar_name, tools, action) {
+            socket.emit('save-toolbar', admin_id, toolbar_name, tools, action);
         }
 
         // This function takes a class name provided by the user.
         // The socket then emits this data to the server to get all 
         // the toolbars for the class.
-        var get_toolbars = function (class_id) {
-            socket.emit('get-toolbars', class_id);
+        var get_toolbars = function (admin_id) {
+            socket.emit('get-toolbars', admin_id);
         }
 
         // This function takes a username and a password
@@ -69,8 +76,8 @@
         // This function takes a class id and the tools provided by the user.
         // The socket then emits this data to the server to delete a toolbar
         // from the class.
-        var delete_toolbar = function (class_id, toolbar_name) {
-            socket.emit('delete-toolbar', class_id, toolbar_name);
+        var delete_toolbar = function (admin_id, toolbar_name) {
+            socket.emit('delete-toolbar', admin_id, toolbar_name);
         }
 
         // This function takes a class id and group id provided by the user.
@@ -152,8 +159,12 @@
             add_group_response();
         });
 
-        socket.on('create-admin-response', function(data){
+        socket.on('create-admin-response', function(data) {
             create_admin_response(data.check);
+        });
+
+        socket.on('change-password-response', function(data) {
+            change_password_response(data.success);
         });
 
         socket.on('get-toolbar-response', function(data) {
@@ -173,7 +184,6 @@
         });
 
         socket.on('leave-class-response', function(data) {
-            console.log("hello");
             leave_class_response(data.disconnect);
         });
 
@@ -207,6 +217,7 @@
         return {
             add_class: add_class,
             create_admin: create_admin,
+            change_password: change_password,
             create_session: create_session,
             join_class: join_class,
             add_group: add_group,

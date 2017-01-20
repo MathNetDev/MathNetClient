@@ -188,6 +188,7 @@ $(function() {
         for(var i = 1; i < numgroups; i++){
             socket.xml_change('admin', sessionStorage.getItem('admin_class_id'), i, '', toolbar_str);
         }
+        $("option:selected").prop("selected", false);
     });
 
     $sendconstruction_button.bind('click', function(){
@@ -254,20 +255,25 @@ $(function() {
     // SAVING A TOOLBAR
     //
     $savetoolbar_button.bind('click', function(){
-
+        var $my_select_opt = $('#my_select option');
+        var index = $my_select[0].selectedIndex;
         var tools = toolbar_locs.join('|');
-        var toolbar_name = prompt("Enter toolbar name");
+        var toolbar_name = index > -1 ? (confirm("This will save over the old toolbar."), $my_select[0][index].text) : prompt("Enter toolbar name");
         var len = $my_select_opt.length;
-
+        
         for(var i = 0; i < len; i++)
         {
             if($my_select_opt[i].text == toolbar_name)
                 break;
         }
-        
-        if (i == len)
-            socket.save_toolbar(sessionStorage.getItem('admin_class_id'), toolbar_name, tools);
-        else
+
+        if (i == len && index == -1)
+            socket.save_toolbar(localStorage.getItem('admin_id'), toolbar_name, tools, "insert");
+        else if (i != len && index != -1){
+            console.log("update update");
+            socket.save_toolbar(localStorage.getItem('admin_id'), toolbar_name, tools, "update");
+        }
+        else if (i != len && index == -1)
             alert("You already have a toolbox with that name");
 
     });
@@ -276,27 +282,21 @@ $(function() {
     // USING A TOOLBAR
     //
     $usetoolbar_button.bind('click', function(){
-
         var select = $my_select[0];
         var id = select.selectedIndex;
         var array = select[id].tool.split('|');
         var i,j;
 
-        for(i = 0; i < 12; i++ )
-        {
+        for(i = 0; i < 12; i++ ){
             $('#toolbar-target-' + i).empty();
             toolbar_locs[i] = [];
-            console.log(toolbar_locs);
         }
-
-        console.log(array);
-        for( i = 0; i < array.length; i++)
-        {
+        
+        for( i = 0; i < array.length; i++){
             var temp = array[i].split(',');
-            for ( j = 0; j < temp.length; j++ )
-            {
+            for ( j = 0; j < temp.length; j++ ){
                 if(temp[j] != ""){
-                    var this_tool = $("div[data-mode='" + temp[j] + "']");
+                    var this_tool = $(".toolbox div[data-mode='" + temp[j] + "']");
                     var target = $('#toolbar-target-'+i);
                     var location = $design_icons.index(target);
                     var mode = this_tool.attr("data-mode");
@@ -305,21 +305,18 @@ $(function() {
                     var toolbar_tool = this_tool.clone();
                     button.html('-');
                     button.bind('click', function(){
-                        //alert('toolbar_locs[' + location + '][' + tb_index + ']');
                         var tool = $(this).parent();
                         toolbar_locs[tool.parent().index(0)].splice(tool.index(0),1);
-
-                        console.log(toolbar_locs);
                         $design_toolbox.append(tool);
                         tool.remove();
                     });
                     toolbar_tool.append(button);
-                    
                     target.append(toolbar_tool);
+
                 }
             }
         }
-
+        $(select[id]).prop("selected", false);
     });
 
     //
@@ -331,7 +328,7 @@ $(function() {
             var select = $my_select[0];
             var id = select.selectedIndex;
 
-            socket.delete_toolbar(sessionStorage.getItem('admin_class_id'), select[id].text);
+            socket.delete_toolbar(localStorage.getItem('admin_id'), select[id].text);
         }
      });
 
@@ -341,6 +338,7 @@ $(function() {
     $logout_class_button.bind('click', function(){
         
         $create_view.hide();
+        $settings_tab.hide();
         $username_password_view.show();
         
         socket.delete_session(localStorage.getItem('admin_id'));
@@ -383,8 +381,27 @@ $(function() {
 
         if (password == $secret)
         {
-           alert('Correct!. The class has been deleted. Press Ok to continue');
+           alert('Correct! The class has been deleted. Press OK to continue.');
            socket.delete_class(sessionStorage.getItem('admin_class_id'), $secret, true);
+        }
+    });
+
+    //
+    // SETTINGS CHANGE PASSWORD BUTTON 
+    //
+    $change_password_button.bind('click', function() {
+        if ($changed_password.val() !== $retyped_changed_password.val()) {
+            $('.error_password_incorrect').hide();
+            $current_password.css('border-color',  '#CCCCCC'); 
+            $('.error_password_mismatch').show();
+            $changed_password.css('border-color', 'red'); 
+            $retyped_changed_password.css('border-color', 'red');
+        }
+        else {
+            $('.error_password_mismatch').hide();
+            $changed_password.css('border-color',  '#CCCCCC'); 
+            $retyped_changed_password.css('border-color', '#CCCCCC');
+            socket.change_password(localStorage.getItem('admin_id'), $current_password.val(), $changed_password.val(), $secret);
         }
     });
 
@@ -414,7 +431,7 @@ $(function() {
         //alert(tab);
         if(tab == 'design'){
 
-                var params = {
+            var params = {
                 "container":"appletContainer",
                 "id":"applet",
                 "width":$applet_activity_designer.innerWidth(),
@@ -436,7 +453,7 @@ $(function() {
                 "isPreloader":false,
                 "screenshotGenerator":false,
                 "preventFocus":false
-    };
+            };
             
             getToolbarIcons();
             appletInit(params);
@@ -472,7 +489,7 @@ $(function() {
                 };
                 appletInit(params);
             });
-            socket.get_toolbars(sessionStorage.getItem('admin_class_id'));
+            socket.get_toolbars(localStorage.getItem('admin_id'));
 
         }else if (tab == 'view'){
             $design_toolbox.empty();
