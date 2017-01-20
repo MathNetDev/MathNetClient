@@ -191,6 +191,14 @@ function checkLabels(appletName){
     }
 }
 
+function updateColors(appletName)
+{
+    var colors = sessionStorage.getItem('group_colors');
+    colors = colors.split("-");
+    randomizeColors(document.applet, colors[0], colors[1] , colors[2]);
+}
+
+
 //This function sends the socket call that there was a XML change,
 // and takes the new XML, and the socket that the call will go through. 
 function check_xml(xml, socket){
