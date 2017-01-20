@@ -541,7 +541,7 @@ $(function() {
                     "perspective":"G",
                     "showAlgebraInput":false,
                     "showToolBarHelp":false,
-                    "showMenubar":false,
+                    "showMenubar":true,
                     "enableLabelDrags":false,
                     "showResetIcon":false,
                     "showToolbar":false,
