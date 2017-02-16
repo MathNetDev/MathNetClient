@@ -9,6 +9,7 @@ var $default_toolset = '0|1,501,67,5,19,72,75,76|2,15,45,18,65,7,37|4,3,8,9,13,4
 function appletSetExtXML(xml, toolbar, id){
 
     //console.log("setXml");
+    var final_xml;
     var appletName = document.applet;
     console.log('appletSetExtXML id param: ' + id);
     if (typeof document['applet' + id] !== 'undefined'){
@@ -27,38 +28,41 @@ function appletSetExtXML(xml, toolbar, id){
     var cur_construction = $(cur_xml_doc).find('construction')[0];
 
     xml = xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>').replace(/\\"/g, '"').replace(/\\n/g, '').replace(/\\t/g, '');
-    xml = xml.substr(xml.indexOf("<"), xml.lastIndexOf(">") ) ;
+    xml = xml.substr(xml.indexOf("<"), xml.lastIndexOf(">")) ;
     //console.log(xml);
     var new_xml_doc = $.parseXML(xml);
-    var new_construction = $(new_xml_doc).find('construction')[0];
-
-    cur_construction.innerHTML = new_construction.innerHTML;
-
-    //xml = xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>');
-    // xml = JSON.parse(xml);
-
-    // var cur_json = x2js.xml_str2json(cur_xml);
-    // var new_json = x2js.xml_str2json(xml);
-    // var commandString = "";
-    // //debugger;
-    // //console.log(new_json);
-    // if(new_json === null){
-    //     return;
-    // }
-    // if((new_json.geogebra.construction).hasOwnProperty('command')){
-    //     var obj = commandParsing(new_json);
-    //     new_json = obj.new_json;
-    //     commandString = obj.commandString;
-    // }
-
-    // cur_json.geogebra.construction = new_json.geogebra.construction;
-
-    // $("#xmlView").val(xml);
     
-    // var final_xml = x2js.json2xml_str(cur_json);
-    // //console.log(toolbar);
+
+    //console.log(new_xml_doc);
+    if(new_xml_doc !== null){
+        var new_construction = $(new_xml_doc).find('construction')[0];
+        cur_construction.innerHTML = new_construction.innerHTML;
+    }
+        //xml = xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>');
+        // xml = JSON.parse(xml);
+
+        // var cur_json = x2js.xml_str2json(cur_xml);
+        // var new_json = x2js.xml_str2json(xml);
+        // var commandString = "";
+        // //debugger;
+        // //console.log(new_json);
+        // if(new_json === null){
+        //     return;
+        // }
+        // if((new_json.geogebra.construction).hasOwnProperty('command')){
+        //     var obj = commandParsing(new_json);
+        //     new_json = obj.new_json;
+        //     commandString = obj.commandString;
+        // }
+
+        // cur_json.geogebra.construction = new_json.geogebra.construction;
+
+        // $("#xmlView").val(xml);
+        
+        // var final_xml = x2js.json2xml_str(cur_json);
+        // //console.log(toolbar);
     var final_xml = $(cur_xml_doc).find('geogebra')[0].outerHTML;
-    console.log(final_xml);
+    //console.log(final_xml);
     appletName.setXML(final_xml);
 
     // if(commandString != undefined && commandString != ""){
@@ -177,7 +181,7 @@ function checkLocks(appletName){
         var ggb_user = appletName.getCaption(name);
         var username = sessionStorage.getItem('username');
 
-        console.log(ggb_user);
+        //console.log(ggb_user);
         if ((username !== ggb_user) && ggb_user != "admin"){
             appletName.setFixed(name, true);
         } else if (username === ggb_user ){
