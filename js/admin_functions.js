@@ -403,40 +403,41 @@ function view_merge(event){
     $('.unmergeview_button').show();
     $clear_buttons.hide();
 
-    var XMLs = {};
+    var XMLs = "";
     var array = $('#views_checkboxes :checked');
     var counter = 0, count = 0; // for checking and not deleteing the first admin objects
+    var numgroups = ($('ul.groups div').length)+1;
+    var applet = document['applet' + numgroups];
+    var cur_xml = applet.getXML();
+    var cur_xml_doc = $.parseXML(cur_xml);
+    var cur_construction = $(cur_xml_doc).find('construction')[0];
 
+    //console.log(array);
     for (var i = 0; i < array.length ; i++){
         var value = array[i]["value"];
-        var parsing = document[value].getXML();
-        var obj = x2js.xml_str2json(parsing);
         var num = array[i]["value"].substr(value.lastIndexOf('t') + 1 , value.length - value.lastIndexOf('t'));
+        var parsing = document[value].getXML();
+        var xml;
 
-        //console.log(num);
-
-        obj,counter = rename_labels(obj, num, counter);
+        [xml, counter] = rename_labels(parsing, num, counter);
+        
         if (counter == 1 && count == 0) // if these are the first admin objects dont delete them
             count++;
         else if(counter == 1)  // if these are not the first admin objects delete them 
-            obj = remove_admin_objects(obj);
+            xml = remove_admin_objects(xml);
 
-        //console.log(counter);
+        var new_construction = $($.parseXML(xml)).find('construction')[0];
 
-        _.mergeWith(XMLs, obj, function (a, b) {
-          if (_.isArray(a)) {
-            return a.concat(b);
-          }
-        });
-        //$.extend(true, XMLs, obj);
+        XMLs += new_construction.innerHTML;
+
+       
         $("." + array[i]["name"]).hide()
+
     }
-    var final_xml = x2js.json2xml_str(XMLs);
-    var numgroups = ($('ul.groups div').length)+1;
-    final_xml = JSON.stringify(final_xml);
+    cur_construction.innerHTML = XMLs;
+    var final_xml = '"' + $(cur_xml_doc).find('geogebra')[0].outerHTML + '"';
     
     appletSetExtXML(final_xml, '', numgroups);
-    var applet = document['applet' + numgroups];
     var numelems = applet.getObjectNumber();
     for (i = 0; i < numelems; i++){
         var name = applet.getObjectName(i);
@@ -454,105 +455,79 @@ function view_merge(event){
 //have their group number added onto the end, preventing conflicts
 //when merging multiple XMLs together
 function remove_admin_objects(xml, counter){
-    console.log(xml);
-    if((xml.geogebra).hasOwnProperty('construction')){
-        if((xml.geogebra.construction).hasOwnProperty('element')){
-            var array = xml.geogebra.construction.element;
+    var xobj = $.parseXML(xml);
+    var commands = $(xobj).find('construction').find('command');
+    var elements = $(xobj).find('construction').find('element');
+    var deleted_array = [];
 
-            if(array !== null && typeof array === 'object' && !(array instanceof Array)){
-                var temp = array;
-                array = [];
-                array.push(temp);
-            }
-            var deleted_array = [];
-            for (var i = array.length - 1; i >= 0; i--){
-                if(array[i]["_type"] === 'point'){
-                    if ("caption" in array[i]){
-                        var elem = array[i]["caption"]["_val"];
-                        if(elem.includes("admin")){
-                           deleted_array.push(array[i]["_label"]);
-                           array.splice(i,1);
-                        }
-                    }
+    if(elements != undefined){
+        for(i = elements.length-1; i >= 0; i--){
+            var caption = $(elements[i]).find('caption')[0];
+            if(caption !== undefined){
+                caption = caption.attributes[0];
+                if (caption.value.includes("admin")){
+                    var label = $(elements[i])[0].attributes[1]
+                    deleted_array.push(label.value);
+                    $(elements[i]).remove();
                 }
             }
-            xml.geogebra.construction.element = array;
         }
+    }
 
-        //console.log(deleted_array);
-        if((xml.geogebra.construction).hasOwnProperty('command')){
-            var array = xml.geogebra.construction.command;
-
-            if(array !== null && typeof array === 'object' && !(array instanceof Array)){
-                var temp = array;
-                array = [];
-                array.push(temp);
-            }
-
-            for (var i = array.length - 1; i >= 0 ; i--){
-                for (var point in array[i].input){
-                    if(deleted_array.includes(array[i]["input"][point]))
-                    {
-                        array.splice(i,1);
-                        break;
-                    }
+    if(commands !== undefined){
+        for(var i = commands.length-1; i >= 0; i--){
+            var inputs = $(commands[i]).find('input')[0].attributes;
+            for(var j = 0; j < inputs.length; j++){
+                if (deleted_array.includes(inputs[j].value)) {
+                    $(commands[i]).remove();
+                    break;
                 }
             }
-            xml.geogebra.construction.command = array;
-        }     
+        } 
     }
-    console.log(xml);
-    return xml;
+
+    var new_xml = $(xobj).find('geogebra')[0].outerHTML;
+    return new_xml;
 }
 
 //this is used to rename all object labels within the given XML to 
 //have their group number added onto the end, preventing conflicts
 //when merging multiple XMLs together
 function rename_labels(xml, num, counter){
-    console.log(xml);
-    if((xml.geogebra).hasOwnProperty('construction')){
-        if((xml.geogebra.construction).hasOwnProperty('element')){
-            var array = xml.geogebra.construction.element;
+    var xobj = $.parseXML(xml);
+    var commands = $(xobj).find('construction').find('command');
+    var elements = $(xobj).find('construction').find('element');
 
-            if(array !== null && typeof array === 'object' && !(array instanceof Array)){
-                var temp = array;
-                array = [];
-                array.push(temp);
+    if(commands !== undefined){
+        for(var i = 0; i < commands.length; i++){
+            var inputs = $(commands[i]).find('input')[0].attributes;
+            for(var j = 0; j < inputs.length; j++){
+                inputs[j].value = inputs[j].value + "g" + num;
             }
-
-            for (var i = 0; i < array.length; i++){
-                if(array[i]["_type"] === 'point'){
-                    array[i]["_label"] = array[i]["_label"] + 'g' + num;
-                    if ("caption" in array[i]){
-                        var elem = array[i]["caption"]["_val"];
-                        array[i]["caption"]["_val"] = elem + 'g' + num;
-                    }
-                    if(elem.includes("admin")){
-                            counter = 1;
-                    }
-                }
+            var outputs = $(commands[i]).find('output')[0].attributes;
+            for(var j = 0; j < outputs.length; j++){
+                outputs[j].value = outputs[j].value + "g" + num;
             }
-            xml.geogebra.construction.element = array;
-        }
+        } 
+    }
 
-        if((xml.geogebra.construction).hasOwnProperty('command')){
-            var array = xml.geogebra.construction.command;
-
-            if(array !== null && typeof array === 'object' && !(array instanceof Array)){
-                var temp = array;
-                array = [];
-                array.push(temp);
+    if(elements != undefined){
+        for(i = 0; i < elements.length; i++){
+            var label = $(elements[i])[0].attributes[1];
+            label.value = label.value + "g" + num;
+            var caption = $(elements[i]).find('caption')[0];
+            if(caption !== undefined){
+                caption = caption.attributes[0];
+                caption.value = caption.value + "g" + num;
             }
-
-            for (var i = 0; i < array.length; i++){
-                for (var point in array[i].input){
-                    array[i]["input"][point] =  array[i]["input"][point] + 'g' + num;
-                }
+            if(caption.value.includes("admin")){
+                    counter = 1;
             }
-            xml.geogebra.construction.command = array;
         }
     }
-    return xml, counter;
+
+    var new_xml = $(xobj).find('geogebra')[0].outerHTML;
+    return [new_xml, counter];
 }
 
 //this is called when the unmerge views button is pressed.
