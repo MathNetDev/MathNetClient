@@ -428,36 +428,14 @@ function view_merge(event){
 
         var new_construction = $($.parseXML(xml)).find('construction')[0];
 
-        //console.log(new_construction);
         XMLs += new_construction.innerHTML;
-        //console.log(XMLs);
-        // var obj = x2js.xml_str2json(parsing);
-        // var num = array[i]["value"].substr(value.lastIndexOf('t') + 1 , value.length - value.lastIndexOf('t'));
 
-        // //console.log(num);
-
-        // obj,counter = rename_labels(obj, num, counter);
-        // if (counter == 1 && count == 0) // if these are the first admin objects dont delete them
-        //     count++;
-        // else if(counter == 1)  // if these are not the first admin objects delete them 
-        //     obj = remove_admin_objects(obj);
-
-        // //console.log(counter);
-
-        // _.mergeWith(XMLs, obj, function (a, b) {
-        //   if (_.isArray(a)) {
-        //     return a.concat(b);
-        //   }
-        // });
-        // //$.extend(true, XMLs, obj);
+       
         $("." + array[i]["name"]).hide()
 
     }
     cur_construction.innerHTML = XMLs;
-    // var final_xml = x2js.json2xml_str(XMLs);
     var final_xml = '"' + $(cur_xml_doc).find('geogebra')[0].outerHTML + '"';
-    //console.log(final_xml);
-    // final_xml = JSON.stringify(final_xml);
     
     appletSetExtXML(final_xml, '', numgroups);
     var numelems = applet.getObjectNumber();
@@ -478,13 +456,10 @@ function view_merge(event){
 //when merging multiple XMLs together
 function remove_admin_objects(xml, counter){
     var xobj = $.parseXML(xml);
-    //console.log(xobj);
-    //console.log($(xobj).find('construction').find('command'));
-    //console.log($(xobj).find('construction').find('element'));
     var commands = $(xobj).find('construction').find('command');
     var elements = $(xobj).find('construction').find('element');
-
     var deleted_array = [];
+
     if(elements != undefined){
         for(i = elements.length-1; i >= 0; i--){
             var caption = $(elements[i]).find('caption')[0];
@@ -493,76 +468,25 @@ function remove_admin_objects(xml, counter){
                 if (caption.value.includes("admin")){
                     var label = $(elements[i])[0].attributes[1]
                     deleted_array.push(label.value);
-                    elements.splice(i, 1);
-
+                    $(elements[i]).remove();
                 }
             }
         }
     }
-    console.log(deleted_array);
+
     if(commands !== undefined){
         for(var i = commands.length-1; i >= 0; i--){
             var inputs = $(commands[i]).find('input')[0].attributes;
             for(var j = 0; j < inputs.length; j++){
                 if (deleted_array.includes(inputs[j].value)) {
-                    console.log(inputs[j].value);
-                    commands.splice(i,1);
+                    $(commands[i]).remove();
                     break;
                 }
             }
         } 
     }
 
-    //console.log(xobj);
-
-    // if((xml.geogebra).hasOwnProperty('construction')){
-    //     if((xml.geogebra.construction).hasOwnProperty('element')){
-    //         var array = xml.geogebra.construction.element;
-
-    //         if(array !== null && typeof array === 'object' && !(array instanceof Array)){
-    //             var temp = array;
-    //             array = [];
-    //             array.push(temp);
-    //         }
-    //         var deleted_array = [];
-    //         for (var i = array.length - 1; i >= 0; i--){
-    //             if(array[i]["_type"] === 'point'){
-    //                 if ("caption" in array[i]){
-    //                     var elem = array[i]["caption"]["_val"];
-    //                     if(elem.includes("admin")){
-    //                        deleted_array.push(array[i]["_label"]);
-    //                        array.splice(i,1);
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //         xml.geogebra.construction.element = array;
-    //     }
-
-    //     //console.log(deleted_array);
-    //     if((xml.geogebra.construction).hasOwnProperty('command')){
-    //         var array = xml.geogebra.construction.command;
-
-    //         if(array !== null && typeof array === 'object' && !(array instanceof Array)){
-    //             var temp = array;
-    //             array = [];
-    //             array.push(temp);
-    //         }
-
-    //         for (var i = array.length - 1; i >= 0 ; i--){
-    //             for (var point in array[i].input){
-    //                 if(deleted_array.includes(array[i]["input"][point]))
-    //                 {
-    //                     array.splice(i,1);
-    //                     break;
-    //                 }
-    //             }
-    //         }
-    //         xml.geogebra.construction.command = array;
-    //     }     
-    // }
     var new_xml = $(xobj).find('geogebra')[0].outerHTML;
-    console.log(new_xml);
     return new_xml;
 }
 
@@ -571,9 +495,6 @@ function remove_admin_objects(xml, counter){
 //when merging multiple XMLs together
 function rename_labels(xml, num, counter){
     var xobj = $.parseXML(xml);
-
-    //console.log($(xobj).find('construction').find('command'));
-    //console.log($(xobj).find('construction').find('element'));
     var commands = $(xobj).find('construction').find('command');
     var elements = $(xobj).find('construction').find('element');
 
@@ -605,51 +526,7 @@ function rename_labels(xml, num, counter){
         }
     }
 
-    // console.log(xml);
-    // if((xml.geogebra).hasOwnProperty('construction')){
-    //     if((xml.geogebra.construction).hasOwnProperty('element')){
-    //         var array = xml.geogebra.construction.element;
-
-    //         if(array !== null && typeof array === 'object' && !(array instanceof Array)){
-    //             var temp = array;
-    //             array = [];
-    //             array.push(temp);
-    //         }
-
-    //         for (var i = 0; i < array.length; i++){
-    //             if(array[i]["_type"] === 'point'){
-    //                 array[i]["_label"] = array[i]["_label"] + 'g' + num;
-    //                 if ("caption" in array[i]){
-    //                     var elem = array[i]["caption"]["_val"];
-    //                     array[i]["caption"]["_val"] = elem + 'g' + num;
-    //                 }
-    //                 if(elem.includes("admin")){
-    //                         counter = 1;
-    //                 }
-    //             }
-    //         }
-    //         xml.geogebra.construction.element = array;
-    //     }
-
-    //     if((xml.geogebra.construction).hasOwnProperty('command')){
-    //         var array = xml.geogebra.construction.command;
-
-    //         if(array !== null && typeof array === 'object' && !(array instanceof Array)){
-    //             var temp = array;
-    //             array = [];
-    //             array.push(temp);
-    //         }
-
-    //         for (var i = 0; i < array.length; i++){
-    //             for (var point in array[i].input){
-    //                 array[i]["input"][point] =  array[i]["input"][point] + 'g' + num;
-    //             }
-    //         }
-    //         xml.geogebra.construction.command = array;
-    //     }
-    // }
     var new_xml = $(xobj).find('geogebra')[0].outerHTML;
-    // console.log(new_xml);
     return [new_xml, counter];
 }
 
