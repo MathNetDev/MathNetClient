@@ -518,10 +518,10 @@ function rename_labels(xml, num, counter){
             var caption = $(elements[i]).find('caption')[0];
             if(caption !== undefined){
                 caption = caption.attributes[0];
-                caption.value = caption.value + "g" + num;
-            }
-            if(caption.value.includes("admin")){
+                if(caption.value.includes("admin")){
                     counter = 1;
+                }
+                caption.value = caption.value + "g" + num;
             }
         }
     }
