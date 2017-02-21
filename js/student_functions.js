@@ -214,6 +214,7 @@ function group_color_response(colors) {
 function ggbOnInit(arg) {
     document.applet.registerAddListener("addLock");
     document.applet.registerUpdateListener("checkUser");
+    document.applet.registerRemoveListener("checkUser");
     document.applet.registerAddListener("updateColors");
     socket.group_color(sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'));
     console.log(arg);
