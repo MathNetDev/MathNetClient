@@ -320,7 +320,8 @@ function getToolbarIcons(container){
             {"name":"Hyperbola_Three_Points", "mode":56, "src":"./images/Mode_hyperbola3.svg"},
             {"name":"Parabola", "mode":57, "src":"./images/Mode_parabola.svg"},
             {"name":"Fitline", "mode":58, "src":"./images/Mode_fitline.svg"},
-            {"name":"Record_To_Spreadsheet", "mode":59, "src":"./images/Mode_recordtospreadsheet.svg"}
+            {"name":"Record_To_Spreadsheet", "mode":59, "src":"./images/Mode_recordtospreadsheet.svg"},
+            {"name":"Attach_Detach_Point","mode":67,"src":"./images/Mode_attachdetachpoint.svg"}
     ];
 
     for(var i = 0; i < icons.length; i++){
