@@ -181,6 +181,31 @@ function delete_toolbar_response(response) {
 }
 
 /**
+ * @function get_class_users_response
+ * @description refreshes the selection list of all the default toolbars
+ */
+function get_class_users_response(response) {
+    var toolbar_users_select = $(".toolbar_users");
+    toolbar_users_select.html("");
+    var class_users = response.class_users;
+    for (var i = 0; i < class_users.length; i++){
+        if(class_users[i].users.length > 0){
+            var optgroup = $("<optgroup></optgroup>");
+            var group = class_users[i].group;
+            optgroup.attr("label","Group " + class_users[i].group);
+            for(var j = 0; j<class_users[i].users.length; j++){
+                var opt = $("<option></option>");
+                opt.text(class_users[i].users[j]);
+                opt.val(group + "|" + opt.text());
+                optgroup.append(opt);
+            }
+            toolbar_users_select.append(optgroup);
+        }
+    }
+
+}
+
+/**
  * @function delete_group_response
  * @description deletes the last group from the list
  */
@@ -241,7 +266,6 @@ function leave_class_response(disconnect) {
 function group_info_response(username, class_id, group_id, group, status) {
     var $people = $('.g' + group_id);
     var $real_people = $('.gr' + group_id);
-    
     if (status) {
         for (var i in group) {
             var member = '<li id="' + group[i].member_name +'"><ul><li>';
@@ -259,8 +283,9 @@ function group_info_response(username, class_id, group_id, group, status) {
         username = escapeStr(username);
         $('li[id="' + username + '"]').remove();
         $('p[id="l' + username + '"]').remove();
-        console.log(group_id);
     }
+    // Update the user toolbar select
+    socket.get_class_users(sessionStorage.getItem('admin_class_id'),'get-class-users-response');
 }
 
 /**
@@ -278,7 +303,6 @@ function get_classes_response(classes, secret){
 
     $get_classes.html('');
     for (var i = 0; i < classes.length; i++) {
-        //console.log(classes[i]);
         $get_classes.append('<button class="btn btn-primary" onclick=\'join_class("'
             + classes[i].hashed_id + '")\'><span>' + classes[i].class_name + '</span></button>');
     }
@@ -326,19 +350,13 @@ function check_session_response(admin_id, check){
         localStorage.setItem('admin_id', '');
         localStorage.setItem('check', '');
         sessionStorage.setItem('admin_secret', '');
-        console.log(-1);
     } else if(check == 0 ){
         localStorage.setItem('admin_id', '');
         localStorage.setItem('check', '');
         sessionStorage.setItem('admin_secret', '');
-        console.log(0);
     }
 }
 
-function delete_it(form) {
-    console.log(form.choices);
-    //why is this here?
-}
 /**
  * @function join_class
  * @param class_id
@@ -351,7 +369,6 @@ function join_class(class_id){
 //This function registers listeners on geogebra initialization 
 function ggbOnInit(arg) {
     var name, num, index = arg.search('[0-9]');
-    //console.log(arg);
     document[arg].evalCommand("CenterView[(0,0)]");
     document[arg].evalCommand("ZoomOut[4,(0,0)]");
     document.applet.registerAddListener("addLock");
@@ -412,7 +429,6 @@ function view_merge(event){
     var cur_xml_doc = $.parseXML(cur_xml);
     var cur_construction = $(cur_xml_doc).find('construction')[0];
 
-    //console.log(array);
     for (var i = 0; i < array.length ; i++){
         var value = array[i]["value"];
         var num = array[i]["value"].substr(value.lastIndexOf('t') + 1 , value.length - value.lastIndexOf('t'));

@@ -71,7 +71,6 @@ $(function() {
     //
     $create_button.bind('click', function() {
         // Tell the server to create a class in the database
-        //console.log(sessionStorage.getItem('admin_id'));
         if ($class_input.val().trim() == "") {
             $class_input.css("border-color", "red");
             $empty_class_input.show();
@@ -85,7 +84,6 @@ $(function() {
                 colors.push(Math.floor(Math.random() * (maximum - minimum + 1)) + minimum);
                 colors.push(Math.floor(Math.random() * (maximum - minimum + 1)) + minimum);
                 var color = colors.join('-');
-                console.log(color);
                 group_colors[i] = color;
 
             }
@@ -161,7 +159,15 @@ $(function() {
         var numgroups = ($('ul.groups div').length)+1;
         var xml = new_applet_xml;
         for(var i = 1; i < numgroups; i++){
-            socket.xml_change('admin', sessionStorage.getItem('admin_class_id'), i, xml);
+            var data = {
+                username: 'admin',
+                class_id: sessionStorage.getItem('admin_class_id'),
+                group_id: i,
+                xml: xml,
+                toolbar: '',
+                toolbar_user: ''
+            };
+            socket.xml_change(data);
         }
         socket.leave_class(sessionStorage.getItem('admin_class_id'), $secret, false);
 
@@ -184,9 +190,26 @@ $(function() {
     $sendtoolbar_button.bind('click', function(){
         var numgroups = ($('ul.groups div').length)+1;
         var toolbar_str = toolbar_locs.join('|');
-        console.log(toolbar_str);
-        for(var i = 1; i < numgroups; i++){
-            socket.xml_change('admin', sessionStorage.getItem('admin_class_id'), i, '', toolbar_str);
+        var toolbar_users = $('.toolbar_users').val();
+        if(!toolbar_users){
+            $('.toolbar_users option').prop('selected', true);
+            toolbar_users = $('.toolbar_users').val();
+        }
+        var class_id = sessionStorage.getItem('admin_class_id'); 
+
+        for(var i = 0; i < toolbar_users.length; i++){
+            var user_data = toolbar_users[i].split('|');
+            var group_id = user_data[0];
+            var toolbar_user  = user_data[1];
+            var data = {
+                username: 'admin',
+                class_id: class_id,
+                group_id: group_id,
+                xml: '',
+                toolbar: toolbar_str,
+                toolbar_user: toolbar_user
+            };
+            socket.xml_change(data);
         }
         $("option:selected").prop("selected", false);
     });
@@ -194,7 +217,15 @@ $(function() {
     $sendconstruction_button.bind('click', function(){
         var numgroups = ($('ul.groups div').length)+1;
         for(var i = 1; i < numgroups; i++){
-            socket.xml_change('admin', sessionStorage.getItem('admin_class_id'), i, document.applet.getXML(), '');
+            var data = {
+                username: 'admin',
+                class_id: sessionStorage.getItem('admin_class_id'),
+                group_id: i,
+                xml: document.applet.getXML(),
+                toolbar: '',
+                toolbar_user: ''
+            };
+            socket.xml_change(data);
         }
     });
 
@@ -205,7 +236,15 @@ $(function() {
         var numgroups = ($('ul.groups div').length)+1;
         var xml = new_applet_xml;
         for(var i = 1; i < numgroups; i++){
-            socket.xml_change('admin', sessionStorage.getItem('admin_class_id'), i, xml, '');
+            var data = {
+                username: 'admin',
+                class_id: sessionStorage.getItem('admin_class_id'),
+                group_id: i,
+                xml: xml,
+                toolbar: '',
+                toolbar_user: ''
+            };
+            socket.xml_change(data);
         }
     });
 
@@ -244,8 +283,15 @@ $(function() {
         var xml = new_applet_xml;        
         for(var i = 0; i<allVals.length; i++)
         {
-            //console.log(allVals[i]);
-            socket.xml_change('admin', sessionStorage.getItem('admin_class_id'), allVals[i], xml, '');
+            var data = {
+                username: 'admin',
+                class_id: sessionStorage.getItem('admin_class_id'),
+                group_id: allVals[i],
+                xml: xml,
+                toolbar: '',
+                toolbar_user: ''
+            };
+            socket.xml_change(data);
         }
         $choices.hide();
         e.preventDefault();
@@ -270,7 +316,6 @@ $(function() {
         if (i == len && index == -1)
             socket.save_toolbar(localStorage.getItem('admin_id'), toolbar_name, tools, "insert");
         else if (i != len && index != -1){
-            console.log("update update");
             socket.save_toolbar(localStorage.getItem('admin_id'), toolbar_name, tools, "update");
         }
         else if (i != len && index == -1)
@@ -368,7 +413,6 @@ $(function() {
         {
             $('#toolbar-target-' + i).empty();
             toolbar_locs[i] = [];
-            console.log(toolbar_locs);
         }
     });
 
@@ -489,6 +533,7 @@ $(function() {
                 };
                 appletInit(params);
             });
+            socket.get_class_users(sessionStorage.getItem('admin_class_id'),'get-class-users-response');
             socket.get_toolbars(localStorage.getItem('admin_id'));
 
         }else if (tab == 'view'){

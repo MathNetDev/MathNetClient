@@ -11,14 +11,14 @@ function appletSetExtXML(xml, toolbar, id){
     //console.log("setXml");
     var final_xml;
     var appletName = document.applet;
-    console.log('appletSetExtXML id param: ' + id);
+    //console.log('appletSetExtXML id param: ' + id);
     if (typeof document['applet' + id] !== 'undefined'){
 
         appletName = document['applet' + id];
-        console.log(appletName);
+        //console.log(appletName);
     }
     if (toolbar && toolbar !== "undefined" && toolbar !== "null"){
-        console.log('setting ' + appletName.id + ' custom toolbar to: ' + toolbar);
+        //console.log('setting ' + appletName.id + ' custom toolbar to: ' + toolbar);
         sessionStorage.setItem('toolbar', toolbar);
         appletName.setCustomToolBar(toolbar);
     }
@@ -146,7 +146,7 @@ function colorizePoints(appletName, cur_json){
             var red = colors._r;
             var green = colors._g;
             var blue = colors._b;
-            console.log("called randomizeColors");
+            //console.log("called randomizeColors");
             randomizeColors(appletName, red, green, blue);
         }
     }
@@ -195,7 +195,7 @@ function checkLabels(appletName){
     if(sessionStorage.getItem('admin_class_id') !== null){
         admin = true;
     }
-    console.log(admin);
+    //console.log(admin);
     for (i = 0; i < numelems; i++){
         var name = appletName.getObjectName(i);
         var type = appletName.getObjectType(name);
@@ -229,8 +229,15 @@ function check_xml(xml, socket){
         var username = sessionStorage.getItem('username');
         var class_id = sessionStorage.getItem('class_id');
         var group_id = sessionStorage.getItem('group_id');
-
-        socket.xml_change(username, class_id, group_id, cur_xml, '');
+        var data = {
+                username: username,
+                class_id: class_id,
+                group_id: group_id,
+                xml: cur_xml,
+                toolbar: '',
+                toolbar_user: ''
+            };
+        socket.xml_change(data);
 
     }, 1000);
 }
@@ -239,7 +246,7 @@ function check_xml(xml, socket){
 //It adds a caption to the new object with the local user's class username,
 // and can add a lock onto it.
 function addLock(object){
-
+    //console.log("addLock");
     var username;
     if(sessionStorage.getItem('username') != null)
         username = sessionStorage.getItem('username');
