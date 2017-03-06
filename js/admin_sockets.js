@@ -80,6 +80,13 @@
             socket.emit('delete-toolbar', admin_id, toolbar_name);
         }
 
+        // This function takes a class name provided by the user.
+        // The socket then emits this data to the server to get all 
+        // the users for the class.
+        var get_class_users = function (class_id, callback) {
+            socket.emit('get-class-users', class_id, callback);
+        }
+
         // This function takes a class id and group id provided by the user.
         // The socket then emits this data to the server to delete a group
         // from the class.
@@ -124,8 +131,8 @@
         //This function takes a username, class_id, group_id, and XML
         //It then emits a socket event to change the class's XML in the datastructure
         //based on the given XML, group_id, and class_id
-        var xml_change = function(username, class_id, group_id, xml, toolbar) {
-            socket.emit('xml_change', username, class_id, group_id, xml, toolbar);
+        var xml_change = function(data) {
+            socket.emit('xml_change', data);
         }
 
         //This function takes a username, class_id, and group_id
@@ -173,6 +180,10 @@
 
         socket.on('delete-toolbar-response', function() {
             delete_toolbar_response();
+        });
+
+        socket.on('get-class-users-response', function(data) {
+            get_class_users_response(data);
         });
 
         socket.on('delete-class-response', function(data) {
@@ -232,6 +243,7 @@
             delete_class: delete_class,
             save_settings: save_settings,
             get_classes: get_classes,
+            get_class_users: get_class_users,
             xml_change: xml_change,
             get_xml: get_xml,
             disconnect: disconnect

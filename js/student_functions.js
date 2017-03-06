@@ -16,7 +16,6 @@ function server_error(error) {
     if (str.indexOf("Invalid username") !== -1) {
         $username.css("border-color", "red");
         $error_username.show();
-        console.log("logout");
     }
     else if (str.indexOf("invalid.") !== -1) {
         $class_id.css("border-color", "red");
@@ -62,6 +61,9 @@ function logout_response(disconnect) {
     if(!disconnect){
         sessionStorage.removeItem('class_id');
         sessionStorage.removeItem('username');
+        sessionStorage.removeItem('group_id');
+        sessionStorage.removeItem('toolbar');
+        sessionStorage.removeItem('group_colors');
     }
 }
 
@@ -162,6 +164,9 @@ function get_xml_response(username, class_id, group_id, xml,toolbar){
     if(xml == undefined){
         xml = '{}';
     }
+    if(!toolbar){
+        toolbar = sessionStorage.getItem('toolbar');
+    }
     appletSetExtXML(xml, toolbar);
     ggbOnInit('socket_call')
 }
@@ -217,12 +222,10 @@ function ggbOnInit(arg) {
     document.applet.registerRemoveListener("checkUser");
     document.applet.registerAddListener("updateColors");
     socket.group_color(sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'));
-    console.log(arg);
     if(arg != 'socket_call'){
         socket.get_xml(sessionStorage.getItem('username'),sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'));
     }
     $(window).resize(function() {
-        console.log("Resizing");
         document.applet.setHeight($(window).height()/1.3);
     });
 }
