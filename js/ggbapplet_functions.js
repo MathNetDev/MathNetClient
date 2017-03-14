@@ -370,9 +370,10 @@ function appletInit(params){
     params.container = typeof params.container !== 'undefined' ? params.container : 'appletContainer';
     params.width = typeof params.width !== 'undefined' ? params.width : 800;
     params.height = typeof params.height !== 'undefined' ? params.height : 600;
+    params.tubeurl = "http://mathnet.dev";
     params.ggbBase64 = ggbBase64;
     var applet = new GGBApplet(params, true);
-    
+    applet.setHTML5Codebase('http://mathnet.dev/5.0/web3d/');
     //applet.setJavaCodebase('geogebra/Java/4.2', 'true');
     //applet.setHTML5Codebase('/', 'true');
     applet.inject(params.container, 'auto');
