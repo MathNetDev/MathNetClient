@@ -9,6 +9,18 @@ function escapeStr(str)
     return str;
 }
 
+/**
+ * function ping response
+ * checks time and update ping
+ */
+ function ping_response(time) {
+    var d = new Date();
+    //console.log(d.getTime() - time)
+    $('.ping').html("Ping: " + (d.getTime() - time).toString());
+ }
+
+ 
+
 //displays server error on client side
 function server_error(error) {
     var str = error;
@@ -28,6 +40,7 @@ function server_error(error) {
         location.reload();
     }
 }
+
 
 //shows class_view and sets sessionStorage for class_id and username, then calls groups_get
 function login_response(username, class_id) {

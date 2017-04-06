@@ -30,6 +30,17 @@ function server_error(error) {
 }
 
 /**
+ * function ping response
+ * checks time and update ping
+ */
+ function ping_response(time) {
+    var d = new Date();
+    //console.log(d.getTime() - time)
+    $('.ping').html("Ping: " + (d.getTime() - time).toString());
+ }
+
+
+/**
  * @function add_class_response
  * @param {number} class_id the id of the new class
  * @param {string} class_name the name of the new class
@@ -62,11 +73,12 @@ function add_class_response(class_id, class_name, group_count) {
         // $lists.append($("<div class = '"+group+" g'>"+ group +"</div>").attr('id', 'well')); //create new div
         groups_html += "<li>Group " + group;
         groups_html += "<div class='g" + group + "'></div></li>";
-    }
+    }                                                                                                                                                                                                                                                   
     $groups.html(groups_html);
     $lists.html(lists_html);
     
 }
+
 
 /**
  * @function create_admin response
