@@ -13,6 +13,10 @@ hr {
   stroke: black;
 }
 
+.ping {
+  text-align: right;
+}
+
 .tick text{
   font-size: 12px;
 }

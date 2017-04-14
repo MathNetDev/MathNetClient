@@ -20,6 +20,12 @@
             socket.emit('create-admin', username, password, secret);
         };
 
+        // This function takes a time and pings it
+        var ping = function(time) {
+            socket.emit('ping', time);
+        };
+
+
         // This function takes the admin_id, their current password, and a
         // new password to change it to. The socket emits this data to
         // the server to change the user's password
@@ -158,6 +164,10 @@
             server_error(data.message);
         });
 
+        socket.on('ping-response', function(time) {
+            ping_response(time);
+        });
+
         socket.on('add-class-response', function(data) {
             add_class_response(data.class_id, data.class_name, data.group_count);
         });
@@ -246,6 +256,7 @@
             get_class_users: get_class_users,
             xml_change: xml_change,
             get_xml: get_xml,
+            ping: ping,
             disconnect: disconnect
         };
     };

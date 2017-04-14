@@ -40,6 +40,16 @@ $(function() {
         $login_view.show(); 
     }
 
+    
+    //
+    //  Pinging
+    //
+    window.setInterval(function(){
+        var d = new Date();
+        socket.ping(d.getTime());
+    }, 500);
+
+
     $login_button.bind('click', function() {
         if (valid_username($username.val().trim())) {
             socket.login($username.val().trim(), $class_id.val().trim());

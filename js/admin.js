@@ -40,6 +40,15 @@ $(function() {
 
 
     //
+    //  Pinging
+    //
+    window.setInterval(function(){
+        var d = new Date();
+        socket.ping(d.getTime());
+    }, 500);
+
+    
+    //
     // SUBMIT PASSWORD HITTING ENTER KEY
     //
     $password.keypress(function(e) {

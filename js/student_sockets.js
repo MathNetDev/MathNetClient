@@ -10,6 +10,11 @@
     // The initialization function for the Student.Socket object
     var init = function (socket) {
         
+        // This function takes a time and pings it
+        var ping = function(time) {
+            socket.emit('ping', time);
+        };
+
         //This function takes a username and class_id from the user
         //It then emits a socket call to login the username to the class_id.
         var login = function (username, class_id) {
@@ -90,6 +95,10 @@
             server_error(data.message);      
         });
        
+       socket.on('ping-response', function(time) {
+            ping_response(time);
+        });
+       
         socket.on('login_response', function(data) {
             login_response(data.username, data.class_id);
         });
@@ -148,7 +157,6 @@
             delete_student_class_response();
         });
 
-
         return {
             login: login,
             logout: logout,
@@ -160,7 +168,8 @@
             xml_change: xml_change,
             get_xml: get_xml,
             get_settings: get_settings,
-            disconnect: disconnect
+            disconnect: disconnect,
+            ping:ping
         };
     }
     
