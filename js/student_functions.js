@@ -1,5 +1,8 @@
 "use strict";
 
+
+var dmp = new diff_match_patch();
+
 //escapes most strings to not break general forms
 function escapeStr(str) 
 {
@@ -167,9 +170,27 @@ function group_info_response(username, class_id, group_id, members, status) {
 
 //handler for xml_change response, appends message to chatbox, and calls appletSetExtXML()
 function xml_change_response(username, class_id, group_id, xml, toolbar) {
+    // if (sessionStorage.getItem('username') == 'a')
+    //     return;
     socket.group_color(sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'));
     appletSetExtXML(xml, toolbar);
     ggbOnInit('socket_call');
+}
+
+function patch_response(username, class_id, group_id, patch) {
+    // if (sessionStorage.getItem('username') == 'a')
+    //     return;
+
+    var applet = document.applet;
+    var cur_xml = applet.getXML();
+    var cur_xml_doc = $.parseXML(cur_xml);
+    var cur_construction = $(cur_xml_doc).find("construction")[0];
+    var oldVersion = cur_construction.innerHTML;
+
+    var newVersion = dmp.patch_apply(patch, oldVersion)[0];
+    cur_construction.innerHTML = newVersion;
+
+    applet.evalXML($(cur_xml_doc).find("construction")[0].outerHTML);
 }
 
 //calls appletSetExtXML() to update the local geogebra applet.
@@ -232,7 +253,7 @@ function group_color_response(colors) {
 function ggbOnInit(arg) {
     document.applet.registerAddListener("addLock");
     document.applet.registerUpdateListener("checkUser");
-    document.applet.registerRemoveListener("checkUser");
+    document.applet.registerRemoveListener("checkUser2");
     document.applet.registerAddListener("updateColors");
     socket.group_color(sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'));
     if(arg != 'socket_call'){

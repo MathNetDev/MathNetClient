@@ -67,6 +67,10 @@
             socket.emit('xml_change', username, class_id, group_id, xml, toolbar);
         }
 
+        var patch = function(data) {
+            socket.emit('patch', data);
+        }
+
         //This function takes a username, class_id, and group_id
         //It then emits a socket event to retrieve the group's XML
         //using the given class_id and group_id
@@ -132,6 +136,10 @@
             xml_change_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar);
         });
 
+        socket.on('patch_response', function(data) {
+            patch_response(data.username, data.class_id, data.group_id, data.patch);
+        });
+
         socket.on('get_xml_response', function(data) {
             get_xml_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar);
         });
@@ -166,6 +174,7 @@
             group_info: group_info,
             group_color: group_color,
             xml_change: xml_change,
+            patch: patch,
             get_xml: get_xml,
             get_settings: get_settings,
             disconnect: disconnect,

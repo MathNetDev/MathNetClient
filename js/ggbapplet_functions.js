@@ -2,6 +2,7 @@
 var cur_xml = '<xml/>';
 appletName = document.applet;
 var timeoutHandle;
+var timeoutHandle2;
 var $default_toolset = '0|1,501,67,5,19,72,75,76|2,15,45,18,65,7,37|4,3,8,9,13,44,58,47|16,51,64,70|10,34,53,11,24,20,22,21,23|55,56,57,12|36,46,38,49,50,71|30,29,54,32,31,33|17,26,62,73,14,68|25,52,60,61|40,41,42,27,28,35,6';
 
 //This function takes the new XML, changes it and the old XML to a JSON format, and then 
@@ -224,6 +225,49 @@ function check_xml(xml, socket){
         window.clearTimeout(timeoutHandle);
     }
     timeoutHandle = window.setTimeout(function(){
+        // cur_xml = xml;
+        // var $messages = $("#messages");
+        // var username = sessionStorage.getItem('username');
+        // var class_id = sessionStorage.getItem('class_id');
+        // var group_id = sessionStorage.getItem('group_id');
+        // var data = {
+        //         username: username,
+        //         class_id: class_id,
+        //         group_id: group_id,
+        //         xml: cur_xml,
+        //         toolbar: '',
+        //         toolbar_user: ''
+        //     };
+        // socket.xml_change(data);
+
+        var cur_xml_doc = $.parseXML(cur_xml);
+        var oldVersion = $(cur_xml_doc).find("construction")[0].innerHTML;
+        cur_xml = xml;
+
+        new_xml_doc = $.parseXML(xml);
+        var newVersion = $(new_xml_doc).find("construction")[0].innerHTML;
+        patch = dmp.patch_make(oldVersion, newVersion);
+        var data = {
+            username: sessionStorage.getItem('username'),
+            class_id: sessionStorage.getItem('class_id'),
+            group_id: sessionStorage.getItem('group_id'),
+            patch: patch
+        };
+
+        socket.patch(data);
+
+    }, 1);
+}
+
+//This function sends the socket call that there was a XML change,
+// and takes the new XML, and the socket that the call will go through. 
+function abc(xml, socket){
+
+    if (timeoutHandle2 != undefined){
+        
+        window.clearTimeout(timeoutHandle2);
+    }
+    timeoutHandle2 = window.setTimeout(function(){
         cur_xml = xml;
         var $messages = $("#messages");
         var username = sessionStorage.getItem('username');
@@ -239,7 +283,8 @@ function check_xml(xml, socket){
             };
         socket.xml_change(data);
 
-    }, 300);
+
+    }, 1);
 }
 
 //This function is an add listener added in gbbOnInit()
@@ -258,6 +303,8 @@ function addLock(object){
     if (type === 'point'){
         document.applet.setLabelStyle(object, 3);
     }
+    abc(document.applet.getXML(), socket);
+    console.log("add");
     //document.applet.setFixed(object, true);
 }
 
@@ -278,6 +325,24 @@ function checkUser(object){
     }
     // on update of Geogebra view, send clients updated XML
     check_xml(document.applet.getXML(), socket);
+    console.log("update");
+}
+
+function checkUser2(object){
+    var ggb_user = document.applet.getCaption(object);
+    var username = sessionStorage.getItem('username');
+    var move = document.applet.isMoveable(object);
+
+    if ((username !== ggb_user && move) && ggb_user != "admin"){
+        document.applet.setFixed(object, true);
+    }
+
+    if(($('#myonoffswitch').is(':checked')) && ggb_user == "admin" ){
+        document.applet.setCaption(object, username);
+    }
+    // on update of Geogebra view, send clients updated XML
+    abc(document.applet.getXML(), socket);
+    console.log("remove");
 }
 
 
