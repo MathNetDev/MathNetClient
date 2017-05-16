@@ -372,6 +372,6 @@ function appletInit(params){
     params.height = typeof params.height !== 'undefined' ? params.height : 600;
     params.ggbBase64 = ggbBase64;
     var applet = new GGBApplet(params, true);
-    applet.setHTML5Codebase('http://mathnet.dev/5.0/web3d/');
+    applet.setHTML5Codebase('http://tetsuo.ucdavis.edu/mathnet/5.0/web3d/');
     applet.inject(params.container, 'auto');
 }
