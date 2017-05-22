@@ -129,11 +129,11 @@
         });
         
         socket.on('xml_change_response', function(data) {
-            xml_change_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar);
+            xml_change_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar, data.properties);
         });
 
         socket.on('get_xml_response', function(data) {
-            get_xml_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar);
+            get_xml_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar, data.properties);
         });
 
         socket.on('group_numbers_response', function(data) {

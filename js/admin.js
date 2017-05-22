@@ -6,6 +6,8 @@ $(function() {
     
     var toolbar_locs = []; // The array that stores all the toolbars
         while(toolbar_locs.push([]) < 12);
+
+     $('[data-toggle="tooltip"]').tooltip(); //enable tooltips
     
     // Connect to the server using the Admin.Socket object constructor
     
@@ -205,7 +207,12 @@ $(function() {
             toolbar_users = $('.toolbar_users').val();
         }
         var class_id = sessionStorage.getItem('admin_class_id'); 
-
+        var properties = {
+            axis_display: $('#axisToggle').prop('checked'),
+            grid_display: $('#gridToggle').prop('checked'),
+            perspective: $('#perspective').val()
+        };
+        console.log(properties);
         for(var i = 0; i < toolbar_users.length; i++){
             var user_data = toolbar_users[i].split('|');
             var group_id = user_data[0];
@@ -216,7 +223,8 @@ $(function() {
                 group_id: group_id,
                 xml: '',
                 toolbar: toolbar_str,
-                toolbar_user: toolbar_user
+                toolbar_user: toolbar_user,
+                properties: properties
             };
             socket.xml_change(data);
         }

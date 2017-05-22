@@ -6,7 +6,7 @@ var $default_toolset = '0|1,501,67,5,19,72,75,76|2,15,45,18,65,7,37|4,3,8,9,13,4
 
 //This function takes the new XML, changes it and the old XML to a JSON format, and then 
 // parses it, and changes it back to XML to be set in the geogebra applet.
-function appletSetExtXML(xml, toolbar, id){
+function appletSetExtXML(xml, toolbar, properties, id){
 
     //console.log("setXml");
     var final_xml;
@@ -21,6 +21,14 @@ function appletSetExtXML(xml, toolbar, id){
         //console.log('setting ' + appletName.id + ' custom toolbar to: ' + toolbar);
         sessionStorage.setItem('toolbar', toolbar);
         appletName.setCustomToolBar(toolbar);
+    }
+    if (properties && properties !== "undefined" && properties !== "null"){
+        console.log(properties);
+        //console.log('setting ' + appletName.id + ' custom toolbar to: ' + toolbar);
+            appletName.setAxesVisible(1, properties['axis_display'], properties['axis_display']);
+            appletName.setGridVisible(properties['grid_display']);
+        if(properties['perspective'] && properties['perspective'] != '')
+            appletName.setPerspective(properties['perspective']);
     }
     //console.log(xml);
     cur_xml = appletName.getXML();
