@@ -257,8 +257,8 @@
                 <input type="checkbox" id="gridToggle" checked> Grid Display</input><br/>
                 Perspective Box
                 <input type="text" id="perspective"></input>&ensp;
-                <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-html="true" id="pHelp" title="<table><tr><th>Letter</th>&emsp; <th>View</th></tr><tr><td>A</td> <td>Algebra</td></tr><tr><td>B</td> <td>Probability Calculator</td></tr><tr><td>C</td> <td>CAS</td></tr><tr><td>D</td> <td>Graphics 2</td></tr><tr><td>G</td> <td>Graphics</td></tr><tr><td>L</td> <td>Construction Protocol</td></tr><tr><td>P</td> <td>Properties</td></tr><tr><td>S</td> <td>Spreadsheet</td></tr><tr><td>T</td> <td>3D Graphics</td></tr></table>
-                Example: <ul><li>'G' makes only the Menu view graphics.svg Graphics View visible.</li><li>'AGS' makes Algebra, Graphics, and Spreadsheet View visible, aligned horizontally.</li><li>'S/G' makes Spreadsheet and Graphics View visible vertically, with Spreadsheet on top.</li><li>'S/(GA)' is similar as above, with the bottom having Graphics and Algebra View on the left and right, respectively.</li></ul>"></span>
+                <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-html="true" offset="0 50px" id="pHelp" title="<table><tr><th>Letter</th> <th>&emsp;View</th></tr><tr><td>A</td> <td>Algebra</td></tr><tr><td>B</td> <td>Probability Calculator</td></tr><tr><td>C</td> <td>CAS</td></tr><tr><td>D</td> <td>Graphics 2</td></tr><tr><td>G</td> <td>Graphics</td></tr><tr><td>L</td> <td>Construction Protocol</td></tr><tr><td>P</td> <td>Properties</td></tr><tr><td>S</td> <td>Spreadsheet</td></tr><tr><td>T</td> <td>3D Graphics</td></tr></table>
+                Example values: A, AG, A/G, A/(GS), with AG being split vertically, A/G horizontally, and A/(GS) horizontally then vertically in the bottom half."></span>
                 
                 <div class = "shifted">
                   <h1 style=" font-size: 1.2em; margin:0 0 .5em 0;">Class users</h1>
@@ -388,9 +388,9 @@
 <style>
 .tooltip-inner {
     min-width: 100px;
-    max-width: 100%;
+    max-width: 200px;
     /* If max-width does not work, try using width instead */
-    width: 600px; 
+    /*width: 600px; */
 }
 </style>
 </footer>
