@@ -180,7 +180,7 @@ function get_xml_response(username, class_id, group_id, xml,toolbar, properties)
     if(!toolbar){
         toolbar = sessionStorage.getItem('toolbar');
     }
-    console.log(properties);
+    
     appletSetExtXML(xml, toolbar, properties);
     ggbOnInit('socket_call')
 }

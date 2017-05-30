@@ -215,7 +215,7 @@ $(function() {
             grid_display: $gridToggle.prop('checked'),
             perspective: perspective
         };
-        console.log(properties);
+
         for(var i = 0; i < toolbar_users.length; i++){
             var user_data = toolbar_users[i].split('|');
             var group_id = user_data[0];
@@ -237,7 +237,7 @@ $(function() {
     $perspectiveBox.toggle();
     $boxToggle.bind('click', function(){
         $perspectiveBox.toggle();
-    })
+    });
 
     $sendconstruction_button.bind('click', function(){
         var numgroups = ($('ul.groups div').length)+1;
