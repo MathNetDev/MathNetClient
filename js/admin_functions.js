@@ -400,7 +400,7 @@ function ggbOnInit(arg) {
 function xml_change_response(username, class_id, group_id, xml, toolbar) {
     var tab = $('a[data-toggle="tab"][aria-expanded=true]').html();
     if(tab == "View")
-        appletSetExtXML(xml, toolbar, group_id);
+        appletSetExtXML(xml, toolbar, null, group_id);
     //ggbOnInit();
 }
 
@@ -409,7 +409,7 @@ function get_xml_response(username, class_id, group_id, xml, toolbar){
     if(xml == undefined){
         xml = '{}';
     }
-    appletSetExtXML(xml, toolbar, group_id);
+    appletSetExtXML(xml, toolbar, null, group_id);
 }
 
 //called on checkbox change, shows/hides box based on if checked or not
@@ -465,7 +465,7 @@ function view_merge(event){
     cur_construction.innerHTML = XMLs;
     var final_xml = '"' + $(cur_xml_doc).find('geogebra')[0].outerHTML + '"';
     
-    appletSetExtXML(final_xml, '', numgroups);
+    appletSetExtXML(final_xml, '', null, numgroups);
     var numelems = applet.getObjectNumber();
     for (i = 0; i < numelems; i++){
         var name = applet.getObjectName(i);

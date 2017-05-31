@@ -6,150 +6,51 @@ var $default_toolset = '0|1,501,67,5,19,72,75,76|2,15,45,18,65,7,37|4,3,8,9,13,4
 
 //This function takes the new XML, changes it and the old XML to a JSON format, and then 
 // parses it, and changes it back to XML to be set in the geogebra applet.
-function appletSetExtXML(xml, toolbar, id){
+function appletSetExtXML(xml, toolbar, properties, id){
 
     //console.log("setXml");
     var final_xml;
     var appletName = document.applet;
     //console.log('appletSetExtXML id param: ' + id);
-    if (typeof document['applet' + id] !== 'undefined'){
 
+    if (typeof document['applet' + id] !== 'undefined'){
         appletName = document['applet' + id];
         //console.log(appletName);
     }
-    if (toolbar && toolbar !== "undefined" && toolbar !== "null"){
+    if (properties && properties !== "undefined" && properties !== "null"){
+            appletName.setAxesVisible(1, properties['axis_display'], properties['axis_display']);
+            appletName.setGridVisible(properties['grid_display']);
+        if(properties['perspective'] && properties['perspective'] != '')
+            appletName.setPerspective(properties['perspective']);
+    }
+    if (toolbar && toolbar !== "undefined" && toolbar !== "null" && properties && properties['perspective'] && properties['perspective'].includes("G")){
         //console.log('setting ' + appletName.id + ' custom toolbar to: ' + toolbar);
         sessionStorage.setItem('toolbar', toolbar);
         appletName.setCustomToolBar(toolbar);
     }
-    //console.log(xml);
+
     cur_xml = appletName.getXML();
     var cur_xml_doc = $.parseXML(cur_xml);
     var cur_construction = $(cur_xml_doc).find('construction')[0];
 
     xml = xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>').replace(/\\"/g, '"').replace(/\\n/g, '').replace(/\\t/g, '');
     xml = xml.substr(xml.indexOf("<"), xml.lastIndexOf(">")) ;
-    //console.log(xml);
+    
     var new_xml_doc = $.parseXML(xml);
     
-
-    //console.log(new_xml_doc);
     if(new_xml_doc !== null){
         var new_construction = $(new_xml_doc).find('construction')[0];
         cur_construction.innerHTML = new_construction.innerHTML;
     }
-        //xml = xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>');
-        // xml = JSON.parse(xml);
-
-        // var cur_json = x2js.xml_str2json(cur_xml);
-        // var new_json = x2js.xml_str2json(xml);
-        // var commandString = "";
-        // //debugger;
-        // //console.log(new_json);
-        // if(new_json === null){
-        //     return;
-        // }
-        // if((new_json.geogebra.construction).hasOwnProperty('command')){
-        //     var obj = commandParsing(new_json);
-        //     new_json = obj.new_json;
-        //     commandString = obj.commandString;
-        // }
-
-        // cur_json.geogebra.construction = new_json.geogebra.construction;
-
-        // $("#xmlView").val(xml);
-        
-        // var final_xml = x2js.json2xml_str(cur_json);
-        // //console.log(toolbar);
+       
     var final_xml = $(cur_xml_doc).find('geogebra')[0].outerHTML;
-    //console.log(final_xml);
     appletName.setXML(final_xml);
-
-    // if(commandString != undefined && commandString != ""){
-    //     appletName.evalCommand(commandString);
-    // }
-
-    //colorizePoints(appletName, cur_json);
     checkLocks(appletName);
-    //checkLabels(appletName);
-}
-
-//This function takes the new_json, removes all commands in the construction, and creates a string (commandString)
-// that is used later in appletSetExtXML() to evaluate all commands in the send XML
-function commandParsing(new_json){
-    var commandString = "";
-    var array = new_json.geogebra.construction.command;
-
-    if(array !== null && typeof array === 'object' && !(array instanceof Array)){
-        var temp = array;
-        array = [];
-        array.push(temp);
-    }
-
-    for (var i = 0; i < array.length; i++){
-        //console.log(array[i]);
-        // if (array[i]._name == 'Point'){
-        //     continue;
-        // }
-        commandString += array[i]._name + "[ ";
-        for (var point in array[i].input){
-            commandString += array[i]["input"][point] + ",";
-        }
-        var loc = i;
-        for (var point in array[i].output){
-            var stack = [];
-            var label = array[i]["output"][point];
-            var len = new_json.geogebra.construction.element.length;
-
-
-
-            for (var j = 0; j < len; j++){
-                if (label == new_json["geogebra"]["construction"]["element"][j]["_label"]){
-                    stack.unshift(j)
-                }
-            }
-
-            for(var j = 0; j < stack.length; j++){
-                new_json.geogebra.construction.element.splice(stack[j], 1);
-            }
-        }
-
-        commandString = commandString.slice(0, commandString.length-1);
-        commandString += "]\n";
-    }
-
-    delete new_json.geogebra.construction.command;
-
-    return {
-        "new_json": new_json,
-        "commandString": commandString
-    };
 }
 
 //This clears the local applet view
 function clearApplet(appletName){
     appletName.reset();
-}
-
-function colorizePoints(appletName, cur_json){
-    var elem = cur_json.geogebra.construction.element;
-
-    if(elem !== null && typeof elem === 'object' && !(elem instanceof Array)){
-        var temp = elem;
-        elem = [];
-        elem.push(temp);
-    }
-
-    if(elem != null){
-        var colors = elem[0]["objColor"];
-        if(colors._b != "255" || colors._g != "0" || colors._r != "0"){
-            var red = colors._r;
-            var green = colors._g;
-            var blue = colors._b;
-            //console.log("called randomizeColors");
-            randomizeColors(appletName, red, green, blue);
-        }
-    }
 }
 
 //This function changes the colors of all elements on the local view to a random color
@@ -186,23 +87,6 @@ function checkLocks(appletName){
             appletName.setFixed(name, true);
         } else if (username === ggb_user ){
             appletName.setFixed(name, false);
-        }
-    }
-}
-function checkLabels(appletName){
-    var admin = false;
-    var numelems = appletName.getObjectNumber();
-    if(sessionStorage.getItem('admin_class_id') !== null){
-        admin = true;
-    }
-    //console.log(admin);
-    for (i = 0; i < numelems; i++){
-        var name = appletName.getObjectName(i);
-        var type = appletName.getObjectType(name);
-        if(type !== 'point'){
-            appletName.setLabelStyle(name, 0);
-        } else {
-            appletName.setLabelStyle(name, 3);
         }
     }
 }
@@ -279,7 +163,6 @@ function checkUser(object){
     // on update of Geogebra view, send clients updated XML
     check_xml(document.applet.getXML(), socket);
 }
-
 
 //This function appends a set of button toolbar items to a container
 function getToolbarIcons(container){

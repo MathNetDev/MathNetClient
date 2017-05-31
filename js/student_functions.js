@@ -166,21 +166,22 @@ function group_info_response(username, class_id, group_id, members, status) {
 }//members is undefined if group_info_response is triggered by group_leave, so short circuit it on status.
 
 //handler for xml_change response, appends message to chatbox, and calls appletSetExtXML()
-function xml_change_response(username, class_id, group_id, xml, toolbar) {
+function xml_change_response(username, class_id, group_id, xml, toolbar, properties) {
     socket.group_color(sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'));
-    appletSetExtXML(xml, toolbar);
+    appletSetExtXML(xml, toolbar, properties);
     ggbOnInit('socket_call');
 }
 
 //calls appletSetExtXML() to update the local geogebra applet.
-function get_xml_response(username, class_id, group_id, xml,toolbar){
+function get_xml_response(username, class_id, group_id, xml,toolbar, properties){
     if(xml == undefined){
         xml = '{}';
     }
     if(!toolbar){
         toolbar = sessionStorage.getItem('toolbar');
     }
-    appletSetExtXML(xml, toolbar);
+    
+    appletSetExtXML(xml, toolbar, properties);
     ggbOnInit('socket_call')
 }
 

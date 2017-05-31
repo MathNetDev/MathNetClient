@@ -6,6 +6,8 @@ $(function() {
     
     var toolbar_locs = []; // The array that stores all the toolbars
         while(toolbar_locs.push([]) < 12);
+
+     $('[data-toggle="tooltip"]').tooltip(); //enable tooltips
     
     // Connect to the server using the Admin.Socket object constructor
     
@@ -204,7 +206,15 @@ $(function() {
             $('.toolbar_users option').prop('selected', true);
             toolbar_users = $('.toolbar_users').val();
         }
-        var class_id = sessionStorage.getItem('admin_class_id'); 
+        var index = $perspectiveSelect[0].selectedIndex;
+        var class_id = sessionStorage.getItem('admin_class_id');
+        var perspective = ($perspective.val() != '' && $perspective.is(':visible')) 
+            ? $perspective.val() : $perspectiveSelect[0].options[index].value;
+        var properties = {
+            axis_display: $axisToggle.prop('checked'),
+            grid_display: $gridToggle.prop('checked'),
+            perspective: perspective
+        };
 
         for(var i = 0; i < toolbar_users.length; i++){
             var user_data = toolbar_users[i].split('|');
@@ -216,11 +226,17 @@ $(function() {
                 group_id: group_id,
                 xml: '',
                 toolbar: toolbar_str,
-                toolbar_user: toolbar_user
+                toolbar_user: toolbar_user,
+                properties: properties
             };
             socket.xml_change(data);
         }
         $("option:selected").prop("selected", false);
+    });
+
+    $perspectiveBox.toggle();
+    $boxToggle.bind('click', function(){
+        $perspectiveBox.toggle();
     });
 
     $sendconstruction_button.bind('click', function(){
