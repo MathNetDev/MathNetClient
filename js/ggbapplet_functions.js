@@ -17,16 +17,16 @@ function appletSetExtXML(xml, toolbar, properties, id){
         appletName = document['applet' + id];
         //console.log(appletName);
     }
-    if (toolbar && toolbar !== "undefined" && toolbar !== "null"){
-        //console.log('setting ' + appletName.id + ' custom toolbar to: ' + toolbar);
-        sessionStorage.setItem('toolbar', toolbar);
-        appletName.setCustomToolBar(toolbar);
-    }
     if (properties && properties !== "undefined" && properties !== "null"){
             appletName.setAxesVisible(1, properties['axis_display'], properties['axis_display']);
             appletName.setGridVisible(properties['grid_display']);
         if(properties['perspective'] && properties['perspective'] != '')
             appletName.setPerspective(properties['perspective']);
+    }
+    if (toolbar && toolbar !== "undefined" && toolbar !== "null" && properties && properties['perspective'] && properties['perspective'].includes("G")){
+        //console.log('setting ' + appletName.id + ' custom toolbar to: ' + toolbar);
+        sessionStorage.setItem('toolbar', toolbar);
+        appletName.setCustomToolBar(toolbar);
     }
 
     cur_xml = appletName.getXML();
