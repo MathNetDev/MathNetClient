@@ -84,9 +84,9 @@ function checkLocks(appletName){
 
         //console.log(ggb_user);
         if ((username !== ggb_user) && ggb_user != "admin"){
-            appletName.setFixed(name, true);
+            appletName.setFixed(name, true, false);
         } else if (username === ggb_user ){
-            appletName.setFixed(name, false);
+            appletName.setFixed(name, false, true);
         }
     }
 }
