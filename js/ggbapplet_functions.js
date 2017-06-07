@@ -23,11 +23,6 @@ function appletSetExtXML(xml, toolbar, properties, id){
         if(properties['perspective'] && properties['perspective'] != '')
             appletName.setPerspective(properties['perspective']);
     }
-    if (toolbar && toolbar !== "undefined" && toolbar !== "null" && properties && properties['perspective'] && properties['perspective'].includes("G")){
-        //console.log('setting ' + appletName.id + ' custom toolbar to: ' + toolbar);
-        sessionStorage.setItem('toolbar', toolbar);
-        appletName.setCustomToolBar(toolbar);
-    }
 
     cur_xml = appletName.getXML();
     var cur_xml_doc = $.parseXML(cur_xml);
@@ -46,6 +41,12 @@ function appletSetExtXML(xml, toolbar, properties, id){
     var final_xml = $(cur_xml_doc).find('geogebra')[0].outerHTML;
     appletName.setXML(final_xml);
     checkLocks(appletName);
+
+    if (toolbar && toolbar !== "undefined" && toolbar !== "null" && properties && properties['perspective'] && properties['perspective'].includes("G")){
+        //console.log('setting ' + appletName.id + ' custom toolbar to: ' + toolbar);
+        sessionStorage.setItem('toolbar', toolbar);
+        appletName.setCustomToolBar(toolbar);
+    }
 }
 
 //This clears the local applet view
