@@ -493,7 +493,7 @@ function remove_admin_objects(xml, counter){
             var caption = $(elements[i]).find('caption')[0];
             if(caption !== undefined){
                 caption = caption.attributes[0];
-                if (caption.value.includes("admin")){
+                if (caption.value.includes("unassigned")){
                     var label = $(elements[i])[0].attributes[1]
                     deleted_array.push(label.value);
                     $(elements[i]).remove();
@@ -546,7 +546,7 @@ function rename_labels(xml, num, counter){
             var caption = $(elements[i]).find('caption')[0];
             if(caption !== undefined){
                 caption = caption.attributes[0];
-                if(caption.value.includes("admin")){
+                if(caption.value.includes("unassigned")){
                     counter = 1;
                 }
                 caption.value = caption.value + "g" + num;
