@@ -83,7 +83,7 @@ function checkLocks(appletName){
         var username = sessionStorage.getItem('username');
 
         //console.log(ggb_user);
-        if ((username !== ggb_user) && ggb_user != "admin"){
+        if ((username !== ggb_user) && ggb_user != "unassigned"){
             appletName.setFixed(name, true);
         } else if (username === ggb_user ){
             appletName.setFixed(name, false);
@@ -135,7 +135,7 @@ function addLock(object){
     if(sessionStorage.getItem('username') != null)
         username = sessionStorage.getItem('username');
     else
-        username = "admin";
+        username = "unassigned";
 
     document.applet.setCaption(object, username);
     var type = document.applet.getObjectType(object);
@@ -153,11 +153,11 @@ function checkUser(object){
     var username = sessionStorage.getItem('username');
     var move = document.applet.isMoveable(object);
 
-    if ((username !== ggb_user && move) && ggb_user != "admin"){
+    if ((username !== ggb_user && move) && ggb_user != "unassigned"){
         document.applet.setFixed(object, true);
     }
 
-    if(($('#myonoffswitch').is(':checked')) && ggb_user == "admin" ){
+    if(($('#myonoffswitch').is(':checked')) && ggb_user == "unassigned" ){
         document.applet.setCaption(object, username);
     }
     // on update of Geogebra view, send clients updated XML
