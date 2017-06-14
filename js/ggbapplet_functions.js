@@ -15,15 +15,13 @@ function appletSetExtXML(xml, toolbar, properties, id){
 
     if (typeof document['applet' + id] !== 'undefined'){
         appletName = document['applet' + id];
-        //console.log(appletName);
     }
-    if (properties && properties !== "undefined" && properties !== "null"){
-            appletName.setAxesVisible(1, properties['axis_display'], properties['axis_display']);
-            appletName.setGridVisible(properties['grid_display']);
-        if(properties['perspective'] && properties['perspective'] != '')
-            appletName.setPerspective(properties['perspective']);
+    console.log(properties);
+    if(properties['perspective'] && properties['perspective'] != ''){
+        // need to set the perspective before setting the XML
+        appletName.setPerspective(properties['perspective']);
     }
-    if (toolbar && toolbar !== "undefined" && toolbar !== "null" && properties && properties['perspective'] && properties['perspective'].includes("G")){
+    if (toolbar && toolbar !== "undefined" && toolbar !== "null" && toolbar.match(/\d+/g) && properties && properties['perspective'] && properties['perspective'].includes("G")){
         //console.log('setting ' + appletName.id + ' custom toolbar to: ' + toolbar);
         sessionStorage.setItem('toolbar', toolbar);
         appletName.setCustomToolBar(toolbar);
@@ -46,6 +44,11 @@ function appletSetExtXML(xml, toolbar, properties, id){
     var final_xml = $(cur_xml_doc).find('geogebra')[0].outerHTML;
     appletName.setXML(final_xml);
     checkLocks(appletName);
+    if (properties && properties !== "undefined" && properties !== "null"){
+        // need to set the grid and axes visibility after setXML
+        appletName.setAxesVisible(1, properties['axis_display'], properties['axis_display']);
+        appletName.setGridVisible(properties['grid_display']);
+    }
 }
 
 //This clears the local applet view
