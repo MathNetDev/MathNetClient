@@ -253,6 +253,8 @@ function appletInit(params){
     params.container = typeof params.container !== 'undefined' ? params.container : 'appletContainer';
     params.width = typeof params.width !== 'undefined' ? params.width : 800;
     params.height = typeof params.height !== 'undefined' ? params.height : 600;
+    params.enable3D = true;
+    params.enableCAS = true;
     params.ggbBase64 = ggbBase64;
     var applet = new GGBApplet(params, true);
     applet.setHTML5Codebase('http://tetsuo.ucdavis.edu/mathnet/5.0/web3d/');
