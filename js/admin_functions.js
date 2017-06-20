@@ -382,9 +382,7 @@ function join_class(class_id){
 function ggbOnInit(arg) {
     var name, num, index = arg.search('[0-9]');
     document[arg].evalCommand("CenterView[(0,0)]");
-    document[arg].evalCommand("ZoomOut[4,(0,0)]");
-    document.applet.registerAddListener("addLock");
-                            
+    document[arg].evalCommand("ZoomOut[4,(0,0)]");        
 
     if (index != -1){
         num = arg.slice(index);
@@ -394,6 +392,8 @@ function ggbOnInit(arg) {
             socket.get_xml('admin', class_id, num);
         }
     }
+    // fix for view tab applets not loading current group xml
+    document.applet.registerAddListener("addLock");
 }
 
 //handler for xml_change response, appends message to chatbox, and calls appletSetExtXML()

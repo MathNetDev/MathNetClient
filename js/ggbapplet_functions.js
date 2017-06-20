@@ -44,10 +44,14 @@ function appletSetExtXML(xml, toolbar, properties, id){
     var final_xml = $(cur_xml_doc).find('geogebra')[0].outerHTML;
     appletName.setXML(final_xml);
     checkLocks(appletName);
-    if (properties && properties !== "undefined" && properties !== "null"){
+    if (properties != null){
         // need to set the grid and axes visibility after setXML
-        appletName.setAxesVisible(1, properties['axis_display'], properties['axis_display']);
-        appletName.setGridVisible(properties['grid_display']);
+        if(properties.hasOwnProperty('axis_display')){
+            appletName.setAxesVisible(1, properties['axis_display'], properties['axis_display']);    
+        }
+        if(properties.hasOwnProperty('grid_display')){
+            appletName.setGridVisible(properties['grid_display']);    
+        }
     }
 }
 

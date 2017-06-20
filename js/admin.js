@@ -549,17 +549,16 @@ $(function() {
                 }
             });
 
-            // listen for menu bar checkbox toggle and re-inject applet
-            $('#toggle-menu-bar').bind('change',function(){
-                if($(this).is(':checked')){
-                    params.showMenubar = true;
-                    params.allowStyleBar = false;
-                }else{
-                    params.showMenubar = false;
-                };
-                appletInit(params);
-            });
-            socket.get_class_users(sessionStorage.getItem('admin_class_id'),'get-class-users-response');
+            // // listen for menu bar checkbox toggle and re-inject applet
+            // $('#toggle-menu-bar').bind('change',function(){
+            //     if($(this).is(':checked')){
+            //         params.showMenubar = true;
+            //         params.allowStyleBar = false;
+            //     }else{
+            //         params.showMenubar = false;
+            //     };
+            //     appletInit(params);
+            // });
             socket.get_toolbars(localStorage.getItem('admin_id'));
 
         }else if (tab == 'view'){
@@ -567,7 +566,6 @@ $(function() {
             $views_jsapp.empty();
             $('#views_checkboxes').html('<div class="panel-heading"><h3 class="panel-title">Show Groups</h3></div><div class="panel-body"></div>');
             var numgroups = ($('ul.groups div').length)+1;
-            
             for(var i = 1; i < numgroups; i++){
                 var params = {
                     "container":"appletContainer"+i,
@@ -636,11 +634,13 @@ $(function() {
                 ' type="button" value="Unmerge Views" style="display:none;">';
             $('#views_checkboxes .panel-body').append(mergebutton);
             $views_jsapp.append(mergegroup);
-            appletInit(params); 
+            appletInit(params);
+
 
         } else {
              $design_toolbox.empty();
         }
+        socket.get_class_users(sessionStorage.getItem('admin_class_id'),'get-class-users-response');
     });
 });
 
