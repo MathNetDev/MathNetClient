@@ -499,33 +499,34 @@ $(function() {
         var tab = String(e.target).split('#')[1];
         //alert(tab);
         if(tab == 'design'){
-
-            var params = {
-                "container":"appletContainer",
-                "id":"applet",
-                "width":$applet_activity_designer.innerWidth(),
-                "height":600,
-                "perspective":"AG",
-                "showAlgebraInput":true,
-                "showToolBarHelp":false,
-                "showMenubar":true,
-                "enableLabelDrags":false,
-                "showResetIcon":true,
-                "showToolbar":true,
-                "allowStyleBar":false,
-                "useBrowserForJS":true,
-                "enableShiftDragZoom":true,
-                "errorDialogsActive":true,
-                "enableRightClick":false,
-                "enableCAS":false,
-                "enable3d":false,
-                "isPreloader":false,
-                "screenshotGenerator":false,
-                "preventFocus":false
-            };
-            
+            if(!document.applet){
+                var params = {
+                    "container":"appletContainer",
+                    "id":"applet",
+                    "width":$applet_activity_designer.innerWidth(),
+                    "height":600,
+                    "perspective":"AG",
+                    "showAlgebraInput":true,
+                    "showToolBarHelp":false,
+                    "showMenubar":true,
+                    "enableLabelDrags":false,
+                    "showResetIcon":true,
+                    "showToolbar":true,
+                    "allowStyleBar":false,
+                    "useBrowserForJS":true,
+                    "enableShiftDragZoom":true,
+                    "errorDialogsActive":true,
+                    "enableRightClick":false,
+                    "enableCAS":false,
+                    "enable3d":false,
+                    "isPreloader":false,
+                    "screenshotGenerator":false,
+                    "preventFocus":false
+                };
+                appletInit(params);
+            }   
             getToolbarIcons();
-            appletInit(params);
+            
 
             $design_icons.droppable({
                 drop: function( event, ui ) {
