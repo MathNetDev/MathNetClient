@@ -17,7 +17,7 @@ function appletSetExtXML(xml, toolbar, properties, id){
         appletName = document['applet' + id];
     }
     console.log(properties);
-    if(properties['perspective'] && properties['perspective'] != ''){
+    if(properties != null && properties.hasOwnProperty('perspective')){
         // need to set the perspective before setting the XML
         appletName.setPerspective(properties['perspective']);
     }
