@@ -381,9 +381,9 @@ function join_class(class_id){
 //This function registers listeners on geogebra initialization 
 function ggbOnInit(arg) {
     var name, num, index = arg.search('[0-9]');
-    document[arg].evalCommand("CenterView[(0,0)]");
-    document[arg].evalCommand("ZoomOut[4,(0,0)]");        
-
+    var applet = document[arg];
+    applet.evalCommand("CenterView[(0,0)]");
+    applet.evalCommand("ZoomOut[4,(0,0)]");        
     if (index != -1){
         num = arg.slice(index);
         name = arg.slice(0, index);
@@ -393,7 +393,7 @@ function ggbOnInit(arg) {
         }
     }
     // fix for view tab applets not loading current group xml
-    document.applet.registerAddListener("addLock");
+    applet.registerAddListener("addLock");
 }
 
 //handler for xml_change response, appends message to chatbox, and calls appletSetExtXML()
@@ -473,8 +473,10 @@ function view_merge(event){
     }
     
     applet.setPerspective('G');
+    applet.setCoordSystem(-10,10,-10,10);
+ 
     $('#views_checkboxes :checkbox').hide();
-    $('.merge_group').show();
+    $('.merge_group').css('visibility','visible');
 }
 
 
@@ -564,7 +566,7 @@ function unmerge_views(event){
     $('#views_checkboxes :checkbox').show();
     $('.mergeview_button').show();
     $('.unmergeview_button').hide();
-    $('.merge_group').hide();
+    $('.merge_group').css('visibility','hidden');
     $clear_buttons.show();
 
     var array = $('#views_checkboxes :checked');

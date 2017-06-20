@@ -626,7 +626,7 @@ $(function() {
                     "screenshotGenerator":false,
                     "preventFocus":true
                 };
-            var mergegroup = '<div class="merge_group" style="display:none;"><h4> Merge Group</h4><div class="geogebrawebapplet"' +
+            var mergegroup = '<div class="merge_group" style="visibility:hidden"><h4> Merge Group</h4><div class="geogebrawebapplet"' +
                 'id="appletContainer' + numgroups + '"style="width:100%;height:650px;display:block;"></div></div><br/>';
 
             var mergebutton = '&emsp;&emsp;<input class="btn btn-default mergeview_button" onclick="view_merge(this)"'+
@@ -635,7 +635,6 @@ $(function() {
             $('#views_checkboxes .panel-body').append(mergebutton);
             $views_jsapp.append(mergegroup);
             appletInit(params);
-
 
         } else {
              $design_toolbox.empty();
