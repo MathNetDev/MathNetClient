@@ -381,11 +381,9 @@ function join_class(class_id){
 //This function registers listeners on geogebra initialization 
 function ggbOnInit(arg) {
     var name, num, index = arg.search('[0-9]');
-    document[arg].evalCommand("CenterView[(0,0)]");
-    document[arg].evalCommand("ZoomOut[4,(0,0)]");
-    document.applet.registerAddListener("addLock");
-                            
-
+    var applet = document[arg];
+    applet.evalCommand("CenterView[(0,0)]");
+    applet.evalCommand("ZoomOut[4,(0,0)]");        
     if (index != -1){
         num = arg.slice(index);
         name = arg.slice(0, index);
@@ -394,6 +392,8 @@ function ggbOnInit(arg) {
             socket.get_xml('admin', class_id, num);
         }
     }
+    // fix for view tab applets not loading current group xml
+    applet.registerAddListener("addLock");
 }
 
 //handler for xml_change response, appends message to chatbox, and calls appletSetExtXML()
@@ -469,12 +469,14 @@ function view_merge(event){
     var numelems = applet.getObjectNumber();
     for (i = 0; i < numelems; i++){
         var name = applet.getObjectName(i);
-        applet.setFixed(name, false);
+        applet.setFixed(name, false, true);
     }
     
     applet.setPerspective('G');
+    applet.setCoordSystem(-10,10,-10,10);
+ 
     $('#views_checkboxes :checkbox').hide();
-    $('.merge_group').show();
+    $('.merge_group').css('visibility','visible');
 }
 
 
@@ -493,7 +495,7 @@ function remove_admin_objects(xml, counter){
             var caption = $(elements[i]).find('caption')[0];
             if(caption !== undefined){
                 caption = caption.attributes[0];
-                if (caption.value.includes("admin")){
+                if (caption.value.includes("unassigned")){
                     var label = $(elements[i])[0].attributes[1]
                     deleted_array.push(label.value);
                     $(elements[i]).remove();
@@ -546,7 +548,7 @@ function rename_labels(xml, num, counter){
             var caption = $(elements[i]).find('caption')[0];
             if(caption !== undefined){
                 caption = caption.attributes[0];
-                if(caption.value.includes("admin")){
+                if(caption.value.includes("unassigned")){
                     counter = 1;
                 }
                 caption.value = caption.value + "g" + num;
@@ -564,7 +566,7 @@ function unmerge_views(event){
     $('#views_checkboxes :checkbox').show();
     $('.mergeview_button').show();
     $('.unmergeview_button').hide();
-    $('.merge_group').hide();
+    $('.merge_group').css('visibility','hidden');
     $clear_buttons.show();
 
     var array = $('#views_checkboxes :checked');

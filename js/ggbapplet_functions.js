@@ -15,13 +15,16 @@ function appletSetExtXML(xml, toolbar, properties, id){
 
     if (typeof document['applet' + id] !== 'undefined'){
         appletName = document['applet' + id];
-        //console.log(appletName);
     }
-    if (properties && properties !== "undefined" && properties !== "null"){
-            appletName.setAxesVisible(1, properties['axis_display'], properties['axis_display']);
-            appletName.setGridVisible(properties['grid_display']);
-        if(properties['perspective'] && properties['perspective'] != '')
-            appletName.setPerspective(properties['perspective']);
+    if(properties != null && properties.hasOwnProperty('perspective')){
+        // need to set the perspective before setting the XML
+        appletName.setPerspective(properties['perspective']);
+    }
+
+    if (toolbar && toolbar !== "undefined" && toolbar !== "null" && toolbar.match(/\d+/g) && properties && properties['perspective'] && properties['perspective'].includes("G")){
+        //console.log('setting ' + appletName.id + ' custom toolbar to: ' + toolbar);
+        sessionStorage.setItem('toolbar', toolbar);
+        appletName.setCustomToolBar(toolbar);
     }
 
     cur_xml = appletName.getXML();
@@ -30,7 +33,7 @@ function appletSetExtXML(xml, toolbar, properties, id){
 
     xml = xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>').replace(/\\"/g, '"').replace(/\\n/g, '').replace(/\\t/g, '');
     xml = xml.substr(xml.indexOf("<"), xml.lastIndexOf(">")) ;
-    
+    console.log(xml);
     var new_xml_doc = $.parseXML(xml);
     
     if(new_xml_doc !== null){
@@ -42,10 +45,14 @@ function appletSetExtXML(xml, toolbar, properties, id){
     appletName.setXML(final_xml);
     checkLocks(appletName);
 
-    if (toolbar && toolbar !== "undefined" && toolbar !== "null" && properties && properties['perspective'] && properties['perspective'].includes("G")){
-        //console.log('setting ' + appletName.id + ' custom toolbar to: ' + toolbar);
-        sessionStorage.setItem('toolbar', toolbar);
-        appletName.setCustomToolBar(toolbar);
+    if (properties != null){
+        // need to set the grid and axes visibility after setXML
+        if(properties.hasOwnProperty('axis_display')){
+            appletName.setAxesVisible(1, properties['axis_display'], properties['axis_display']);    
+        }
+        if(properties.hasOwnProperty('grid_display')){
+            appletName.setGridVisible(properties['grid_display']);    
+        }
     }
 }
 
@@ -84,7 +91,8 @@ function checkLocks(appletName){
         var username = sessionStorage.getItem('username');
 
         //console.log(ggb_user);
-        if ((username !== ggb_user) && ggb_user != "admin"){
+
+        if ((username !== ggb_user) && ggb_user != "unassigned"){
             appletName.setFixed(name, true, false);
         } else if (username === ggb_user ){
             appletName.setFixed(name, false, true);
@@ -136,7 +144,7 @@ function addLock(object){
     if(sessionStorage.getItem('username') != null)
         username = sessionStorage.getItem('username');
     else
-        username = "admin";
+        username = "unassigned";
 
     document.applet.setCaption(object, username);
     var type = document.applet.getObjectType(object);
@@ -154,11 +162,11 @@ function checkUser(object){
     var username = sessionStorage.getItem('username');
     var move = document.applet.isMoveable(object);
 
-    if ((username !== ggb_user && move) && ggb_user != "admin"){
+    if ((username !== ggb_user && move) && ggb_user != "unassigned"){
         document.applet.setFixed(object, true);
     }
 
-    if(($('#myonoffswitch').is(':checked')) && ggb_user == "admin" ){
+    if(($('#myonoffswitch').is(':checked')) && ggb_user == "unassigned" ){
         document.applet.setCaption(object, username);
     }
     // on update of Geogebra view, send clients updated XML
@@ -254,6 +262,8 @@ function appletInit(params){
     params.container = typeof params.container !== 'undefined' ? params.container : 'appletContainer';
     params.width = typeof params.width !== 'undefined' ? params.width : 800;
     params.height = typeof params.height !== 'undefined' ? params.height : 600;
+    params.enable3D = true;
+    params.enableCAS = true;
     params.ggbBase64 = ggbBase64;
     var applet = new GGBApplet(params, true);
     applet.setHTML5Codebase('http://tetsuo.ucdavis.edu/mathnet/5.0/web3d/');
