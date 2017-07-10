@@ -44,7 +44,7 @@ function appletSetExtXML(xml, toolbar, properties, id){
     var final_xml = $(cur_xml_doc).find('geogebra')[0].outerHTML;
     appletName.setXML(final_xml);
     checkLocks(appletName);
-
+    console.log(properties);
     if (properties != null){
         // need to set the grid and axes visibility after setXML
         if(properties.hasOwnProperty('axis_display')){
@@ -52,6 +52,12 @@ function appletSetExtXML(xml, toolbar, properties, id){
         }
         if(properties.hasOwnProperty('grid_display')){
             appletName.setGridVisible(properties['grid_display']);    
+        }
+        if(properties.hasOwnProperty('coord_system')){
+            appletName.setCoordSystem(properties['coord_system']['x_min'] ,properties['coord_system']['x_max'], properties['coord_system']['y_min'], properties['coord_system']['y_max']);
+        }
+        if(properties.hasOwnProperty('axis_steps')){
+            appletName.setAxisSteps(1, properties['axis_steps']['x'], properties['axis_steps']['y'], properties['axis_steps']['z']);            
         }
     }
 }

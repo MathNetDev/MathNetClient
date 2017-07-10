@@ -46,12 +46,20 @@ var $savetoolbar_button = $('.btn-savetoolbar'); // Saving the toolbar
 var $deletetoolbar_button = $('.btn-deletetoolbar'); // Deleting toolbars
 var $usetoolbar_button = $('.btn-usetoolbar'); // Using the saved toolbars to send to students
 var $default_toolset_name = 'Default toolset';
+
 var $boxToggle = $('#boxToggle');
 var $perspectiveBox = $('#perspectiveBox');
 var $perspectiveSelect = $('#perspectiveSelect');
 var $axisToggle = $('#axisToggle');
 var $gridToggle = $('#gridToggle');
 var $perspective = $('#perspective');
+var $axis_x_toggle = $('#axis_x_toggle');
+var $axis_y_toggle = $('#axis_y_toggle');
+var $axis_z_toggle = $('#axis_z_toggle');
+var $coord_x_min = $('#coord_x_min');
+var $coord_x_max = $('#coord_x_max');
+var $coord_y_min = $('#coord_y_min');
+var $coord_y_max = $('#coord_y_max');
 
 var $design_tab = $('#design_tab'); // When the design tab is pressed
 var $design_toolbox = $('.toolbox'); //design view tool container

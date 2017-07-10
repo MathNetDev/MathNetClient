@@ -210,10 +210,27 @@ $(function() {
         var class_id = sessionStorage.getItem('admin_class_id');
         var perspective = ($perspective.val() != '' && $perspective.is(':visible')) 
             ? $perspective.val() : $perspectiveSelect[0].options[index].value;
+        var coord_system;
+        var axis_steps = {
+                'x' : $axis_x_toggle.prop('checked'),
+                'y' : $axis_y_toggle.prop('checked'),
+                'z' : $axis_z_toggle.prop('checked')
+            };
+
+        if ($coord_x_min.val() | $coord_x_max.val() | $coord_y_min.val() | $coord_y_max.val()){
+            coord_system = {
+                'x_min' : (($.isNumeric($coord_x_min.val())) ? $coord_x_min.val() : 0),
+                'x_max' : (($.isNumeric($coord_x_max.val())) ? $coord_x_max.val() : 0),
+                'y_min' : (($.isNumeric($coord_y_min.val())) ? $coord_y_min.val() : 0),
+                'y_max' : (($.isNumeric($coord_y_max.val())) ? $coord_y_max.val() : 0)
+            }
+        }
         var properties = {
             axis_display: $axisToggle.prop('checked'),
             grid_display: $gridToggle.prop('checked'),
-            perspective: perspective
+            perspective: perspective,
+            axis_steps: axis_steps,
+            coord_system: coord_system
         };
 
         for(var i = 0; i < toolbar_users.length; i++){
