@@ -211,7 +211,8 @@ $(function() {
         var perspective = ($perspective.val() != '' && $perspective.is(':visible')) 
             ? $perspective.val() : $perspectiveSelect[0].options[index].value;
         var coord_system, axis_steps;
-        if ($axis_step_x.val() | $axis_step_y.val() | $axis_step_z.val()){
+        
+        if ($axis_step_x.val() != "" | $axis_step_y.val() != "" | $axis_step_z.val() != ""){
             axis_steps = {
                 'x' : (($.isNumeric($axis_step_x.val())) ? $axis_step_x.val() : 0),
                 'y' : (($.isNumeric($axis_step_y.val())) ? $axis_step_y.val() : 0),
@@ -219,7 +220,7 @@ $(function() {
             };
         }
 
-        if ($coord_x_min.val() | $coord_x_max.val() | $coord_y_min.val() | $coord_y_max.val()){
+        if ($coord_x_min.val() != "" | $coord_x_max.val() != ""  | $coord_y_min.val() != "" | $coord_y_max.val() != ""){
             coord_system = {
                 'x_min' : (($.isNumeric($coord_x_min.val())) ? $coord_x_min.val() : 0),
                 'x_max' : (($.isNumeric($coord_x_max.val())) ? $coord_x_max.val() : 0),
