@@ -210,12 +210,14 @@ $(function() {
         var class_id = sessionStorage.getItem('admin_class_id');
         var perspective = ($perspective.val() != '' && $perspective.is(':visible')) 
             ? $perspective.val() : $perspectiveSelect[0].options[index].value;
-        var coord_system;
-        var axis_steps = {
-                'x' : $axis_x_toggle.prop('checked'),
-                'y' : $axis_y_toggle.prop('checked'),
-                'z' : $axis_z_toggle.prop('checked')
+        var coord_system, axis_steps;
+        if ($axis_step_x.val() | $axis_step_y.val() | $axis_step_z.val()){
+            axis_steps = {
+                'x' : (($.isNumeric($axis_step_x.val())) ? $axis_step_x.val() : 0),
+                'y' : (($.isNumeric($axis_step_y.val())) ? $axis_step_y.val() : 0),
+                'z' : (($.isNumeric($axis_step_z.val())) ? $axis_step_z.val() : 0)
             };
+        }
 
         if ($coord_x_min.val() | $coord_x_max.val() | $coord_y_min.val() | $coord_y_max.val()){
             coord_system = {
@@ -223,8 +225,9 @@ $(function() {
                 'x_max' : (($.isNumeric($coord_x_max.val())) ? $coord_x_max.val() : 0),
                 'y_min' : (($.isNumeric($coord_y_min.val())) ? $coord_y_min.val() : 0),
                 'y_max' : (($.isNumeric($coord_y_max.val())) ? $coord_y_max.val() : 0)
-            }
+            };
         }
+
         var properties = {
             axis_display: $axisToggle.prop('checked'),
             grid_display: $gridToggle.prop('checked'),

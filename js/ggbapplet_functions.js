@@ -44,6 +44,7 @@ function appletSetExtXML(xml, toolbar, properties, id){
     var final_xml = $(cur_xml_doc).find('geogebra')[0].outerHTML;
     appletName.setXML(final_xml);
     checkLocks(appletName);
+    
     console.log(properties);
     if (properties != null){
         // need to set the grid and axes visibility after setXML
