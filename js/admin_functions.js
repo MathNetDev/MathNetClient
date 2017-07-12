@@ -183,10 +183,10 @@ function get_toolbar_response(response) {
  * @description deletes the selected toolbar
  */
 function delete_toolbar_response(response) {
-    var select = $my_select[0];
+    var select = $toolbar_select[0];
     var id = select.selectedIndex;
-    if($my_select[0].options[id].text != $default_toolset_name){
-        $my_select[0][id].remove();    
+    if($toolbar_select[0].options[id].text != $default_toolset_name){
+        $toolbar_select[0][id].remove();    
     }else{
         alert('The default toolset cannot be deleted.');
     }

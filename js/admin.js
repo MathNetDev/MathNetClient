@@ -347,15 +347,15 @@ $(function() {
     // SAVING A TOOLBAR
     //
     $savetoolbar_button.bind('click', function(){
-        var $my_select_opt = $('#my_select option');
-        var index = $my_select[0].selectedIndex;
+        var $toolbar_select_opt = $('#toolbar_select option');
+        var index = $toolbar_select[0].selectedIndex;
         var tools = toolbar_locs.join('|');
-        var toolbar_name = index > -1 ? (confirm("This will save over the old toolbar."), $my_select[0][index].text) : prompt("Enter toolbar name");
-        var len = $my_select_opt.length;
+        var toolbar_name = index > -1 ? (confirm("This will save over the old toolbar."), $toolbar_select[0][index].text) : prompt("Enter toolbar name");
+        var len = $toolbar_select_opt.length;
         
         for(var i = 0; i < len; i++)
         {
-            if($my_select_opt[i].text == toolbar_name)
+            if($toolbar_select_opt[i].text == toolbar_name)
                 break;
         }
 
@@ -373,7 +373,7 @@ $(function() {
     // USING A TOOLBAR
     //
     $usetoolbar_button.bind('click', function(){
-        var select = $my_select[0];
+        var select = $toolbar_select[0];
         var id = select.selectedIndex;
         var array = select[id].tool.split('|');
         var i,j;
@@ -416,12 +416,13 @@ $(function() {
     $deletetoolbar_button.bind('click', function(){
         var result = confirm("Are you sure you want to delete this toolbar?");
         if (result) {
-            var select = $my_select[0];
+            var select = $toolbar_select[0];
             var id = select.selectedIndex;
 
             socket.delete_toolbar(localStorage.getItem('admin_id'), select[id].text);
         }
-     });
+    });
+
 
     //
     // LOGGING OUT

@@ -220,7 +220,7 @@
                 <div class="checkbox">
                   <div>
                     <p id = "hello">  Select Default ToolBar </p>
-                    <select id="my_select" size="1000"></select>
+                    <select id="toolbar_select" size="1000"></select>
                     <div>
                       <button class="btn btn-primary btn-usetoolbar">Use Toolbar</button>
                       <button class="btn btn-primary btn-deletetoolbar">Delete Toolbar</button>
@@ -268,16 +268,21 @@
                   Example values: A, AG, A/G, A/(GS), with AG split vertically, A/G horizontally, and A/(GS) horizontally then vertically."></span>
                   <br/>
                 </div><br/>
-                Coordinate System <br/>
-                X Min <input type="text" id="coord_x_min"></input> <br/>
-                X Max <input type="text" id="coord_x_max"></input> <br/>
-                Y Min <input type="text" id="coord_y_min"></input> <br/>
-                Y Max <input type="text" id="coord_y_max"></input> <br/>  
+                <div id="coord-axis">
+                  Coordinate System <br/>
+                  <span style="margin-left:105px;">Y Max</span> <br/>
+                  <input type="text" id="coord_y_max" style="margin-left:100px;"></input><br/>
+                  X Min <input type="text" id="coord_x_min"></input> &emsp;
+                  <input type="text" id="coord_x_max" style="margin-left:50px;"></input> X Max <br/>
+                  <input type="text" id="coord_y_min" style="margin-left:100px;"></input> <br/>
+                  <span style="margin-left:105px;">Y Min</span> <br/>
+                    
 
-                Axis Steps <br/>
-                X-axis <input type="text" id="axis_step_x"></input> <br/>
-                Y-axis <input type="text" id="axis_step_y"></input> <br/>
-                Z-axis <input type="text" id="axis_step_z"></input> <br/>
+                  Axis Steps <br/>
+                  X-axis <input type="text" id="axis_step_x"></input> &ensp;
+                  Y-axis <input type="text" id="axis_step_y"></input> &ensp;
+                  Z-axis <input type="text" id="axis_step_z"></input> <br/>
+                </div>
                 <div class = "shifted">
                   <h1 style=" font-size: 1.2em; margin:0 0 .5em 0;">Class users</h1>
                   <select multiple="true" style="display:block;width:60%;clear:both;height:150px" class="toolbar_users"></select>
