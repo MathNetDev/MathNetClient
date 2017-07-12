@@ -158,10 +158,10 @@ function add_group_response() {
  * @description refreshes the selection list of all the default toolbars
  */
 function get_toolbar_response(response) {
-    var $my_select_opt = $('#my_select option');
-    $my_select.html('');
-    $my_select_opt.length = 0;
-    var selection_list = $my_select[0];
+    var $toolbar_select_opt = $('#toolbar_select option');
+    $toolbar_select.html('');
+    $toolbar_select_opt.length = 0;
+    var selection_list = $toolbar_select[0];
     var default_tools = {};
     default_tools.name = $default_toolset_name;
     default_tools.tools = $default_toolset;
