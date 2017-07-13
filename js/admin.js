@@ -272,7 +272,7 @@ $(function() {
                 xml: document.applet.getXML(),
                 toolbar: toolbar,
                 toolbar_user: 'admin',
-                properties: {'perspective': 'G'}
+                properties: {'perspective': 'AG'}
             };
             socket.xml_change(data);
         }
