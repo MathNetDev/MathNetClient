@@ -261,6 +261,8 @@ $(function() {
     });
 
     $sendconstruction_button.bind('click', function(){
+        var xml = $.parseXML(document.applet.getXML());
+        var toolbar = $(xml).find('toolbar').attr('items').replace(/,/g, "").replace(/  /g, " ").replace(/ \| /g, "|").replace(/ /g, ",");
         var numgroups = ($('ul.groups div').length)+1;
         for(var i = 1; i < numgroups; i++){
             var data = {
@@ -268,8 +270,9 @@ $(function() {
                 class_id: sessionStorage.getItem('admin_class_id'),
                 group_id: i,
                 xml: document.applet.getXML(),
-                toolbar: '',
-                toolbar_user: ''
+                toolbar: toolbar,
+                toolbar_user: 'admin',
+                properties: {'perspective': 'G'}
             };
             socket.xml_change(data);
         }
