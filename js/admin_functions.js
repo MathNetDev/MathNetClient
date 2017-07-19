@@ -158,10 +158,10 @@ function add_group_response() {
  * @description refreshes the selection list of all the default toolbars
  */
 function get_toolbar_response(response) {
-    var $my_select_opt = $('#my_select option');
-    $my_select.html('');
-    $my_select_opt.length = 0;
-    var selection_list = $my_select[0];
+    var $toolbar_select_opt = $('#toolbar_select option');
+    $toolbar_select.html('');
+    $toolbar_select_opt.length = 0;
+    var selection_list = $toolbar_select[0];
     var default_tools = {};
     default_tools.name = $default_toolset_name;
     default_tools.tools = $default_toolset;
@@ -183,10 +183,10 @@ function get_toolbar_response(response) {
  * @description deletes the selected toolbar
  */
 function delete_toolbar_response(response) {
-    var select = $my_select[0];
+    var select = $toolbar_select[0];
     var id = select.selectedIndex;
-    if($my_select[0].options[id].text != $default_toolset_name){
-        $my_select[0][id].remove();    
+    if($toolbar_select[0].options[id].text != $default_toolset_name){
+        $toolbar_select[0][id].remove();    
     }else{
         alert('The default toolset cannot be deleted.');
     }
@@ -469,7 +469,7 @@ function view_merge(event){
     var numelems = applet.getObjectNumber();
     for (i = 0; i < numelems; i++){
         var name = applet.getObjectName(i);
-        applet.setFixed(name, false);
+        applet.setFixed(name, false, true);
     }
     
     applet.setPerspective('G');

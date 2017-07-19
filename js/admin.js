@@ -210,10 +210,31 @@ $(function() {
         var class_id = sessionStorage.getItem('admin_class_id');
         var perspective = ($perspective.val() != '' && $perspective.is(':visible')) 
             ? $perspective.val() : $perspectiveSelect[0].options[index].value;
+        var coord_system, axis_steps;
+        
+        if ($axis_step_x.val() != "" | $axis_step_y.val() != "" | $axis_step_z.val() != ""){
+            axis_steps = {
+                'x' : (($.isNumeric($axis_step_x.val())) ? $axis_step_x.val() : 0),
+                'y' : (($.isNumeric($axis_step_y.val())) ? $axis_step_y.val() : 0),
+                'z' : (($.isNumeric($axis_step_z.val())) ? $axis_step_z.val() : 0)
+            };
+        }
+
+        if ($coord_x_min.val() != "" | $coord_x_max.val() != ""  | $coord_y_min.val() != "" | $coord_y_max.val() != ""){
+            coord_system = {
+                'x_min' : (($.isNumeric($coord_x_min.val())) ? $coord_x_min.val() : 0),
+                'x_max' : (($.isNumeric($coord_x_max.val())) ? $coord_x_max.val() : 0),
+                'y_min' : (($.isNumeric($coord_y_min.val())) ? $coord_y_min.val() : 0),
+                'y_max' : (($.isNumeric($coord_y_max.val())) ? $coord_y_max.val() : 0)
+            };
+        }
+
         var properties = {
             axis_display: $axisToggle.prop('checked'),
             grid_display: $gridToggle.prop('checked'),
-            perspective: perspective
+            perspective: perspective,
+            axis_steps: axis_steps,
+            coord_system: coord_system
         };
 
         for(var i = 0; i < toolbar_users.length; i++){
@@ -240,6 +261,8 @@ $(function() {
     });
 
     $sendconstruction_button.bind('click', function(){
+        var xml = $.parseXML(document.applet.getXML());
+        var toolbar = $(xml).find('toolbar').attr('items').replace(/,/g, "").replace(/  /g, " ").replace(/ \| /g, "|").replace(/ /g, ",");
         var numgroups = ($('ul.groups div').length)+1;
         for(var i = 1; i < numgroups; i++){
             var data = {
@@ -247,8 +270,9 @@ $(function() {
                 class_id: sessionStorage.getItem('admin_class_id'),
                 group_id: i,
                 xml: document.applet.getXML(),
-                toolbar: '',
-                toolbar_user: ''
+                toolbar: toolbar,
+                toolbar_user: 'admin',
+                properties: {'perspective': 'AG'}
             };
             socket.xml_change(data);
         }
@@ -326,15 +350,15 @@ $(function() {
     // SAVING A TOOLBAR
     //
     $savetoolbar_button.bind('click', function(){
-        var $my_select_opt = $('#my_select option');
-        var index = $my_select[0].selectedIndex;
+        var $toolbar_select_opt = $('#toolbar_select option');
+        var index = $toolbar_select[0].selectedIndex;
         var tools = toolbar_locs.join('|');
-        var toolbar_name = index > -1 ? (confirm("This will save over the old toolbar."), $my_select[0][index].text) : prompt("Enter toolbar name");
-        var len = $my_select_opt.length;
+        var toolbar_name = index > -1 ? (confirm("This will save over the old toolbar."), $toolbar_select[0][index].text) : prompt("Enter toolbar name");
+        var len = $toolbar_select_opt.length;
         
         for(var i = 0; i < len; i++)
         {
-            if($my_select_opt[i].text == toolbar_name)
+            if($toolbar_select_opt[i].text == toolbar_name)
                 break;
         }
 
@@ -352,7 +376,7 @@ $(function() {
     // USING A TOOLBAR
     //
     $usetoolbar_button.bind('click', function(){
-        var select = $my_select[0];
+        var select = $toolbar_select[0];
         var id = select.selectedIndex;
         var array = select[id].tool.split('|');
         var i,j;
@@ -395,12 +419,13 @@ $(function() {
     $deletetoolbar_button.bind('click', function(){
         var result = confirm("Are you sure you want to delete this toolbar?");
         if (result) {
-            var select = $my_select[0];
+            var select = $toolbar_select[0];
             var id = select.selectedIndex;
 
             socket.delete_toolbar(localStorage.getItem('admin_id'), select[id].text);
         }
-     });
+    });
+
 
     //
     // LOGGING OUT

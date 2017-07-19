@@ -46,12 +46,20 @@ var $savetoolbar_button = $('.btn-savetoolbar'); // Saving the toolbar
 var $deletetoolbar_button = $('.btn-deletetoolbar'); // Deleting toolbars
 var $usetoolbar_button = $('.btn-usetoolbar'); // Using the saved toolbars to send to students
 var $default_toolset_name = 'Default toolset';
+
 var $boxToggle = $('#boxToggle');
 var $perspectiveBox = $('#perspectiveBox');
 var $perspectiveSelect = $('#perspectiveSelect');
 var $axisToggle = $('#axisToggle');
 var $gridToggle = $('#gridToggle');
 var $perspective = $('#perspective');
+var $axis_step_x = $('#axis_step_x');
+var $axis_step_y = $('#axis_step_y');
+var $axis_step_z = $('#axis_step_z');
+var $coord_x_min = $('#coord_x_min');
+var $coord_x_max = $('#coord_x_max');
+var $coord_y_min = $('#coord_y_min');
+var $coord_y_max = $('#coord_y_max');
 
 var $design_tab = $('#design_tab'); // When the design tab is pressed
 var $design_toolbox = $('.toolbox'); //design view tool container
@@ -59,7 +67,7 @@ var $design_icons = $('.toolbar-target');
 var $trash_button = $('.btn-trash');
 var $clear_group_button = $('.clear_group_button');
 var $choices = $('.choices');
-var $my_select = $('#my_select');
+var $toolbar_select = $('#toolbar_select');
 var $views_jsapp = $('#views_jsapp');
 var $applet_activity_designer = $('.applet-activity-designer');
 

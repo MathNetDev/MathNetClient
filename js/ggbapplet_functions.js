@@ -20,6 +20,7 @@ function appletSetExtXML(xml, toolbar, properties, id){
         // need to set the perspective before setting the XML
         appletName.setPerspective(properties['perspective']);
     }
+
     if (toolbar && toolbar !== "undefined" && toolbar !== "null" && toolbar.match(/\d+/g) && properties && properties['perspective'] && properties['perspective'].includes("G")){
         //console.log('setting ' + appletName.id + ' custom toolbar to: ' + toolbar);
         sessionStorage.setItem('toolbar', toolbar);
@@ -32,7 +33,7 @@ function appletSetExtXML(xml, toolbar, properties, id){
 
     xml = xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>').replace(/\\"/g, '"').replace(/\\n/g, '').replace(/\\t/g, '');
     xml = xml.substr(xml.indexOf("<"), xml.lastIndexOf(">")) ;
-    
+    console.log(xml);
     var new_xml_doc = $.parseXML(xml);
     
     if(new_xml_doc !== null){
@@ -43,6 +44,8 @@ function appletSetExtXML(xml, toolbar, properties, id){
     var final_xml = $(cur_xml_doc).find('geogebra')[0].outerHTML;
     appletName.setXML(final_xml);
     checkLocks(appletName);
+    
+    console.log(properties);
     if (properties != null){
         // need to set the grid and axes visibility after setXML
         if(properties.hasOwnProperty('axis_display')){
@@ -50,6 +53,12 @@ function appletSetExtXML(xml, toolbar, properties, id){
         }
         if(properties.hasOwnProperty('grid_display')){
             appletName.setGridVisible(properties['grid_display']);    
+        }
+        if(properties.hasOwnProperty('axis_steps')){
+            appletName.setAxisSteps(1, properties['axis_steps']['x'], properties['axis_steps']['y'], properties['axis_steps']['z']);            
+        }
+        if(properties.hasOwnProperty('coord_system')){
+            appletName.setCoordSystem(properties['coord_system']['x_min'] ,properties['coord_system']['x_max'], properties['coord_system']['y_min'], properties['coord_system']['y_max']);
         }
     }
 }
@@ -89,10 +98,11 @@ function checkLocks(appletName){
         var username = sessionStorage.getItem('username');
 
         //console.log(ggb_user);
+
         if ((username !== ggb_user) && ggb_user != "unassigned"){
-            appletName.setFixed(name, true);
+            appletName.setFixed(name, true, false);
         } else if (username === ggb_user ){
-            appletName.setFixed(name, false);
+            appletName.setFixed(name, false, true);
         }
     }
 }

@@ -217,10 +217,13 @@ circle {
   stroke: steelblue;
   stroke-width: 1.5px;
 }
-#my_select{
+#toolbar_select{
 
   width:60%;
   height:100px;
+}
+#coord-axis input[type="text"]{
+  width: 50px;
 }
 
 #hello{
