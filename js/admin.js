@@ -426,6 +426,55 @@ $(function() {
         }
     });
 
+    //
+    // SAVING A CONSTRUCTION
+    //
+    $saveconstruction_button.bind('click', function(){
+        var $construction_select_opt = $('#construction_select option');
+        var index = $construction_select[0].selectedIndex;
+        var construction_name = index > -1 ? (confirm("This will save over the old construction."), $construction_select[0][index].text) : prompt("Enter construction name");
+        var len = $construction_select_opt.length;
+        var xml = document.applet.getXML();
+        for(var i = 0; i < len; i++)
+        {
+            if($construction_select_opt[i].text == construction_name)
+                break;
+        }
+
+
+        if (i == len && index == -1)
+            socket.save_xml(localStorage.getItem('admin_id'), construction_name, xml, "insert");
+        else if (i != len && index != -1)
+            socket.save_xml(localStorage.getItem('admin_id'), construction_name, xml, "update");
+        else if (i != len && index == -1) 
+            alert("You already have a construction with that name");
+
+    });
+
+    //
+    // USING A CONSTRUCTION
+    //
+    $useconstruction_button.bind('click', function(){
+        var select = $construction_select[0];
+        var id = select.selectedIndex;
+        var xml = $construction_select[0][id].xml;
+        appletSetExtXML(xml); 
+        
+        $(select[id]).prop("selected", false);
+    });
+
+    //
+    // DELETING A CONSTRUCTION
+    //
+    $deleteconstruction_button.bind('click', function(){
+        var result = confirm("Are you sure you want to delete this toolbar?");
+        if (result) {
+            var select = $construction_select[0];
+            var id = select.selectedIndex;
+
+            socket.delete_xml(localStorage.getItem('admin_id'), select[id].text);
+        }
+    });
 
     //
     // LOGGING OUT
@@ -585,6 +634,7 @@ $(function() {
             //     appletInit(params);
             // });
             socket.get_toolbars(localStorage.getItem('admin_id'));
+            socket.get_xmls(localStorage.getItem('admin_id'));
 
         }else if (tab == 'view'){
             $design_toolbox.empty();
