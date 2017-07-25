@@ -435,6 +435,8 @@ $(function() {
         var construction_name = index > -1 ? (confirm("This will save over the old construction."), $construction_select[0][index].text) : prompt("Enter construction name");
         var len = $construction_select_opt.length;
         var xml = document.applet.getXML();
+        var parsedXML = $.parseXML(xml);
+        var toolbar = $(parsedXML).find('toolbar').attr('items').replace(/,/g, "").replace(/  /g, " ").replace(/ \| /g, "|").replace(/ /g, ",");
         for(var i = 0; i < len; i++)
         {
             if($construction_select_opt[i].text == construction_name)
@@ -443,9 +445,9 @@ $(function() {
 
 
         if (i == len && index == -1)
-            socket.save_xml(localStorage.getItem('admin_id'), construction_name, xml, "insert");
+            socket.save_xml(localStorage.getItem('admin_id'), construction_name, xml, toolbar, "insert");
         else if (i != len && index != -1)
-            socket.save_xml(localStorage.getItem('admin_id'), construction_name, xml, "update");
+            socket.save_xml(localStorage.getItem('admin_id'), construction_name, xml, toolbar, "update");
         else if (i != len && index == -1) 
             alert("You already have a construction with that name");
 
@@ -458,7 +460,9 @@ $(function() {
         var select = $construction_select[0];
         var id = select.selectedIndex;
         var xml = $construction_select[0][id].xml;
-        appletSetExtXML(xml); 
+        var toolbar = $construction_select[0][id].toolbar;
+        var properties = {perspective: "AG"}
+        appletSetExtXML(xml, toolbar, properties); 
         
         $(select[id]).prop("selected", false);
     });

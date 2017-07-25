@@ -202,6 +202,7 @@ function get_xmls_response(response) {
         var option = document.createElement('option');
         option.text = response.xmls[i].xml_name;
         option.xml = response.xmls[i].xml;
+        option.toolbar = response.xmls[i].toolbar;
         selection_list.add(option);
     }
 

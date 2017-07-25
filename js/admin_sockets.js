@@ -83,8 +83,8 @@
         // This function takes a admin id provided by the user.
         // The socket then emits this data to the server to create a 
         // xml for the class.
-        var save_xml = function (admin_id, xml_name, xml, action) {
-            socket.emit('save-xml', admin_id, xml_name, xml, action);
+        var save_xml = function (admin_id, xml_name, xml, toolbar, action) {
+            socket.emit('save-xml', admin_id, xml_name, xml, toolbar, action);
         }
 
         // This function takes a admin id provided by the user.
