@@ -8,14 +8,4 @@ $(function() {
                           );
     });
 
-    $update_xml_button.bind('click', function(e){
-        e.preventDefault();
-        check_xml(document.applet.getXML(), socket);
-    });
-
-    $randomizeColors_button.bind('click', function(e){
-        e.preventDefault();
-        randomizeColors(document.applet);
-    });
-
 });
