@@ -1,5 +1,7 @@
 "use strict";
 
+var currentMax = -1;
+
 //escapes most strings to not break general forms
 function escapeStr(str) 
 {
@@ -77,6 +79,7 @@ function logout_response(disconnect) {
         sessionStorage.removeItem('group_id');
         sessionStorage.removeItem('toolbar');
         sessionStorage.removeItem('group_colors');
+
     }
 }
 
@@ -320,7 +323,7 @@ var kDataSetTemplate = {
       },
       {
         name: 'Spreadsheet',
-        parent: 'zu2wuvsp',
+        parent: sessionStorage.getItem('class_id'),
         labels: {
           pluralCase: "Spreadsheet",
           setOfCasesWithArticle: "a sample"
@@ -437,10 +440,11 @@ function sendItems(dataSetName, items) {
   });
 }
 
-function deleteItems(dataSetName) {
+function updateItems(dataSetName, items) {
   return codapInterface.sendRequest({
-    action: 'delete',
-    resource: 'dataContext[' + dataSetName + '].item'
+    action: 'update',
+    resource: 'dataContext[' + dataSetName + '].item',
+    values: items
   });
 }
 
@@ -475,14 +479,11 @@ function generateNumbers (spreadsheet, ymax) {
   // }
 
   // generate the samples and format as items.
-  for (ix = 0; ix < ymax; ix += 1) {
+  for (ix = 0; ix < ymax + 1; ix += 1) {
     samples.push({ Group_Number: sessionStorage.getItem('group_id'), A: spreadsheet[ix][0], B: spreadsheet[ix][1], C: spreadsheet[ix][2], D: spreadsheet[ix][3], E: spreadsheet[ix][4], F: spreadsheet[ix][5], G: spreadsheet[ix][6], H: spreadsheet[ix][7], I: spreadsheet[ix][8], J: spreadsheet[ix][9]});
   }
 
-  deleteItems(kDataSetName);
-
-  // send them
-  sendItems(kDataSetName, samples);
+    sendItems(kDataSetName, samples);
 
   // open a case table if one is not already open
   guaranteeCaseTable();
