@@ -192,6 +192,42 @@ function getArray(x,y)
 
 }
 
+// for creating a new 3d array
+function get3DArray(x,y,z)
+{
+  var iMax = y;
+  var jMax = x;
+  var f = new Array();
+  for(var k=0;k<z;k++)
+  {
+    f[k] = new Array();
+    for (var i=0;i<iMax;i++) 
+    {
+         f[k][i]=new Array();
+         for (var j=0;j<jMax;j++) {
+          f[k][i][j]="";
+         }
+    }
+  }
+  return f;
+
+}
+
+// for getting the name of the student
+function getStudent(html)
+{
+  var index = html.indexOf("caption val=") + 13;
+  var name = html[index];
+  index++;
+  // for checking for the entire name
+    while(html[index] != '"'){
+        name = name + html[index];
+        index++;
+    }
+
+  return name;
+}
+
 //handler for xml_change response, appends message to chatbox, and calls appletSetExtXML()
 function xml_change_response(username, class_id, group_id, xml, toolbar, properties) {
     socket.group_color(sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'));
@@ -201,25 +237,47 @@ function xml_change_response(username, class_id, group_id, xml, toolbar, propert
     var cur_xml_doc = $.parseXML(xml);
     var spreadsheet_elements = $(cur_xml_doc).find('[type="numeric"]');
 
-    var spreadsheet = getArray(10,100);
+    var spreadsheet_student_names = getArray(10,100);
+    var student_names = [];
+    var max_student = [];
 
     var i = 0;
     var ymax  = 0;
     while(i < spreadsheet_elements.length)
     {
-        //console.log(getVal(spreadsheet_elements[i].innerHTML) , "at index",getIndex(spreadsheet_elements[i].outerHTML)[0], ',',getIndex(spreadsheet_elements[i].outerHTML)[1] );
-        spreadsheet[getIndex(spreadsheet_elements[i].outerHTML)[1] - 1][getIndex(spreadsheet_elements[i].outerHTML)[0] - 1] = getVal(spreadsheet_elements[i].innerHTML);
-
-        // to update the till what the table needs to be created
-        if(getIndex(spreadsheet_elements[i].outerHTML)[1] - 1 > ymax)
-          ymax = getIndex(spreadsheet_elements[i].outerHTML)[1] - 1;
-
+      var student_name = getStudent(spreadsheet_elements[i].innerHTML);
+      spreadsheet_student_names[getIndex(spreadsheet_elements[i].outerHTML)[1] - 1][getIndex(spreadsheet_elements[i].outerHTML)[0] - 1] = student_name;
+      if (student_names.indexOf(student_name) == -1)
+        student_names.push(student_name);
         i++;
     }
 
+      var spreadsheet = get3DArray(10,100,student_names.length);
 
-    console.log(ymax + 1 );
-    generateNumbers(spreadsheet, ymax);
+      for(var j = 0; j < student_names.length;j++)
+      {
+        var max = 0;
+        var i = 0;
+        while(i < spreadsheet_elements.length)
+        {
+          if(student_names[j] == spreadsheet_student_names[getIndex(spreadsheet_elements[i].outerHTML)[1] - 1][getIndex(spreadsheet_elements[i].outerHTML)[0] - 1]) // the student
+          {
+            spreadsheet[j][getIndex(spreadsheet_elements[i].outerHTML)[1] - 1][getIndex(spreadsheet_elements[i].outerHTML)[0] - 1] = getVal(spreadsheet_elements[i].innerHTML);
+
+            console.log("here");
+            // to update the till what the table needs to be created
+            if(getIndex(spreadsheet_elements[i].outerHTML)[1] - 1 > max)
+              max = getIndex(spreadsheet_elements[i].outerHTML)[1] - 1;
+          }
+
+          i++;
+        }
+
+        max_student.push(max);
+
+      }
+
+    generateNumbers(spreadsheet,student_names, max_student);
     
     //appletSetExtXML(xml, toolbar, properties);
     //ggbOnInit('socket_call');
@@ -315,15 +373,20 @@ var kAppName = "MathNet Spreadsheet";
 // refer to. It will look for it at startup and create it if not found.
 var kDataSetTemplate = {
     name: "{name}",
-    collections: [  // There are two collections: a parent and a child
+    collections: [  // There are three collections: a parent and a child and a child's child
       {
         name: sessionStorage.getItem('class_id'),
         // The parent collection has just one attribute
         attrs: [ {name: "Group_Number", type: 'categorical'}],
       },
       {
-        name: 'Spreadsheet',
+        name: 'Student_Names',
         parent: sessionStorage.getItem('class_id'),
+        attrs:[ {name: "student_name", type: 'categorical'}],
+      },
+      {
+        name: 'Spreadsheet',
+        parent: 'Student_Names',
         labels: {
           pluralCase: "Spreadsheet",
           setOfCasesWithArticle: "a sample"
@@ -453,7 +516,7 @@ function updateItems(dataSetName, items) {
  * This is the function invoked from a button press.
  *
  */
-function generateNumbers (spreadsheet, ymax) {
+function generateNumbers (spreadsheet, student_names, max_student) {
   // verify we are in CODAP
   if(codapInterface.getConnectionState() !== 'active') {
     // we assume the connection should have been made by the time a button is
@@ -470,7 +533,7 @@ function generateNumbers (spreadsheet, ymax) {
   var samples = [];
  // var howMany = getRequestedSampleCount();
   var sampleIndex = ++myState.sampleNumber;
-  var ix;
+  var ix,yx;
 
   // // if we do not have a valid sample count, complain
   // if (isNaN(howMany) || howMany <= 0) {
@@ -479,8 +542,12 @@ function generateNumbers (spreadsheet, ymax) {
   // }
 
   // generate the samples and format as items.
-  for (ix = 0; ix < ymax + 1; ix += 1) {
-    samples.push({ Group_Number: sessionStorage.getItem('group_id'), A: spreadsheet[ix][0], B: spreadsheet[ix][1], C: spreadsheet[ix][2], D: spreadsheet[ix][3], E: spreadsheet[ix][4], F: spreadsheet[ix][5], G: spreadsheet[ix][6], H: spreadsheet[ix][7], I: spreadsheet[ix][8], J: spreadsheet[ix][9]});
+  for(yx = 0; yx < student_names.length; yx += 1)
+  {
+    for (ix = 0; ix < max_student[yx] + 1; ix += 1) {
+      samples.push({ Group_Number: sessionStorage.getItem('group_id'), student_name: student_names[yx], 
+        A: spreadsheet[yx][ix][0], B: spreadsheet[yx][ix][1], C: spreadsheet[yx][ix][2], D: spreadsheet[yx][ix][3], E: spreadsheet[yx][ix][4], F: spreadsheet[yx][ix][5], G: spreadsheet[yx][ix][6], H: spreadsheet[yx][ix][7], I: spreadsheet[yx][ix][8], J: spreadsheet[yx][ix][9]});
+    }
   }
 
     sendItems(kDataSetName, samples);
@@ -505,7 +572,7 @@ codapInterface.init({
   return requestDataContext(kDataSetName);
 }).then(function (iResult) {
   // if we did not find a data set, make one
-  if (iResult && !iResult.success) {
+  if (iResult && !iResult.suc) {
     // If not not found, create it.
     return requestCreateDataSet(kDataSetName, kDataSetTemplate);
   } else {
