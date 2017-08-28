@@ -192,6 +192,32 @@ function delete_toolbar_response(response) {
     }
 }
 
+function get_xmls_response(response) {
+    var $construction_select_opt = $('#construction_select option');
+    $construction_select.html('');
+    $construction_select_opt.length = 0;
+    var selection_list = $construction_select[0];
+    
+    for (var i = 0; i < response.xmls.length; i++){
+        var option = document.createElement('option');
+        option.text = response.xmls[i].xml_name;
+        option.xml = response.xmls[i].xml;
+        option.toolbar = response.xmls[i].toolbar;
+        selection_list.add(option);
+    }
+
+}
+
+/**
+ * @function delete_toolbar_response
+ * @description deletes the selected toolbar
+ */
+function delete_xml_response(response) {
+    var select = $construction_select[0];
+    var id = select.selectedIndex;
+    $construction_select[0][id].remove();    
+}
+
 /**
  * @function get_class_users_response
  * @description refreshes the selection list of all the default toolbars

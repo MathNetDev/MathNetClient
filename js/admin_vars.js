@@ -47,6 +47,11 @@ var $deletetoolbar_button = $('.btn-deletetoolbar'); // Deleting toolbars
 var $usetoolbar_button = $('.btn-usetoolbar'); // Using the saved toolbars to send to students
 var $default_toolset_name = 'Default toolset';
 
+var $saveconstruction_button = $('.btn-saveconstruction'); // Saving the construction
+var $deleteconstruction_button = $('.btn-deleteconstruction'); // Deleting construction
+var $useconstruction_button = $('.btn-useconstruction'); // Using the saved construction to send to students
+var $construction_select = $('#construction_select');
+
 var $boxToggle = $('#boxToggle');
 var $perspectiveBox = $('#perspectiveBox');
 var $perspectiveSelect = $('#perspectiveSelect');

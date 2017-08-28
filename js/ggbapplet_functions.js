@@ -21,18 +21,12 @@ function appletSetExtXML(xml, toolbar, properties, id){
         appletName.setPerspective(properties['perspective']);
     }
 
-    if (toolbar && toolbar !== "undefined" && toolbar !== "null" && toolbar.match(/\d+/g) && properties && properties['perspective'] && properties['perspective'].includes("G")){
-        //console.log('setting ' + appletName.id + ' custom toolbar to: ' + toolbar);
-        sessionStorage.setItem('toolbar', toolbar);
-        appletName.setCustomToolBar(toolbar);
-    }
-
     cur_xml = appletName.getXML();
     var cur_xml_doc = $.parseXML(cur_xml);
     var cur_construction = $(cur_xml_doc).find('construction')[0];
 
     xml = xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>').replace(/\\"/g, '"').replace(/\\n/g, '').replace(/\\t/g, '');
-    xml = xml.substr(xml.indexOf("<"), xml.lastIndexOf(">")) ;
+    xml = xml.substr(xml.indexOf("<"), xml.lastIndexOf(">"));
     console.log(xml);
     var new_xml_doc = $.parseXML(xml);
     
@@ -40,11 +34,19 @@ function appletSetExtXML(xml, toolbar, properties, id){
         var new_construction = $(new_xml_doc).find('construction')[0];
         cur_construction.innerHTML = new_construction.innerHTML;
     }
-       
+    // console.log($(new_xml_doc).find('geogebra')[0].innerHTML);
+    // console.log($(cur_xml_doc).find('geogebra')[0].innerHTML);
+    // $(cur_xml_doc).find('geogebra')[0].innerHTML = $(new_xml_doc).find('geogebra')[0].innerHTML;
+    // console.log($(cur_xml_doc).find('geogebra')[0].innerHTML);
     var final_xml = $(cur_xml_doc).find('geogebra')[0].outerHTML;
     appletName.setXML(final_xml);
     checkLocks(appletName);
     
+    if (toolbar && toolbar !== "undefined" && toolbar !== "null" && toolbar.match(/\d+/g) && properties && properties['perspective'] && properties['perspective'].includes("G")){
+        //console.log('setting ' + appletName.id + ' custom toolbar to: ' + toolbar);
+        sessionStorage.setItem('toolbar', toolbar);
+        appletName.setCustomToolBar(toolbar);
+    }
     console.log(properties);
     if (properties != null){
         // need to set the grid and axes visibility after setXML
