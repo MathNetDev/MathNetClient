@@ -549,8 +549,20 @@ function generateNumbers (spreadsheet, student_names, max_student) {
         A: spreadsheet[yx][ix][0], B: spreadsheet[yx][ix][1], C: spreadsheet[yx][ix][2], D: spreadsheet[yx][ix][3], E: spreadsheet[yx][ix][4], F: spreadsheet[yx][ix][5], G: spreadsheet[yx][ix][6], H: spreadsheet[yx][ix][7], I: spreadsheet[yx][ix][8], J: spreadsheet[yx][ix][9]});
     }
   }
+    console.log(samples);
+    codapInterface.sendRequest({action:'get',resource: 'dataContext[MathNet_Spreadsheet].collection[Spreadsheet].caseCount'}).then(function(result){
+      console.log("Do we have a pre-existing context: " + result.success);
+      console.log(result);
+      if(result.values > 0){
+        codapInterface.sendRequest({action:'delete',resource: 'dataContext[MathNet_Spreadsheet].collection[Spreadsheet].allCases'}).then(function(){
+          sendItems(kDataSetName, samples);  
+        });
+      }else{
+        sendItems(kDataSetName, samples);
+      }
+    });
 
-    sendItems(kDataSetName, samples);
+    //sendItems(kDataSetName, samples);
 
   // open a case table if one is not already open
   guaranteeCaseTable();
