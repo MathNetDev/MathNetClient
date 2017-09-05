@@ -222,6 +222,11 @@ circle {
   width:60%;
   height:100px;
 }
+#construction_select{
+
+  width:60%;
+  height:100px;
+}
 #coord-axis input[type="text"]{
   width: 50px;
 }

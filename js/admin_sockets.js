@@ -52,14 +52,14 @@
             socket.emit('join-class', class_id, secret);
         };
 
-        // This function takes a class name provided by the user.
+        // This function takes an admin id provided by the user.
         // The socket then emits this data to the server to create a 
         // group for the class.
         var add_group = function (class_id, secret, colors) {
             socket.emit('add-group', class_id, secret, colors);
         }
 
-        // This function takes a class name provided by the user.
+        // This function takes an admin id provided by the user.
         // The socket then emits this data to the server to create a 
         // toolbar for the class.
         var save_toolbar = function (admin_id, toolbar_name, tools, action) {
@@ -73,17 +73,38 @@
             socket.emit('get-toolbars', admin_id);
         }
 
-        // This function takes a username and a password
-        // The socket then emits this data to the server to check the combination
-        var check_username = function (username, password, secret) {
-            socket.emit('check-username', username, password, secret);
-        }
-
-        // This function takes a class id and the tools provided by the user.
+        // This function takes an admin id and the tools provided by the user.
         // The socket then emits this data to the server to delete a toolbar
         // from the class.
         var delete_toolbar = function (admin_id, toolbar_name) {
             socket.emit('delete-toolbar', admin_id, toolbar_name);
+        }
+
+        // This function takes a admin id provided by the user.
+        // The socket then emits this data to the server to create a 
+        // xml for the class.
+        var save_xml = function (admin_id, xml_name, xml, toolbar, action) {
+            socket.emit('save-xml', admin_id, xml_name, xml, toolbar, action);
+        }
+
+        // This function takes a admin id provided by the user.
+        // The socket then emits this data to the server to get all 
+        // the xmls for the class.
+        var get_xmls = function (admin_id) {
+            socket.emit('get-xmls', admin_id);
+        }
+
+        // This function takes a admin id and xml name provided by the user.
+        // The socket then emits this data to the server to delete an xml
+        // from the class.
+        var delete_xml = function (admin_id, xml_name) {
+            socket.emit('delete-xml', admin_id, xml_name);
+        }
+
+        // This function takes a username and a password
+        // The socket then emits this data to the server to check the combination
+        var check_username = function (username, password, secret) {
+            socket.emit('check-username', username, password, secret);
         }
 
         // This function takes a class name provided by the user.
@@ -192,6 +213,14 @@
             delete_toolbar_response();
         });
 
+        socket.on('get-xmls-response', function(data) {
+            get_xmls_response(data);
+        });
+
+        socket.on('delete-xml-response', function() {
+            delete_xml_response();
+        });
+
         socket.on('get-class-users-response', function(data) {
             get_class_users_response(data);
         });
@@ -256,6 +285,9 @@
             get_class_users: get_class_users,
             xml_change: xml_change,
             get_xml: get_xml,
+            save_xml: save_xml,
+            get_xmls: get_xmls,
+            delete_xml: delete_xml,
             ping: ping,
             disconnect: disconnect
         };
