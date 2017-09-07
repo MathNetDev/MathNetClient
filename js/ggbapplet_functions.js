@@ -101,9 +101,9 @@ function checkLocks(appletName){
 
         //console.log(ggb_user);
 
-        if ((username !== ggb_user) && ggb_user != "unassigned"){
+        if ((username !== ggb_user && username != "admin") && ggb_user != "unassigned"){
             appletName.setFixed(name, true, false);
-        } else if (username === ggb_user ){
+        } else if (username === ggb_user || username == "admin"){
             appletName.setFixed(name, false, true);
         }
     }
@@ -141,7 +141,7 @@ function check_xml(xml, socket){
             };
         socket.xml_change(data);
 
-    }, 3);
+    }, 500);
 }
 
 //This function is an add listener added in gbbOnInit()
@@ -171,12 +171,16 @@ function checkUser(object){
     var username = sessionStorage.getItem('username');
     var move = document.applet.isMoveable(object);
 
-    if ((username !== ggb_user && move) && ggb_user != "unassigned"){
+    if (((username !== ggb_user && username != "admin") && move) && ggb_user != "unassigned"){
         document.applet.setFixed(object, true);
+    } else if (((username !== ggb_user && username == "admin") && !move) && ggb_user != "unassigned"){
+        document.applet.setFixed(object, false);
     }
 
-    if(($('#myonoffswitch').is(':checked')) && ggb_user == "unassigned" ){
+    if(($('#myonoffswitch').is(':checked')) && ggb_user == "unassigned" && username != "admin" ){
         document.applet.setCaption(object, username);
+    } else if (($('#myonoffswitch').is(':checked')) && username == "admin" && ggb_user != "unassigned"){
+        document.applet.setCaption(object, "unassigned");
     }
     // on update of Geogebra view, send clients updated XML
     check_xml(document.applet.getXML(), socket);

@@ -646,9 +646,9 @@ function redirect_modal_submit(group, username) {
 function valid_username(username) { 
     var alphanum = /^[A-Za-z][A-Za-z0-9]*$/;
     if (username.match(alphanum) && username.length < 9) {  
-        if (username == "admin") {
-            return false;
-        }
+        // if (username == "admin") {
+        //     return false;
+        // }
         return true;  
     }
     else {   

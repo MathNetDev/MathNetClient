@@ -10,7 +10,7 @@ $(function() {
         query = unescape(query.substring(1));
         var data = query.split('&');
 
-        var url_class_id, url_group_id, url_username = "admin";
+        var url_class_id, url_group_id, url_username;
         var i;
         for (i = 0; i < data.length; i++)
             data[i] = unescape(data[i]);
