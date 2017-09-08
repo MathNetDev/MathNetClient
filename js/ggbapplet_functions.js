@@ -150,7 +150,7 @@ function check_xml(xml, socket){
 function addLock(object){
     //console.log("addLock");
     var username;
-    if(sessionStorage.getItem('username') != null)
+    if(sessionStorage.getItem('username') != null && sessionStorage.getItem('username') != "admin")
         username = sessionStorage.getItem('username');
     else
         username = "unassigned";
@@ -170,17 +170,23 @@ function checkUser(object){
     var ggb_user = document.applet.getCaption(object);
     var username = sessionStorage.getItem('username');
     var move = document.applet.isMoveable(object);
+    var type = document.applet.getObjectType(object);
+    var isPoint = (type == "point");
 
-    if (((username !== ggb_user && username != "admin") && move) && ggb_user != "unassigned"){
-        document.applet.setFixed(object, true);
-    } else if (((username !== ggb_user && username == "admin") && !move) && ggb_user != "unassigned"){
-        document.applet.setFixed(object, false);
-    }
+    if(username !== ggb_user && isPoint && ggb_user != "unassigned"){
+        if (username != "admin" && move){
+            document.applet.setFixed(object, true, false);
+        } else if (username == "admin" && !move){
+            document.applet.setFixed(object, false, true);
+        }
+    }   
 
-    if(($('#myonoffswitch').is(':checked')) && ggb_user == "unassigned" && username != "admin" ){
-        document.applet.setCaption(object, username);
-    } else if (($('#myonoffswitch').is(':checked')) && username == "admin" && ggb_user != "unassigned"){
-        document.applet.setCaption(object, "unassigned");
+    if ($('#myonoffswitch').is(':checked')){
+        if(ggb_user == "unassigned" && username != "admin" ){
+            document.applet.setCaption(object, username);
+        } else if (ggb_user != "unassigned" && username == "admin"){
+            document.applet.setCaption(object, "unassigned");
+        }
     }
     // on update of Geogebra view, send clients updated XML
     check_xml(document.applet.getXML(), socket);
