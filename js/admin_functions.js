@@ -228,16 +228,21 @@ function get_class_users_response(response) {
     var class_users = response.class_users;
     for (var i = 0; i < class_users.length; i++){
         if(class_users[i].users.length > 0){
-            var optgroup = $("<optgroup></optgroup>");
+            var ogrp = $("<option></option>");
             var group = class_users[i].group;
-            optgroup.attr("label","Group " + class_users[i].group);
+            ogrp.text("Group " + group);
+            ogrp.attr("class", "parent_group");
+            ogrp.on("click",  function(){ $(this).prop('selected', false);
+                $('.toolbar_users option[value^="'+ group + '|"').prop('selected', true);});
+            toolbar_users_select.append(ogrp);
+            
             for(var j = 0; j<class_users[i].users.length; j++){
                 var opt = $("<option></option>");
                 opt.text(class_users[i].users[j]);
+                opt.attr("class", "child_group");
                 opt.val(group + "|" + opt.text());
-                optgroup.append(opt);
+                toolbar_users_select.append(opt);
             }
-            toolbar_users_select.append(optgroup);
         }
     }
 
