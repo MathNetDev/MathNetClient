@@ -228,6 +228,40 @@ function getStudent(html)
   return name;
 }
 
+// the function that goes through the 3d array and gets rid of all the empty cells
+function fill_spaces(spread, max_student)
+{
+  var max = max_student;
+  
+  for(var i = 0; i < max_student.length; i++)
+  {
+    var max_number = 0;
+    for(var j = 0; j <= max_student[i]; j++)
+    {
+      for(var k = 0; k < 10; k++)
+      {
+        var tempj = j;
+        while(spread[i][tempj][k] == "" && tempj <= max_student[i]) //  going down the list and filling up the spaces
+          tempj++;
+
+        if(tempj <= max_student[i] && tempj != j)
+        {
+          console.log(spread[i][j][k],i, tempj, spread[i][tempj][k]);
+          spread[i][j][k] = spread[i][tempj][k];
+          spread[i][tempj][k] = "";
+          if(j>max_number)
+            max_number = j;
+          //max[i] = max[i] - (tempj - j);
+        }
+      }
+    }
+    if(max_number < max_student[i]) // finding the last line so empty lines dont show up on the table
+      max[i] = max_number;
+  }
+
+  return spread, max;
+}
+
 //handler for xml_change response, appends message to chatbox, and calls appletSetExtXML()
 function xml_change_response(username, class_id, group_id, xml, toolbar, properties) {
     socket.group_color(sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'));
@@ -236,47 +270,51 @@ function xml_change_response(username, class_id, group_id, xml, toolbar, propert
     xml = xml.substr(xml.indexOf("<"), xml.lastIndexOf(">")) ;
     var cur_xml_doc = $.parseXML(xml);
     var spreadsheet_elements = $(cur_xml_doc).find('[type="numeric"]');
-
+    console.log(spreadsheet_elements);
     var spreadsheet_student_names = getArray(10,100);
     var student_names = [];
     var max_student = [];
 
     var i = 0;
     var ymax  = 0;
-    while(i < spreadsheet_elements.length)
+    while(i < spreadsheet_elements.length) // getting the student names
     {
       var student_name = getStudent(spreadsheet_elements[i].innerHTML);
       spreadsheet_student_names[getIndex(spreadsheet_elements[i].outerHTML)[1] - 1][getIndex(spreadsheet_elements[i].outerHTML)[0] - 1] = student_name;
+
       if (student_names.indexOf(student_name) == -1)
         student_names.push(student_name);
-        i++;
+        
+      i++;
     }
 
-      var spreadsheet = get3DArray(10,100,student_names.length);
+    var spreadsheet = get3DArray(10,100,student_names.length);
 
-      for(var j = 0; j < student_names.length;j++)
+    for(var j = 0; j < student_names.length;j++) // getting all the data and storing based on the students
+    {
+      var max = 0;
+      var i = 0;
+      while(i < spreadsheet_elements.length)
       {
-        var max = 0;
-        var i = 0;
-        while(i < spreadsheet_elements.length)
+        if(student_names[j] == spreadsheet_student_names[getIndex(spreadsheet_elements[i].outerHTML)[1] - 1][getIndex(spreadsheet_elements[i].outerHTML)[0] - 1]) // the student
         {
-          if(student_names[j] == spreadsheet_student_names[getIndex(spreadsheet_elements[i].outerHTML)[1] - 1][getIndex(spreadsheet_elements[i].outerHTML)[0] - 1]) // the student
-          {
-            spreadsheet[j][getIndex(spreadsheet_elements[i].outerHTML)[1] - 1][getIndex(spreadsheet_elements[i].outerHTML)[0] - 1] = getVal(spreadsheet_elements[i].innerHTML);
+          spreadsheet[j][getIndex(spreadsheet_elements[i].outerHTML)[1] - 1][getIndex(spreadsheet_elements[i].outerHTML)[0] - 1] = getVal(spreadsheet_elements[i].innerHTML);
 
-            console.log("here");
-            // to update the till what the table needs to be created
-            if(getIndex(spreadsheet_elements[i].outerHTML)[1] - 1 > max)
-              max = getIndex(spreadsheet_elements[i].outerHTML)[1] - 1;
-          }
-
-          i++;
+          console.log("here");
+          // to update the till what the table needs to be created
+          if(getIndex(spreadsheet_elements[i].outerHTML)[1] - 1 > max)
+            max = getIndex(spreadsheet_elements[i].outerHTML)[1] - 1;
         }
 
-        max_student.push(max);
-
+        i++;
       }
 
+      max_student.push(max);
+
+    }
+
+    spreadsheet, max_student = fill_spaces(spreadsheet, max_student);
+    //console.log(max_student);
     generateNumbers(spreadsheet,student_names, max_student);
     
     //appletSetExtXML(xml, toolbar, properties);
@@ -503,6 +541,21 @@ function sendItems(dataSetName, items) {
   });
 }
 
+// stuff= {
+//   "action": "create",
+//   "resource": "dataContext[MathNet_Spreadsheet]" ,
+//   "values": [{
+//         "name": 'Spreadsheet2',
+//         "parent": 'Student_Names',
+//         "labels": {
+//           "pluralCase": "Spreadsheet",
+//           "setOfCasesWithArticle": "a sample"
+//         },
+//         // The child collection also has just one attribute
+//         "attrs": [{"name": "A", "type": 'nominal', "precision": 1}, {"name": "B", "type": 'nominal', "precision": 1}, {"name": "C", "type": 'nominal', "precision": 1}, {"name": "D", "type": 'nominal', "precision": 1}, {"name": "E", "type": 'nominal', "precision": 1}, {"name": "F", "type": 'nominal', "precision": 1}, {"name": "G", "type": 'nominal', "precision": 1}, {"name": "H", "type": 'nominal', "precision": 1}, {"name": "I", "type": 'nominal', "precision": 1}, {"name": "J", "type": 'nominal', "precision": 1}]
+//       }]
+// }
+
 function updateItems(dataSetName, items) {
   return codapInterface.sendRequest({
     action: 'update',
@@ -563,6 +616,7 @@ function generateNumbers (spreadsheet, student_names, max_student) {
     });
 
     //sendItems(kDataSetName, samples);
+
 
   // open a case table if one is not already open
   guaranteeCaseTable();
