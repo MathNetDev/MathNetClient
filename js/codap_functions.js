@@ -262,7 +262,25 @@ function fill_spaces(spread, max_student)
   return spread, max;
 }
 
+// handler for getting the headers from the spreadsheet if there are any
+function getHeaders(headers) {
+
+  var labels = [];
+  var i = 0;
+  while(i < headers.length)
+  {
+    var xml = headers[i].outerHTML;
+    var ans = ans  = xml.substr(xml.indexOf(";") + 1,xml.lastIndexOf("&") - xml.indexOf(";") - 1);
+    if(ans != "")
+    labels = labels.concat([ans]);
+    i++;
+  }
+  return labels;
+}
+
+
 //handler for xml_change response, appends message to chatbox, and calls appletSetExtXML()
+// heavily 
 function xml_change_response(username, class_id, group_id, xml, toolbar, properties) {
     socket.group_color(sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'));
     //console.log(xml);
@@ -271,6 +289,10 @@ function xml_change_response(username, class_id, group_id, xml, toolbar, propert
     var cur_xml_doc = $.parseXML(xml);
     var spreadsheet_elements = $(cur_xml_doc).find('[type="numeric"]');
     console.log(spreadsheet_elements);
+
+    var labels = getHeaders($(cur_xml_doc).find('expression'));
+
+    console.log(labels);
     var spreadsheet_student_names = getArray(10,100);
     var student_names = [];
     var max_student = [];
@@ -314,8 +336,8 @@ function xml_change_response(username, class_id, group_id, xml, toolbar, propert
     }
 
     spreadsheet, max_student = fill_spaces(spreadsheet, max_student);
-    //console.log(max_student);
-    generateNumbers(spreadsheet,student_names, max_student);
+    console.log(student_names);
+    generateNumbers(spreadsheet,student_names, max_student, labels);
     
     //appletSetExtXML(xml, toolbar, properties);
     //ggbOnInit('socket_call');
@@ -421,17 +443,18 @@ var kDataSetTemplate = {
         name: 'Student_Names',
         parent: sessionStorage.getItem('class_id'),
         attrs:[ {name: "student_name", type: 'categorical'}],
-      },
-      {
-        name: 'Spreadsheet',
-        parent: 'Student_Names',
-        labels: {
-          pluralCase: "Spreadsheet",
-          setOfCasesWithArticle: "a sample"
-        },
-        // The child collection also has just one attribute
-        attrs: [{name: "A", type: 'nominal', precision: 1}, {name: "B", type: 'nominal', precision: 1}, {name: "C", type: 'nominal', precision: 1}, {name: "D", type: 'nominal', precision: 1}, {name: "E", type: 'nominal', precision: 1}, {name: "F", type: 'nominal', precision: 1}, {name: "G", type: 'nominal', precision: 1}, {name: "H", type: 'nominal', precision: 1}, {name: "I", type: 'nominal', precision: 1}, {name: "J", type: 'nominal', precision: 1}]
       }
+      // ,
+      // {
+      //   name: 'Spreadsheet',
+      //   parent: 'Student_Names',
+      //   labels: {
+      //     pluralCase: "Spreadsheet",
+      //     setOfCasesWithArticle: "a sample"
+      //   },
+      //   // The child collection also has just one attribute
+      //   //attrs: [{name: "A", type: 'nominal', precision: 1}, {name: "B", type: 'nominal', precision: 1}, {name: "C", type: 'nominal', precision: 1}, {name: "D", type: 'nominal', precision: 1}, {name: "E", type: 'nominal', precision: 1}, {name: "F", type: 'nominal', precision: 1}, {name: "G", type: 'nominal', precision: 1}, {name: "H", type: 'nominal', precision: 1}, {name: "I", type: 'nominal', precision: 1}, {name: "J", type: 'nominal', precision: 1}]
+      // }
     ]
   };
 
@@ -569,7 +592,9 @@ function updateItems(dataSetName, items) {
  * This is the function invoked from a button press.
  *
  */
-function generateNumbers (spreadsheet, student_names, max_student) {
+function generateNumbers (spreadsheet, student_names, max_student , labels) {
+
+
   // verify we are in CODAP
   if(codapInterface.getConnectionState() !== 'active') {
     // we assume the connection should have been made by the time a button is
@@ -586,7 +611,8 @@ function generateNumbers (spreadsheet, student_names, max_student) {
   var samples = [];
  // var howMany = getRequestedSampleCount();
   var sampleIndex = ++myState.sampleNumber;
-  var ix,yx;
+  var ix,yx,jx;
+
 
   // // if we do not have a valid sample count, complain
   // if (isNaN(howMany) || howMany <= 0) {
@@ -594,14 +620,63 @@ function generateNumbers (spreadsheet, student_names, max_student) {
   //   return;
   // }
 
-  // generate the samples and format as items.
+  // changing labels if required
+
+  var new_attr = [{name: "A", type: 'nominal', precision: 1}, {name: "B", type: 'nominal', precision: 1}, {name: "C", type: 'nominal', precision: 1}, {name: "D", type: 'nominal', precision: 1}, {name: "E", type: 'nominal', precision: 1}, {name: "F", type: 'nominal', precision: 1}, {name: "G", type: 'nominal', precision: 1}, {name: "H", type: 'nominal', precision: 1}, {name: "I", type: 'nominal', precision: 1}, {name: "J", type: 'nominal', precision: 1}];
+  if(labels.length != 0)
+  {
+    new_attr = [];
+    var i = 0;
+    while(i < labels.length)
+    {
+      var temp = {name: labels[i], type: 'nominal', precision: 1};
+      new_attr = new_attr.concat([temp]);
+      i++;
+    }
+
+    //kDataSetTemplate.collections[2].attrs = new_attr;
+  }
+
+  codapInterface.sendRequest({action:'create',resource: 'dataContext[MathNet_Spreadsheet].collection', values: [{
+        name: 'Spreadsheet',
+        parent: 'Student_Names',
+        labels: {
+          pluralCase: "Spreadsheet",
+          setOfCasesWithArticle: "a sample"
+        },
+        // The child collection also has just one attribute
+        attrs: new_attr
+      }]});
+
+
+  if(labels.length != 0)
+  {
+    for(yx = 0; yx < student_names.length; yx += 1)
+    {
+      for (ix = 0; ix < max_student[yx] + 1; ix += 1) {
+      
+        var temp = {Group_Number: sessionStorage.getItem('group_id'), student_name: student_names[yx]};
+        
+
+        for(jx = 0; jx < labels.length; jx += 1)
+          temp[labels[jx]] = spreadsheet[yx][ix][jx];
+
+        samples.push(temp);
+      }
+    }
+  }
+  else
+  {
+  // console.log(kDataSetTemplate);  // generate the samples and format as items.
   for(yx = 0; yx < student_names.length; yx += 1)
   {
     for (ix = 0; ix < max_student[yx] + 1; ix += 1) {
       samples.push({ Group_Number: sessionStorage.getItem('group_id'), student_name: student_names[yx], 
-        A: spreadsheet[yx][ix][0], B: spreadsheet[yx][ix][1], C: spreadsheet[yx][ix][2], D: spreadsheet[yx][ix][3], E: spreadsheet[yx][ix][4], F: spreadsheet[yx][ix][5], G: spreadsheet[yx][ix][6], H: spreadsheet[yx][ix][7], I: spreadsheet[yx][ix][8], J: spreadsheet[yx][ix][9]});
+        "A": spreadsheet[yx][ix][0], B: spreadsheet[yx][ix][1], C: spreadsheet[yx][ix][2], D: spreadsheet[yx][ix][3], E: spreadsheet[yx][ix][4], F: spreadsheet[yx][ix][5], G: spreadsheet[yx][ix][6], H: spreadsheet[yx][ix][7], I: spreadsheet[yx][ix][8], J: spreadsheet[yx][ix][9]});
     }
   }
+}
+
     console.log(samples);
     codapInterface.sendRequest({action:'get',resource: 'dataContext[MathNet_Spreadsheet].collection[Spreadsheet].caseCount'}).then(function(result){
       console.log("Do we have a pre-existing context: " + result.success);
