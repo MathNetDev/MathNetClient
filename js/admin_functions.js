@@ -563,12 +563,21 @@ function rename_labels(xml, num, counter){
     var xobj = $.parseXML(xml);
     var commands = $(xobj).find('construction').find('command');
     var elements = $(xobj).find('construction').find('element');
+    var regex = /[A-Z]+/gi;
 
     if(commands !== undefined){
         for(var i = 0; i < commands.length; i++){
             var inputs = $(commands[i]).find('input')[0].attributes;
             for(var j = 0; j < inputs.length; j++){
-                inputs[j].value = inputs[j].value + "g" + num;
+                var result, index, indices = [];
+                while(result = regex.exec(inputs[j].value)){
+                    indices.push(result.index + result[0].length);
+                }
+                while (index = indices.pop()){
+                    inputs[j].value = inputs[j].value.slice(0, index) + "g" + num + inputs[j].value.slice(index);
+                }
+                console.log(inputs[j].value);
+                //inputs[j].value = inputs[j].value + "g" + num;
             }
             var outputs = $(commands[i]).find('output')[0].attributes;
             for(var j = 0; j < outputs.length; j++){
