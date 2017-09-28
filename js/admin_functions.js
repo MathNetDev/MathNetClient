@@ -563,7 +563,7 @@ function rename_labels(xml, num, counter){
     var xobj = $.parseXML(xml);
     var commands = $(xobj).find('construction').find('command');
     var elements = $(xobj).find('construction').find('element');
-    var regex = /[A-Z]+/gi;
+    var regex = /[A-Z]+(?![a-z])/g;
 
     if(commands !== undefined){
         for(var i = 0; i < commands.length; i++){
