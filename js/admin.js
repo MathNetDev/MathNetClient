@@ -239,6 +239,9 @@ $(function() {
 
         for(var i = 0; i < toolbar_users.length; i++){
             var user_data = toolbar_users[i].split('|');
+            if (user_data.length < 2){
+                continue;
+            }
             var group_id = user_data[0];
             var toolbar_user  = user_data[1];
             var data = {
@@ -263,12 +266,17 @@ $(function() {
     $sendconstruction_button.bind('click', function(){
         var xml = $.parseXML(document.applet.getXML());
         var toolbar = $(xml).find('toolbar').attr('items').replace(/,/g, "").replace(/  /g, " ").replace(/ \| /g, "|").replace(/ /g, ",");
-        var numgroups = ($('ul.groups div').length)+1;
-        for(var i = 1; i < numgroups; i++){
+        var construction_groups = $('.construction_groups').val();
+        if(!construction_groups){
+            $('.construction_groups option').prop('selected', true);
+            construction_groups = $('.construction_groups').val();
+        }
+        console.log(construction_groups);
+        for(var i = 0; i < construction_groups.length; i++){
             var data = {
                 username: 'admin',
                 class_id: sessionStorage.getItem('admin_class_id'),
-                group_id: i,
+                group_id: construction_groups[i],
                 xml: document.applet.getXML(),
                 toolbar: toolbar,
                 toolbar_user: 'admin',
@@ -276,6 +284,13 @@ $(function() {
             };
             socket.xml_change(data);
         }
+    });
+
+    $sendconstruction_all_button.bind('click', function(){
+        var construction_groups_opt = $('.construction_groups option');
+        construction_groups_opt.prop('selected', true);
+        $sendconstruction_button.click();
+        construction_groups_opt.prop('selected', false);
     });
 
     //

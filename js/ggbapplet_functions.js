@@ -101,9 +101,9 @@ function checkLocks(appletName){
 
         //console.log(ggb_user);
 
-        if ((username !== ggb_user) && ggb_user != "unassigned"){
+        if ((username !== ggb_user && username != "admin") && ggb_user != "unassigned"){
             appletName.setFixed(name, true, false);
-        } else if (username === ggb_user ){
+        } else if (username === ggb_user || username == "admin"){
             appletName.setFixed(name, false, true);
         }
     }
@@ -141,7 +141,7 @@ function check_xml(xml, socket){
             };
         socket.xml_change(data);
 
-    }, 3);
+    }, 500);
 }
 
 //This function is an add listener added in gbbOnInit()
@@ -150,7 +150,7 @@ function check_xml(xml, socket){
 function addLock(object){
     //console.log("addLock");
     var username;
-    if(sessionStorage.getItem('username') != null)
+    if(sessionStorage.getItem('username') != null && sessionStorage.getItem('username') != "admin")
         username = sessionStorage.getItem('username');
     else
         username = "unassigned";
@@ -170,13 +170,23 @@ function checkUser(object){
     var ggb_user = document.applet.getCaption(object);
     var username = sessionStorage.getItem('username');
     var move = document.applet.isMoveable(object);
+    var type = document.applet.getObjectType(object);
+    var isPoint = (type == "point");
 
-    if ((username !== ggb_user && move) && ggb_user != "unassigned"){
-        document.applet.setFixed(object, true);
-    }
+    if(username !== ggb_user && isPoint && ggb_user != "unassigned"){
+        if (username != "admin" && move){
+            document.applet.setFixed(object, true, false);
+        } else if (username == "admin" && !move){
+            document.applet.setFixed(object, false, true);
+        }
+    }   
 
-    if(($('#myonoffswitch').is(':checked')) && ggb_user == "unassigned" ){
-        document.applet.setCaption(object, username);
+    if ($('#myonoffswitch').is(':checked')){
+        if(ggb_user == "unassigned" && username != "admin" ){
+            document.applet.setCaption(object, username);
+        } else if (ggb_user != "unassigned" && username == "admin"){
+            document.applet.setCaption(object, "unassigned");
+        }
     }
     // on update of Geogebra view, send clients updated XML
     check_xml(document.applet.getXML(), socket);

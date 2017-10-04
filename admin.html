@@ -296,22 +296,26 @@
           </div>
 
           <button class="accordion">Activity Designer</button>
-            <div class="panel panel-accordion">
-                <br/>
-                <button class="btn btn-primary btn-sendconstruction">Send View</button>&emsp;&emsp;
-                <label>
-                    <input type="checkbox" id="toggle-menu-bar" value="1"> Show menu bar
-                </label>
+            <div class="panel panel-accordion"> <br/>
                 <div class="construction_stuff">
-                  <div>
                     <p id = "hello">  Select Construction </p>
-                    <select id="construction_select" size="1000"></select>
-                    <div>
-                      <button class="btn btn-primary btn-useconstruction">Use Construction</button>
-                      <button class="btn btn-primary btn-saveconstruction">Save Construction</button>
-                      <button class="btn btn-primary btn-deleteconstruction">Delete Construction</button>
+                    <div class="">
+                      <select id="construction_select" size="1000"></select>
+                      <div>
+                        <button class="btn btn-primary btn-useconstruction">Use Construction</button>
+                        <button class="btn btn-primary btn-saveconstruction">Save Construction</button>
+                        <button class="btn btn-primary btn-deleteconstruction">Delete Construction</button>
+                      </div>
                     </div>
-                  </div>
+                    <div class=""> Select Group to Send View to <br/>
+                      <select multiple="true" style="display:block;width:30%;clear:both;height:100px;" class="construction_groups"></select>
+                      <button class="btn btn-primary btn-sendconstruction">Send View</button>
+                      <button class="btn btn-primary btn-sendconstructionall">Send View to All</button> &emsp;&emsp;
+                      <label>
+                        <input type="checkbox" id="toggle-menu-bar" value="1"> Show menu bar </input>
+                      </label>
+                    </div>
+                    
                 </div>
                 <div class="javascriptapplet">
                   <div class="geogebrawebapplet applet-activity-designer" id="appletContainer" style="width:100%;height:650px;display: block;"></div> 

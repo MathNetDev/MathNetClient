@@ -48,7 +48,8 @@ function server_error(error) {
  * @description creates the starting group svgs for the admin view
  */
 function add_class_response(class_id, class_name, group_count) {
-    
+    var construction_groups = $(".construction_groups");
+
     sessionStorage.setItem('admin_class_id', class_id);
     $error_frame.html('');
 
@@ -73,6 +74,10 @@ function add_class_response(class_id, class_name, group_count) {
         // $lists.append($("<div class = '"+group+" g'>"+ group +"</div>").attr('id', 'well')); //create new div
         groups_html += "<li>Group " + group;
         groups_html += "<div class='g" + group + "'></div></li>";
+        var const_group = $("<option></option>")
+        const_group.text("Group " + group);
+        const_group.val(group);
+        construction_groups.append(const_group);
     }                                                                                                                                                                                                                                                   
     $groups.html(groups_html);
     $lists.html(lists_html);
@@ -140,6 +145,7 @@ function add_group_response() {
     var new_group = "";
     var lists_html = "";
     var group_number = $('.groups > li:last').index() + 2;
+
     new_group += "<li>Group " + group_number;
     new_group += "<div class='g" + group_number + "'></div></li>";
 
@@ -228,16 +234,21 @@ function get_class_users_response(response) {
     var class_users = response.class_users;
     for (var i = 0; i < class_users.length; i++){
         if(class_users[i].users.length > 0){
-            var optgroup = $("<optgroup></optgroup>");
+            var ogrp = $("<option></option>");
             var group = class_users[i].group;
-            optgroup.attr("label","Group " + class_users[i].group);
+            ogrp.text("Group " + group);
+            ogrp.attr("class", "parent_group");
+            ogrp.on("click",  function(){ $(this).prop('selected', false);
+                $('.toolbar_users option[value^="'+ group + '|"').prop('selected', true);});
+            toolbar_users_select.append(ogrp);
+
             for(var j = 0; j<class_users[i].users.length; j++){
                 var opt = $("<option></option>");
                 opt.text(class_users[i].users[j]);
+                opt.attr("class", "child_group");
                 opt.val(group + "|" + opt.text());
-                optgroup.append(opt);
+                toolbar_users_select.append(opt);
             }
-            toolbar_users_select.append(optgroup);
         }
     }
 
@@ -262,7 +273,6 @@ function delete_group_response() {
 function delete_class_response(class_id) {
     delete sessionStorage.admin_class_id;
 }
-
 
 /**
  * @function leave_class_response
@@ -553,12 +563,21 @@ function rename_labels(xml, num, counter){
     var xobj = $.parseXML(xml);
     var commands = $(xobj).find('construction').find('command');
     var elements = $(xobj).find('construction').find('element');
+    var regex = /[A-Z]+(?![a-z])/g;
 
     if(commands !== undefined){
         for(var i = 0; i < commands.length; i++){
             var inputs = $(commands[i]).find('input')[0].attributes;
             for(var j = 0; j < inputs.length; j++){
-                inputs[j].value = inputs[j].value + "g" + num;
+                var result, index, indices = [];
+                while(result = regex.exec(inputs[j].value)){
+                    indices.push(result.index + result[0].length);
+                }
+                while (index = indices.pop()){
+                    inputs[j].value = inputs[j].value.slice(0, index) + "g" + num + inputs[j].value.slice(index);
+                }
+                console.log(inputs[j].value);
+                //inputs[j].value = inputs[j].value + "g" + num;
             }
             var outputs = $(commands[i]).find('output')[0].attributes;
             for(var j = 0; j < outputs.length; j++){
@@ -646,9 +665,9 @@ function redirect_modal_submit(group, username) {
 function valid_username(username) { 
     var alphanum = /^[A-Za-z][A-Za-z0-9]*$/;
     if (username.match(alphanum) && username.length < 9) {  
-        if (username == "admin") {
-            return false;
-        }
+        // if (username == "admin") {
+        //     return false;
+        // }
         return true;  
     }
     else {   

@@ -10,7 +10,7 @@ $(function() {
         query = unescape(query.substring(1));
         var data = query.split('&');
 
-        var url_class_id, url_group_id, url_username = "admin";
+        var url_class_id, url_group_id, url_username;
         var i;
         for (i = 0; i < data.length; i++)
             data[i] = unescape(data[i]);
@@ -22,14 +22,16 @@ $(function() {
             else if (data[i].startsWith("username="))
                 url_username = data[i].substring(9).trim();
         }
-        if (url_class_id) {
+        if (url_class_id && url_username) {
             socket.login(url_username, url_class_id);
             if (url_class_id) {
                 wait_for_login(url_group_id);
             }
+        }else{
+            $login_view.show();
         }
     }
-    else if (sessionStorage.getItem('class_id')){
+    else if (sessionStorage.getItem('class_id') && sessionStorage.getItem('username')){
         socket.login(sessionStorage.getItem('username'), sessionStorage.getItem('class_id'));
         if (sessionStorage.getItem('group_id')){
             socket.group_join(sessionStorage.getItem('username'), sessionStorage.getItem('class_id'), 
