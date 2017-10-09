@@ -27,7 +27,6 @@ function appletSetExtXML(xml, toolbar, properties, id){
 
     xml = xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>').replace(/\\"/g, '"').replace(/\\n/g, '').replace(/\\t/g, '');
     xml = xml.substr(xml.indexOf("<"), xml.lastIndexOf(">"));
-    console.log(xml);
     var new_xml_doc = $.parseXML(xml);
     
     if(new_xml_doc !== null){
@@ -71,7 +70,7 @@ function clearApplet(appletName){
 }
 
 //This function changes the colors of all elements on the local view to a random color
-function randomizeColors(appletName, r, g, b) {
+function randomizeColors(applet, r, g, b) {
     //cur_xml = appletName.getXML(); 
     var minimum = 0, maximum = 255, colors = [], i;
 
@@ -82,12 +81,29 @@ function randomizeColors(appletName, r, g, b) {
             colors.push(Math.floor(Math.random() * (maximum - minimum + 1)) + minimum);
         } //this is your color
     }
-
-    var numelems = appletName.getObjectNumber();
+    applet.unregisterUpdateListener("checkUser");
+    var numelems = applet.getObjectNumber();
     for (i = 0; i < numelems; i++){
-        var name = appletName.getObjectName(i);
-        appletName.setColor(name, colors[0], colors[1], colors[2]); 
+        var name = applet.getObjectName(i);
+        if(applet.getColor(name) != "#" + rgbToHex(colors[0], colors[1], colors[2])){
+            console.log("Updating color for obj " + name);
+            applet.setColor(name, colors[0], colors[1], colors[2]);     
+        }
     }
+    applet.registerUpdateListener("checkUser");
+}
+
+// Converts RGB color to HEX
+function rgbToHex(R,G,B) {
+    return toHex(R) + toHex(G) + toHex(B);
+}
+
+function toHex(n) {
+ n = parseInt(n,10);
+ if (isNaN(n)) return "00";
+ n = Math.max(0,Math.min(n,255));
+ return "0123456789ABCDEF".charAt((n-n%16)/16)
+      + "0123456789ABCDEF".charAt(n%16);
 }
 
 //This function grabs all objects in the construction, and sets a lock on them
@@ -109,7 +125,7 @@ function checkLocks(appletName){
     }
 }
 
-function updateColors(appletName)
+function updateColors()
 {
     var colors = sessionStorage.getItem('group_colors');
     colors = colors.split("-");
@@ -148,7 +164,6 @@ function check_xml(xml, socket){
 //It adds a caption to the new object with the local user's class username,
 // and can add a lock onto it.
 function addLock(object){
-    //console.log("addLock");
     var username;
     if(sessionStorage.getItem('username') != null && sessionStorage.getItem('username') != "admin")
         username = sessionStorage.getItem('username');
@@ -160,6 +175,7 @@ function addLock(object){
     if (type === 'point'){
         document.applet.setLabelStyle(object, 3);
     }
+    updateColors();
     //document.applet.setFixed(object, true);
 }
 
@@ -167,19 +183,22 @@ function addLock(object){
 //It checks if the caption of the point is the username of the current user,
 //to figure out if the user is allowed to move the point or not.
 function checkUser(object){
+    updateColors();
+    applet.unregisterUpdateListener("checkUser");
     var ggb_user = document.applet.getCaption(object);
     var username = sessionStorage.getItem('username');
     var move = document.applet.isMoveable(object);
     var type = document.applet.getObjectType(object);
     var isPoint = (type == "point");
-
     if(username !== ggb_user && isPoint && ggb_user != "unassigned"){
         if (username != "admin" && move){
             document.applet.setFixed(object, true, false);
         } else if (username == "admin" && !move){
             document.applet.setFixed(object, false, true);
         }
-    }   
+    }else if(username == ggb_user || ggb_user == "unassigned"){
+        document.applet.setFixed(object, false, true);
+    }
 
     if ($('#myonoffswitch').is(':checked')){
         if(ggb_user == "unassigned" && username != "admin" ){
@@ -188,6 +207,7 @@ function checkUser(object){
             document.applet.setCaption(object, "unassigned");
         }
     }
+    applet.registerUpdateListener("checkUser");
     // on update of Geogebra view, send clients updated XML
     check_xml(document.applet.getXML(), socket);
 }

@@ -234,7 +234,7 @@ function ggbOnInit(arg) {
     document.applet.registerAddListener("addLock");
     document.applet.registerUpdateListener("checkUser");
     document.applet.registerRemoveListener("checkUser");
-    document.applet.registerAddListener("updateColors");
+    //document.applet.registerAddListener("updateColors");
     socket.group_color(sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'));
     if(arg != 'socket_call'){
         socket.get_xml(sessionStorage.getItem('username'),sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'));
