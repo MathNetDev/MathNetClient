@@ -27,7 +27,6 @@ function appletSetExtXML(xml, toolbar, properties, id){
 
     xml = xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>').replace(/\\"/g, '"').replace(/\\n/g, '').replace(/\\t/g, '');
     xml = xml.substr(xml.indexOf("<"), xml.lastIndexOf(">"));
-    //console.log(xml);
     var new_xml_doc = $.parseXML(xml);
     
     if(new_xml_doc !== null){
