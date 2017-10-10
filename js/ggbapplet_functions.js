@@ -27,7 +27,7 @@ function appletSetExtXML(xml, toolbar, properties, id){
 
     xml = xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>').replace(/\\"/g, '"').replace(/\\n/g, '').replace(/\\t/g, '');
     xml = xml.substr(xml.indexOf("<"), xml.lastIndexOf(">"));
-    console.log(xml);
+    //console.log(xml);
     var new_xml_doc = $.parseXML(xml);
     
     if(new_xml_doc !== null){
@@ -39,6 +39,8 @@ function appletSetExtXML(xml, toolbar, properties, id){
     // $(cur_xml_doc).find('geogebra')[0].innerHTML = $(new_xml_doc).find('geogebra')[0].innerHTML;
     // console.log($(cur_xml_doc).find('geogebra')[0].innerHTML);
     var final_xml = $(cur_xml_doc).find('geogebra')[0].outerHTML;
+    // delete the current autosave object
+    
     appletName.setXML(final_xml);
     checkLocks(appletName);
     
@@ -47,7 +49,6 @@ function appletSetExtXML(xml, toolbar, properties, id){
         sessionStorage.setItem('toolbar', toolbar);
         appletName.setCustomToolBar(toolbar);
     }
-    console.log(properties);
     if (properties != null){
         // need to set the grid and axes visibility after setXML
         if(properties.hasOwnProperty('axis_display')){
@@ -102,7 +103,7 @@ function checkLocks(appletName){
         //console.log(ggb_user);
 
         if ((username !== ggb_user && username != "admin") && ggb_user != "unassigned"){
-            appletName.setFixed(name, true, false);
+            appletName.setFixed(name, true, true);
         } else if (username === ggb_user || username == "admin"){
             appletName.setFixed(name, false, true);
         }
@@ -148,7 +149,6 @@ function check_xml(xml, socket){
 //It adds a caption to the new object with the local user's class username,
 // and can add a lock onto it.
 function addLock(object){
-    //console.log("addLock");
     var username;
     if(sessionStorage.getItem('username') != null && sessionStorage.getItem('username') != "admin")
         username = sessionStorage.getItem('username');
