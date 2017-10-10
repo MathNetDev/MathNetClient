@@ -28,7 +28,6 @@ function appletSetExtXML(xml, toolbar, properties, id){
     xml = xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>').replace(/\\"/g, '"').replace(/\\n/g, '').replace(/\\t/g, '');
     xml = xml.substr(xml.indexOf("<"), xml.lastIndexOf(">"));
     var new_xml_doc = $.parseXML(xml);
-    
     if(new_xml_doc !== null){
         var new_construction = $(new_xml_doc).find('construction')[0];
         cur_construction.innerHTML = new_construction.innerHTML;
@@ -46,7 +45,6 @@ function appletSetExtXML(xml, toolbar, properties, id){
         sessionStorage.setItem('toolbar', toolbar);
         appletName.setCustomToolBar(toolbar);
     }
-    console.log(properties);
     if (properties != null){
         // need to set the grid and axes visibility after setXML
         if(properties.hasOwnProperty('axis_display')){
