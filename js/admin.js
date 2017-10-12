@@ -255,7 +255,7 @@ $(function() {
             };
             socket.xml_change(data);
         }
-        $("option:selected").prop("selected", false);
+        //$("option:selected").prop("selected", false);
     });
 
     $perspectiveBox.toggle();

@@ -168,6 +168,11 @@ function group_info_response(username, class_id, group_id, members, status) {
 //handler for xml_change response, appends message to chatbox, and calls appletSetExtXML()
 function xml_change_response(username, class_id, group_id, xml, toolbar, properties) {
     socket.group_color(sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'));
+    if(properties !== null){
+        sessionStorage.setItem('properties', JSON.stringify(properties));
+    } else if (properties === null && sessionStorage.getItem('properties') !== null){
+        properties = JSON.parse(sessionStorage.getItem('properties'));
+    }
     appletSetExtXML(xml, toolbar, properties);
     ggbOnInit('socket_call');
 }
@@ -176,6 +181,12 @@ function xml_change_response(username, class_id, group_id, xml, toolbar, propert
 function get_xml_response(username, class_id, group_id, xml,toolbar, properties){
     if(xml == undefined){
         xml = '{}';
+    }
+    console.log(properties);
+    if(properties !== null){
+        sessionStorage.setItem('properties', JSON.stringify(properties));
+    } else if (properties === null && sessionStorage.getItem('properties') !== null){
+        properties = JSON.parse(sessionStorage.getItem('properties'));
     }
     if(!toolbar){
         toolbar = sessionStorage.getItem('toolbar');
