@@ -1,0 +1,119 @@
+<!DOCTYPE HTML>
+<html>
+
+  <head>
+    <meta charset="UTF-8"> 
+    <script src="js/iframe-phone.js" language="javascript"></script>
+    <script src="js/CodapInterface.js"></script>
+    <title>MathNet CODAP plugin</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css"/>
+    <link rel="stylesheet" href="css/student.css"/>
+    <link type="text/css" rel="stylesheet" href="css/groupgraph.css" />
+  </head>
+  <body hidden>
+    <div class="container" id="main">
+      <div class="row">
+        <!-- Login View -->
+        <div class="login_view" hidden>
+
+          <div class="col-md-4">
+            <h4 id="error_frame"></h4>
+          </div>
+
+          <!-- Title -->
+          <div class="col-md-12 col-sm-12">
+            <div class="col-md-4 col-sm-4 col-md-offset-4 col-sm-offset-4">
+              <h2 id="login_title"> Student Login </h2>
+            </div>
+          </div>
+
+          <br/>
+
+          <!-- Text Fields and Login Button -->
+          <div class="col-md-12 col-sm-12">
+            <div class="col-md-4 col-sm-4 col-md-offset-4 col-sm-offset-4">
+              <input type="text" class="form-control class_id" id="class_id" name="class_id" required="" placeholder="Class ID"/>
+              <p class = "error error_class_id" hidden> Class ID does not exist </p> <br/>
+              <input type="text" class="form-control nickname" id="nickname" name="nickname" required="" placeholder="Nickname"/>
+              <p class = "error error_nickname" hidden> Nickname already taken </p> <br/>
+              <input class="btn btn-lg btn-primary btn-block login" type="submit" value="Login" id="login"/><br/>
+            </div>
+          </div>
+          <h5 class = "ping"> Ping : 0 </h5>
+        </div> <!-- ***** End of login_view ***** -->
+        <div class="class_view">
+          <div class="col-md-12 col-sm-12">
+            <!-- Title -->
+            <div class="col-md-12 col-sm-12">
+              <div class="col-md-4 col-sm-4 col-md-offset-4 col-sm-offset-4">
+                <h3> Student Groups </h3>
+              </div>
+            </div>
+
+            <!-- Group Buttons -->
+            <div class="col-md-12 col-sm-12">
+              <div class="col-md-6 col-sm-6 col-md-offset-3 col-sm-offset-3">
+                <!-- add in class name, display buttons based on the class's groups to enter the individual groups  -->
+                <h3 id="buttons"> </h3>
+              </div>
+            </div>
+
+            <!-- Log Out button -->
+            <div class="col-md-12 col-sm-12">
+              <div class="col-md-4 col-sm-4 col-md-offset-4 col-sm-offset-4">
+                <!-- foreach group, create a html button with onclick to emit action to a group -->
+                <input type="button" class="btn btn-danger"  value="Log Out" id="logout" />
+              </div>
+            </div>
+          </div>
+          <h5 class = "ping"> Ping : 0 </h5>
+        </div> <!-- ***** End of class_view ***** -->
+        
+        <!-- ***** Group View ***** -->
+        <div class="group_view">
+          <div class="col-md-12 col-lg-12 col-sm-12">
+            <h2> 
+              <span id="number">Group</span> 
+              <input class="btn btn-danger" type="button" value="Leave Group" id="leave_group"/>
+            </h2>
+            
+            
+          </div>
+                        <h5 class = "ping"> Ping : 0 </h5>
+        </div><!-- ***** End of group_view ***** -->
+
+      </div>
+    </div> <!-- End of Container -->
+    
+    <footer>
+      <!-- normal communications library stuff -->
+      <script src="../Common/js/iframe-phone.js" language="javascript"></script>
+  <script src="../Common/js/CodapInterface.js"></script>
+      <script src="js/socket.io-1.3.5.js"></script>
+      <script src="js/jquery-2.2.3.min.js"></script>
+      <script src="js/bootstrap.min.js"></script>
+      <script src="js/codap_vars.js"></script>
+      <script src="js/host.js"></script>
+      <script src="js/codap_sockets.js"></script>
+      <script src="js/codap_functions.js"></script>
+      <script src="js/login.js"></script>
+      <script src="js/class.js"></script>
+      <script src="js/groups.js"></script>
+      <script>
+        var socket = Codap.Socket(io(host));
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-87061901-2', 'auto');
+        ga('send', 'pageview');
+      </script>
+    </footer>
+    <div id="message-area"></div>
+  </body>
+</html>
