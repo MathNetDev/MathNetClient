@@ -480,6 +480,7 @@ function view_merge(event){
     for (var i = 0; i < array.length ; i++){
         var value = array[i]["value"];
         var num = array[i]["value"].substr(value.lastIndexOf('t') + 1 , value.length - value.lastIndexOf('t'));
+        randomizeColors(document[value]);
         var parsing = document[value].getXML();
         var xml;
 
@@ -517,9 +518,8 @@ function view_merge(event){
 
 
 
-//this is used to rename all object labels within the given XML to 
-//have their group number added onto the end, preventing conflicts
-//when merging multiple XMLs together
+//this is used to remove admin objects past those in the first group
+//so we don't have duplicate points in the construction
 function remove_admin_objects(xml, counter){
     var xobj = $.parseXML(xml);
     var commands = $(xobj).find('construction').find('command');
@@ -617,6 +617,8 @@ function unmerge_views(event){
     var array = $('#views_checkboxes :checked');
     for (var i = 0; i < array.length; i++){
         $("." + array[i]["name"]).show();
+        var value = array[i]["value"];
+        randomizeColors(document[value], 'default');
     }
 }
 

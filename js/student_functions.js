@@ -76,7 +76,9 @@ function logout_response(disconnect) {
         sessionStorage.removeItem('username');
         sessionStorage.removeItem('group_id');
         sessionStorage.removeItem('toolbar');
-        sessionStorage.removeItem('group_colors');
+        //sessionStorage.removeItem('group_colors');
+        sessionStorage.removeItem('properties');
+
     }
 }
 
@@ -237,7 +239,7 @@ function delete_student_class_response() {
 }
 
 function group_color_response(colors) {
-    sessionStorage.setItem('group_colors', colors);
+    //sessionStorage.setItem('group_colors', colors);
 }
 
 //This function registers listeners on geogebra initialization 
