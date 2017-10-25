@@ -511,7 +511,7 @@ function view_merge(event){
     
     applet.setPerspective('G');
     applet.setCoordSystem(-10,10,-10,10);
- 
+    applet.evalCommand("SetAxesRatio(1,1)");
     $('#views_checkboxes :checkbox').hide();
     $('.merge_group').css('visibility','visible');
 }
