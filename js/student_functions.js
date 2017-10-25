@@ -76,7 +76,9 @@ function logout_response(disconnect) {
         sessionStorage.removeItem('username');
         sessionStorage.removeItem('group_id');
         sessionStorage.removeItem('toolbar');
-        sessionStorage.removeItem('group_colors');
+        //sessionStorage.removeItem('group_colors');
+        sessionStorage.removeItem('properties');
+
     }
 }
 
@@ -168,6 +170,11 @@ function group_info_response(username, class_id, group_id, members, status) {
 //handler for xml_change response, appends message to chatbox, and calls appletSetExtXML()
 function xml_change_response(username, class_id, group_id, xml, toolbar, properties) {
     socket.group_color(sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'));
+    if(properties !== null){
+        sessionStorage.setItem('properties', JSON.stringify(properties));
+    } else if (properties === null && sessionStorage.getItem('properties') !== null){
+        properties = JSON.parse(sessionStorage.getItem('properties'));
+    }
     appletSetExtXML(xml, toolbar, properties);
     ggbOnInit('socket_call');
 }
@@ -176,6 +183,12 @@ function xml_change_response(username, class_id, group_id, xml, toolbar, propert
 function get_xml_response(username, class_id, group_id, xml,toolbar, properties){
     if(xml == undefined){
         xml = '{}';
+    }
+    console.log(properties);
+    if(properties !== null){
+        sessionStorage.setItem('properties', JSON.stringify(properties));
+    } else if (properties === null && sessionStorage.getItem('properties') !== null){
+        properties = JSON.parse(sessionStorage.getItem('properties'));
     }
     if(!toolbar){
         toolbar = sessionStorage.getItem('toolbar');
@@ -226,7 +239,7 @@ function delete_student_class_response() {
 }
 
 function group_color_response(colors) {
-    sessionStorage.setItem('group_colors', colors);
+    //sessionStorage.setItem('group_colors', colors);
 }
 
 //This function registers listeners on geogebra initialization 

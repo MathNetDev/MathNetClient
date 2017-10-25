@@ -73,6 +73,9 @@ function clearApplet(appletName){
 function randomizeColors(applet, r, g, b) {
     //cur_xml = appletName.getXML(); 
     var minimum = 0, maximum = 255, colors = [], i;
+    var default_point = [0,0,255];
+    var default_line = [153,51,0];
+    var regex = /[a-z]+/
 
     if (r != undefined && g != undefined && b != undefined){
         colors.push(r, g, b);
@@ -85,8 +88,20 @@ function randomizeColors(applet, r, g, b) {
     var numelems = applet.getObjectNumber();
     for (i = 0; i < numelems; i++){
         var name = applet.getObjectName(i);
-        if(applet.getColor(name) != "#" + rgbToHex(colors[0], colors[1], colors[2])){
-            console.log("Updating color for obj " + name);
+        if(r == "default"){
+            if (regex.exec(name)){
+                if(applet.getColor(name) != "#" + rgbToHex(default_line[0], default_line[1], default_line[2])){
+                    //console.log("Updating color for obj " + name);
+                    applet.setColor(name, default_line[0], default_line[1], default_line[2]);     
+                }
+            } else {
+                if(applet.getColor(name) != "#" + rgbToHex(default_point[0], default_point[1], default_point[2])){
+                    //console.log("Updating color for obj " + name);
+                    applet.setColor(name, default_point[0], default_point[1], default_point[2]);     
+                }
+            }
+        } else if(applet.getColor(name) != "#" + rgbToHex(colors[0], colors[1], colors[2])){
+            //console.log("Updating color for obj " + name);
             applet.setColor(name, colors[0], colors[1], colors[2]);     
         }
     }
@@ -114,13 +129,22 @@ function checkLocks(appletName){
         var name = appletName.getObjectName(i);
         var ggb_user = appletName.getCaption(name);
         var username = sessionStorage.getItem('username');
+        var objType = appletName.getObjectType(name);
 
         //console.log(ggb_user);
 
         if ((username !== ggb_user && username != "admin") && ggb_user != "unassigned"){
-            appletName.setFixed(name, true, true);
+            if(objType == 'numeric'){
+                appletName.setFixed(name, true, false);
+            } else {
+                appletName.setFixed(name, true);
+            }
         } else if (username === ggb_user || username == "admin"){
-            appletName.setFixed(name, false, true);
+            if(objType == 'numeric'){
+                appletName.setFixed(name, false, true);
+            } else {
+                appletName.setFixed(name, false);
+            }
         }
     }
 }
@@ -175,7 +199,7 @@ function addLock(object){
     if (type === 'point'){
         document.applet.setLabelStyle(object, 3);
     }
-    updateColors();
+    //updateColors();
     //document.applet.setFixed(object, true);
 }
 
@@ -183,7 +207,7 @@ function addLock(object){
 //It checks if the caption of the point is the username of the current user,
 //to figure out if the user is allowed to move the point or not.
 function checkUser(object){
-    updateColors();
+    //updateColors();
     applet.unregisterUpdateListener("checkUser");
     var ggb_user = document.applet.getCaption(object);
     var username = sessionStorage.getItem('username');
@@ -192,9 +216,17 @@ function checkUser(object){
     var isPoint = (type == "point");
     if(username !== ggb_user && isPoint && ggb_user != "unassigned"){
         if (username != "admin" && move){
-            document.applet.setFixed(object, true, false);
+            if(objType == 'numeric'){
+                appletName.setFixed(name, true, false);
+            } else {
+                appletName.setFixed(name, true);
+            }
         } else if (username == "admin" && !move){
-            document.applet.setFixed(object, false, true);
+            if(objType == 'numeric'){
+                appletName.setFixed(name, false, true);
+            } else {
+                appletName.setFixed(name, false);
+            }
         }
     }else if(username == ggb_user || ggb_user == "unassigned"){
         document.applet.setFixed(object, false, true);
