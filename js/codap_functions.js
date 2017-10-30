@@ -103,11 +103,11 @@ function group_numbers_response(username, class_id, group_id, status, group_size
 //resets $messages and $people, sets group_id in sessionStorage, then calls group_info
 // and get_settings
 function group_join_response(username, class_id, group_id, group_size) {
-    $login_view.hide();
-    $class_view.hide();
-    $group_view.show();
+    // $login_view.hide();
+    // $class_view.hide();
+    // $group_view.show();
     
-    sessionStorage.setItem('group_id', group_id);
+     sessionStorage.setItem('group_id', group_id);
 
     socket.group_info(username, class_id, group_id, true);
     socket.get_settings(class_id, group_id);

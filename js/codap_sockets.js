@@ -67,6 +67,12 @@
             socket.emit('xml_change', username, class_id, group_id, xml, toolbar);
         }
 
+        //This function takes a class_id, group_id
+        //It then emits a socket event to create the codap table by getting the xml
+        var toggle_codap = function(class_id, group_id) {
+            socket.emit('toggle_codap', class_id, group_id);
+        }
+
         //This function takes a username, class_id, and group_id
         //It then emits a socket event to retrieve the group's XML
         //using the given class_id and group_id
@@ -132,6 +138,11 @@
             xml_change_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar, data.properties);
         });
 
+        socket.on('toggle_codap_response', function(data) {
+            console.log(data.xml);
+            xml_change_response("", data.class_id, data.group_id, data.xml, data.toolbar, data.properties);
+        });
+
         socket.on('get_xml_response', function(data) {
             get_xml_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar, data.properties);
         });
@@ -167,6 +178,7 @@
             group_color: group_color,
             xml_change: xml_change,
             get_xml: get_xml,
+            toggle_codap: toggle_codap,
             get_settings: get_settings,
             disconnect: disconnect,
             ping:ping
