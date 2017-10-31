@@ -20,13 +20,25 @@ function escapeStr(str) {
  */
 function server_error(error) {
     if(error != "Duplicate Entry")
-        $('#error_frame').html(JSON.stringify(error)); 
+        $error_frame.html(JSON.stringify(error)); 
     else {
 
-        document.getElementById("class_input").style.borderColor = "red";
-        $('.error_class_input').show();
+
+        //$class_input.css("border-color", "red");
+        //$error_class_input.show();
     }
 }
+
+/**
+ * function ping response
+ * checks time and update ping
+ */
+ function ping_response(time) {
+    var d = new Date();
+    //console.log(d.getTime() - time)
+    $('.ping').html("Ping: " + (d.getTime() - time).toString());
+ }
+
 
 /**
  * @function add_class_response
@@ -36,23 +48,13 @@ function server_error(error) {
  * @description creates the starting group svgs for the admin view
  */
 function add_class_response(class_id, class_name, group_count) {
-    var $secret_view = $('.secret_view');
-    var $create_view = $('.create_view');
-    var $manage_view = $('.manage_view');
-    var $class_view = $('.class_view');
-    var $settings_view = $('.settings_view');
-    var $class_name = $('.class_name');
-    var $class_id = $('.class_id');
-    var $groups = $('.groups');
-    var $design_tab = $('#design_tab');
-    var $view_tab = $('#view_tab');
-    var $lists = $('.lists')
+    var construction_groups = $(".construction_groups");
 
     sessionStorage.setItem('admin_class_id', class_id);
-    $('#error_frame').html('');
+    $error_frame.html('');
 
-    $secret_view.hide();
     $create_view.hide();
+    $settings_tab.hide();
     $class_view.show();
     $design_tab.show();
     $view_tab.show();
@@ -72,56 +74,78 @@ function add_class_response(class_id, class_name, group_count) {
         // $lists.append($("<div class = '"+group+" g'>"+ group +"</div>").attr('id', 'well')); //create new div
         groups_html += "<li>Group " + group;
         groups_html += "<div class='g" + group + "'></div></li>";
-    }
+        var const_group = $("<option></option>")
+        const_group.text("Group " + group);
+        const_group.val(group);
+        construction_groups.append(const_group);
+    }                                                                                                                                                                                                                                                   
     $groups.html(groups_html);
     $lists.html(lists_html);
     
 }
 
+
 /**
  * @function create_admin response
  * @description adds an admin
  */
-
  function create_admin_response( check ){
 
     if (check == 0) {
-        document.getElementById("new_username").style.borderColor = "red";
-        $('.error_new_username').show();
-        $('.error_re_new_password').hide();
-        document.getElementById("re_new_password").style.borderColor = null;
+        $new_username.css("border-color", "red");
+        $error_new_username.show();
+        $error_re_new_password.hide();
+        $re_new_password.css("border-color", null);
     }
 
     else {
-        $('.new_username').val("");
-        $('.new_password').val("");
-        $('.re_new_password').val("");
-        $('.Secret').val("");
+        $new_username.val("");
+        $new_password.val("");
+        $re_new_password.val("");
+        $Secret.val("");
         alert("user created");
-        var $create_user_view = $('.create_user_view'); // Div holding user creation view
-        var $username_password_view = $('.username_password_view'); // Div holding user creation view
+
         $create_user_view.hide();
         $username_password_view.show();
 
-        $('.error_new_username').hide();
-        document.getElementById("new_username").style.borderColor = null;
-        $('.error_re_new_password').hide();
-        document.getElementById("re_new_password").style.borderColor = null;
+        $error_new_username.hide();
+        $new_username.css("border-color", null);
+        $error_re_new_password.hide();
+        $re_new_password.css("border-color", null);
     }
  }
+
+/**
+ * @function change_password response
+ * @description tells the user if password was changed
+ */
+ function change_password_response(success) {
+    if (success) {
+        $current_password.val("");
+        $changed_password.val("");
+        $retyped_changed_password.val("");
+        alert("Your password has been updated.")
+    }
+    else {
+        $('.error_password_mismatch').hide();
+        $changed_password.css('border-color',  '#CCCCCC'); 
+        $retyped_changed_password.css('border-color', '#CCCCCC');
+        $('.error_password_incorrect').show();
+        $current_password.css('border-color',  'red'); 
+    }
+ }
+
 
 /**
  * @function add_group_response
  * @description adds a group to the end of the list
  */
-function add_group_response() {
-    var $groups = $('.groups');
-    var $lists = $('.lists');
-    
-    $('#error_frame').html('');
+function add_group_response() {    
+    $error_frame.html('');
     var new_group = "";
     var lists_html = "";
     var group_number = $('.groups > li:last').index() + 2;
+
     new_group += "<li>Group " + group_number;
     new_group += "<div class='g" + group_number + "'></div></li>";
 
@@ -140,15 +164,19 @@ function add_group_response() {
  * @description refreshes the selection list of all the default toolbars
  */
 function get_toolbar_response(response) {
-
-    document.getElementById("mySelect").options.length = 0;
-    var selection_list = document.getElementById("mySelect");
-
-    //console.log(response.toolbars.length);
-
+    var $toolbar_select_opt = $('#toolbar_select option');
+    $toolbar_select.html('');
+    $toolbar_select_opt.length = 0;
+    var selection_list = $toolbar_select[0];
+    var default_tools = {};
+    default_tools.name = $default_toolset_name;
+    default_tools.tools = $default_toolset;
+    var default_option = document.createElement('option');
+    default_option.text = default_tools.name;
+    default_option.tool = default_tools.tools;
+    selection_list.add(default_option);
     for (var i = 0; i < response.toolbars.length; i++){
-        
-        var option = document.createElement("option");
+        var option = document.createElement('option');
         option.text = response.toolbars[i].toolbar_name;
         option.tool = response.toolbars[i].tools;
         selection_list.add(option);
@@ -161,12 +189,68 @@ function get_toolbar_response(response) {
  * @description deletes the selected toolbar
  */
 function delete_toolbar_response(response) {
-
-
-    var select = document.getElementById("mySelect");
+    var select = $toolbar_select[0];
     var id = select.selectedIndex;
-    //console.log(id);
-    document.getElementById("mySelect").remove(id);
+    if($toolbar_select[0].options[id].text != $default_toolset_name){
+        $toolbar_select[0][id].remove();    
+    }else{
+        alert('The default toolset cannot be deleted.');
+    }
+}
+
+function get_xmls_response(response) {
+    var $construction_select_opt = $('#construction_select option');
+    $construction_select.html('');
+    $construction_select_opt.length = 0;
+    var selection_list = $construction_select[0];
+    
+    for (var i = 0; i < response.xmls.length; i++){
+        var option = document.createElement('option');
+        option.text = response.xmls[i].xml_name;
+        option.xml = response.xmls[i].xml;
+        option.toolbar = response.xmls[i].toolbar;
+        selection_list.add(option);
+    }
+
+}
+
+/**
+ * @function delete_toolbar_response
+ * @description deletes the selected toolbar
+ */
+function delete_xml_response(response) {
+    var select = $construction_select[0];
+    var id = select.selectedIndex;
+    $construction_select[0][id].remove();    
+}
+
+/**
+ * @function get_class_users_response
+ * @description refreshes the selection list of all the default toolbars
+ */
+function get_class_users_response(response) {
+    var toolbar_users_select = $(".toolbar_users");
+    toolbar_users_select.html("");
+    var class_users = response.class_users;
+    for (var i = 0; i < class_users.length; i++){
+        if(class_users[i].users.length > 0){
+            var ogrp = $("<option></option>");
+            var group = class_users[i].group;
+            ogrp.text("Group " + group);
+            ogrp.attr("class", "parent_group");
+            ogrp.on("click",  function(){ $(this).prop('selected', false);
+                $('.toolbar_users option[value^="'+ group + '|"').prop('selected', true);});
+            toolbar_users_select.append(ogrp);
+
+            for(var j = 0; j<class_users[i].users.length; j++){
+                var opt = $("<option></option>");
+                opt.text(class_users[i].users[j]);
+                opt.attr("class", "child_group");
+                opt.val(group + "|" + opt.text());
+                toolbar_users_select.append(opt);
+            }
+        }
+    }
 
 }
 
@@ -175,7 +259,7 @@ function delete_toolbar_response(response) {
  * @description deletes the last group from the list
  */
 function delete_group_response() {
-    $('#error_frame').html('');
+    $error_frame.html('');
     var group_number = $('.groups > li:last').index() + 1;
     $('.groups > li:last').remove(); 
     $('.g'+group_number).remove();
@@ -187,11 +271,8 @@ function delete_group_response() {
  * @description deletes the last group from the list
  */
 function delete_class_response(class_id) {
-    //console.log("hellos");
     delete sessionStorage.admin_class_id;
-     //console.out(classes.available_classes[0]);
 }
-
 
 /**
  * @function leave_class_response
@@ -199,26 +280,21 @@ function delete_class_response(class_id) {
  * @description changes the admin view from a class to the login page
  */
 function leave_class_response(disconnect) {
-    var $secret_view = $('.secret_view');
-    var $create_view = $('.create_view');
-    var $class_view = $('.class_view');
-    var $secret = 'ucd_247';
-    var $design_tab = $('#design_tab');
-    var $design_icons = $('.toolbar-target');
-    var $view_tab = $('#view_tab');
-    $('#error_frame').html('');
+    $error_frame.html('');
     
-    $secret_view.hide();
     $create_view.show();
+    $settings_tab.show();
     $class_view.hide();
     $design_icons.empty();
     $design_tab.hide();
     $view_tab.hide();
-    $('.error_class_input').hide();
-    $('.empty_class_input').hide();
-    document.getElementById("class_input").style.borderColor = null;
-    $('.class_input').val("");
-    $('.group_input').val("");
+
+    $error_class_input.hide();
+    $empty_class_input.hide();
+
+    $class_input.css("border-color", null);
+    $class_input.val("");
+    $group_input.val("");
 
     if(!disconnect){
         sessionStorage.removeItem('admin_class_id');
@@ -238,8 +314,6 @@ function leave_class_response(disconnect) {
 function group_info_response(username, class_id, group_id, group, status) {
     var $people = $('.g' + group_id);
     var $real_people = $('.gr' + group_id);
-    //$people.html('');
-    
     if (status) {
         for (var i in group) {
             var member = '<li id="' + group[i].member_name +'"><ul><li>';
@@ -257,8 +331,9 @@ function group_info_response(username, class_id, group_id, group, status) {
         username = escapeStr(username);
         $('li[id="' + username + '"]').remove();
         $('p[id="l' + username + '"]').remove();
-        console.log(group_id);
     }
+    // Update the user toolbar select
+    socket.get_class_users(sessionStorage.getItem('admin_class_id'),'get-class-users-response');
 }
 
 /**
@@ -267,20 +342,16 @@ function group_info_response(username, class_id, group_id, group, status) {
  * @description appends list objects of Classes and their IDs to an unordered list in admin.html
  */
 function get_classes_response(classes, secret){
-    var $username_password_view = $('.username_password_view');
-    var $create_view = $('.create_view');
-    var $class_view = $('.class_view');
-    
     $username_password_view.hide();
     $create_view.show();
+    $settings_tab.show();
     $class_view.hide();
 
     sessionStorage.setItem('admin_secret', secret);
 
-    $('#get-classes').html('');
+    $get_classes.html('');
     for (var i = 0; i < classes.length; i++) {
-        //console.log(classes[i]);
-        $('#get-classes').append('<button class="btn btn-primary" onclick=\'join_class("'
+        $get_classes.append('<button class="btn btn-primary" onclick=\'join_class("'
             + classes[i].hashed_id + '")\'><span>' + classes[i].class_name + '</span></button>');
     }
 }
@@ -291,27 +362,19 @@ function get_classes_response(classes, secret){
  * @description logs the user in and creates a session
  */
 function check_username_response(admin_id, check){
-    
     if(check == 0){
-
-        document.getElementById("username").style.borderColor = "red";
+        $username.css("border-color", "red");
         $('.error_username').show();
         $('.error_password').hide();
-        document.getElementById("password").style.borderColor = null;
-    }
-
-    else if (check == -1){
-
-        document.getElementById("password").style.borderColor = "red";
+        $password.css("border-color", null);
+    } else if (check == -1){
+        $password.css("border-color", "red");
         $('.error_password').show();
         $('.error_username').hide();
-        document.getElementById("username").style.borderColor = null;
-    }
-
-    else{
-
-        $('.username').val("");
-        $('.password').val("");
+        $username.css("border-color", null);
+    } else{
+        $username.val("");
+        $password.val("");
 
         var string = Math.random().toString(36).substr(2, 8).toLowerCase(); 
         socket.create_session(admin_id, string);
@@ -328,64 +391,52 @@ function check_username_response(admin_id, check){
  * @description checks a session
  */
 function check_session_response(admin_id, check){
-    
     if(check == 1){
         socket.get_classes("ucd_247", admin_id);
-    }
-
-    if(check == -1){
+    } else if(check == -1){
         socket.delete_session(admin_id);
         localStorage.setItem('admin_id', '');
         localStorage.setItem('check', '');
         sessionStorage.setItem('admin_secret', '');
-        console.log(-1);
-    }
-
-    if(check == 0 ){
+    } else if(check == 0 ){
         localStorage.setItem('admin_id', '');
         localStorage.setItem('check', '');
         sessionStorage.setItem('admin_secret', '');
-        console.log(0);
     }
-
 }
 
-function delete_it(form) {
-        console.log(form.choices);
-    }
 /**
  * @function join_class
  * @param class_id
  * @description for letting student join class
  */
 function join_class(class_id){
-    var $secret = 'ucd_247'; 
     socket.join_class(class_id, $secret);
 }
 
 //This function registers listeners on geogebra initialization 
 function ggbOnInit(arg) {
     var name, num, index = arg.search('[0-9]');
-    console.log(arg);
-    document[arg].evalCommand("CenterView[(0,0)]");
-    document[arg].evalCommand("ZoomOut[4,(0,0)]");
-    //document[arg].setCustomToolBar('0 | 1 501 67 , 5 19 , 72 75 76 | 2 15 45 , 18 65 , 7 37 | 4 3 8 9 , 13 44 , 58 , 47 | 16 51 64 , 70 | 10 34 53 11 , 24  20 22 , 21 23 | 55 56 57 , 12 | 36 46 , 38 49  50 , 71 | 30 29 54 32 31 33 | 17 26 62 73 , 14 68 | 25 52 60 61 | 40 41 42 , 27 28 35 , 6');
-
+    var applet = document[arg];
+    applet.evalCommand("CenterView[(0,0)]");
+    applet.evalCommand("ZoomOut[4,(0,0)]");        
     if (index != -1){
         num = arg.slice(index);
         name = arg.slice(0, index);
         if (name == "applet" && num <= $('ul.groups div').length){
-            var class_id = sessionStorage.getItem('admin_class_id');
+            var class_id = sessionStorage.getItem('admin_class_id');        
             socket.get_xml('admin', class_id, num);
         }
     }
+    // fix for view tab applets not loading current group xml
+    applet.registerAddListener("addLock");
 }
 
 //handler for xml_change response, appends message to chatbox, and calls appletSetExtXML()
 function xml_change_response(username, class_id, group_id, xml, toolbar) {
     var tab = $('a[data-toggle="tab"][aria-expanded=true]').html();
     if(tab == "View")
-        appletSetExtXML(xml, toolbar, group_id);
+        appletSetExtXML(xml, toolbar, null, group_id);
     //ggbOnInit();
 }
 
@@ -394,7 +445,7 @@ function get_xml_response(username, class_id, group_id, xml, toolbar){
     if(xml == undefined){
         xml = '{}';
     }
-    appletSetExtXML(xml, toolbar, group_id);
+    appletSetExtXML(xml, toolbar, null, group_id);
 }
 
 //called on checkbox change, shows/hides box based on if checked or not
@@ -415,82 +466,143 @@ function views_change(event){
 function view_merge(event){
     $('.mergeview_button').hide();
     $('.unmergeview_button').show();
-    $('#clear_buttons').hide();
+    $clear_buttons.hide();
 
-    var XMLs = {};
+    var XMLs = "";
     var array = $('#views_checkboxes :checked');
-
-    for (var i = 0; i < array.length; i++){
-        var value = array[i]["value"];
-        var parsing = document[value].getXML();
-        var obj = x2js.xml_str2json(parsing);
-        var num = array[i]["value"].substr(-1, 1);
-
-        obj = rename_labels(obj, num);
-        _.mergeWith(XMLs, obj, function (a, b) {
-          if (_.isArray(a)) {
-            return a.concat(b);
-          }
-        });
-        //$.extend(true, XMLs, obj);
-        $("." + array[i]["name"]).hide()
-    }
-    var final_xml = x2js.json2xml_str(XMLs);
+    var counter = 0, count = 0; // for checking and not deleteing the first admin objects
     var numgroups = ($('ul.groups div').length)+1;
-    final_xml = JSON.stringify(final_xml);
-    
-    appletSetExtXML(final_xml, '', numgroups);
     var applet = document['applet' + numgroups];
+    var cur_xml = applet.getXML();
+    var cur_xml_doc = $.parseXML(cur_xml);
+    var cur_construction = $(cur_xml_doc).find('construction')[0];
+
+    for (var i = 0; i < array.length ; i++){
+        var value = array[i]["value"];
+        var num = array[i]["value"].substr(value.lastIndexOf('t') + 1 , value.length - value.lastIndexOf('t'));
+        randomizeColors(document[value]);
+        var parsing = document[value].getXML();
+        var xml;
+
+        [xml, counter] = rename_labels(parsing, num, counter);
+        
+        if (counter == 1 && count == 0) // if these are the first admin objects dont delete them
+            count++;
+        else if(counter == 1)  // if these are not the first admin objects delete them 
+            xml = remove_admin_objects(xml);
+
+        var new_construction = $($.parseXML(xml)).find('construction')[0];
+
+        XMLs += new_construction.innerHTML;
+
+       
+        $("." + array[i]["name"]).hide()
+
+    }
+    cur_construction.innerHTML = XMLs;
+    var final_xml = '"' + $(cur_xml_doc).find('geogebra')[0].outerHTML + '"';
+    
+    appletSetExtXML(final_xml, '', null, numgroups);
+    var numelems = applet.getObjectNumber();
+    for (i = 0; i < numelems; i++){
+        var name = applet.getObjectName(i);
+        applet.setFixed(name, false, true);
+    }
+    
     applet.setPerspective('G');
+    applet.setCoordSystem(-10,10,-10,10);
+    applet.evalCommand("SetAxesRatio(1,1)");
     $('#views_checkboxes :checkbox').hide();
-    $('.merge_group').show();
+    $('.merge_group').css('visibility','visible');
+}
+
+
+
+//this is used to remove admin objects past those in the first group
+//so we don't have duplicate points in the construction
+function remove_admin_objects(xml, counter){
+    var xobj = $.parseXML(xml);
+    var commands = $(xobj).find('construction').find('command');
+    var elements = $(xobj).find('construction').find('element');
+    var deleted_array = [];
+
+    if(elements != undefined){
+        for(i = elements.length-1; i >= 0; i--){
+            var caption = $(elements[i]).find('caption')[0];
+            if(caption !== undefined){
+                caption = caption.attributes[0];
+                if (caption.value.includes("unassigned")){
+                    var label = $(elements[i])[0].attributes[1]
+                    deleted_array.push(label.value);
+                    $(elements[i]).remove();
+                }
+            }
+        }
+    }
+
+    if(commands !== undefined){
+        for(var i = commands.length-1; i >= 0; i--){
+            var inputs = $(commands[i]).find('input')[0].attributes;
+            for(var j = 0; j < inputs.length; j++){
+                if (deleted_array.includes(inputs[j].value)) {
+                    $(commands[i]).remove();
+                    break;
+                }
+            }
+        } 
+    }
+
+    var new_xml = $(xobj).find('geogebra')[0].outerHTML;
+    return new_xml;
 }
 
 //this is used to rename all object labels within the given XML to 
 //have their group number added onto the end, preventing conflicts
 //when merging multiple XMLs together
-function rename_labels(xml, num){
-    console.log(xml);
-    if((xml.geogebra).hasOwnProperty('construction')){
-        if((xml.geogebra.construction).hasOwnProperty('element')){
-            var array = xml.geogebra.construction.element;
+function rename_labels(xml, num, counter){
+    var xobj = $.parseXML(xml);
+    var commands = $(xobj).find('construction').find('command');
+    var elements = $(xobj).find('construction').find('element');
+    var regex = /[A-Z]+(?![a-z])|^[A-Z]*[a-z]+[0-9]*(?![a-zA-Z])/g;
 
-            if(array !== null && typeof array === 'object' && !(array instanceof Array)){
-                var temp = array;
-                array = [];
-                array.push(temp);
-            }
-
-            for (var i = 0; i < array.length; i++){
-                if(array[i]["_type"] === 'point'){
-                    array[i]["_label"] = array[i]["_label"] + 'g' + num;
-                    if ("caption" in array[i]){
-                        var elem = array[i]["caption"]["_val"];
-                        array[i]["caption"]["_val"] = elem + "g" + num;
-                    }
+    if(commands !== undefined){
+        for(var i = 0; i < commands.length; i++){
+            var inputs = $(commands[i]).find('input')[0].attributes;
+            for(var j = 0; j < inputs.length; j++){
+                var result, index, indices = [];
+                while(result = regex.exec(inputs[j].value)){
+                    indices.push(result.index + result[0].length);
                 }
-            }
-            xml.geogebra.construction.element = array;
-        }
-
-        if((xml.geogebra.construction).hasOwnProperty('command')){
-            var array = xml.geogebra.construction.command;
-
-            if(array !== null && typeof array === 'object' && !(array instanceof Array)){
-                var temp = array;
-                array = [];
-                array.push(temp);
-            }
-
-            for (var i = 0; i < array.length; i++){
-                for (var point in array[i].input){
-                    array[i]["input"][point] =  array[i]["input"][point] + 'g' + num;
+                while (index = indices.pop()){
+                    inputs[j].value = inputs[j].value.slice(0, index) + "g" + num + inputs[j].value.slice(index);
                 }
+                console.log(inputs[j].value);
+                //inputs[j].value = inputs[j].value + "g" + num;
             }
-            xml.geogebra.construction.command = array;
+            var outputs = $(commands[i]).find('output')[0].attributes;
+            for(var j = 0; j < outputs.length; j++){
+                outputs[j].value = outputs[j].value + "g" + num;
+            }
+        } 
+    }
+
+    if(elements != undefined){
+        for(i = 0; i < elements.length; i++){
+            var label = $(elements[i])[0].attributes[1];
+            label.value = label.value + "g" + num;
+            var caption = $(elements[i]).find('caption')[0];
+            if(caption !== undefined){
+                caption = caption.attributes[0];
+                if(caption.value.includes("unassigned")){
+                    counter = 1;
+                }
+                caption.value = caption.value + "g" + num;
+            }
         }
     }
-    return xml;
+
+    var new_xml = $(xobj).find('geogebra')[0].outerHTML;
+    return [new_xml, counter];
 }
 
 //this is called when the unmerge views button is pressed.
@@ -499,11 +611,68 @@ function unmerge_views(event){
     $('#views_checkboxes :checkbox').show();
     $('.mergeview_button').show();
     $('.unmergeview_button').hide();
-    $('.merge_group').hide();
-    $('#clear_buttons').show();
+    $('.merge_group').css('visibility','hidden');
+    $clear_buttons.show();
 
     var array = $('#views_checkboxes :checked');
     for (var i = 0; i < array.length; i++){
         $("." + array[i]["name"]).show();
+        var value = array[i]["value"];
+        randomizeColors(document[value], 'default');
     }
+}
+
+//this is called when a user presses the hyperlink for group i
+//in the View tab
+function redirect(i){
+    $('#redirect_modal').attr("group_id", i);
+    $('#redirect_modal').modal('show');
+}
+
+//this is called when the user submits a username after the
+//redirect modal is opened
+function redirect_modal_submit(group, username) {
+    username = username.trim();
+    if (username == "") return;
+    if (!valid_username(username)) {
+        if (username == "admin") {
+            $('#redirect_username_error_admin').show();
+            $('#redirect_username_error').hide();
+        }
+        else {
+            $('#redirect_username_error_admin').hide();
+            $('#redirect_username_error').show();
+        }
+        $('#redirect_username').css("border-color", "red");
+        $('#redirect_modal').modal('show');
+        return;
+    }
+    $('#redirect_username_error_admin').hide();
+    $('#redirect_username_error').hide();
+    $('#redirect_username').css("border-color", "rgb(204,204,204)");
+    $('#redirect_modal').modal('hide');
+    $('#redirect_username').val("");
+
+    var class_id = "class_id=" + sessionStorage.getItem('admin_class_id');
+    var group_id = "group_id=" + group;
+    var user_id = "username=" + username;
+    var data = [class_id, group_id, user_id];
+    var packed = escape(data[0]);
+    for (var i = 1; i < data.length; i++) 
+        packed += "&" + escape(data[i]);
+    window.open("student.html?" + packed, "_blank","toolbar=yes,menubar=yes,scrollbars=yes,resizable=yes,width=" + window.outerWidth + ",height=" + window.outerHeight);
+}
+
+//this function validates the username submitted to the redirect modal
+function valid_username(username) { 
+    var alphanum = /^[A-Za-z][A-Za-z0-9]*$/;
+    if (username.match(alphanum) && username.length < 9) {  
+        // if (username == "admin") {
+        //     return false;
+        // }
+        return true;  
+    }
+    else {   
+        return false;
+    }  
 }

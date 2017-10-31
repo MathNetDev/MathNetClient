@@ -10,6 +10,11 @@
     // The initialization function for the Student.Socket object
     var init = function (socket) {
         
+        // This function takes a time and pings it
+        var ping = function(time) {
+            socket.emit('ping', time);
+        };
+
         //This function takes a username and class_id from the user
         //It then emits a socket call to login the username to the class_id.
         var login = function (username, class_id) {
@@ -48,12 +53,12 @@
             socket.emit('group_info', username, class_id, group_id, status);
         }
 
-        //This function takes a username, class_id, group_id, x, y, and info
-        //It then emits a socket event to change the username's coordinates and info in group_id
-        //given x, y, and info.
-        var coordinate_change = function(username, class_id, group_id, x, y, info) {
-            socket.emit('coordinate_change', username, class_id, group_id, x, y, info);
+        //This function takes class_id and group_id,
+        // It then emits the socket event to get the color of the group
+        var group_color = function(class_id, group_id) {
+            socket.emit('group-color', class_id, group_id);
         }
+
 
         //This function takes a username, class_id, group_id, and XML
         //It then emits a socket event to change the class's XML in the datastructure
@@ -90,6 +95,10 @@
             server_error(data.message);      
         });
        
+       socket.on('ping-response', function(time) {
+            ping_response(time);
+        });
+       
         socket.on('login_response', function(data) {
             login_response(data.username, data.class_id);
         });
@@ -115,17 +124,16 @@
                                 data.other_members, data.status);
         });
 
-        socket.on('coordinate_change_response', function(data) {
-            coordinate_change_response(data.username, data.class_id, 
-                                       data.group_id, data.x, data.y, data.info);
+        socket.on('group-color-response', function(data) {
+            group_color_response(data[0].group_color);
         });
         
         socket.on('xml_change_response', function(data) {
-            xml_change_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar);
+            xml_change_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar, data.properties);
         });
 
         socket.on('get_xml_response', function(data) {
-            get_xml_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar);
+            get_xml_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar, data.properties);
         });
 
         socket.on('group_numbers_response', function(data) {
@@ -149,7 +157,6 @@
             delete_student_class_response();
         });
 
-
         return {
             login: login,
             logout: logout,
@@ -157,11 +164,12 @@
             group_join: group_join,
             group_leave: group_leave,
             group_info: group_info,
-            coordinate_change: coordinate_change,
+            group_color: group_color,
             xml_change: xml_change,
             get_xml: get_xml,
             get_settings: get_settings,
-            disconnect: disconnect
+            disconnect: disconnect,
+            ping:ping
         };
     }
     

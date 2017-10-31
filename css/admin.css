@@ -13,6 +13,10 @@ hr {
   stroke: black;
 }
 
+.ping {
+  text-align: right;
+}
+
 .tick text{
   font-size: 12px;
 }
@@ -71,20 +75,15 @@ hr {
 #get-classes div:hover{
   background-color: rgba(211, 214, 34, 0.42);
 }
+#redirect_modal .modal-title {
+  text-align: center;
+}
 
-.leave_button{
-  position:  relative;
-  top: 15px; 
+#settings input {
+  margin-bottom: 10px;
+  max-width: 200px;
 }
-.settings_view{
-  margin:4em 0 0 0;
-}
-.settings_view p{
-  margin:0;
-}
-.settings_view input[type=checkbox]{
-  margin:0 .5em 0 0;
-}
+
 .error{
   color: red;
 }
@@ -158,9 +157,9 @@ hr {
 .toolbar-target{
   border: 1px solid #d2d2d2;
   display: inline-block;
-  min-height: 52px;
+  min-height: 48px;
   padding: 0;
-  width: 50px;
+  width: 48px;
   text-align: center;
   background: #eee;
 }
@@ -218,10 +217,18 @@ circle {
   stroke: steelblue;
   stroke-width: 1.5px;
 }
-#mySelect{
+#toolbar_select{
 
   width:60%;
   height:100px;
+}
+#construction_select{
+
+  width:60%;
+  height:100px;
+}
+#coord-axis input[type="text"]{
+  width: 50px;
 }
 
 #hello{
@@ -259,7 +266,6 @@ button.accordion.active:after {
 }
 
 div.panel-accordion {
-    padding: 0 18px;
     background-color: white;
     max-height: 0;
     overflow: hidden;
@@ -270,4 +276,18 @@ div.panel-accordion {
 div.panel-accordion.show {
     opacity: 1;
     max-height: 1000px;
+}
+
+.modal-body {
+    position: relative;
+    overflow-y: auto;
+    max-height: 400px;
+    padding: 15px;
+}
+
+.parent_group{
+  font-weight: bold;
+}
+.child_group{
+  padding-left: 16px;
 }

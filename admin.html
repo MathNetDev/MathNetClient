@@ -8,7 +8,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="css/bootstrap.min.css"/>
   <link rel="stylesheet" href="css/style.css"/>
   <link rel="stylesheet" href="css/admin.css"/>
   <link rel="stylesheet" type="text/css" href="js/jquery-ui/jquery-ui.min.css">
@@ -19,58 +19,51 @@
   <!-- Nav tabs -->
     <ul class="nav nav-tabs" role="tablist">
       <li role="presentation" class="active"><a href="#admin" aria-controls="design" role="tab" data-toggle="tab" id="admin_tab">Admin</a></li>
+      <li role="presentation"><a href="#settings" aria-controls="design" role="tab" data-toggle="tab" id="settings_tab" style="display:none">Settings</a></li>
       <li role="presentation"><a href="#design" aria-controls="design" role="tab" data-toggle="tab" id="design_tab" style="display:none">Design</a></li>
       <li role="presentation"><a href="#view" aria-controls="design" role="tab" data-toggle="tab" id="view_tab" style="display:none">View</a></li>
     </ul>
   
     <div class="tab-content">
       <div role="tabpanel" class="tab-pane active" id="admin">
-        <div class="col-md-4">
+        <div class="col-md-12 col-sm-12">
           <h3 id="error_frame"></h3>
         </div>
-        <div class="col-md-12">
+        <div class="col-md-12 col-sm-12">
 
           <!-- Main View Begins-->
           <div class="username_password_view" hidden>
 
             <!-- Title -->
             <div class="col-md-12 col-sm-12">
-              <div class="col-md-4 col-sm-4"></div>
-              <div class="col-md-4 col-sm-4">
+              <div class="col-md-4 col-sm-4 col-md-offset-4 col-sm-offset-4">
                 <h2 style="text-align: center"> Admin Login </h2>
               </div>
-              <div class="col-md-4 col-sm-4"></div>
             </div>
 
             <!-- Text Fields and Login Button -->
             <div class="col-md-12 col-sm-12">
-              <div class="col-md-4 col-sm-4"></div>
-              <div class="col-md-4 col-sm-4">
-                <input type="text" class="form-control username" id="username" name="user_id" required="" placeholder="User ID"/>
+              <div class="col-md-4 col-sm-4 col-md-offset-4 col-sm-offset-4">
+                <input type="text" class="form-control username" name="user_id" required="" placeholder="User ID"/>
                 <p class = "error error_username" hidden> User ID does not exist </p> <br/>
-                <input type="password" class="form-control password" id="password" name="password" required="" placeholder="Password"/>
+                <input type="password" class="form-control password" name="password" required="" placeholder="Password"/>
                 <p class = "error error_password" hidden> Wrong Password Try Again </p> <br/>
               </div>
-              <div class="col-md-4 col-sm-4"></div>
             </div>
 
             <!-- New To Math Net -->
             <div class="col-md-12 col-sm-12">
-                <div class="col-md-4 col-sm-4"></div>
-                <div class="col-md-4 col-sm-4">
-                  <input class="btn btn-lg btn-primary btn-block login_button" type="submit" value="Login" id="login"/><br/>
+                <div class="col-md-4 col-sm-4 col-md-offset-4 col-sm-offset-4">
+                  <input class="btn btn-lg btn-primary btn-block login_button" type="submit" value="Login"/><br/>
                   <p style="text-align: center"> New to Math Net? </p>
                 </div>
-              <div class="col-md-4 col-sm-4"></div>
             </div>
 
             <!-- New user button -->
             <div class="col-md-12 col-sm-12">
-              <div class="col-md-4 col-sm-4"></div>
-              <div class="col-md-4 col-sm-4" style="text-align: center">
+              <div class="col-md-4 col-sm-4 col-md-offset-4 col-sm-offset-4" style="text-align: center">
                 <input class="btn btn-default new_user" type="button" value="Click Here" /><br/><br/>
               </div>
-              <div class="col-md-4 col-sm-4"></div>
             </div>  
 
           </div>
@@ -83,17 +76,14 @@
 
             <!-- Title -->
             <div class="col-md-12 col-sm-12">
-              <div class="col-md-4 col-sm-4"></div>
-              <div class="col-md-4 col-sm-4">
+              <div class="col-md-4 col-sm-4 col-md-offset-4 col-sm-offset-4">
                 <h2 style="text-align: center"> New Admin </h2>
               </div>
-              <div class="col-md-4 col-sm-4"></div>
             </div>
 
             <!-- Text Fields and Create Admin Button -->
             <div class="col-md-12 col-sm-12">
-              <div class="col-md-4 col-sm-4"></div>
-              <div class="col-md-4 col-sm-4">
+              <div class="col-md-4 col-sm-4 col-md-offset-4 col-sm-offset-4">
 
                 <input type="text" class="form-control new_username" id="new_username" name="new_username" required="" placeholder="New Username"/>
                 <p class = "error error_new_username" hidden> Username Already Exists </p> <br/>
@@ -105,29 +95,27 @@
                 <input type="password" class="form-control Secret" id="password" name="password" required="" placeholder="Secret Code"/><br/>
                 <input class="btn btn-lg btn-primary btn-block create_admin_button" type="submit" value="Create Admin"/><br/>
               </div>
-              <div class="col-md-4 col-sm-4"></div>
             </div>
             <input class="btn btn-default create_admin_back" type="submit" value="Back"/><br/><br/>
           </div>
           <!-- Username View Ends -->
 
-
+          <h5 class = "ping"> Ping : 0 </h5>
 
           <!-- This div appears when an admin leaves a class or has not made on yet -->
           <div class="create_view" style="display:none">
 
-            <!-- Heading for classes view -->
+                <!-- Heading for classes view -->
             <div class="col-md-12 col-sm-12">
-              <div class="col-md-4 col-sm-4"></div>
-                <div class="col-md-4 col-sm-4">
+                <div class="col-md-4 col-sm-4 col-md-offset-4 col-sm-offset-4">
                   <h2 style="text-align: center"> Click To Join A Class </h2></div>
-                <div class="col-md-4 col-sm-4"></div>
             </div>
             <!-- All classes -->
             <div>
               <h3 id="get-classes-head"></h3>
               <div class="col-md-12 col-lg-12 col-xs-12 col-sm-12" id="get-classes"></div>
             </div>
+
 
             <!-- Line Break -->
             <table width="100%">
@@ -138,31 +126,27 @@
 
             <!-- New Class heading -->
             <div class="col-md-12 col-sm-12">
-              <div class="col-md-4 col-sm-4"></div>
-                <div class="col-md-4 col-sm-4">
-                  <h3 style="text-align: center"> Create New Class</h3></div>
-                <div class="col-md-4 col-sm-4"></div>
+              <div class="col-md-4 col-sm-4 col-md-offset-4 col-sm-offset-4">
+                  <h3 style="text-align: center"> Create New Class</h3>
+              </div>
+                
             </div>
 
             <!-- New Class -->
             <div class="col-md-12 col-sm-12">
-              <div class="col-md-4 col-sm-4"></div>
-              <div class="col-md-4 col-sm-4">
+              <div class="col-md-4 col-sm-4 col-md-offset-4 col-sm-offset-4">
                 <input type="text" class="form-control class_input" id="class_input" name="class_input" required="" placeholder="Class Name"/> 
                 <p class = "error error_class_input" hidden> Class Name Already Exists </p> <br/>
                 <p class = "error empty_class_input" hidden> Class Name Can't Be Empty </p> <br/>
                 <input type="number" class="form-control group_input" id="group_input" name="group_input" required="" placeholder="Number Of Groups"/><br/>
               </div>
-              <div class="col-md-4 col-sm-4"></div>
             </div>    
             <!-- The buttons -->
             <div class="col-md-12 col-sm-12">
-              <div class="col-md-4 col-sm-4"></div>
-              <div class="col-md-4 col-sm-4" style="text-align: center">
+              <div class="col-md-4 col-sm-4 col-md-offset-4 col-sm-offset-4" style="text-align: center">
                 <input class="btn btn-primary btn-block create_button" type="button" value="Create Class" /><br/><br/>
                 <input id = "logout_class_button" class="btn btn-default btn-danger logout_class_button" type="button" value="Logout">
               </div>
-              <div class="col-md-4 col-sm-4"></div>
             </div>  
             <!-- End Of Buttons -->
           </div>
@@ -171,36 +155,24 @@
 
           <!-- This div appears once an admin has created a class -->
           <div class="class_view" style="display:none">
-            <!-- Title -->
-            <div class="col-md-12 col-sm-12">
-              <div class="col-md-4 col-sm-4"></div>
-              <div class="col-md-4 col-sm-4">
-                <h1 class = "class_name" style = "text-align: center"></h1>
-              </div>
-              <div class="col-md-4 col-sm-4"></div>
-            </div>
+
 
             <!-- Title -->
             <div class="col-md-12 col-sm-12">
               <div class="col-md-4 col-sm-4">
-                <input class="btn btn-default btn-danger leave_button" type="button" value="Leave Class">
+                <input class="btn btn-default btn-danger leave_button" type="button" style="margin-right:1em;" value="Leave Class">
+                <input id = "delete_class_button" class="btn btn-danger delete_class_button" type="button" value="Delete Class"> 
               </div>
               <div class="col-md-4 col-sm-4">
-                <h3 class = "class_id" style = "text-align: center"></h3><br/>
+                <h1 class = "class_name" style = "text-align: center; margin-top:-5px;"></h1>
+                <h3 class = "class_id" style = "text-align: center; margin-top:-5px;"></h3>
               </div>
-              <div class="col-md-4 col-sm-4"></div>
-            </div>
-
-
-            <div class="col-md-12 col-sm-12">
-              <div class="col-md-2 col-sm-2"></div>
-              <div class="col-md-8 col-sm-8" style = "text-align: center">
-                <input class="btn btn-primary add_button" type="button" value="Add Group"> &emsp;&emsp;&emsp;
-                <input class="btn btn-primary delete_button" type="button" value="Delete Group"> &emsp;&emsp;&emsp;
-                <input id = "delete_class_button" class="btn btn-danger delete_class_button" type="button" value="Delete Class"> <br/><br/>
+              <div class="col-md-4 col-sm-4">
+                <input class="btn btn-primary add_button" type="button" style="float:right;" value="Add Group">
+                <input class="btn btn-primary delete_button" type="button" style="float:right; margin-right: 1em;" value="Delete Group"> &emsp;
+                <br/><br/>
               </div>
-              <div class="col-md-2 col-sm-2"></div>
-            </div>  
+            </div> 
 
             <!-- The place to store the lists -->
             <div class="manage_view" hidden>
@@ -212,89 +184,151 @@
               <td><hr/></td>
                 <td style="width:1px; padding: 0 10px; white-space: nowrap;">GROUPS AND STUDENTS</td>
               <td><hr /></td>
-            </table>​ <br/>
+            </table> <br/>
 
-            <div class="col-md-12 lists" style="align: center"></div> 
+            <div class="col-md-12 lists"></div> 
 
-            <div class="settings_view">
-              <h4>Settings</h4>
-              <p><input class="setting" type="checkbox" name="Hide Options" id="setting-hide-options"><label for="setting-hide-options">Hide Options</label></p>
-              <p><input class="setting" type="checkbox" name="Test2" id="setting-test2"><label for="setting-test2">Test2</label></p>
-              <p><input class="setting" type="checkbox" name="Test3" id="setting=test3"><label for="setting-test3">Test3</label></p>
-              <p><input class="btn btn-default save_button" type="button" value="Save Settings"></p>
-            </div>
           </div>
         </div>
-      </div>
+      </div> <!-- End of admin tab -->
 
+
+      <!-- Settings tab -->
+      <div role="tabpanel" class="tab-pane" id="settings">
+        <div class="col-md-12 col-sm-12">
+          <h3> Settings </h3>
+          <h4> Change Password </h4>
+          <p class="error error_password_mismatch" hidden> Passwords do not match <br/> </p> 
+          <p class="error error_password_incorrect" hidden> Incorrect password <br/> </p> 
+          <input type="password" class="form-control" id="current_password" name="password" required="" placeholder="Current password"/>
+          <input type="password" class="form-control" id="changed_password" name="password" required="" placeholder="New password"/>
+          <input type="password" class="form-control" id="retyped_changed_password" name="password" required="" placeholder="Retype new password"/>
+          <input class="btn btn-md btn-primary btn-block" type="submit" value="Submit" id="change_password_button"/>
+        </div>
+      </div> <!-- End of settings tab -->
 
 
       <div role="tabpanel" class="tab-pane" id="design">
         <div class="col-md-12 col-sm-12">
           <h3> Designer</h3>
-          <button class="btn btn-primary accordion">Toolbar Designer</button>
+          <h5 class = "ping"> Ping : 0 </h5>
+          <button class="btn btn-primary accordion">User Customizations</button>
           <div class="panel panel-accordion">
-          <div class="row">
-            <div class="toolbox col-md-8 col-sm-12"></div>
-            <div class="col-md-4 col-sm-12">
-              <div class="checkbox">
-                <label>
-                  <input type="checkbox" id="toggle-menu-bar" value="1"> Show menu bar
-                </label>
-                <div>
-                  <p id="hello">  Select Default ToolBar </p>
-                  <select id="mySelect" size="1000">
-                  </select>
+            <div>
+              <div class="toolbox col-md-8 col-sm-12"></div>
+              <div class="col-md-4 col-sm-12">
+                <div class="checkbox">
                   <div>
-                    <button class="btn btn-primary btn-usetoolbar">Use Toolbar</button>
-                    <button class="btn btn-primary btn-deletetoolbar">Delete Toolbar</button>
+                    <p id = "hello">  Select Default ToolBar </p>
+                    <select id="toolbar_select" size="1000"></select>
+                    <div>
+                      <button class="btn btn-primary btn-usetoolbar">Use Toolbar</button>
+                      <button class="btn btn-primary btn-deletetoolbar">Delete Toolbar</button>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
           
-          <div class="ggbtoolbar row">
-            <div class="col-md-8 col-sm-12">
-              <div id = "toolbar-target-0" class="col-md-1 col-sm-1 toolbar-target"></div>
-              <div id = "toolbar-target-1" class="col-md-1 col-sm-1 toolbar-target"></div>
-              <div id = "toolbar-target-2" class="col-md-1 col-sm-1 toolbar-target"></div>
-              <div id = "toolbar-target-3" class="col-md-1 col-sm-1 toolbar-target"></div>
-              <div id = "toolbar-target-4" class="col-md-1 col-sm-1 toolbar-target"></div>
-              <div id = "toolbar-target-5" class="col-md-1 col-sm-1 toolbar-target"></div>
-              <div id = "toolbar-target-6" class="col-md-1 col-sm-1 toolbar-target"></div>
-              <div id = "toolbar-target-7" class="col-md-1 col-sm-1 toolbar-target"></div>
-              <div id = "toolbar-target-8" class="col-md-1 col-sm-1 toolbar-target"></div>
-              <div id = "toolbar-target-9" class="col-md-1 col-sm-1 toolbar-target"></div>
-              <div id = "toolbar-target-10" class="col-md-1 col-sm-1 toolbar-target"></div>
-              <div id = "toolbar-target-11" class="col-md-1 col-sm-1 toolbar-target"></div> 
-            </div>
-            <div class="col-md-4 col-sm-12">
-              <div class = "shifted">
-                <button class="btn btn-primary btn-sendtoolbar">Send Tools</button>
-                <button class="btn btn-primary btn-savetoolbar">Save Tools</button>
-                <button id="trash" class ="btn-trash btn btn-default" type="button" >
-                  <span class="glyphicon glyphicon-trash" aria-hidden="true" style= "height:10px"></span>
-                </button>
+            <div class="ggbtoolbar row">
+              <div class="col-md-8 col-sm-12">
+                <div id = "toolbar-target-0" class="col-md-1 col-sm-1 toolbar-target"></div>
+                <div id = "toolbar-target-1" class="col-md-1 col-sm-1 toolbar-target"></div>
+                <div id = "toolbar-target-2" class="col-md-1 col-sm-1 toolbar-target"></div>
+                <div id = "toolbar-target-3" class="col-md-1 col-sm-1 toolbar-target"></div>
+                <div id = "toolbar-target-4" class="col-md-1 col-sm-1 toolbar-target"></div>
+                <div id = "toolbar-target-5" class="col-md-1 col-sm-1 toolbar-target"></div>
+                <div id = "toolbar-target-6" class="col-md-1 col-sm-1 toolbar-target"></div>
+                <div id = "toolbar-target-7" class="col-md-1 col-sm-1 toolbar-target"></div>
+                <div id = "toolbar-target-8" class="col-md-1 col-sm-1 toolbar-target"></div>
+                <div id = "toolbar-target-9" class="col-md-1 col-sm-1 toolbar-target"></div>
+                <div id = "toolbar-target-10" class="col-md-1 col-sm-1 toolbar-target"></div>
+                <div id = "toolbar-target-11" class="col-md-1 col-sm-1 toolbar-target"></div>
+                <button class="btn btn-primary btn-savetoolbar" style="margin: 0 0 0 .5em" title="Save toolbar"><span class="glyphicon glyphicon-save" aria-hidden="true" style= "font-size:1.5em;margin-right:-2px"></span></button>
+                <button id="trash" class ="btn-trash btn btn-default" type="button" style="margin:0 .5em" title="Clear toolbar">
+                    <span class="glyphicon glyphicon-trash" aria-hidden="true" style= "font-size:1.5em;margin-left:-2px"></span>
+                  </button>
+              </div>
+              <div class="col-md-4 col-sm-12">
+                <input type="checkbox" id="axisToggle" checked> Axis Display</input>                
+                <input type="checkbox" id="gridToggle" checked> Grid Display</input><br/>
+                Perspective
+                <select id="perspectiveSelect">
+                    <option value="AG" selected>AlgebraGraphics</option>
+                    <option value="A">Algebra</option>
+                    <option value="G">Graphics</option>
+                    <option value="S">Spreadsheet</option>
+                    <option value="AS">AlgebraSpreadsheet</option>
+                    <option value="GS">GraphicsSpreadsheet</option>
+                </select><br/>
+                <input type="checkbox" id="boxToggle">Manual Perspective Input</input><br/>
+                <div id="perspectiveBox">
+                  <input type="text" id="perspective"></input>&ensp;
+                  <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-html="true" offset="0 50px" id="pHelp" title="<table><tr><th>Letter</th> <th>&emsp;View</th></tr><tr><td>A</td> <td>Algebra</td></tr><tr><td>B</td> <td>Probability Calculator</td></tr><tr><td>C</td> <td>CAS</td></tr><tr><td>D</td> <td>Graphics 2</td></tr><tr><td>G</td> <td>Graphics</td></tr><tr><td>L</td> <td>Construction Protocol</td></tr><tr><td>P</td> <td>Properties</td></tr><tr><td>S</td> <td>Spreadsheet</td></tr><tr><td>T</td> <td>3D Graphics</td></tr></table>
+                  Example values: A, AG, A/G, A/(GS), with AG split vertically, A/G horizontally, and A/(GS) horizontally then vertically."></span>
+                  <br/>
+                </div><br/>
+                <div id="coord-axis">
+                  Coordinate System <br/>
+                  <span style="margin-left:105px;">Y Max</span> <br/>
+                  <input type="text" id="coord_y_max" style="margin-left:100px;"></input><br/>
+                  X Min <input type="text" id="coord_x_min"></input> &emsp;
+                  <input type="text" id="coord_x_max" style="margin-left:50px;"></input> X Max <br/>
+                  <input type="text" id="coord_y_min" style="margin-left:100px;"></input> <br/>
+                  <span style="margin-left:105px;">Y Min</span> <br/>
+                    
+
+                  Axis Steps <br/>
+                  X-axis <input type="text" id="axis_step_x"></input> &ensp;
+                  Y-axis <input type="text" id="axis_step_y"></input> &ensp;
+                  Z-axis <input type="text" id="axis_step_z"></input> <br/>
+                </div>
+                <div class = "shifted">
+                  <h1 style=" font-size: 1.2em; margin:0 0 .5em 0;">Class users</h1>
+                  <select multiple="true" style="display:block;width:60%;clear:both;height:150px" class="toolbar_users"></select>
+                  <button class="btn btn-primary btn-sendtoolbar" title="Send toolbar to users">Send Changes</button>
+
+                  <!-- add the check boxes for settings, use same selection method as send tools. -->
+                </div>
               </div>
             </div>
-          </div>
           <br/><br/><br/>
           </div>
-          <button class="accordion">Activity Desginer</button>
-            <div class="panel panel-accordion">
-                <br/>
-                <button class="btn btn-primary btn-sendconstruction">Send View</button>
+
+          <button class="accordion">Activity Designer</button>
+            <div class="panel panel-accordion col-md-12 col-sm-12"> <br/>
+                <div class="construction_stuff">
+                    <p id = "hello">  Select Construction </p>
+                    <div class="">
+                      <select id="construction_select" style="display:block;width:30%;clear:both;height:100px;" size="1000"></select>
+                      <div>
+                        <button class="btn btn-primary btn-useconstruction">Use Construction</button>
+                        <button class="btn btn-primary btn-saveconstruction">Save Construction</button>
+                        <button class="btn btn-primary btn-deleteconstruction">Delete Construction</button>
+                      </div>
+                    </div>
+                    <div class=""> Select Group to Send View to <br/>
+                      <select multiple="true" style="display:block;width:30%;clear:both;height:100px;" class="construction_groups"></select>
+                      <button class="btn btn-primary btn-sendconstruction">Send View</button>
+                      <button class="btn btn-primary btn-sendconstructionall">Send View to All</button> &emsp;&emsp;
+                      <label>
+                        <input type="checkbox" id="toggle-menu-bar" value="1"> Show menu bar </input>
+                      </label>
+                    </div>
+                    
+                </div>
                 <div class="javascriptapplet">
-                  <div class="geogebrawebapplet" id="appletContainer" style="width:100%;height:650px;display: block;"></div> 
+                  <div class="geogebrawebapplet applet-activity-designer" id="appletContainer" style="width:100%;height:650px;display: block;"></div> 
                 </div>
                 <br/><br/><br/>
             </div>
         </div>
-      </div>
+      </div> <!-- End of design tab -->
+
       <div role="tabpanel" class="tab-pane" id="view">
         <div class="col-md-12">
           <h3>Class View</h3>
+          <h5 class = "ping"> Ping : 0 </h5>
           <div id="views_checkboxes" class="panel panel-default"></div>
           <div id="clear_buttons">
             <input class="btn btn-danger clear_class_button" type="button" value="Clear Class">
@@ -303,19 +337,66 @@
           </div>
           <div class="javascriptapplet" id="views_jsapp"></div> 
         </div>
-      </div>
-    </div>
-  </div>
+      </div> <!-- End of view tab -->
+
+    </div> <!-- End of table-content -->
+  </div> <!-- End of container -->
+
+    <!-- Redirect Modal -->
+  <div id="redirect_modal" class="modal fad" tabindex="-1" role="dialog" aria-labelledby="modal_redirect_label">
+    <div class="modal-dialog">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h4 class="modal-title" id="modal_redirect_label"> Enter a Username </h4>
+        </div> <!-- modal-header -->
+
+        <div class="modal-body">
+
+          <div class="col-md-12">
+            <div class="col-md-4"></div>
+            <div class="error col-md-4" id="redirect_username_error_admin" hidden>
+              <p> Username <strong>admin</strong> not allowed. </p>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="col-md-4"></div>
+            <div class="error col-md-4" id="redirect_username_error" hidden>
+              <p> Username must be less than or equal to 8 characters long and must start with an alphabetic character. </p>
+            </div>
+          </div>
+
+          <div class="col-md-12">
+            <div class="col-md-4"></div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="redirect_username" name="user_id" required="" placeholder="Username"/>
+            </div>
+          </div>
+          <br/><br/>
+          <div class="col-md-12">
+            <div class="col-md-4"></div>
+            <div class="col-md-4">
+              <input class="btn btn-md btn-primary btn-block" type="submit" value="Login" id="redirect_login"/><br/>
+            </div>
+          </div>
+          <br/><br/>
+        </div> <!-- modal-body -->
+
+      </div> <!-- modal-content -->
+    </div> <!-- modal-dialog -->
+  </div> <!-- Redirect Modal -->
 
 <footer>
-  <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-  <script src="https://cdn.socket.io/socket.io-1.3.5.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  <script src="js/jquery-2.2.3.min.js"></script>
+  <script src="js/socket.io-1.4.5.js"></script>  
+  <script src="js/tether.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
   <script src="js/jquery-ui/jquery-ui.min.js"></script>
   <script type="text/javascript" src="js/lodash.min.js"></script>
-  <script type="text/javascript" src="js/xml2json.min.js"></script>
 
   <script src="js/host.js"></script>
+
+  <script src="js/admin_vars.js"></script>
   <script src="js/admin_sockets.js"></script>
   <script src="js/admin_functions.js"></script>
   <script src="js/admin.js"></script>
@@ -324,9 +405,8 @@
 
   <script>
     $(document).ready(function() {
-    $('#body').show();
+      $('#body').show();
     });
-    var x2js = new X2JS();
     var socket = Admin.Socket(io(host));
 
     var acc = document.getElementsByClassName("accordion");
@@ -345,7 +425,7 @@
   ga('create', 'UA-87061901-2', 'auto');
   ga('send', 'pageview');
 
-</script>
+  </script>
 </footer>
   
 </body>

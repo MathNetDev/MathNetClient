@@ -14,10 +14,23 @@
     var init = function (socket) {
        // sock = socket;
 
-        // This funcrion takes a username and password provided by the user
+        // This function takes a username and password provided by the user
         // The socket then emits this data to the server to create the admin
         var create_admin = function(username, password, secret) {
             socket.emit('create-admin', username, password, secret);
+        };
+
+        // This function takes a time and pings it
+        var ping = function(time) {
+            socket.emit('ping', time);
+        };
+
+
+        // This function takes the admin_id, their current password, and a
+        // new password to change it to. The socket emits this data to
+        // the server to change the user's password
+        var change_password = function(admin_id, password, new_password, secret) {
+            socket.emit('change-password', admin_id, password, new_password, secret);
         };
 
         // Takes admin id and a normal string 
@@ -29,8 +42,8 @@
         // This function takes a class name and group count provided by the 
         // user. The socket then emits this data to the server to create 
         // the class and groups. 
-        var add_class = function (class_name, group_count, secret, admin_id) {
-            socket.emit('add-class', class_name, group_count, secret, admin_id);
+        var add_class = function (class_name, group_count, secret, admin_id, group_colors) {
+            socket.emit('add-class', class_name, group_count, secret, admin_id, group_colors);
         };
 
         // This function takes a class id provided by the user. The socket then
@@ -39,25 +52,53 @@
             socket.emit('join-class', class_id, secret);
         };
 
-        // This function takes a class name provided by the user.
+        // This function takes an admin id provided by the user.
         // The socket then emits this data to the server to create a 
         // group for the class.
-        var add_group = function (class_id, secret) {
-            socket.emit('add-group', class_id, secret);
+        var add_group = function (class_id, secret, colors) {
+            socket.emit('add-group', class_id, secret, colors);
         }
 
-        // This function takes a class name provided by the user.
+        // This function takes an admin id provided by the user.
         // The socket then emits this data to the server to create a 
         // toolbar for the class.
-        var save_toolbar = function (class_id, toolbar_name, tools) {
-            socket.emit('save-toolbar', class_id, toolbar_name, tools);
+        var save_toolbar = function (admin_id, toolbar_name, tools, action) {
+            socket.emit('save-toolbar', admin_id, toolbar_name, tools, action);
         }
 
         // This function takes a class name provided by the user.
         // The socket then emits this data to the server to get all 
         // the toolbars for the class.
-        var get_toolbars = function (class_id) {
-            socket.emit('get-toolbars', class_id);
+        var get_toolbars = function (admin_id) {
+            socket.emit('get-toolbars', admin_id);
+        }
+
+        // This function takes an admin id and the tools provided by the user.
+        // The socket then emits this data to the server to delete a toolbar
+        // from the class.
+        var delete_toolbar = function (admin_id, toolbar_name) {
+            socket.emit('delete-toolbar', admin_id, toolbar_name);
+        }
+
+        // This function takes a admin id provided by the user.
+        // The socket then emits this data to the server to create a 
+        // xml for the class.
+        var save_xml = function (admin_id, xml_name, xml, toolbar, action) {
+            socket.emit('save-xml', admin_id, xml_name, xml, toolbar, action);
+        }
+
+        // This function takes a admin id provided by the user.
+        // The socket then emits this data to the server to get all 
+        // the xmls for the class.
+        var get_xmls = function (admin_id) {
+            socket.emit('get-xmls', admin_id);
+        }
+
+        // This function takes a admin id and xml name provided by the user.
+        // The socket then emits this data to the server to delete an xml
+        // from the class.
+        var delete_xml = function (admin_id, xml_name) {
+            socket.emit('delete-xml', admin_id, xml_name);
         }
 
         // This function takes a username and a password
@@ -66,11 +107,11 @@
             socket.emit('check-username', username, password, secret);
         }
 
-        // This function takes a class id and the tools provided by the user.
-        // The socket then emits this data to the server to delete a toolbar
-        // from the class.
-        var delete_toolbar = function (class_id, toolbar_name) {
-            socket.emit('delete-toolbar', class_id, toolbar_name);
+        // This function takes a class name provided by the user.
+        // The socket then emits this data to the server to get all 
+        // the users for the class.
+        var get_class_users = function (class_id, callback) {
+            socket.emit('get-class-users', class_id, callback);
         }
 
         // This function takes a class id and group id provided by the user.
@@ -117,8 +158,8 @@
         //This function takes a username, class_id, group_id, and XML
         //It then emits a socket event to change the class's XML in the datastructure
         //based on the given XML, group_id, and class_id
-        var xml_change = function(username, class_id, group_id, xml, toolbar) {
-            socket.emit('xml_change', username, class_id, group_id, xml, toolbar);
+        var xml_change = function(data) {
+            socket.emit('xml_change', data);
         }
 
         //This function takes a username, class_id, and group_id
@@ -144,6 +185,10 @@
             server_error(data.message);
         });
 
+        socket.on('ping-response', function(time) {
+            ping_response(time);
+        });
+
         socket.on('add-class-response', function(data) {
             add_class_response(data.class_id, data.class_name, data.group_count);
         });
@@ -152,8 +197,12 @@
             add_group_response();
         });
 
-        socket.on('create-admin-response', function(data){
+        socket.on('create-admin-response', function(data) {
             create_admin_response(data.check);
+        });
+
+        socket.on('change-password-response', function(data) {
+            change_password_response(data.success);
         });
 
         socket.on('get-toolbar-response', function(data) {
@@ -162,6 +211,18 @@
 
         socket.on('delete-toolbar-response', function() {
             delete_toolbar_response();
+        });
+
+        socket.on('get-xmls-response', function(data) {
+            get_xmls_response(data);
+        });
+
+        socket.on('delete-xml-response', function() {
+            delete_xml_response();
+        });
+
+        socket.on('get-class-users-response', function(data) {
+            get_class_users_response(data);
         });
 
         socket.on('delete-class-response', function(data) {
@@ -173,7 +234,6 @@
         });
 
         socket.on('leave-class-response', function(data) {
-            console.log("hello");
             leave_class_response(data.disconnect);
         });
 
@@ -182,10 +242,7 @@
                                 data.other_members, data.status);
         });
 
-        socket.on('coordinate_change_response', function(data) {
-            coordinate_change_response(data.username, data.class_id, 
-                                       data.group_id, data.x, data.y, data.info);
-        });
+       
         
         socket.on('get-classes-response', function(data){
             get_classes_response(data.classes, data.secret);
@@ -210,6 +267,7 @@
         return {
             add_class: add_class,
             create_admin: create_admin,
+            change_password: change_password,
             create_session: create_session,
             join_class: join_class,
             add_group: add_group,
@@ -224,8 +282,13 @@
             delete_class: delete_class,
             save_settings: save_settings,
             get_classes: get_classes,
+            get_class_users: get_class_users,
             xml_change: xml_change,
             get_xml: get_xml,
+            save_xml: save_xml,
+            get_xmls: get_xmls,
+            delete_xml: delete_xml,
+            ping: ping,
             disconnect: disconnect
         };
     };
