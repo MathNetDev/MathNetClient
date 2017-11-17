@@ -5,7 +5,6 @@
 body {
     padding: 15px;
     background-color: #abc;
-    overflow-y:scroll;
 }
 #error_frame:not(:empty){
     color:red;
