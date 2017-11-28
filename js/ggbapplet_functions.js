@@ -134,13 +134,13 @@ function checkLocks(appletName){
         //console.log(ggb_user);
 
         if ((username !== ggb_user && username != "admin") && ggb_user != "unassigned"){
-            if(objType == 'numeric'){
+            if(objType == 'numeric' || objType == 'textfield'){
                 appletName.setFixed(name, true, false);
             } else {
                 appletName.setFixed(name, true);
             }
         } else if (username === ggb_user || username == "admin"){
-            if(objType == 'numeric'){
+            if(objType == 'numeric' || objType == 'textfield'){
                 appletName.setFixed(name, false, true);
             } else {
                 appletName.setFixed(name, false);
@@ -216,13 +216,13 @@ function checkUser(object){
     var isPoint = (type == "point");
     if(username !== ggb_user && isPoint && ggb_user != "unassigned"){
         if (username != "admin" && move){
-            if(objType == 'numeric'){
+            if(objType == 'numeric' || objType == 'textfield'){
                 appletName.setFixed(name, true, false);
             } else {
                 appletName.setFixed(name, true);
             }
         } else if (username == "admin" && !move){
-            if(objType == 'numeric'){
+            if(objType == 'numeric' || objType == 'textfield'){
                 appletName.setFixed(name, false, true);
             } else {
                 appletName.setFixed(name, false);

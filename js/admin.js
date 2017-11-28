@@ -265,7 +265,7 @@ $(function() {
 
     $sendconstruction_button.bind('click', function(){
         var xml = $.parseXML(document.applet.getXML());
-        var toolbar = $(xml).find('toolbar').attr('items').replace(/,/g, "").replace(/  /g, " ").replace(/ \| /g, "|").replace(/ /g, ",");
+        var toolbar = $(xml).find('toolbar').attr('items').replace(/  /g, " ").replace(/ \| /g, "|").replace(/ /g, ",");
         var construction_groups = $('.construction_groups').val();
         if(!construction_groups){
             $('.construction_groups option').prop('selected', true);
