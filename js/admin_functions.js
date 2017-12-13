@@ -418,8 +418,11 @@ function join_class(class_id){
 function ggbOnInit(arg) {
     var name, num, index = arg.search('[0-9]');
     var applet = document[arg];
+    applet.setCoordSystem(-10,10,-10,10);
+    applet.evalCommand("SetAxesRatio(1,1)");
+    applet.setAxisSteps(1, 2,2,2);
     applet.evalCommand("CenterView[(0,0)]");
-    applet.evalCommand("ZoomOut[4,(0,0)]");        
+    //applet.evalCommand("ZoomOut[4,(0,0)]");       
     if (index != -1){
         num = arg.slice(index);
         name = arg.slice(0, index);
@@ -512,6 +515,8 @@ function view_merge(event){
     applet.setPerspective('G');
     applet.setCoordSystem(-10,10,-10,10);
     applet.evalCommand("SetAxesRatio(1,1)");
+    applet.setAxisSteps(1, 2,2,2);
+    applet.evalCommand("CenterView[(0,0)]");
     $('#views_checkboxes :checkbox').hide();
     $('.merge_group').css('visibility','visible');
 }
