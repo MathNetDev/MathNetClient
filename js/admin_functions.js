@@ -58,6 +58,8 @@ function add_class_response(class_id, class_name, group_count) {
     $class_view.show();
     $design_tab.show();
     $view_tab.show();
+    $filtered_merged_view_tab.show();
+    $overlayed_image_view_tab.show();
 
     $class_name.html(class_name);
     $class_id.html("ID : " + class_id);
@@ -288,6 +290,8 @@ function leave_class_response(disconnect) {
     $design_icons.empty();
     $design_tab.hide();
     $view_tab.hide();
+    $filtered_merged_view_tab.hide();
+    $overlayed_image_view_tab.hide();
 
     $error_class_input.hide();
     $empty_class_input.hide();
@@ -411,6 +415,10 @@ function check_session_response(admin_id, check){
  * @description for letting student join class
  */
 function join_class(class_id){
+	//Adds a Link to a Pre-filled Class ID Student Page
+    var current_path = window.location.pathname;
+    document.getElementById('student_class_id_link').href = current_path.substring(0,window.location.pathname.lastIndexOf('/')) + "/student.html?class_id="+class_id; 
+    
     socket.join_class(class_id, $secret);
 }
 
@@ -426,7 +434,7 @@ function ggbOnInit(arg) {
     if (index != -1){
         num = arg.slice(index);
         name = arg.slice(0, index);
-        if (name == "applet" && num <= $('ul.groups div').length){
+        if ((name == "applet" || name == "merged_view_applet" || name == "overlayed_image_view_applet") && num <= $('ul.groups div').length){
             var class_id = sessionStorage.getItem('admin_class_id');        
             socket.get_xml('admin', class_id, num);
         }
@@ -435,11 +443,44 @@ function ggbOnInit(arg) {
     applet.registerAddListener("addLock");
 }
 
+//Called when the Live/Not Live Toggle is Set/Unset for the Merged View
+function liveUpdatesCheckboxChange(checkbox)
+{
+    if(checkbox.checked == true)
+    {
+        filtered_view_merge(this); 
+    }
+}
+
 //handler for xml_change response, appends message to chatbox, and calls appletSetExtXML()
 function xml_change_response(username, class_id, group_id, xml, toolbar) {
     var tab = $('a[data-toggle="tab"][aria-expanded=true]').html();
     if(tab == "View")
         appletSetExtXML(xml, toolbar, null, group_id);
+    
+    if(tab == "Filtered Merged View" && $('.filtered_unmergeview_button').is(":visible"))
+    {
+        appletSetExtXML(xml, toolbar, null, group_id);
+        if($("#myonoffswitch").is(':checked'))
+        {
+            filtered_view_merge(this);
+        }
+    }
+    else if(tab == "Filtered Merged View" && $('.filtered_mergeview_button').is(":visible"))
+    {
+        appletSetExtXML(xml, toolbar, null, group_id);
+    }
+    else if(tab == "Overlayed Image View")
+    {
+        var id = 'img_' + group_id;
+        $('#img_'+group_id+'').remove();
+        
+        appletSetExtXML(xml, toolbar, null, group_id);
+
+        var img = '<img src="data:image/png;base64,'+document['overlayed_image_view_applet'+group_id].getPNGBase64(1.5, true, undefined)+'" id="img_'+group_id+'" style="position:absolute;">';
+        $('#overlayed_image_div .panel-body').append(img);
+    }
+    
     //ggbOnInit();
 }
 
@@ -455,10 +496,13 @@ function get_xml_response(username, class_id, group_id, xml, toolbar){
 function views_change(event){
     var box = $(event)[0];
     var $view = $("."+box.name);
+    var group_id = box.name.split('_')[2];
 
     if(box.checked){
+    	$('#img_'+group_id).show();
         $view.show();
     } else {
+    	$('#img_'+group_id).hide();
         $view.hide();
     }
 }
@@ -625,6 +669,146 @@ function unmerge_views(event){
         var value = array[i]["value"];
         randomizeColors(document[value], 'default');
     }
+}
+
+//called on merge view button press in the Filtered Mergeview tab
+//this parses the xml of all shown groups and condenses
+//them into one XML for appletSetExtXML to evaluate
+function filtered_view_merge(event){
+    $('.filtered_mergeview_button').hide();
+    $('.filtered_unmergeview_button').show();
+    $('.onoffswitch').show();
+    $clear_buttons.hide();
+
+    var XMLs = "";
+    var array = $('#group_select_checkboxes :checked');
+    var counter = 0, count = 0; // for checking and not deleting the first admin objects
+    var numgroups = ($('ul.groups div').length)+1;
+    var applet = document['merged_view_applet' + numgroups];
+
+    var cur_xml = applet.getXML();
+    var cur_xml_doc = $.parseXML(cur_xml);
+    var cur_construction = $(cur_xml_doc).find('construction')[0];
+
+    var selected_objs_for_merging = [];
+    $('[name="merge_objs"]:checked').each(function() {
+        selected_objs_for_merging.push($(this).attr('value'));
+    });
+
+    for (var i = 0; i < array.length ; i++){
+        var value = array[i]["value"];
+        var num = array[i]["value"].substr(value.lastIndexOf('t') + 1 , value.length - value.lastIndexOf('t'));
+        randomizeColors(document[value]);
+        var parsing = document[value].getXML();
+        var xml;
+
+        [xml, counter] = rename_labels(parsing, num, counter);
+
+        xml = filter_objects(xml,selected_objs_for_merging);
+        
+        if (counter == 1 && count == 0) // if these are the first admin objects dont delete them
+            count++;
+        else if(counter == 1)  // if these are not the first admin objects delete them 
+            xml = remove_admin_objects(xml);
+
+        var new_construction = $($.parseXML(xml)).find('construction')[0];
+
+        XMLs += new_construction.innerHTML;
+       
+        $("." + array[i]["name"]).hide()
+
+    }
+    cur_construction.innerHTML = XMLs;
+    var final_xml = '"' + $(cur_xml_doc).find('geogebra')[0].outerHTML + '"';
+    
+    appletSetExtXML(final_xml, '', null, numgroups);
+    var numelems = applet.getObjectNumber();
+    for (i = 0; i < numelems; i++){
+        var name = applet.getObjectName(i);
+        applet.setFixed(name, false, true);
+    }
+    
+    applet.setPerspective('G');
+    applet.setCoordSystem(-10,10,-10,10);
+    applet.evalCommand("SetAxesRatio(1,1)");
+    applet.setAxisSteps(1, 2,2,2);
+    applet.evalCommand("CenterView[(0,0)]");
+    $('#group_select_checkboxes :checkbox').hide();
+    $('#filter_merge_items .panel-body :checkbox').hide();
+    $('.filtered_merge_group').css('visibility','visible');
+}
+
+//Called when the unmerge views button on the Filtered Mergeview Tab is pressed.
+//it shows all hidden divs from the merge view
+function filtered_unmerge_views(event){
+    $('#group_select_checkboxes :checkbox').show();
+    $('.filtered_mergeview_button').show();
+    $('.filtered_unmergeview_button').hide();
+    $('.onoffswitch').hide();
+    $('#myonoffswitch').prop('checked', true);
+    $('#filter_merge_items .panel-body :checkbox').show();
+    $('.filtered_merge_group').css('visibility','hidden');
+    $clear_buttons.show();
+
+    var array = $('#group_select_checkboxes :checked');
+    for (var i = 0; i < array.length; i++){
+        $("." + array[i]["name"]).show();
+        var value = array[i]["value"];
+        randomizeColors(document[value], 'default');
+    }
+}
+
+//Filter Objects based on the User's Selection of types to Merge on the Filtered Merge View Tab
+function filter_objects(xml,objs_to_be_merged){
+    var xobj = $.parseXML(xml);
+    var commands = $(xobj).find('construction').find('command');
+    var elements = $(xobj).find('construction').find('element');
+    var deleted_array = [];
+
+    var is_obj_to_be_kept = 0;
+
+    if(elements != undefined){
+        for(i = elements.length-1; i >= 0; i--){
+            var obj_type = $(elements[i]).attr('type');
+            if(obj_type !== undefined){
+                is_obj_to_be_kept = 0;
+                for(var j = 0; j < objs_to_be_merged.length; j++)
+                {
+                    if (obj_type.trim() === objs_to_be_merged[j].trim()){
+                        is_obj_to_be_kept = 1;
+                        break;
+                    }
+                }
+                if(is_obj_to_be_kept == 0)
+                {
+                    var label = $(elements[i])[0].attributes[1];
+                    deleted_array.push(label.value);
+                    $(elements[i]).remove();
+                }
+            }
+        }
+    }
+    if(commands !== undefined){
+        for(var i = commands.length-1; i >= 0; i--){
+            var inputs = $(commands[i]).find('input')[0].attributes;
+            var outputs = $(commands[i]).find('output')[0].attributes;
+            for(var j = 0; j < inputs.length; j++){
+                if (deleted_array.includes(inputs[j].value)) {
+                    $(commands[i]).remove();
+                    break;
+                }
+            }
+            for(var j = 0; j < outputs.length; j++){
+                if (deleted_array.includes(outputs[j].value)) {
+                    $(commands[i]).remove();
+                    break;
+                }
+            }
+        } 
+    }
+
+    var new_xml = $(xobj).find('geogebra')[0].outerHTML;
+    return new_xml;
 }
 
 //this is called when a user presses the hyperlink for group i

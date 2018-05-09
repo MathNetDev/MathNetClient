@@ -16,6 +16,17 @@ function appletSetExtXML(xml, toolbar, properties, id){
     if (typeof document['applet' + id] !== 'undefined'){
         appletName = document['applet' + id];
     }
+    
+    //Get Appropriate appletName depending on the Currently Active View/Tab
+    if ($('a[data-toggle="tab"][aria-expanded=true]').html() == "Filtered Merged View" && typeof document['merged_view_applet' + id] !== 'undefined')
+    {
+        appletName = document['merged_view_applet' + id];
+    }
+    else if($('a[data-toggle="tab"][aria-expanded=true]').html() == "Overlayed Image View" && typeof document['overlayed_image_view_applet' + id] !== 'undefined')
+    {
+        appletName = document['overlayed_image_view_applet' + id];
+    }
+    
     if(properties != null && properties.hasOwnProperty('perspective')){
         // need to set the perspective before setting the XML
         appletName.setPerspective(properties['perspective']);
@@ -61,6 +72,22 @@ function appletSetExtXML(xml, toolbar, properties, id){
         if(properties.hasOwnProperty('coord_system')){
             appletName.setCoordSystem(properties['coord_system']['x_min'] ,properties['coord_system']['x_max'], properties['coord_system']['y_min'], properties['coord_system']['y_max']);
         }
+        
+        /* Set Applet's Graphics 2 Window Parameters if Present */
+        if(properties.hasOwnProperty('g2axis_display')){
+            appletName.setAxesVisible(2, properties['g2axis_display'], properties['g2axis_display']);
+        }
+        if(properties.hasOwnProperty('g2grid_display')){
+            appletName.setGridVisible(2,properties['g2grid_display']);  
+        }
+        if(properties.hasOwnProperty('g2axis_steps')){
+            appletName.setAxisSteps(2, properties['g2axis_steps']['x'], properties['g2axis_steps']['y'], properties['g2axis_steps']['z']);            
+        }
+        if(properties.hasOwnProperty('g2coord_system')){
+            appletName.evalCommand('SetActiveView(2)');
+            appletName.evalCommand('ZoomIn('+properties['g2coord_system']['x_min']+','+properties['g2coord_system']['y_min']+','+properties['g2coord_system']['x_max']+','+properties['g2coord_system']['y_max']+')');
+        }
+        
     }
 }
 

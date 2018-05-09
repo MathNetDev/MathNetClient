@@ -130,6 +130,20 @@
 
         ga('create', 'UA-87061901-2', 'auto');
         ga('send', 'pageview');
+        
+        //Code for Pre-filling Class ID if URL contains it
+        $(document).ready(function() {
+          if($('.login_view').is(":visible"))
+          {
+            var url = new URL(window.location.href);
+            var class_id = url.searchParams.get("class_id");
+            if(class_id != null)
+            {
+              $('.class_id').val(class_id);
+            }
+          }
+        });
+        //End of Code for Pre-filling Class ID
       </script>
     </footer>
   </body>

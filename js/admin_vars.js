@@ -4,6 +4,24 @@ var $secret = 'ucd_247';
 var $view_tab = $('#view_tab');
 var $lists = $('.lists');
 
+var $filtered_merged_view_tab = $('#filtered_merged_view_tab');
+var $individual_groups_view_jsapps = $('#individual_groups_view_jsapps');
+var $overlayed_image_view_tab = $('#overlayed_image_view_tab');
+var $overlayed_image_views_jsapps = $('#overlayed_image_views_jsapps');
+var $onoffswitch = $('.onoffswitch');
+
+var $g2Toggle = $('#g2Toggle');
+var $g2Box = $('#g2Box');
+var $g2axisToggle = $('#g2axisToggle');
+var $g2gridToggle = $('#g2gridToggle');
+var $g2perspective = $('#g2perspective');
+var $g2axis_step_x = $('#g2axis_step_x');
+var $g2axis_step_y = $('#g2axis_step_y');
+var $g2axis_step_z = $('#g2axis_step_z');
+var $g2coord_x_min = $('#g2coord_x_min');
+var $g2coord_x_max = $('#g2coord_x_max');
+var $g2coord_y_min = $('#g2coord_y_min');
+var $g2coord_y_max = $('#g2coord_y_max');
 
 var $container = $('.container');
 var $create_user_view = $('.create_user_view'); // Div holding user creation view
