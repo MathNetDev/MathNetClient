@@ -854,7 +854,7 @@ $(function() {
                     "screenshotGenerator":false,
                     "preventFocus":true
                 };
-            var mergegroup = '<div class="filtered_merge_group" style="visibility:hidden;overflow:hidden;"><h4> Merge Group</h4><div class="geogebrawebapplet"' +
+            var mergegroup = '<div class="filtered_merge_group" style="visibility:hidden"><h4> Merge Group</h4><div class="geogebrawebapplet"' +
                 'id="merged_view_appletContainer' + numgroups + '"style="width:100%;height:650px;display:block;"></div></div><br/>';
 
             var mergebutton = '&emsp;&emsp;<input class="btn btn-default filtered_mergeview_button" onclick="filtered_view_merge(this)"'+
