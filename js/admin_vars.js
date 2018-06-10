@@ -9,6 +9,8 @@ var $individual_groups_view_jsapps = $('#individual_groups_view_jsapps');
 var $overlayed_image_view_tab = $('#overlayed_image_view_tab');
 var $overlayed_image_views_jsapps = $('#overlayed_image_views_jsapps');
 var $onoffswitch = $('.onoffswitch');
+var gen_new_colors = true;
+var filtered_merged_view_obj_colors = [];
 
 var $g2Toggle = $('#g2Toggle');
 var $g2Box = $('#g2Box');

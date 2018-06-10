@@ -97,20 +97,29 @@ function clearApplet(appletName){
 }
 
 //This function changes the colors of all elements on the local view to a random color
-function randomizeColors(applet, r, g, b) {
+function randomizeColors(gen_new_colors, received_colors, applet, r, g, b) {
     //cur_xml = appletName.getXML(); 
     var minimum = 0, maximum = 255, colors = [], i;
     var default_point = [0,0,255];
     var default_line = [153,51,0];
     var regex = /[a-z]+/
 
-    if (r != undefined && g != undefined && b != undefined){
-        colors.push(r, g, b);
-    } else {
-        for(i = 0; i < 3; i++){
-            colors.push(Math.floor(Math.random() * (maximum - minimum + 1)) + minimum);
-        } //this is your color
+    //If Colors Already Generated then Use the Colors sent in the Parameter
+    if(gen_new_colors == true)
+    {
+        if (r != undefined && g != undefined && b != undefined){
+            colors.push(r, g, b);
+        } else {
+            for(i = 0; i < 3; i++){
+                colors.push(Math.floor(Math.random() * (maximum - minimum + 1)) + minimum);
+            } //this is your color
+        }
     }
+    else
+    {
+        colors = received_colors;
+    }
+
     applet.unregisterUpdateListener("checkUser");
     var numelems = applet.getObjectNumber();
     for (i = 0; i < numelems; i++){
@@ -133,6 +142,7 @@ function randomizeColors(applet, r, g, b) {
         }
     }
     applet.registerUpdateListener("checkUser");
+    return colors;
 }
 
 // Converts RGB color to HEX
@@ -180,7 +190,7 @@ function updateColors()
 {
     var colors = sessionStorage.getItem('group_colors');
     colors = colors.split("-");
-    randomizeColors(document.applet, colors[0], colors[1] , colors[2]);
+    randomizeColors(true, [], document.applet, colors[0], colors[1] , colors[2]);
 }
 
 
