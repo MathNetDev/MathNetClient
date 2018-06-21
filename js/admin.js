@@ -894,7 +894,8 @@ $(function() {
                 ' type="button" value="Unmerge Views" style="display:none;">';
 
             var obj_merge_selection = '&emsp;&emsp;<input type="checkbox" name="merge_objs" style="display:inline;" value="point"> Points'+
-            '&emsp;<input type="checkbox" name="merge_objs" style="display:inline;" value="line"> Lines';
+            '&emsp;<input type="checkbox" name="merge_objs" style="display:inline;" value="line"> Lines'+
+            '&emsp;<input type="checkbox" name="merge_objs" style="display:inline;" value="conic"> Conics';
 
             $('#group_select_checkboxes .panel-body').append(mergebutton);
             $('#filter_merge_items .panel-body').append(obj_merge_selection);
