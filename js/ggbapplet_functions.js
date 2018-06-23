@@ -38,11 +38,36 @@ function appletSetExtXML(xml, toolbar, properties, id){
 
     xml = xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>').replace(/\\"/g, '"').replace(/\\n/g, '').replace(/\\t/g, '');
     xml = xml.substr(xml.indexOf("<"), xml.lastIndexOf(">"));
+
     var new_xml_doc = $.parseXML(xml);
     if(new_xml_doc !== null){
         var new_construction = $(new_xml_doc).find('construction')[0];
         cur_construction.innerHTML = new_construction.innerHTML;
     }
+
+    if (properties != null){
+        if(properties.hasOwnProperty('xZero')){
+            $(cur_xml_doc).find('coordSystem').attr('xZero', properties['xZero']);
+        }
+        if(properties.hasOwnProperty('yZero')){
+            $(cur_xml_doc).find('coordSystem').attr('yZero', properties['yZero']);
+        }
+        if(properties.hasOwnProperty('scale')){
+            $(cur_xml_doc).find('coordSystem').attr('scale', properties['scale']);
+       }
+        if(properties.hasOwnProperty('yscale')){
+            $(cur_xml_doc).find('coordSystem').attr('yscale', properties['yscale']);
+        }
+        // NOTE: It might not be necessary to modify the following two values
+        if(properties.hasOwnProperty('width')){
+            $(cur_xml_doc).find('size').attr('width', properties['width']);
+        }
+        if(properties.hasOwnProperty('height')){
+            $(cur_xml_doc).find('size').attr('height', properties['height']);
+        }
+    }
+    // console.log(cur_xml_doc)
+   
     // console.log($(new_xml_doc).find('geogebra')[0].innerHTML);
     // console.log($(cur_xml_doc).find('geogebra')[0].innerHTML);
     // $(cur_xml_doc).find('geogebra')[0].innerHTML = $(new_xml_doc).find('geogebra')[0].innerHTML;

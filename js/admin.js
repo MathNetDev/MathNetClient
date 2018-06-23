@@ -319,6 +319,7 @@ $(function() {
 
     $sendconstruction_button.bind('click', function(){
         var xml = $.parseXML(document.applet.getXML());
+        // console.log(document.applet.getXML());
         var toolbar = $(xml).find('toolbar').attr('items').replace(/  /g, " ").replace(/ \| /g, "|").replace(/ /g, ",");
         var construction_groups = $('.construction_groups').val();
         if(!construction_groups){
@@ -334,8 +335,16 @@ $(function() {
                 xml: document.applet.getXML(),
                 toolbar: toolbar,
                 toolbar_user: 'admin',
-                properties: {'perspective': 'AG'}
+                properties: {'perspective': 'AG',
+                            'xZero': $(xml).find('coordSystem').attr('xZero'),
+                            'yZero': $(xml).find('coordSystem').attr('yZero'),
+                            'scale': $(xml).find('coordSystem').attr('scale'),
+                            'yscale': $(xml).find('coordSystem').attr('yscale'),
+                            'width': $(xml).find('size').attr('width'),
+                            'height': $(xml).find('size').attr('height')
+                        }
             };
+            // console.log($(xml).find('size'));
             socket.xml_change(data);
         }
     });
