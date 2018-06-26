@@ -321,6 +321,7 @@ $(function() {
         var xml = $.parseXML(document.applet.getXML());
         // console.log(document.applet.getXML());
         var toolbar = $(xml).find('toolbar').attr('items').replace(/  /g, " ").replace(/ \| /g, "|").replace(/ /g, ",");
+        console.log(toolbar);
         var construction_groups = $('.construction_groups').val();
         if(!construction_groups){
             $('.construction_groups option').prop('selected', true);
@@ -339,12 +340,9 @@ $(function() {
                             'xZero': $(xml).find('coordSystem').attr('xZero'),
                             'yZero': $(xml).find('coordSystem').attr('yZero'),
                             'scale': $(xml).find('coordSystem').attr('scale'),
-                            'yscale': $(xml).find('coordSystem').attr('yscale'),
-                            'width': $(xml).find('size').attr('width'),
-                            'height': $(xml).find('size').attr('height')
+                            'yscale': $(xml).find('coordSystem').attr('yscale')
                         }
             };
-            // console.log($(xml).find('size'));
             socket.xml_change(data);
         }
     });

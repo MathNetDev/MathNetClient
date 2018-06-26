@@ -58,13 +58,6 @@ function appletSetExtXML(xml, toolbar, properties, id){
         if(properties.hasOwnProperty('yscale')){
             $(cur_xml_doc).find('coordSystem').attr('yscale', properties['yscale']);
         }
-        // NOTE: It might not be necessary to modify the following two values
-        if(properties.hasOwnProperty('width')){
-            $(cur_xml_doc).find('size').attr('width', properties['width']);
-        }
-        if(properties.hasOwnProperty('height')){
-            $(cur_xml_doc).find('size').attr('height', properties['height']);
-        }
     }
     // console.log(cur_xml_doc)
    
