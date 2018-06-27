@@ -71,7 +71,7 @@ function appletSetExtXML(xml, toolbar, properties, id){
     appletName.setXML(final_xml);
     checkLocks(appletName);
     
-    if (toolbar && toolbar !== "undefined" && toolbar !== "null" && toolbar.match(/\d+/g) && properties && properties['perspective'] && properties['perspective'].includes("G")){
+    if (toolbar && toolbar !== "undefined" && toolbar !== "null" && toolbar.match(/\d+/g) && properties && properties['perspective']){// && properties['perspective'].includes("G")){
         //console.log('setting ' + appletName.id + ' custom toolbar to: ' + toolbar);
         sessionStorage.setItem('toolbar', toolbar);
         appletName.setCustomToolBar(toolbar);

@@ -321,12 +321,13 @@ $(function() {
         var xml = $.parseXML(document.applet.getXML());
         // console.log(document.applet.getXML());
         var toolbar = $(xml).find('toolbar').attr('items').replace(/  /g, " ").replace(/ \| /g, "|").replace(/ /g, ",");
-        console.log(toolbar);
+        // var $(xml).find('view').toArray()[0].outerHTML);
         var construction_groups = $('.construction_groups').val();
         if(!construction_groups){
             $('.construction_groups option').prop('selected', true);
             construction_groups = $('.construction_groups').val();
         }
+        // var views = new Map()
         console.log(construction_groups);
         for(var i = 0; i < construction_groups.length; i++){
             var data = {
