@@ -74,7 +74,16 @@ function appletSetExtXML(xml, toolbar, properties, id){
     if (toolbar && toolbar !== "undefined" && toolbar !== "null" && toolbar.match(/\d+/g) && properties && properties['perspective']){// && properties['perspective'].includes("G")){
         //console.log('setting ' + appletName.id + ' custom toolbar to: ' + toolbar);
         sessionStorage.setItem('toolbar', toolbar);
-        appletName.setCustomToolBar(toolbar);
+        if (properties.hasOwnProperty('resetToolbar')){
+            if(properties['resetToolbar']){
+                sessionStorage.setItem('toolbar-record', toolbar);
+            }
+            if(sessionStorage.getItem('toolbar-record')){
+                appletName.setCustomToolBar(sessionStorage.getItem('toolbar-record'));
+            }
+        } else {
+            appletName.setCustomToolBar(toolbar);
+        }
     }
     if (properties != null){
         // need to set the grid and axes visibility after setXML

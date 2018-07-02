@@ -341,7 +341,8 @@ $(function() {
                             'xZero': $(xml).find('coordSystem').attr('xZero'),
                             'yZero': $(xml).find('coordSystem').attr('yZero'),
                             'scale': $(xml).find('coordSystem').attr('scale'),
-                            'yscale': $(xml).find('coordSystem').attr('yscale')
+                            'yscale': $(xml).find('coordSystem').attr('yscale'),
+                            'resetToolbar': $('#send-toolbar-checkbox').prop('checked')
                         }
             };
             socket.xml_change(data);
