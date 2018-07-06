@@ -29,7 +29,7 @@ if($hookSecret !== NULL)
 switch(strtolower($_SERVER["HTTP_X_GITHUB_EVENT"]))
 {
   case "ping":
-    echo "pong";
+    echo "pong...";
     break;
   case "push":
     // Get the current user. Pull the repo, kill node and start it again
