@@ -1,6 +1,6 @@
 <?php
 
-$hookSecret = file_get_contents("/var/www/html/.webhook_secret");
+$hookSecret = trim(file_get_contents("/var/www/html/.webhook_secret"));
 
 if($hookSecret !== NULL)
 {
@@ -22,9 +22,7 @@ if($hookSecret !== NULL)
 
   if($hash !== hash_hmac($algo, $rawPost, $hookSecret))
   {
-    if($_GET['sec'] != $hookSecret){
       exit("Hook secret does not match.");
-    }
   }
 };
 
