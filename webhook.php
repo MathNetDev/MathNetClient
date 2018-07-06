@@ -35,22 +35,22 @@ switch(strtolower($_SERVER["HTTP_X_GITHUB_EVENT"]))
     // Get the current user. Pull the repo, kill node and start it again
     $user = $_SERVER["USER"];
     if($user == "mathdev"){
-      system("cd /var/www/html/live/MathNetClient && git checkout dev && git reset HEAD --hard && git pull origin dev", $dummy);
-      system("cd /var/www/html/live/MathNetServer && git checkout master && git reset HEAD --hard && git pull origin dev", $dummy2);
+      system("cd /var/www/html/dev/MathNetClient && /usr/bin/git checkout dev && /usr/bin/git reset HEAD --hard && /usr/bin/git pull origin dev", $dummy);
+      system("cd /var/www/html/dev/MathNetServer && /usr/bin/git checkout dev && /usr/bin/git reset HEAD --hard && /usr/bin/git pull origin dev", $dummy2);
       system("killall node", $dummy3);
       system("/usr/bin/node /var/www/html/dev/MathNetServer/server.js 8887 &", $dummy4);
       echo "Ran DEV commands " . $dummy . "\n" . $dummy2 . "\n" . $dummy3 . "\n" . $dummy4;
     }
     if($user == "mathtest") {
-      system("cd /var/www/html/live/MathNetClient && git checkout test && git reset HEAD --hard && git pull origin test", $dummy);
-      system("cd /var/www/html/live/MathNetServer && git checkout master && git reset HEAD --hard && git pull origin test", $dummy2);
+      system("cd /var/www/html/test/MathNetClient && /usr/bin/git checkout test && /usr/bin/git reset HEAD --hard && /usr/bin/git pull origin test", $dummy);
+      system("cd /var/www/html/test/MathNetServer && /usr/bin/git checkout test && /usr/bin/git reset HEAD --hard && /usr/bin/git pull origin test", $dummy2);
       system("killall node", $dummy3);
       system("/usr/bin/node /var/www/html/test/MathNetServer/server.js 8888 &", $dummy4);
       echo "Ran TEST commands " . $dummy . "\n" . $dummy2 . "\n" . $dummy3 . "\n" . $dummy4;
     }
     if($user == "mathlive") {
-      system("cd /var/www/html/live/MathNetClient && git checkout master && git reset HEAD --hard && git pull origin master", $dummy);
-      system("cd /var/www/html/live/MathNetServer && git checkout master && git reset HEAD --hard && git pull origin master", $dummy2);
+      system("cd /var/www/html/live/MathNetClient && /usr/bin/git checkout master && /usr/bin/git reset HEAD --hard && /usr/bin/git pull origin master", $dummy);
+      system("cd /var/www/html/live/MathNetServer && /usr/bin/git checkout master && /usr/bin/git reset HEAD --hard && /usr/bin/git pull origin master", $dummy2);
       system("killall node", $dummy3);
       system("/usr/bin/node /var/www/html/live/MathNetServer/server.js 8889 &", $dummy4);
       echo "Ran LIVE commands " . $dummy . "\n" . $dummy2 . "\n" . $dummy3 . "\n" . $dummy4;
