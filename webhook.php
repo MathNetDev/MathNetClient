@@ -22,7 +22,9 @@ if($hookSecret !== NULL)
 
   if($hash !== hash_hmac($algo, $rawPost, $hookSecret))
   {
-    exit("Hook secret does not match." . $hash ." ----- ". hash_hmac($algo, $rawPost, $hookSecret) . " ---- ". $rawPost );
+    if($_GET['sec'] != $hookSecret){
+      exit("Hook secret does not match.");
+    }
   }
 };
 
