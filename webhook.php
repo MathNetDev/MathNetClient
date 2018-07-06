@@ -33,7 +33,7 @@ switch(strtolower($_SERVER["HTTP_X_GITHUB_EVENT"]))
     break;
   case "push":
     // Get the current user. Pull the repo, kill node and start it again
-    $user = get_current_user();
+    $user = $_SERVER["USER"];
     if($user == "mathdev"){
       system("cd /var/www/html/live/MathNetClient && git checkout dev && git reset HEAD --hard && git pull origin dev", $dummy);
       system("cd /var/www/html/live/MathNetServer && git checkout master && git reset HEAD --hard && git pull origin dev", $dummy);
