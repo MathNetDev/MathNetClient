@@ -16,6 +16,17 @@ function appletSetExtXML(xml, toolbar, properties, id){
     if (typeof document['applet' + id] !== 'undefined'){
         appletName = document['applet' + id];
     }
+    
+    //Get Appropriate appletName depending on the Currently Active View/Tab
+    if ($('a[data-toggle="tab"][aria-expanded=true]').html() == "Filtered Merged View" && typeof document['merged_view_applet' + id] !== 'undefined')
+    {
+        appletName = document['merged_view_applet' + id];
+    }
+    else if($('a[data-toggle="tab"][aria-expanded=true]').html() == "Overlayed Image View" && typeof document['overlayed_image_view_applet' + id] !== 'undefined')
+    {
+        appletName = document['overlayed_image_view_applet' + id];
+    }
+    
     if(properties != null && properties.hasOwnProperty('perspective')){
         // need to set the perspective before setting the XML
         appletName.setPerspective(properties['perspective']);
@@ -61,6 +72,22 @@ function appletSetExtXML(xml, toolbar, properties, id){
         if(properties.hasOwnProperty('coord_system')){
             appletName.setCoordSystem(properties['coord_system']['x_min'] ,properties['coord_system']['x_max'], properties['coord_system']['y_min'], properties['coord_system']['y_max']);
         }
+        
+        /* Set Applet's Graphics 2 Window Parameters if Present */
+        if(properties.hasOwnProperty('g2axis_display')){
+            appletName.setAxesVisible(2, properties['g2axis_display'], properties['g2axis_display']);
+        }
+        if(properties.hasOwnProperty('g2grid_display')){
+            appletName.setGridVisible(2,properties['g2grid_display']);  
+        }
+        if(properties.hasOwnProperty('g2axis_steps')){
+            appletName.setAxisSteps(2, properties['g2axis_steps']['x'], properties['g2axis_steps']['y'], properties['g2axis_steps']['z']);            
+        }
+        if(properties.hasOwnProperty('g2coord_system')){
+            appletName.evalCommand('SetActiveView(2)');
+            appletName.evalCommand('ZoomIn('+properties['g2coord_system']['x_min']+','+properties['g2coord_system']['y_min']+','+properties['g2coord_system']['x_max']+','+properties['g2coord_system']['y_max']+')');
+        }
+        
     }
 }
 
@@ -70,20 +97,29 @@ function clearApplet(appletName){
 }
 
 //This function changes the colors of all elements on the local view to a random color
-function randomizeColors(applet, r, g, b) {
+function randomizeColors(gen_new_colors, received_colors, applet, r, g, b) {
     //cur_xml = appletName.getXML(); 
     var minimum = 0, maximum = 255, colors = [], i;
     var default_point = [0,0,255];
     var default_line = [153,51,0];
     var regex = /[a-z]+/
 
-    if (r != undefined && g != undefined && b != undefined){
-        colors.push(r, g, b);
-    } else {
-        for(i = 0; i < 3; i++){
-            colors.push(Math.floor(Math.random() * (maximum - minimum + 1)) + minimum);
-        } //this is your color
+    //If Colors Already Generated then Use the Colors sent in the Parameter
+    if(gen_new_colors == true)
+    {
+        if (r != undefined && g != undefined && b != undefined){
+            colors.push(r, g, b);
+        } else {
+            for(i = 0; i < 3; i++){
+                colors.push(Math.floor(Math.random() * (maximum - minimum + 1)) + minimum);
+            } //this is your color
+        }
     }
+    else
+    {
+        colors = received_colors;
+    }
+
     applet.unregisterUpdateListener("checkUser");
     var numelems = applet.getObjectNumber();
     for (i = 0; i < numelems; i++){
@@ -106,6 +142,7 @@ function randomizeColors(applet, r, g, b) {
         }
     }
     applet.registerUpdateListener("checkUser");
+    return colors;
 }
 
 // Converts RGB color to HEX
@@ -153,7 +190,7 @@ function updateColors()
 {
     var colors = sessionStorage.getItem('group_colors');
     colors = colors.split("-");
-    randomizeColors(document.applet, colors[0], colors[1] , colors[2]);
+    randomizeColors(true, [], document.applet, colors[0], colors[1] , colors[2]);
 }
 
 
@@ -337,6 +374,11 @@ function appletInit(params){
     params.enableCAS = true;
     params.ggbBase64 = ggbBase64;
     var applet = new GGBApplet(params, true);
-    applet.setHTML5Codebase('http://tetsuo.ucdavis.edu/mathnet/5.0/web3d/');
+    
+    var current_path = window.location.pathname;
+    current_path = current_path.substring(0,window.location.pathname.lastIndexOf('/'));
+    applet.setHTML5Codebase(current_path + '/5.0/web3d/');
+    //applet.setHTML5Codebase('http://tetsuo.ucdavis.edu/mathnet/5.0/web3d/');
+    
     applet.inject(params.container, 'auto');
 }
