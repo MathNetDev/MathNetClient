@@ -38,11 +38,29 @@ function appletSetExtXML(xml, toolbar, properties, id){
 
     xml = xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>').replace(/\\"/g, '"').replace(/\\n/g, '').replace(/\\t/g, '');
     xml = xml.substr(xml.indexOf("<"), xml.lastIndexOf(">"));
+
     var new_xml_doc = $.parseXML(xml);
     if(new_xml_doc !== null){
         var new_construction = $(new_xml_doc).find('construction')[0];
         cur_construction.innerHTML = new_construction.innerHTML;
     }
+
+    if (properties != null){
+        if(properties.hasOwnProperty('xZero')){
+            $(cur_xml_doc).find('coordSystem').attr('xZero', properties['xZero']);
+        }
+        if(properties.hasOwnProperty('yZero')){
+            $(cur_xml_doc).find('coordSystem').attr('yZero', properties['yZero']);
+        }
+        if(properties.hasOwnProperty('scale')){
+            $(cur_xml_doc).find('coordSystem').attr('scale', properties['scale']);
+       }
+        if(properties.hasOwnProperty('yscale')){
+            $(cur_xml_doc).find('coordSystem').attr('yscale', properties['yscale']);
+        }
+    }
+    // console.log(cur_xml_doc)
+   
     // console.log($(new_xml_doc).find('geogebra')[0].innerHTML);
     // console.log($(cur_xml_doc).find('geogebra')[0].innerHTML);
     // $(cur_xml_doc).find('geogebra')[0].innerHTML = $(new_xml_doc).find('geogebra')[0].innerHTML;
@@ -53,10 +71,19 @@ function appletSetExtXML(xml, toolbar, properties, id){
     appletName.setXML(final_xml);
     checkLocks(appletName);
     
-    if (toolbar && toolbar !== "undefined" && toolbar !== "null" && toolbar.match(/\d+/g) && properties && properties['perspective'] && properties['perspective'].includes("G")){
+    if (toolbar && toolbar !== "undefined" && toolbar !== "null" && toolbar.match(/\d+/g) && properties && properties['perspective']){// && properties['perspective'].includes("G")){
         //console.log('setting ' + appletName.id + ' custom toolbar to: ' + toolbar);
         sessionStorage.setItem('toolbar', toolbar);
-        appletName.setCustomToolBar(toolbar);
+        if (properties.hasOwnProperty('resetToolbar')){
+            if(properties['resetToolbar']){
+                sessionStorage.setItem('toolbar-record', toolbar);
+            }
+            if(sessionStorage.getItem('toolbar-record')){
+                appletName.setCustomToolBar(sessionStorage.getItem('toolbar-record'));
+            }
+        } else {
+            appletName.setCustomToolBar(toolbar);
+        }
     }
     if (properties != null){
         // need to set the grid and axes visibility after setXML
