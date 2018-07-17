@@ -257,5 +257,9 @@ function ggbOnInit(arg) {
     });
 }
 
+$step_size_slider.bind('change', function() {
+    stepSize = $step_size_slider.val()/10;
+    $step_size_label.text($step_size_slider.val()/10);
+});
 
 

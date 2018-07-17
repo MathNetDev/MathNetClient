@@ -4,6 +4,10 @@ appletName = document.applet;
 var timeoutHandle;
 var $default_toolset = '0|1,501,67,5,19,72,75,76|2,15,45,18,65,7,37|4,3,8,9,13,44,58,47|16,51,64,70|10,34,53,11,24,20,22,21,23|55,56,57,12|36,46,38,49,50,71|30,29,54,32,31,33|17,26,62,73,14,68|25,52,60,61|40,41,42,27,28,35,6';
 
+var currentLabel;
+var finalApplet;
+var stepSize = 1.0;
+
 //This function takes the new XML, changes it and the old XML to a JSON format, and then 
 // parses it, and changes it back to XML to be set in the geogebra applet.
 function appletSetExtXML(xml, toolbar, properties, id){
@@ -59,6 +63,7 @@ function appletSetExtXML(xml, toolbar, properties, id){
             $(cur_xml_doc).find('coordSystem').attr('yscale', properties['yscale']);
         }
     }
+
     // console.log(cur_xml_doc)
    
     // console.log($(new_xml_doc).find('geogebra')[0].innerHTML);
@@ -85,6 +90,7 @@ function appletSetExtXML(xml, toolbar, properties, id){
             appletName.setCustomToolBar(toolbar);
         }
     }
+
     if (properties != null){
         // need to set the grid and axes visibility after setXML
         if(properties.hasOwnProperty('axis_display')){
@@ -114,8 +120,59 @@ function appletSetExtXML(xml, toolbar, properties, id){
             appletName.evalCommand('SetActiveView(2)');
             appletName.evalCommand('ZoomIn('+properties['g2coord_system']['x_min']+','+properties['g2coord_system']['y_min']+','+properties['g2coord_system']['x_max']+','+properties['g2coord_system']['y_max']+')');
         }
-        
     }
+
+    finalApplet = appletName;
+    registerListeners(cur_xml_doc);
+    addArrowButtonsEventlisteners();
+}
+
+function registerListeners(cur_xml_doc){
+
+    finalApplet.registerAddListener(function(label){
+        currentLabel = label;
+        $current_label.text(currentLabel);
+    });
+
+    var elements = $(cur_xml_doc).find('construction').find('element');
+
+     if(elements != undefined){
+        for(var i = 0; i < elements.length; i++){
+            // var obj_type = $(elements[i]).attr('type');
+            // if(obj_type == "point"){
+            var label = $(elements[i]).attr('label');
+
+            finalApplet.registerObjectClickListener(label, function (label){
+                currentLabel = label;
+                $current_label.text(currentLabel);
+            });
+            // }
+        }
+    }
+}
+
+function addArrowButtonsEventlisteners(){
+
+    $arrow_up_button.bind('click', function(){
+        if (finalApplet.getObjectType(currentLabel) == "point"){
+            finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel), finalApplet.getYcoord(currentLabel)+stepSize);
+        }
+    });
+    $arrow_down_button.bind('click', function(){
+        if (finalApplet.getObjectType(currentLabel) == "point"){
+            finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel), finalApplet.getYcoord(currentLabel)-stepSize);
+        }
+    });
+    $arrow_right_button.bind('click', function(){
+        if (finalApplet.getObjectType(currentLabel) == "point"){
+            finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel)+stepSize, finalApplet.getYcoord(currentLabel));
+        }
+    });
+    $arrow_left_button.bind('click', function(){
+        if (finalApplet.getObjectType(currentLabel) == "point"){
+            finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel)-stepSize, finalApplet.getYcoord(currentLabel));
+        }
+    });
 }
 
 //This clears the local applet view
