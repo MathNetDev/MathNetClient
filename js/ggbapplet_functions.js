@@ -132,6 +132,10 @@ function registerListeners(cur_xml_doc){
     finalApplet.registerAddListener(function(label){
         currentLabel = label;
         $current_label.text(currentLabel);
+        finalApplet.registerObjectClickListener(label, function (label){
+            currentLabel = label;
+            $current_label.text(currentLabel);
+        });
     });
 
     var elements = $(cur_xml_doc).find('construction').find('element');
