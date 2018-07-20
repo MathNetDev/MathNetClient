@@ -123,11 +123,11 @@ function appletSetExtXML(xml, toolbar, properties, id){
     }
 
     finalApplet = appletName;
-    /*registerListeners(cur_xml_doc);
+    registerListeners(cur_xml_doc);
     addArrowButtonsEventlisteners();
-    addKeyboardEventListeners();*/
+    addKeyboardEventListeners();
 }
-/*
+
 // This function registers event listeners to elements of the applet
 function registerListeners(cur_xml_doc){
 
@@ -207,7 +207,7 @@ function addKeyboardEventListeners(){
         }
     });
 }
-*/
+
 //This clears the local applet view
 function clearApplet(appletName){
     appletName.reset();
