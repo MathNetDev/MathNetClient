@@ -125,8 +125,10 @@ function appletSetExtXML(xml, toolbar, properties, id){
     finalApplet = appletName;
     registerListeners(cur_xml_doc);
     addArrowButtonsEventlisteners();
+    addKeyboardEventListeners();
 }
 
+// This function registers event listeners to elements of the applet
 function registerListeners(cur_xml_doc){
 
     finalApplet.registerAddListener(function(label){
@@ -155,6 +157,7 @@ function registerListeners(cur_xml_doc){
     }
 }
 
+// This function adds click event listeners to the UI buttons of the Student view
 function addArrowButtonsEventlisteners(){
 
     $arrow_up_button.bind('click', function(){
@@ -175,6 +178,33 @@ function addArrowButtonsEventlisteners(){
     $arrow_left_button.bind('click', function(){
         if (finalApplet.getObjectType(currentLabel) == "point"){
             finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel)-stepSize, finalApplet.getYcoord(currentLabel));
+        }
+    });
+}
+
+// This function adds keyboard event listeners to a selected point of the applet shown in the Student view
+function addKeyboardEventListeners(){
+
+    document.addEventListener("keypress", function(key){
+        if (key.which == 105) { // 105 is the ASCII code of 'i'
+            if (finalApplet.getObjectType(currentLabel) == "point"){
+                finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel), finalApplet.getYcoord(currentLabel)+stepSize);
+            }
+        }
+        else if (key.which == 106) { // 106 is the ASCII code of 'j'
+            if (finalApplet.getObjectType(currentLabel) == "point"){
+                finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel)-stepSize, finalApplet.getYcoord(currentLabel));
+            }
+        }
+        else if (key.which == 107) { // 107 is the ASCII code of 'k'
+            if (finalApplet.getObjectType(currentLabel) == "point"){
+                finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel), finalApplet.getYcoord(currentLabel)-stepSize);
+            }
+        }
+        else if (key.which == 108) { // 108 is the ASCII code of 'l'
+            if (finalApplet.getObjectType(currentLabel) == "point"){
+                finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel)+stepSize, finalApplet.getYcoord(currentLabel));
+            }
         }
     });
 }
