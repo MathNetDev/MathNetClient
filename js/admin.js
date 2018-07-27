@@ -781,6 +781,12 @@ $(function() {
         }else if (tab == 'view'){
             $design_toolbox.empty();
             $views_jsapp.empty();
+/*
+            var class_view_update_toggle = '<div class="onoffswitch" style="display:none;"> <input type="checkbox" name="onoffswitch" '
+            +'class="onoffswitch-checkbox" id="myonoffswitch" onchange="liveUpdatesCheckboxChange(this);" checked> </input> <label class="onoffswitch-label" for="myonoffswitch">' 
+            +'<span class="onoffswitch-inner"></span> <span class="onoffswitch-switch"></span> </label></div>';
+            $views_jsapp.append(class_view_update_toggle);
+*/
             $('#views_checkboxes').html('<div class="panel-heading"><h3 class="panel-title">Show Groups</h3></div><div class="panel-body"></div>');
             var numgroups = ($('ul.groups div').length)+1;
             for(var i = 1; i < numgroups; i++){
