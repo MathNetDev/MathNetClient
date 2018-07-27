@@ -50,6 +50,7 @@ function login_response(username, class_id) {
     username = username.replace(/&lt;/g,'<').replace(/&gt;/g, '>');
 
     sessionStorage.setItem('class_id', class_id);
+    sessionStorage.setItem('previous_username', sessionStorage.getItem('username'));
     sessionStorage.setItem('username', username);
     socket.groups_get(username, class_id);
 }
@@ -188,6 +189,7 @@ function get_xml_response(username, class_id, group_id, xml,toolbar, properties)
     if(properties !== null){
         sessionStorage.setItem('properties', JSON.stringify(properties));
     } else if (properties === null && sessionStorage.getItem('properties') !== null){
+        console.log(sessionStorage.getItem('properties'));
         properties = JSON.parse(sessionStorage.getItem('properties'));
     }
     if(!toolbar){
@@ -244,9 +246,13 @@ function group_color_response(colors) {
 
 //This function registers listeners on geogebra initialization 
 function ggbOnInit(arg) {
+    sessionStorage.setItem('setNewXML', 'true');
     document.applet.registerAddListener("addLock");
-    document.applet.registerUpdateListener("checkUser");
+    //document.applet.registerUpdateListener("checkUser");
     document.applet.registerRemoveListener("checkUser");
+  
+    document.applet.registerUpdateListener("Update");
+ 
     //document.applet.registerAddListener("updateColors");
     socket.group_color(sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'));
     if(arg != 'socket_call'){
