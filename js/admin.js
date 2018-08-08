@@ -384,6 +384,8 @@ $(function() {
             */
         }
 
+        localStorage.setItem('setNewXML', 'true');
+        
         toolbar = (perspectives_mapped.includes("S") || perspectives_mapped.includes("C") ||
         perspectives_mapped.includes("L") || perspectives_mapped.includes("B"))? null: toolbar;
         console.log(perspectives_mapped);
