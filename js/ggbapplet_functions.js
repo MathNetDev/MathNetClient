@@ -269,13 +269,12 @@ function checkUser(object){
         document.applet.setFixed(object, false, true);
     }
 
-    if ($('#myonoffswitch').is(':checked')){
-        if(ggb_user == "unassigned" && username != "admin" ){
-            document.applet.setCaption(object, username);
-        } else if (ggb_user != "unassigned" && username == "admin"){
-            document.applet.setCaption(object, "unassigned");
-        }
+    if(ggb_user == "unassigned" && username != "admin" ){
+        document.applet.setCaption(object, username);
+    } else if (ggb_user != "unassigned" && username == "admin"){
+        document.applet.setCaption(object, "unassigned");
     }
+    
     applet.registerUpdateListener("checkUser");
     // on update of Geogebra view, send clients updated XML
     check_xml(document.applet.getXML(), socket);
