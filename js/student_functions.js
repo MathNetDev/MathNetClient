@@ -50,6 +50,7 @@ function login_response(username, class_id) {
     username = username.replace(/&lt;/g,'<').replace(/&gt;/g, '>');
 
     sessionStorage.setItem('class_id', class_id);
+    sessionStorage.setItem('previous_username', sessionStorage.getItem('username'));
     sessionStorage.setItem('username', username);
     socket.groups_get(username, class_id);
 }
@@ -110,7 +111,7 @@ function group_join_response(username, class_id, group_id, group_size) {
                 "container":"appletContainer",
                 "id":"applet",
                 "width":$applet.innerWidth(),
-                "height":$(window).height()/1.3,
+                "height":$applet.innerWidth()*0.53,
                 "perspective":"AG",
                 "showAlgebraInput":true,
                 "showToolBarHelp":false,
@@ -188,6 +189,7 @@ function get_xml_response(username, class_id, group_id, xml,toolbar, properties)
     if(properties !== null){
         sessionStorage.setItem('properties', JSON.stringify(properties));
     } else if (properties === null && sessionStorage.getItem('properties') !== null){
+        console.log(sessionStorage.getItem('properties'));
         properties = JSON.parse(sessionStorage.getItem('properties'));
     }
     if(!toolbar){
@@ -245,8 +247,11 @@ function group_color_response(colors) {
 //This function registers listeners on geogebra initialization 
 function ggbOnInit(arg) {
     document.applet.registerAddListener("addLock");
-    document.applet.registerUpdateListener("checkUser");
+    //document.applet.registerUpdateListener("checkUser");
     document.applet.registerRemoveListener("checkUser");
+  
+    document.applet.registerUpdateListener("Update");
+ 
     //document.applet.registerAddListener("updateColors");
     socket.group_color(sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'));
     if(arg != 'socket_call'){
@@ -257,5 +262,9 @@ function ggbOnInit(arg) {
     });
 }
 
+$step_size_slider.bind('mousemove', function() {
+    stepSize = $step_size_slider.val()/10;
+    $step_size_label.text($step_size_slider.val()/10);
+});
 
 

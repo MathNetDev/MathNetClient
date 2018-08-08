@@ -319,12 +319,76 @@ $(function() {
 
     $sendconstruction_button.bind('click', function(){
         var xml = $.parseXML(document.applet.getXML());
+        // console.log(document.applet.getXML());
+        // console.log(document.applet.getXML());
         var toolbar = $(xml).find('toolbar').attr('items').replace(/  /g, " ").replace(/ \| /g, "|").replace(/ /g, ",");
+        // var $(xml).find('view').toArray()[0].outerHTML);
         var construction_groups = $('.construction_groups').val();
         if(!construction_groups){
             $('.construction_groups option').prop('selected', true);
             construction_groups = $('.construction_groups').val();
         }
+        var visible_views = $(xml).find('view').filter( function(index){
+            return $( this ).attr( "visible" ) === "true";
+        });
+
+        var visible_views_sorted = visible_views.sort(function(a,b){
+            var a_order = a.getAttribute('location').replace(/,/g, ''),
+                b_order = b.getAttribute('location').replace(/,/g, '');
+            if (a_order > b_order) {
+                return -1;
+            }
+            else if (b_order > a_order) {
+                return 1;
+            }
+            else {
+                return 0;
+            }
+        });
+        var perspectives_mapped = '';
+        for (var i=0; i < visible_views_sorted.length; ++i)
+        {
+            var id = visible_views_sorted[i].getAttribute('id');
+            if (id == '1') {
+                perspectives_mapped += 'G';
+            }
+            else if (id == '2') {
+                perspectives_mapped += 'A';
+            }
+            else if (id == '4') {
+                perspectives_mapped += 'S';
+            }
+            else if (id == '8') {
+                perspectives_mapped += 'C';
+            }
+            else if (id == '16') {
+                perspectives_mapped += 'D';
+            }
+            else if (id == '32') {
+                perspectives_mapped += 'L';
+            }
+            else if (id == '64') {
+                perspectives_mapped += 'B';
+            }
+            /*
+            else if (id == '128') {
+            }
+            else if (id == '512') {
+            }
+            else if (id == '4097') {
+            }
+            else if (id == '43') {
+            }
+            else if (id == '70') {
+            }
+            */
+        }
+
+        localStorage.setItem('setNewXML', 'true');
+        
+        toolbar = (perspectives_mapped.includes("S") || perspectives_mapped.includes("C") ||
+        perspectives_mapped.includes("L") || perspectives_mapped.includes("B"))? null: toolbar;
+        console.log(perspectives_mapped);
         console.log(construction_groups);
         for(var i = 0; i < construction_groups.length; i++){
             var data = {
@@ -334,7 +398,13 @@ $(function() {
                 xml: document.applet.getXML(),
                 toolbar: toolbar,
                 toolbar_user: 'admin',
-                properties: {'perspective': 'AG'}
+                properties: {'perspective': perspectives_mapped == ''? 'AG': perspectives_mapped,
+                            'xZero': $(xml).find('coordSystem').attr('xZero'),
+                            'yZero': $(xml).find('coordSystem').attr('yZero'),
+                            'scale': $(xml).find('coordSystem').attr('scale'),
+                            'yscale': $(xml).find('coordSystem').attr('yscale'),
+                            'resetToolbar': $('#send-toolbar-checkbox').prop('checked')
+                        }
             };
             socket.xml_change(data);
         }
@@ -713,6 +783,12 @@ $(function() {
         }else if (tab == 'view'){
             $design_toolbox.empty();
             $views_jsapp.empty();
+/*
+            var class_view_update_toggle = '<div class="onoffswitch" style="display:none;"> <input type="checkbox" name="onoffswitch" '
+            +'class="onoffswitch-checkbox" id="myonoffswitch" onchange="liveUpdatesCheckboxChange(this);" checked> </input> <label class="onoffswitch-label" for="myonoffswitch">' 
+            +'<span class="onoffswitch-inner"></span> <span class="onoffswitch-switch"></span> </label></div>';
+            $views_jsapp.append(class_view_update_toggle);
+*/
             $('#views_checkboxes').html('<div class="panel-heading"><h3 class="panel-title">Show Groups</h3></div><div class="panel-body"></div>');
             var numgroups = ($('ul.groups div').length)+1;
             for(var i = 1; i < numgroups; i++){
@@ -894,7 +970,8 @@ $(function() {
                 ' type="button" value="Unmerge Views" style="display:none;">';
 
             var obj_merge_selection = '&emsp;&emsp;<input type="checkbox" name="merge_objs" style="display:inline;" value="point"> Points'+
-            '&emsp;<input type="checkbox" name="merge_objs" style="display:inline;" value="line"> Lines';
+            '&emsp;<input type="checkbox" name="merge_objs" style="display:inline;" value="line"> Lines'+
+            '&emsp;<input type="checkbox" name="merge_objs" style="display:inline;" value="conic"> Conics';
 
             $('#group_select_checkboxes .panel-body').append(mergebutton);
             $('#filter_merge_items .panel-body').append(obj_merge_selection);

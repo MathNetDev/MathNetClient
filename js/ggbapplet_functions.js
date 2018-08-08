@@ -2,7 +2,12 @@
 var cur_xml = '<xml/>';
 appletName = document.applet;
 var timeoutHandle;
+var keypressHandler;
 var $default_toolset = '0|1,501,67,5,19,72,75,76|2,15,45,18,65,7,37|4,3,8,9,13,44,58,47|16,51,64,70|10,34,53,11,24,20,22,21,23|55,56,57,12|36,46,38,49,50,71|30,29,54,32,31,33|17,26,62,73,14,68|25,52,60,61|40,41,42,27,28,35,6';
+
+var currentLabel;
+var finalApplet;
+var stepSize = 1.0;
 
 //This function takes the new XML, changes it and the old XML to a JSON format, and then 
 // parses it, and changes it back to XML to be set in the geogebra applet.
@@ -11,6 +16,8 @@ function appletSetExtXML(xml, toolbar, properties, id){
     //console.log("setXml");
     var final_xml;
     var appletName = document.applet;
+
+    appletName.unregisterUpdateListener("Update");
     //console.log('appletSetExtXML id param: ' + id);
 
     if (typeof document['applet' + id] !== 'undefined'){
@@ -38,26 +45,87 @@ function appletSetExtXML(xml, toolbar, properties, id){
 
     xml = xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>').replace(/\\"/g, '"').replace(/\\n/g, '').replace(/\\t/g, '');
     xml = xml.substr(xml.indexOf("<"), xml.lastIndexOf(">"));
+
     var new_xml_doc = $.parseXML(xml);
-    if(new_xml_doc !== null){
-        var new_construction = $(new_xml_doc).find('construction')[0];
-        cur_construction.innerHTML = new_construction.innerHTML;
+
+    var prev_elements = $(cur_xml_doc).find('construction').find('element');
+    var new_elements = $(new_xml_doc).find('construction').find('element');
+
+    var setNewXML = !(localStorage.getItem('setNewXML') == 'false');
+    console.log(localStorage.getItem('setNewXML'));
+
+    if (!setNewXML){
+        if(new_elements != undefined){
+            for(var i = 0; i < new_elements.length; i++){
+                var label = $(new_elements[i]).attr('label');
+                var caption = $(new_elements[i]).find('caption').attr('val');
+                var ggb_user = appletName.getCaption(label);
+                var username = sessionStorage.getItem('username');
+                var objType = appletName.getObjectType(label);
+
+                if (objType == "point" && username != caption && caption != 'unassigned'){
+                    //console.log("first");
+                    //if (appletName.getXcoord(label) != $(new_elements[i]).find('coords').attr('x') && appletName.getYcoord(label) != $(new_elements[i]).find('coords').attr('y'))
+                    
+                    appletName.setCaption(label, caption);
+                    appletName.setCoords(label, $(new_elements[i]).find('coords').attr('x'), $(new_elements[i]).find('coords').attr('y'));
+                    
+                    console.log("second");
+                }
+            }
+        } 
+    } else{
+        if(new_xml_doc !== null){
+            var new_construction = $(new_xml_doc).find('construction')[0];
+            cur_construction.innerHTML = new_construction.innerHTML;
+        }
     }
+   
+
+    if (properties != null){
+        if(properties.hasOwnProperty('xZero')){
+            $(cur_xml_doc).find('coordSystem').attr('xZero', properties['xZero']);
+        }
+        if(properties.hasOwnProperty('yZero')){
+            $(cur_xml_doc).find('coordSystem').attr('yZero', properties['yZero']);
+        }
+        if(properties.hasOwnProperty('scale')){
+            $(cur_xml_doc).find('coordSystem').attr('scale', properties['scale']);
+       }
+        if(properties.hasOwnProperty('yscale')){
+            $(cur_xml_doc).find('coordSystem').attr('yscale', properties['yscale']);
+        }
+    }
+
+    // console.log(cur_xml_doc)
+   
     // console.log($(new_xml_doc).find('geogebra')[0].innerHTML);
     // console.log($(cur_xml_doc).find('geogebra')[0].innerHTML);
     // $(cur_xml_doc).find('geogebra')[0].innerHTML = $(new_xml_doc).find('geogebra')[0].innerHTML;
     // console.log($(cur_xml_doc).find('geogebra')[0].innerHTML);
     var final_xml = $(cur_xml_doc).find('geogebra')[0].outerHTML;
     // delete the current autosave object
+   if (setNewXML){
+        appletName.setXML(final_xml);
+   }
+        checkLocks(appletName);
+
     
-    appletName.setXML(final_xml);
-    checkLocks(appletName);
-    
-    if (toolbar && toolbar !== "undefined" && toolbar !== "null" && toolbar.match(/\d+/g) && properties && properties['perspective'] && properties['perspective'].includes("G")){
+    if (toolbar && toolbar !== "undefined" && toolbar !== "null" && toolbar.match(/\d+/g) && properties && properties['perspective']){// && properties['perspective'].includes("G")){
         //console.log('setting ' + appletName.id + ' custom toolbar to: ' + toolbar);
         sessionStorage.setItem('toolbar', toolbar);
-        appletName.setCustomToolBar(toolbar);
+        if (properties.hasOwnProperty('resetToolbar')){
+            if(properties['resetToolbar']){
+                sessionStorage.setItem('toolbar-record', toolbar);
+            }
+            if(sessionStorage.getItem('toolbar-record')){
+                appletName.setCustomToolBar(sessionStorage.getItem('toolbar-record'));
+            }
+        } else {
+            appletName.setCustomToolBar(toolbar);
+        }
     }
+
     if (properties != null){
         // need to set the grid and axes visibility after setXML
         if(properties.hasOwnProperty('axis_display')){
@@ -87,8 +155,144 @@ function appletSetExtXML(xml, toolbar, properties, id){
             appletName.evalCommand('SetActiveView(2)');
             appletName.evalCommand('ZoomIn('+properties['g2coord_system']['x_min']+','+properties['g2coord_system']['y_min']+','+properties['g2coord_system']['x_max']+','+properties['g2coord_system']['y_max']+')');
         }
-        
     }
+
+    if(window.location.href.includes("student")){
+        finalApplet = appletName;
+        registerListeners(cur_xml_doc);
+        addArrowButtonsEventlisteners();
+        addKeyboardEventListeners();
+    }
+
+    appletName.registerUpdateListener("Update");
+}
+
+function Update(object){
+    localStorage.setItem('setNewXML', 'false');
+    document.applet.unregisterUpdateListener("Update");
+    console.log(object);
+    /*if (document.applet.getObjectType(object) == 'point' && document.applet.getCaption(object) == 'unassigned'){
+        document.applet.setCaption(object, sessionStorage.getItem('username')); 
+    }*/
+
+    var ggb_user = document.applet.getCaption(object);
+    var username = sessionStorage.getItem('username');
+    var move = document.applet.isMoveable(object);
+    var type = document.applet.getObjectType(object);
+    var isPoint = (type == "point");
+    if(username !== ggb_user && isPoint && ggb_user != "unassigned"){
+        if (username != "admin" && move){
+            if(objType == 'numeric' || objType == 'textfield'){
+                document.applet.setFixed(name, true, false);
+            } else {
+                document.applet.setFixed(name, true);
+            }
+        } else if (username == "admin" && !move){
+            if(objType == 'numeric' || objType == 'textfield'){
+                document.applet.setFixed(name, false, true);
+            } else {
+                document.applet.setFixed(name, false);
+            }
+        }
+    }else if(username == ggb_user || ggb_user == "unassigned"){
+        document.applet.setFixed(object, false, true);
+    }
+    
+    if(ggb_user == "unassigned" && username != "admin" ){
+        document.applet.setCaption(object, username);
+    } else if (ggb_user != "unassigned" && username == "admin"){
+        document.applet.setCaption(object, "unassigned");
+    }
+
+    document.applet.registerUpdateListener("Update");
+    // on update of Geogebra view, send clients updated XML
+    check_xml(document.applet.getXML(), socket);
+}
+
+function registerListeners(cur_xml_doc){
+
+    finalApplet.registerAddListener(function(label){
+        currentLabel = label;
+        $current_label.text(currentLabel);
+        finalApplet.registerObjectClickListener(label, function (label){
+            currentLabel = label;
+            $current_label.text(currentLabel);
+        });
+    });
+
+    var elements = $(cur_xml_doc).find('construction').find('element');
+
+     if(elements != undefined){
+        for(var i = 0; i < elements.length; i++){
+            // var obj_type = $(elements[i]).attr('type');
+            // if(obj_type == "point"){
+            var label = $(elements[i]).attr('label');
+
+            finalApplet.registerObjectClickListener(label, function (label){
+                currentLabel = label;
+                $current_label.text(currentLabel);
+            });
+            // }
+        }
+    }
+}
+
+function addArrowButtonsEventlisteners(){
+    
+    $arrow_up_button.unbind('click');
+    $arrow_up_button.bind('click', function(){
+        if (finalApplet.getObjectType(currentLabel) == "point"){
+            finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel), finalApplet.getYcoord(currentLabel)+stepSize);
+        }
+    });
+    $arrow_down_button.unbind('click');
+    $arrow_down_button.bind('click', function(){
+        if (finalApplet.getObjectType(currentLabel) == "point"){
+            finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel), finalApplet.getYcoord(currentLabel)-stepSize);
+        }
+    });
+    $arrow_right_button.unbind('click');
+    $arrow_right_button.bind('click', function(){
+        if (finalApplet.getObjectType(currentLabel) == "point"){
+            finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel)+stepSize, finalApplet.getYcoord(currentLabel));
+        }
+    });
+    $arrow_left_button.unbind('click');
+    $arrow_left_button.bind('click', function(){
+        if (finalApplet.getObjectType(currentLabel) == "point"){
+            finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel)-stepSize, finalApplet.getYcoord(currentLabel));
+        }
+    });
+}
+
+function addKeyboardEventListeners(){
+    
+    if (keypressHandler != undefined){
+        document.removeEventListener("keypress", keypressHandler);
+    }
+    keypressHandler = function(key){
+        if (key.which == 105) { // 105 is the ASCII code of 'i'
+            if (finalApplet.getObjectType(currentLabel) == "point"){
+                finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel), finalApplet.getYcoord(currentLabel)+stepSize);
+            }
+        }
+        else if (key.which == 106) { // 106 is the ASCII code of 'j'
+            if (finalApplet.getObjectType(currentLabel) == "point"){
+                finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel)-stepSize, finalApplet.getYcoord(currentLabel));
+            }
+        }
+        else if (key.which == 107) { // 107 is the ASCII code of 'k'
+            if (finalApplet.getObjectType(currentLabel) == "point"){
+                finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel), finalApplet.getYcoord(currentLabel)-stepSize);
+            }
+        }
+        else if (key.which == 108) { // 108 is the ASCII code of 'l'
+            if (finalApplet.getObjectType(currentLabel) == "point"){
+                finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel)+stepSize, finalApplet.getYcoord(currentLabel));
+            }
+        }
+    }
+    document.addEventListener("keypress", keypressHandler);
 }
 
 //This clears the local applet view
@@ -120,7 +324,7 @@ function randomizeColors(gen_new_colors, received_colors, applet, r, g, b) {
         colors = received_colors;
     }
 
-    applet.unregisterUpdateListener("checkUser");
+    applet.unregisterUpdateListener("Update");
     var numelems = applet.getObjectNumber();
     for (i = 0; i < numelems; i++){
         var name = applet.getObjectName(i);
@@ -141,7 +345,7 @@ function randomizeColors(gen_new_colors, received_colors, applet, r, g, b) {
             applet.setColor(name, colors[0], colors[1], colors[2]);     
         }
     }
-    applet.registerUpdateListener("checkUser");
+    applet.registerUpdateListener("Update");
     return colors;
 }
 
@@ -218,13 +422,15 @@ function check_xml(xml, socket){
             };
         socket.xml_change(data);
 
-    }, 500);
+    }, 4000);
 }
 
 //This function is an add listener added in gbbOnInit()
 //It adds a caption to the new object with the local user's class username,
 // and can add a lock onto it.
 function addLock(object){
+    localStorage.setItem('setNewXML', 'true');
+    console.log("wtff2222");
     var username;
     if(sessionStorage.getItem('username') != null && sessionStorage.getItem('username') != "admin")
         username = sessionStorage.getItem('username');
@@ -239,12 +445,55 @@ function addLock(object){
     //updateColors();
     //document.applet.setFixed(object, true);
 }
+/*
+//This function is an update listener added in ggbOnInit()
+//It checks if the caption of the point is the username of the current user,
+//to figure out if the user is allowed to move the point or not.
+function checkUser(object){
+    //updateColors();
+    applet.unregisterUpdateListener("checkUser");
+    var ggb_user = document.applet.getCaption(object);
+    var username = sessionStorage.getItem('username');
+    var move = document.applet.isMoveable(object);
+    var type = document.applet.getObjectType(object);
+    var isPoint = (type == "point");
+    if(username !== ggb_user && isPoint && ggb_user != "unassigned"){
+        if (username != "admin" && move){
+            if(objType == 'numeric' || objType == 'textfield'){
+                appletName.setFixed(name, true, false);
+            } else {
+                appletName.setFixed(name, true);
+            }
+        } else if (username == "admin" && !move){
+            if(objType == 'numeric' || objType == 'textfield'){
+                appletName.setFixed(name, false, true);
+            } else {
+                appletName.setFixed(name, false);
+            }
+        }
+    }else if(username == ggb_user || ggb_user == "unassigned"){
+        document.applet.setFixed(object, false, true);
+    }
+
+    if ($('#myonoffswitch').is(':checked')){
+        if(ggb_user == "unassigned" && username != "admin" ){
+            document.applet.setCaption(object, username);
+        } else if (ggb_user != "unassigned" && username == "admin"){
+            document.applet.setCaption(object, "unassigned");
+        }
+    }
+    applet.registerUpdateListener("checkUser");
+    // on update of Geogebra view, send clients updated XML
+    check_xml(document.applet.getXML(), socket);
+}*/
+
 
 //This function is an update listener added in ggbOnInit()
 //It checks if the caption of the point is the username of the current user,
 //to figure out if the user is allowed to move the point or not.
 function checkUser(object){
     //updateColors();
+    localStorage.setItem('setNewXML', 'true');
     applet.unregisterUpdateListener("checkUser");
     var ggb_user = document.applet.getCaption(object);
     var username = sessionStorage.getItem('username');
