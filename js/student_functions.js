@@ -257,5 +257,10 @@ function ggbOnInit(arg) {
     });
 }
 
+$(window).bind('beforeunload',function(){
 
+    //save info somewhere
 
+   alert("reload happening");
+
+});
