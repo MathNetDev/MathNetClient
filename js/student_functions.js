@@ -244,8 +244,9 @@ function group_color_response(colors) {
 
 //This function registers listeners on geogebra initialization 
 function ggbOnInit(arg) {
+    localStorage.setItem('setNewXML', 'true');
     document.applet.registerAddListener("addLock");
-    document.applet.registerUpdateListener("checkUser");
+    document.applet.registerUpdateListener("Update");
     document.applet.registerRemoveListener("checkUser");
     //document.applet.registerAddListener("updateColors");
     socket.group_color(sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'));

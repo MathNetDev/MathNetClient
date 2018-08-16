@@ -30,6 +30,8 @@ function appletSetExtXML(xml, toolbar, properties, id){
     {
         appletName = document['overlayed_image_view_applet' + id];
     }
+
+    var setNewXML = !(localStorage.getItem('setNewXML') == 'false');
     
     if(properties != null && properties.hasOwnProperty('perspective')){
         // need to set the perspective before setting the XML
@@ -247,8 +249,9 @@ function addLock(object){
 //This function is an update listener added in ggbOnInit()
 //It checks if the caption of the point is the username of the current user,
 //to figure out if the user is allowed to move the point or not.
-function checkUser(object){
+/*function checkUser(object){
     //updateColors();
+    localStorage.setItem('setNewXML', 'false');
     applet.unregisterUpdateListener("checkUser");
     var ggb_user = document.applet.getCaption(object);
     var username = sessionStorage.getItem('username');
@@ -280,6 +283,44 @@ function checkUser(object){
     }
     
     applet.registerUpdateListener("checkUser");
+    // on update of Geogebra view, send clients updated XML
+    check_xml(document.applet.getXML(), socket);
+}*/
+
+function Update(object){
+    //updateColors();
+    localStorage.setItem('setNewXML', 'false');
+    applet.unregisterUpdateListener("Update");
+    var ggb_user = document.applet.getCaption(object);
+    var username = sessionStorage.getItem('username');
+    var move = document.applet.isMoveable(object);
+    var type = document.applet.getObjectType(object);
+    var isPoint = (type == "point");
+    if(username !== ggb_user && isPoint && ggb_user != "unassigned"){
+        if (username != "admin" && move){
+            if(objType == 'numeric' || objType == 'textfield'){
+                appletName.setFixed(name, true, false);
+            } else {
+                appletName.setFixed(name, true);
+            }
+        } else if (username == "admin" && !move){
+            if(objType == 'numeric' || objType == 'textfield'){
+                appletName.setFixed(name, false, true);
+            } else {
+                appletName.setFixed(name, false);
+            }
+        }
+    }else if(username == ggb_user || ggb_user == "unassigned"){
+        document.applet.setFixed(object, false, true);
+    }
+
+    if(ggb_user == "unassigned" && username != "admin" ){
+        document.applet.setCaption(object, username);
+    } else if (ggb_user != "unassigned" && username == "admin"){
+        document.applet.setCaption(object, "unassigned");
+    }
+    
+    applet.registerUpdateListener("Update");
     // on update of Geogebra view, send clients updated XML
     check_xml(document.applet.getXML(), socket);
 }
