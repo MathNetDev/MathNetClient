@@ -336,6 +336,7 @@ $(function() {
                 toolbar_user: 'admin',
                 properties: {'perspective': 'AG'}
             };
+            localStorage.setItem('setNewXML', 'true');
             socket.xml_change(data);
         }
     });
