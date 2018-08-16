@@ -134,9 +134,7 @@ $(function() {
         // Tell the server to create a new group for the class in the database
         var colors = [], minimum = 0, maximum = 255;
         gen_new_colors = true;
-        filtered_merged_gen_new_colors = true;
         filtered_merged_view_obj_colors = [];
-        view_obj_colors = [];
         colors.push(Math.floor(Math.random() * (maximum - minimum + 1)) + minimum);
         colors.push(Math.floor(Math.random() * (maximum - minimum + 1)) + minimum);
         colors.push(Math.floor(Math.random() * (maximum - minimum + 1)) + minimum);
@@ -164,9 +162,7 @@ $(function() {
         // Only remove if there are groups
         if ($('.groups > li').length > 0) {
             gen_new_colors = true;
-            filtered_merged_gen_new_colors = true;
             filtered_merged_view_obj_colors = [];
-            view_obj_colors = [];
             socket.delete_group(sessionStorage.getItem('admin_class_id'), $('.groups > li:last').index() + 1, $secret);
         }
     });
@@ -746,7 +742,7 @@ $(function() {
                 };
                 var newgroup = '<div class="views_group_'+i+' col-md-4 col-sm-5 col-lg-4" ><h4><a href="javascript:redirect('+i+')"> Group ' + i + 
                     '</h4><div class="geogebrawebapplet" id="appletContainer'+ i + 
-                    '"style="width:100%;height:650px;display:block;"></div></div>';
+                    '"style="width:100%;height:650px;display:block;visibility:hidden;"></div></div>';
 
                 var checkbox = '<label><input checked type="checkbox" onchange="views_change(this)" value="applet'+i+'" name="views_group_'+ i
                 + '">Group '+ i + '</label>';
@@ -759,18 +755,18 @@ $(function() {
             //Wait for Applets to be Loaded and Then Randomize Colors
             var applets_loaded = 0;
             var interval_id = setInterval(function() {
-                //Once all Applets are Loaded Stop Trying
+               //Once all Applets are Loaded Stop Trying
                 if(applets_loaded == 1)
                 {
                     for(var i = 1; i < numgroups; i++)
                     {
                         if(gen_new_colors == true)
                         {
-                            view_obj_colors.push(randomizeColors(gen_new_colors,[],document['applet'+i]));
+                            filtered_merged_view_obj_colors.push(randomizeColors(gen_new_colors,[],document['applet'+i]));
                         }
                         else
                         {
-                            randomizeColors(gen_new_colors,view_obj_colors[i-1],document['applet'+i]);
+                            randomizeColors(gen_new_colors,filtered_merged_view_obj_colors[i-1],document['applet'+i]);
                         }
                         document.getElementById('appletContainer'+i).style.visibility = "visible";
                     }
@@ -781,7 +777,7 @@ $(function() {
                 {
                     applets_loaded = 1;
                 }
-            }, 600);
+            }, 1000);
 
             var params = {
                     "container":"appletContainer"+numgroups,
@@ -875,24 +871,24 @@ $(function() {
                 {
                     for(var i = 1; i < numgroups; i++)
                     {
-                        if(filtered_merged_gen_new_colors == true)
+                        if(gen_new_colors == true)
                         {
-                            filtered_merged_view_obj_colors.push(randomizeColors(filtered_merged_gen_new_colors,[],document['merged_view_applet'+i]));
+                            filtered_merged_view_obj_colors.push(randomizeColors(gen_new_colors,[],document['merged_view_applet'+i]));
                         }
                         else
                         {
-                            randomizeColors(filtered_merged_gen_new_colors,filtered_merged_view_obj_colors[i-1],document['merged_view_applet'+i]);
+                            randomizeColors(gen_new_colors,filtered_merged_view_obj_colors[i-1],document['merged_view_applet'+i]);
                         }
                         document.getElementById('merged_view_appletContainer'+i).style.visibility = "visible";
                     }
-                    filtered_merged_gen_new_colors = false;
+                    gen_new_colors = false;
                     clearInterval(interval_id);
                 }
                 if(document['merged_view_applet1'] !== undefined || numgroups === 0 )
                 {
                     applets_loaded = 1;
                 }
-            }, 600);
+            }, 1000);
             
             var params = {
                     "container":"merged_view_appletContainer"+numgroups,
