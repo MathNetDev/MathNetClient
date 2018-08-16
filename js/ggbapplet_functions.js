@@ -18,7 +18,11 @@ function appletSetExtXML(xml, toolbar, properties, id){
     }
     
     //Get Appropriate appletName depending on the Currently Active View/Tab
-    if ($('a[data-toggle="tab"][aria-expanded=true]').html() == "Filtered Merged View" && typeof document['merged_view_applet' + id] !== 'undefined')
+    if ($('a[data-toggle="tab"][aria-expanded=true]').html() == "View" && typeof document['applet' + id] !== 'undefined')
+    {
+        appletName = document['applet' + id];
+    }
+    else if ($('a[data-toggle="tab"][aria-expanded=true]').html() == "Filtered Merged View" && typeof document['merged_view_applet' + id] !== 'undefined')
     {
         appletName = document['merged_view_applet' + id];
     }
