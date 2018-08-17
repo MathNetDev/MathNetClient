@@ -334,8 +334,10 @@ $(function() {
                 xml: document.applet.getXML(),
                 toolbar: toolbar,
                 toolbar_user: 'admin',
-                properties: {'perspective': 'AG'}
+                properties: {'perspective': 'AG',
+                              'setNewXML': 'true'}
             };
+            //localStorage.setItem('setNewXML', 'true');
             socket.xml_change(data);
         }
     });
