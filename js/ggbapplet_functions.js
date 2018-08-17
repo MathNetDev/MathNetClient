@@ -44,12 +44,12 @@ function appletSetExtXML(xml, toolbar, properties, id){
     xml = xml.substr(xml.indexOf("<"), xml.lastIndexOf(">"));
     var new_xml_doc = $.parseXML(xml);
 
-    console.log(localStorage.getItem('setNewXML'));
-
-    if (localStorage.getItem('setNewXML') == 'false')
-    {
+    if (((properties != null && properties.hasOwnProperty('setNewXML') && properties['setNewXML'] == 'false') || properties == null) && (setNewXML != null && setNewXML == false)) {
         appletUpdateXML(appletName, cur_xml_doc, new_xml_doc);
         return;
+    }
+    else if (setNewXML != null) {
+        setNewXML = false;
     }
 
     if(new_xml_doc !== null){
@@ -108,7 +108,7 @@ function appletUpdateXML(appletName, cur_xml_doc, new_xml_doc)
 {
     var prev_elements = $(cur_xml_doc).find('construction').find('element');
     var new_elements = $(new_xml_doc).find('construction').find('element');
-    console.log(localStorage.getItem('setNewXML'));
+    //console.log(localStorage.getItem('setNewXML'));
 
     if(new_elements != undefined){
         for(var i = 0; i < new_elements.length; i++){
@@ -123,17 +123,16 @@ function appletUpdateXML(appletName, cur_xml_doc, new_xml_doc)
                 //if (appletName.getXcoord(label) != $(new_elements[i]).find('coords').attr('x') && appletName.getYcoord(label) != $(new_elements[i]).find('coords').attr('y'))
                 //applet.unregisterUpdateListener("Update");
                 appletName.setCaption(label, caption);
-              
-                    appletName.setFixed(label, false);
-                    console.log("first");
-                    console.log(label);
-                    console.log($(new_elements[i]).find('coords').attr('x'));
-                    console.log($(new_elements[i]).find('coords').attr('y'));
-                    appletName.setCoords(label, $(new_elements[i]).find('coords').attr('x'), $(new_elements[i]).find('coords').attr('y'));
+                appletName.setFixed(label, false);
+                    //console.log("first");
+                    //console.log(label);
+                    //console.log($(new_elements[i]).find('coords').attr('x'));
+                    //console.log($(new_elements[i]).find('coords').attr('y'));
+                appletName.setCoords(label, $(new_elements[i]).find('coords').attr('x'), $(new_elements[i]).find('coords').attr('y'));
                     //applet.registerUpdateListener("Update");
-                    appletName.setFixed(label, true);
+                appletName.setFixed(label, true);
                 
-                console.log("second");
+                //console.log("second");
             }
         }
     }
@@ -333,7 +332,8 @@ function addLock(object){
 
 function Update(object){
     //updateColors();
-    localStorage.setItem('setNewXML', 'false');
+    //localStorage.setItem('setNewXML', 'false');
+    setNewXML = false;
     applet.unregisterUpdateListener("Update");
     var ggb_user = document.applet.getCaption(object);
     var username = sessionStorage.getItem('username');

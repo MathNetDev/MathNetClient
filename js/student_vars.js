@@ -21,3 +21,5 @@ var $error_class_id = $('.error_class_id');
 
 var $leave_group_button = $('#leave_group');
 var $applet = $('.applet-student');
+
+var setNewXML = true;
