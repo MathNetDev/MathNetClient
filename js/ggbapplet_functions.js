@@ -511,3 +511,4 @@ function appletInit(params){
     
     applet.inject(params.container, 'auto');
 }
+
