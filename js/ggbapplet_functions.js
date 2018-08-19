@@ -22,7 +22,11 @@ function appletSetExtXML(xml, toolbar, properties, id){
     }
     
     //Get Appropriate appletName depending on the Currently Active View/Tab
-    if ($('a[data-toggle="tab"][aria-expanded=true]').html() == "Filtered Merged View" && typeof document['merged_view_applet' + id] !== 'undefined')
+    if ($('a[data-toggle="tab"][aria-expanded=true]').html() == "View" && typeof document['applet' + id] !== 'undefined')
+    {
+        appletName = document['applet' + id];
+    }
+    else if ($('a[data-toggle="tab"][aria-expanded=true]').html() == "Filtered Merged View" && typeof document['merged_view_applet' + id] !== 'undefined')
     {
         appletName = document['merged_view_applet' + id];
     }
@@ -357,13 +361,12 @@ function checkUser(object){
         document.applet.setFixed(object, false, true);
     }
 
-    if ($('#myonoffswitch').is(':checked')){
-        if(ggb_user == "unassigned" && username != "admin" ){
-            document.applet.setCaption(object, username);
-        } else if (ggb_user != "unassigned" && username == "admin"){
-            document.applet.setCaption(object, "unassigned");
-        }
+    if(ggb_user == "unassigned" && username != "admin" ){
+        document.applet.setCaption(object, username);
+    } else if (ggb_user != "unassigned" && username == "admin"){
+        document.applet.setCaption(object, "unassigned");
     }
+    
     applet.registerUpdateListener("checkUser");
     // on update of Geogebra view, send clients updated XML
     check_xml(document.applet.getXML(), socket);

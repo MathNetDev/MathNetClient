@@ -810,7 +810,7 @@ $(function() {
                 };
                 var newgroup = '<div class="views_group_'+i+' col-md-4 col-sm-5 col-lg-4" ><h4><a href="javascript:redirect('+i+')"> Group ' + i + 
                     '</h4><div class="geogebrawebapplet" id="appletContainer'+ i + 
-                    '"style="width:100%;height:650px;display:block;"></div></div>';
+                    '"style="width:100%;height:650px;display:block;visibility:hidden;"></div></div>';
 
                 var checkbox = '<label><input checked type="checkbox" onchange="views_change(this)" value="applet'+i+'" name="views_group_'+ i
                 + '">Group '+ i + '</label>';
@@ -819,6 +819,34 @@ $(function() {
                 $('#views_checkboxes .panel-body').append(checkbox);
                 appletInit(params);                
             }
+
+            //Wait for Applets to be Loaded and Then Randomize Colors
+            var applets_loaded = 0;
+            var interval_id = setInterval(function() {
+               //Once all Applets are Loaded Stop Trying
+                if(applets_loaded == 1)
+                {
+                    for(var i = 1; i < numgroups; i++)
+                    {
+                        if(gen_new_colors == true)
+                        {
+                            filtered_merged_view_obj_colors.push(randomizeColors(gen_new_colors,[],document['applet'+i]));
+                        }
+                        else
+                        {
+                            randomizeColors(gen_new_colors,filtered_merged_view_obj_colors[i-1],document['applet'+i]);
+                        }
+                        document.getElementById('appletContainer'+i).style.visibility = "visible";
+                    }
+                    gen_new_colors = false;
+                    clearInterval(interval_id);
+                }
+                if(document['applet1'] !== undefined || numgroups === 0 )
+                {
+                    applets_loaded = 1;
+                }
+            }, 1000);
+
             var params = {
                     "container":"appletContainer"+numgroups,
                     "id":"applet"+numgroups,

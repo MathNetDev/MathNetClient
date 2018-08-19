@@ -21,6 +21,7 @@ var $error_class_id = $('.error_class_id');
 
 var $leave_group_button = $('#leave_group');
 var $applet = $('.applet-student');
+<<<<<<< HEAD
 var $update_xml_button = $('#update_xml_button');
 var $randomizeColors_button = $('#randomizeColors_button');
 
@@ -31,3 +32,5 @@ var $arrow_left_button = $('#arrow_left_button');
 var $current_label = $('label[for="cur_label"]');
 var $step_size_slider = $('#step_size_slider');
 var $step_size_label = $('label[for="step_size_label"]');
+=======
+>>>>>>> color_consistency_class_view
