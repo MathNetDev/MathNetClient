@@ -45,71 +45,10 @@ function appletSetExtXML(xml, toolbar, properties, id){
     xml = xml.substr(xml.indexOf("<"), xml.lastIndexOf(">"));
 
     var new_xml_doc = $.parseXML(xml);
-
-    var prev_elements = $(cur_xml_doc).find('construction').find('element');
-    var new_elements = $(new_xml_doc).find('construction').find('element');
-
-    var setNewXML = !(sessionStorage.getItem('setNewXML') == 'false');
-    console.log(sessionStorage.getItem('setNewXML'));
-    /*if (new_elements == null || prev_elements == null || prev_elements.length != new_elements.length){
-        setNewXML = true;
-    } else{
-        var prev_elements_set = new Set();
-        var new_elements_set = new Set();
-        var unasigned_count_prev = 0;
-        var unasigned_count_new = 0;
-
-        for (let i = 0; i < prev_elements.length; i++){
-            prev_elements_set.add($(prev_elements[i]).attr('label'));
-            if($(prev_elements[i]).attr('label') == "unassigned") unasigned_count_prev++;
-            new_elements_set.add($(new_elements[i]).attr('label'));
-            if($(new_elements[i]).attr('label') == "unassigned") unasigned_count_new++;
-        }
-        for (let item of prev_elements_set){
-            if (!new_elements_set.has(item)){
-                setNewXML = true;
-            }
-        }
-        for (let item of prev_elements_set){
-            if (!new_elements_set.has(item)){
-                setNewXML = true;
-            }
-        }
-        if (unasigned_count_new != unasigned_count_prev) setNewXML = true;
-    }*/
-
-    if (!setNewXML)
-    if(new_elements != undefined){
-        for(var i = 0; i < new_elements.length; i++){
-            var label = $(new_elements[i]).attr('label');
-            var ggb_user = appletName.getCaption(label);
-            var username = sessionStorage.getItem('username');
-            var objType = appletName.getObjectType(label);
-
-            if (setNewXML){
-                if (objType == "point" && username === ggb_user){   
-                    var x_coord = appletName.getXcoord(label).toString();
-                    var y_coord = appletName.getYcoord(label).toString();
-                    if ($(new_elements[i]).find('caption').attr('val') == ggb_user){
-                        $(new_elements[i]).find('coords').attr('x', x_coord);
-                        $(new_elements[i]).find('coords').attr('y', y_coord);
-                    }
-                }
-            }
-            else{
-            if (objType == "point" && username !== ggb_user){
-                appletName.setCoords(label, $(new_elements[i]).find('coords').attr('x'), $(new_elements[i]).find('coords').attr('y'));
-            }
-            }
-        }
-    }
-
-    if (setNewXML)
     if(new_xml_doc !== null){
         var new_construction = $(new_xml_doc).find('construction')[0];
         cur_construction.innerHTML = new_construction.innerHTML;
     }
-   
 
     if (properties != null){
         if(properties.hasOwnProperty('xZero')){
@@ -134,10 +73,9 @@ function appletSetExtXML(xml, toolbar, properties, id){
     // console.log($(cur_xml_doc).find('geogebra')[0].innerHTML);
     var final_xml = $(cur_xml_doc).find('geogebra')[0].outerHTML;
     // delete the current autosave object
-   if (setNewXML){
-        appletName.setXML(final_xml);
-        checkLocks(appletName);
-    }
+    
+    appletName.setXML(final_xml);
+    checkLocks(appletName);
     
     if (toolbar && toolbar !== "undefined" && toolbar !== "null" && toolbar.match(/\d+/g) && properties && properties['perspective']){// && properties['perspective'].includes("G")){
         //console.log('setting ' + appletName.id + ' custom toolbar to: ' + toolbar);
@@ -406,14 +344,13 @@ function check_xml(xml, socket){
             };
         socket.xml_change(data);
 
-    }, 4000);
+    }, 500);
 }
 
 //This function is an add listener added in gbbOnInit()
 //It adds a caption to the new object with the local user's class username,
 // and can add a lock onto it.
 function addLock(object){
-    sessionStorage.setItem('setNewXML', 'true');
     var username;
     if(sessionStorage.getItem('username') != null && sessionStorage.getItem('username') != "admin")
         username = sessionStorage.getItem('username');
@@ -428,66 +365,12 @@ function addLock(object){
     //updateColors();
     //document.applet.setFixed(object, true);
 }
-/*
-//This function is an update listener added in ggbOnInit()
-//It checks if the caption of the point is the username of the current user,
-//to figure out if the user is allowed to move the point or not.
-function checkUser(object){
-    //updateColors();
-    applet.unregisterUpdateListener("checkUser");
-    var ggb_user = document.applet.getCaption(object);
-    var username = sessionStorage.getItem('username');
-    var move = document.applet.isMoveable(object);
-    var type = document.applet.getObjectType(object);
-    var isPoint = (type == "point");
-    if(username !== ggb_user && isPoint && ggb_user != "unassigned"){
-        if (username != "admin" && move){
-            if(objType == 'numeric' || objType == 'textfield'){
-                appletName.setFixed(name, true, false);
-            } else {
-                appletName.setFixed(name, true);
-            }
-        } else if (username == "admin" && !move){
-            if(objType == 'numeric' || objType == 'textfield'){
-                appletName.setFixed(name, false, true);
-            } else {
-                appletName.setFixed(name, false);
-            }
-        }
-    }else if(username == ggb_user || ggb_user == "unassigned"){
-        document.applet.setFixed(object, false, true);
-    }
-
-    if ($('#myonoffswitch').is(':checked')){
-        if(ggb_user == "unassigned" && username != "admin" ){
-            document.applet.setCaption(object, username);
-        } else if (ggb_user != "unassigned" && username == "admin"){
-            document.applet.setCaption(object, "unassigned");
-        }
-    }
-    applet.registerUpdateListener("checkUser");
-    // on update of Geogebra view, send clients updated XML
-    check_xml(document.applet.getXML(), socket);
-}*/
-
-function Update(object){
-    sessionStorage.setItem('setNewXML', 'false');
-    applet.unregisterUpdateListener("Update");
-    console.log(object);
-    if (document.applet.getObjectType(object) == 'point' && document.applet.getCaption(object) == 'unassigned'){
-        //document.applet.setCaption(object, sessionStorage.getItem('username')); 
-    }
-    applet.registerUpdateListener("Update");
-    // on update of Geogebra view, send clients updated XML
-    check_xml(document.applet.getXML(), socket);
-}
 
 //This function is an update listener added in ggbOnInit()
 //It checks if the caption of the point is the username of the current user,
 //to figure out if the user is allowed to move the point or not.
 function checkUser(object){
     //updateColors();
-    sessionStorage.setItem('setNewXML', 'true');
     applet.unregisterUpdateListener("checkUser");
     var ggb_user = document.applet.getCaption(object);
     var username = sessionStorage.getItem('username');
