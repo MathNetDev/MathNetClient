@@ -2,7 +2,6 @@
 var cur_xml = '<xml/>';
 appletName = document.applet;
 var timeoutHandle;
-var keypressHandler;
 var $default_toolset = '0|1,501,67,5,19,72,75,76|2,15,45,18,65,7,37|4,3,8,9,13,44,58,47|16,51,64,70|10,34,53,11,24,20,22,21,23|55,56,57,12|36,46,38,49,50,71|30,29,54,32,31,33|17,26,62,73,14,68|25,52,60,61|40,41,42,27,28,35,6';
 
 var currentLabel;
@@ -123,12 +122,9 @@ function appletSetExtXML(xml, toolbar, properties, id){
         }
     }
 
-    if(window.location.href.includes("student")){
-        finalApplet = appletName;
-        registerListeners(cur_xml_doc);
-        addArrowButtonsEventlisteners();
-        addKeyboardEventListeners();
-    }
+    finalApplet = appletName;
+    registerListeners(cur_xml_doc);
+    addArrowButtonsEventlisteners();
 }
 
 function registerListeners(cur_xml_doc){
@@ -160,61 +156,27 @@ function registerListeners(cur_xml_doc){
 }
 
 function addArrowButtonsEventlisteners(){
-    
-    $arrow_up_button.unbind('click');
+
     $arrow_up_button.bind('click', function(){
         if (finalApplet.getObjectType(currentLabel) == "point"){
             finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel), finalApplet.getYcoord(currentLabel)+stepSize);
         }
     });
-    $arrow_down_button.unbind('click');
     $arrow_down_button.bind('click', function(){
         if (finalApplet.getObjectType(currentLabel) == "point"){
             finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel), finalApplet.getYcoord(currentLabel)-stepSize);
         }
     });
-    $arrow_right_button.unbind('click');
     $arrow_right_button.bind('click', function(){
         if (finalApplet.getObjectType(currentLabel) == "point"){
             finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel)+stepSize, finalApplet.getYcoord(currentLabel));
         }
     });
-    $arrow_left_button.unbind('click');
     $arrow_left_button.bind('click', function(){
         if (finalApplet.getObjectType(currentLabel) == "point"){
             finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel)-stepSize, finalApplet.getYcoord(currentLabel));
         }
     });
-}
-
-function addKeyboardEventListeners(){
-    
-    if (keypressHandler != undefined){
-        document.removeEventListener("keypress", keypressHandler);
-    }
-    keypressHandler = function(key){
-        if (key.which == 105) { // 105 is the ASCII code of 'i'
-            if (finalApplet.getObjectType(currentLabel) == "point"){
-                finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel), finalApplet.getYcoord(currentLabel)+stepSize);
-            }
-        }
-        else if (key.which == 106) { // 106 is the ASCII code of 'j'
-            if (finalApplet.getObjectType(currentLabel) == "point"){
-                finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel)-stepSize, finalApplet.getYcoord(currentLabel));
-            }
-        }
-        else if (key.which == 107) { // 107 is the ASCII code of 'k'
-            if (finalApplet.getObjectType(currentLabel) == "point"){
-                finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel), finalApplet.getYcoord(currentLabel)-stepSize);
-            }
-        }
-        else if (key.which == 108) { // 108 is the ASCII code of 'l'
-            if (finalApplet.getObjectType(currentLabel) == "point"){
-                finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel)+stepSize, finalApplet.getYcoord(currentLabel));
-            }
-        }
-    }
-    document.addEventListener("keypress", keypressHandler);
 }
 
 //This clears the local applet view
