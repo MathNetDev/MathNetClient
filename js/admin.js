@@ -397,6 +397,7 @@ $(function() {
                 toolbar: toolbar,
                 toolbar_user: 'admin',
                 properties: {'perspective': perspectives_mapped == ''? 'AG': perspectives_mapped,
+                            'setNewXML': 'true',
                             'xZero': $(xml).find('coordSystem').attr('xZero'),
                             'yZero': $(xml).find('coordSystem').attr('yZero'),
                             'scale': $(xml).find('coordSystem').attr('scale'),
