@@ -527,7 +527,7 @@ function view_merge(event){
     for (var i = 0; i < array.length ; i++){
         var value = array[i]["value"];
         var num = array[i]["value"].substr(value.lastIndexOf('t') + 1 , value.length - value.lastIndexOf('t'));
-        randomizeColors(true,[],document[value]);
+        randomizeColors(gen_new_colors,filtered_merged_view_obj_colors[parseInt(num)-1],document[value]);
         var parsing = document[value].getXML();
         var xml;
 
@@ -667,7 +667,7 @@ function unmerge_views(event){
     for (var i = 0; i < array.length; i++){
         $("." + array[i]["name"]).show();
         var value = array[i]["value"];
-        randomizeColors(true,[],document[value], 'default');
+        //randomizeColors(true,[],document[value], 'default');
     }
 }
 
@@ -698,7 +698,7 @@ function filtered_view_merge(event){
     for (var i = 0; i < array.length ; i++){
         var value = array[i]["value"];
         var num = array[i]["value"].substr(value.lastIndexOf('t') + 1 , value.length - value.lastIndexOf('t'));
-        randomizeColors(gen_new_colors,filtered_merged_view_obj_colors[i],document[value]);      
+        randomizeColors(gen_new_colors,filtered_merged_view_obj_colors[parseInt(num)-1],document[value]);      
         var parsing = document[value].getXML();
         var xml;
 
