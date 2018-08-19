@@ -29,6 +29,9 @@ var $arrow_left_button = $('#arrow_left_button');
 var $current_label = $('label[for="cur_label"]');
 var $step_size_slider = $('#step_size_slider');
 var $step_size_label = $('label[for="step_size_label"]');
+<<<<<<< HEAD
 
 
 
+=======
+>>>>>>> parent of 6f79fa5... Merge branch 'test' into dev
