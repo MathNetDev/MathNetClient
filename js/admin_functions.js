@@ -720,7 +720,7 @@ function filtered_view_merge(event){
     }
     cur_construction.innerHTML = XMLs;
     var final_xml = '"' + $(cur_xml_doc).find('geogebra')[0].outerHTML + '"';
-    
+    // console.log(final_xml);
     appletSetExtXML(final_xml, '', null, numgroups);
     var numelems = applet.getObjectNumber();
     for (i = 0; i < numelems; i++){
@@ -793,9 +793,13 @@ function filter_objects(xml,objs_to_be_merged){
             var inputs = $(commands[i]).find('input')[0].attributes;
             var outputs = $(commands[i]).find('output')[0].attributes;
             for(var j = 0; j < inputs.length; j++){
-                if (deleted_array.includes(inputs[j].value)) {
-                    $(commands[i]).remove();
-                    break;
+                var inputs_array = inputs[j].value.split(",");
+                for (var k = 0; k < inputs_array.length; k++){
+                    console.log(inputs_array[k].replace(/[^0-9a-zA-Z_]/gi, ''));
+                    if (deleted_array.includes(inputs_array[k].replace(/[^0-9a-zA-Z_]/gi, ''))) {
+                        $(commands[i]).remove();
+                        break;
+                    }
                 }
             }
             for(var j = 0; j < outputs.length; j++){

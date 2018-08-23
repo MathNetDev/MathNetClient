@@ -110,7 +110,7 @@ function group_join_response(username, class_id, group_id, group_size) {
                 "container":"appletContainer",
                 "id":"applet",
                 "width":$applet.innerWidth(),
-                "height":$(window).height()/1.3,
+                "height":$applet.innerWidth()*0.53,
                 "perspective":"AG",
                 "showAlgebraInput":true,
                 "showToolBarHelp":false,
@@ -261,6 +261,10 @@ function ggbOnInit(arg) {
     });
 }
 
+$step_size_slider.bind('mousemove', function() {
+    stepSize = $step_size_slider.val()/10;
+    $step_size_label.text($step_size_slider.val()/10);
+});
 
 
 

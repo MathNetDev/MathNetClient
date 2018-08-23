@@ -2,7 +2,12 @@
 var cur_xml = '<xml/>';
 appletName = document.applet;
 var timeoutHandle;
+var keypressHandler;
 var $default_toolset = '0|1,501,67,5,19,72,75,76|2,15,45,18,65,7,37|4,3,8,9,13,44,58,47|16,51,64,70|10,34,53,11,24,20,22,21,23|55,56,57,12|36,46,38,49,50,71|30,29,54,32,31,33|17,26,62,73,14,68|25,52,60,61|40,41,42,27,28,35,6';
+
+var currentLabel;
+var finalApplet;
+var stepSize = 1.0;
 
 //This function takes the new XML, changes it and the old XML to a JSON format, and then 
 // parses it, and changes it back to XML to be set in the geogebra applet.
@@ -44,9 +49,19 @@ function appletSetExtXML(xml, toolbar, properties, id){
     xml = xml.substr(xml.indexOf("<"), xml.lastIndexOf(">"));
     var new_xml_doc = $.parseXML(xml);
 
-    if (((properties != null && properties.hasOwnProperty('setNewXML') && properties['setNewXML'] == 'false') || properties == null) && (setNewXML != null && setNewXML == false)) {
-        appletUpdateXML(appletName, cur_xml_doc, new_xml_doc);
-        return;
+    if (((properties != null && properties.hasOwnProperty('setNewXML') && properties['setNewXML'] == 'false') || properties == null)) {
+        try {
+            if (setNewXML && setNewXML == false) {
+                appletUpdateXML(appletName, cur_xml_doc, new_xml_doc);
+                return;
+            }
+        } catch (error) {
+            // Catch a ReferenceError only
+            if (!(error instanceof ReferenceError))
+            {
+                throw "Unknown error";
+            }
+        }
     }
     else if (setNewXML != null) {
         setNewXML = false;
@@ -56,20 +71,45 @@ function appletSetExtXML(xml, toolbar, properties, id){
         var new_construction = $(new_xml_doc).find('construction')[0];
         cur_construction.innerHTML = new_construction.innerHTML;
     }
+
+    if (properties != null){
+        if(properties.hasOwnProperty('xZero')){
+            $(cur_xml_doc).find('coordSystem').attr('xZero', properties['xZero']);
+        }
+        if(properties.hasOwnProperty('yZero')){
+            $(cur_xml_doc).find('coordSystem').attr('yZero', properties['yZero']);
+        }
+        if(properties.hasOwnProperty('scale')){
+            $(cur_xml_doc).find('coordSystem').attr('scale', properties['scale']);
+       }
+        if(properties.hasOwnProperty('yscale')){
+            $(cur_xml_doc).find('coordSystem').attr('yscale', properties['yscale']);
+        }
+    }
+
     // console.log($(new_xml_doc).find('geogebra')[0].innerHTML);
     // console.log($(cur_xml_doc).find('geogebra')[0].innerHTML);
     // $(cur_xml_doc).find('geogebra')[0].innerHTML = $(new_xml_doc).find('geogebra')[0].innerHTML;
     // console.log($(cur_xml_doc).find('geogebra')[0].innerHTML);
     var final_xml = $(cur_xml_doc).find('geogebra')[0].outerHTML;
     // delete the current autosave object
-    
+
     appletName.setXML(final_xml);
     checkLocks(appletName);
-    
-    if (toolbar && toolbar !== "undefined" && toolbar !== "null" && toolbar.match(/\d+/g) && properties && properties['perspective'] && properties['perspective'].includes("G")){
+
+    if (toolbar && toolbar !== "undefined" && toolbar !== "null" && toolbar.match(/\d+/g) && properties && properties['perspective']){
         //console.log('setting ' + appletName.id + ' custom toolbar to: ' + toolbar);
         sessionStorage.setItem('toolbar', toolbar);
-        appletName.setCustomToolBar(toolbar);
+        if (properties.hasOwnProperty('resetToolbar')){
+            if(properties['resetToolbar']){
+                sessionStorage.setItem('toolbar-record', toolbar);
+            }
+            if(sessionStorage.getItem('toolbar-record')){
+                appletName.setCustomToolBar(sessionStorage.getItem('toolbar-record'));
+            }
+        } else {
+            appletName.setCustomToolBar(toolbar);
+        }
     }
     if (properties != null){
         // need to set the grid and axes visibility after setXML
@@ -102,6 +142,100 @@ function appletSetExtXML(xml, toolbar, properties, id){
         }
         
     }
+
+    if(window.location.href.includes("student")){
+        finalApplet = appletName;
+        registerListeners(cur_xml_doc);
+        addArrowButtonsEventlisteners();
+        addKeyboardEventListeners();
+    }
+}
+
+function registerListeners(cur_xml_doc){
+
+    finalApplet.registerAddListener(function(label){
+        currentLabel = label;
+        $current_label.text(currentLabel);
+        finalApplet.registerObjectClickListener(label, function (label){
+            currentLabel = label;
+            $current_label.text(currentLabel);
+        });
+    });
+
+    var elements = $(cur_xml_doc).find('construction').find('element');
+
+     if(elements != undefined){
+        for(var i = 0; i < elements.length; i++){
+            // var obj_type = $(elements[i]).attr('type');
+            // if(obj_type == "point"){
+            var label = $(elements[i]).attr('label');
+
+            finalApplet.registerObjectClickListener(label, function (label){
+                currentLabel = label;
+                $current_label.text(currentLabel);
+            });
+            // }
+        }
+    }
+}
+
+function addArrowButtonsEventlisteners(){
+    
+    $arrow_up_button.unbind('click');
+    $arrow_up_button.bind('click', function(){
+        if (finalApplet.getObjectType(currentLabel) == "point"){
+            finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel), finalApplet.getYcoord(currentLabel)+stepSize);
+        }
+    });
+    $arrow_down_button.unbind('click');
+    $arrow_down_button.bind('click', function(){
+        if (finalApplet.getObjectType(currentLabel) == "point"){
+            finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel), finalApplet.getYcoord(currentLabel)-stepSize);
+        }
+    });
+    $arrow_right_button.unbind('click');
+    $arrow_right_button.bind('click', function(){
+        if (finalApplet.getObjectType(currentLabel) == "point"){
+            finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel)+stepSize, finalApplet.getYcoord(currentLabel));
+        }
+    });
+    $arrow_left_button.unbind('click');
+    $arrow_left_button.bind('click', function(){
+        if (finalApplet.getObjectType(currentLabel) == "point"){
+            finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel)-stepSize, finalApplet.getYcoord(currentLabel));
+        }
+    });
+}
+
+function addKeyboardEventListeners(){
+    
+    if (keypressHandler != undefined){
+        document.removeEventListener("keypress", keypressHandler);
+    }
+    keypressHandler = function(key){
+        if (key.which == 105) { // 105 is the ASCII code of 'i'
+            if (finalApplet.getObjectType(currentLabel) == "point"){
+                finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel), finalApplet.getYcoord(currentLabel)+stepSize);
+            }
+        }
+        else if (key.which == 106) { // 106 is the ASCII code of 'j'
+            if (finalApplet.getObjectType(currentLabel) == "point"){
+                finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel)-stepSize, finalApplet.getYcoord(currentLabel));
+            }
+        }
+        else if (key.which == 107) { // 107 is the ASCII code of 'k'
+            if (finalApplet.getObjectType(currentLabel) == "point"){
+                finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel), finalApplet.getYcoord(currentLabel)-stepSize);
+            }
+        }
+        else if (key.which == 108) { // 108 is the ASCII code of 'l'
+            if (finalApplet.getObjectType(currentLabel) == "point"){
+                finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel)+stepSize, finalApplet.getYcoord(currentLabel));
+            }
+        }
+    }
+
+    document.addEventListener("keypress", keypressHandler);
 }
 
 function appletUpdateXML(appletName, cur_xml_doc, new_xml_doc)
@@ -470,4 +604,3 @@ function appletInit(params){
     
     applet.inject(params.container, 'auto');
 }
-

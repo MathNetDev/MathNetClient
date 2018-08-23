@@ -22,10 +22,12 @@ var $error_class_id = $('.error_class_id');
 var $leave_group_button = $('#leave_group');
 var $applet = $('.applet-student');
 
+var $arrow_up_button = $('#arrow_up_button');
+var $arrow_down_button = $('#arrow_down_button');
+var $arrow_right_button = $('#arrow_right_button');
+var $arrow_left_button = $('#arrow_left_button');
+var $current_label = $('label[for="cur_label"]');
+var $step_size_slider = $('#step_size_slider');
+var $step_size_label = $('label[for="step_size_label"]');
+
 var setNewXML = true;
-
-
-
-
-
-
