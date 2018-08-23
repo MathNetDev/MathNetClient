@@ -49,9 +49,19 @@ function appletSetExtXML(xml, toolbar, properties, id){
     xml = xml.substr(xml.indexOf("<"), xml.lastIndexOf(">"));
     var new_xml_doc = $.parseXML(xml);
 
-    if (((properties != null && properties.hasOwnProperty('setNewXML') && properties['setNewXML'] == 'false') || properties == null) && (setNewXML != null && setNewXML == false)) {
-        appletUpdateXML(appletName, cur_xml_doc, new_xml_doc);
-        return;
+    if (((properties != null && properties.hasOwnProperty('setNewXML') && properties['setNewXML'] == 'false') || properties == null)) {
+        try {
+            if (setNewXML && setNewXML == false) {
+                appletUpdateXML(appletName, cur_xml_doc, new_xml_doc);
+                return;
+            }
+        } catch (error) {
+            // Catch a ReferenceError only
+            if (!(error instanceof ReferenceError))
+            {
+                throw "Unknown error";
+            }
+        }
     }
     else if (setNewXML != null) {
         setNewXML = false;
