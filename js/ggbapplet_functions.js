@@ -49,6 +49,7 @@ function appletSetExtXML(xml, toolbar, properties, id){
     xml = xml.substr(xml.indexOf("<"), xml.lastIndexOf(">"));
     var new_xml_doc = $.parseXML(xml);
 
+    // If this is the students' website, then in most cases we only want to update certain areas of the XML
     if (window.location.href.includes("student")) {
         if (!properties && setNewXML == false) {
             appletUpdateXML(appletName, cur_xml_doc, new_xml_doc);
@@ -132,6 +133,7 @@ function appletSetExtXML(xml, toolbar, properties, id){
         
     }
 
+    // If this is the students' website, then we register and add the listeners
     if(window.location.href.includes("student")){
         finalApplet = appletName;
         registerListeners(cur_xml_doc);
@@ -231,10 +233,9 @@ function appletUpdateXML(appletName, cur_xml_doc, new_xml_doc)
 {
     var prev_elements = $(cur_xml_doc).find('construction').find('element');
     var new_elements = $(new_xml_doc).find('construction').find('element');
-    //console.log(localStorage.getItem('setNewXML'));
 
-    if(new_elements != undefined){
-        for(var i = 0; i < new_elements.length; i++){
+    if (new_elements != undefined){
+        for (var i = 0; i < new_elements.length; i++){
             var label = $(new_elements[i]).attr('label');
             var caption = $(new_elements[i]).find('caption').attr('val');
             var ggb_user = appletName.getCaption(label);
@@ -242,20 +243,10 @@ function appletUpdateXML(appletName, cur_xml_doc, new_xml_doc)
             var objType = appletName.getObjectType(label);
 
             if (objType == "point" && username != caption && username != ggb_user && caption != 'unassigned'){
-                //console.log("first");
-                //if (appletName.getXcoord(label) != $(new_elements[i]).find('coords').attr('x') && appletName.getYcoord(label) != $(new_elements[i]).find('coords').attr('y'))
-                //applet.unregisterUpdateListener("Update");
                 appletName.setCaption(label, caption);
                 appletName.setFixed(label, false);
-                    //console.log("first");
-                    //console.log(label);
-                    //console.log($(new_elements[i]).find('coords').attr('x'));
-                    //console.log($(new_elements[i]).find('coords').attr('y'));
                 appletName.setCoords(label, $(new_elements[i]).find('coords').attr('x'), $(new_elements[i]).find('coords').attr('y'));
-                    //applet.registerUpdateListener("Update");
                 appletName.setFixed(label, true);
-                
-                //console.log("second");
             }
         }
     }
