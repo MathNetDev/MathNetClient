@@ -365,7 +365,7 @@ function check_xml(xml, socket){
     if (timeoutHandle != undefined) 
         window.clearTimeout(timeoutHandle);
     updatePerformed = false;
-    window.setTimeout(function(){
+    timeoutHandle = window.setTimeout(function(){
         cur_xml = xml;
         var $messages = $("#messages");
         var username = sessionStorage.getItem('username');
@@ -381,7 +381,7 @@ function check_xml(xml, socket){
             };
         socket.xml_change(data);
         updatePerformed = true;
-    }, 100);
+    }, 250);
 }
 
 //This function is an add listener added in gbbOnInit()
@@ -479,7 +479,7 @@ function Update(object){
     }
     
     applet.registerUpdateListener("Update");
-    if(updatePerformed)
+    if(updatePerformed == true)
     // on update of Geogebra view, send clients updated XML
     check_xml(document.applet.getXML(), socket);
 }
