@@ -381,7 +381,7 @@ function check_xml(xml, socket){
             };
         socket.xml_change(data);
 
-    }, 400);
+    }, 100);
 }
 
 //This function is an add listener added in gbbOnInit()
