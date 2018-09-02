@@ -356,34 +356,6 @@ function updateColors()
     randomizeColors(true, [], document.applet, colors[0], colors[1] , colors[2]);
 }
 
-
-//This function sends the socket call that there was a XML change,
-// and takes the new XML, and the socket that the call will go through. 
-function check_xml(xml, socket){
-
-    if (timeoutHandle != undefined){
-        
-        window.clearTimeout(timeoutHandle);
-    }
-    timeoutHandle = window.setTimeout(function(){
-        cur_xml = xml;
-        var $messages = $("#messages");
-        var username = sessionStorage.getItem('username');
-        var class_id = sessionStorage.getItem('class_id');
-        var group_id = sessionStorage.getItem('group_id');
-        var data = {
-                username: username,
-                class_id: class_id,
-                group_id: group_id,
-                xml: cur_xml,
-                toolbar: '',
-                toolbar_user: ''
-            };
-        socket.xml_change(data);
-
-    }, 100);
-}
-
 //This function is an add listener added in gbbOnInit()
 //It adds a caption to the new object with the local user's class username,
 // and can add a lock onto it.
@@ -480,7 +452,7 @@ function Update(object){
     
     applet.registerUpdateListener("Update");
     // on update of Geogebra view, send clients updated XML
-    check_xml(document.applet.getXML(), socket);
+    // check_xml(document.applet.getXML(), socket);
 }
 
 //This function appends a set of button toolbar items to a container
