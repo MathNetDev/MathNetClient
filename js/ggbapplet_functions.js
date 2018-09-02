@@ -2,6 +2,7 @@
 var cur_xml = '<xml/>';
 appletName = document.applet;
 var timeoutHandle;
+var updatePerformed = true;
 var keypressHandler;
 var $default_toolset = '0|1,501,67,5,19,72,75,76|2,15,45,18,65,7,37|4,3,8,9,13,44,58,47|16,51,64,70|10,34,53,11,24,20,22,21,23|55,56,57,12|36,46,38,49,50,71|30,29,54,32,31,33|17,26,62,73,14,68|25,52,60,61|40,41,42,27,28,35,6';
 
@@ -361,11 +362,10 @@ function updateColors()
 // and takes the new XML, and the socket that the call will go through. 
 function check_xml(xml, socket){
 
-    if (timeoutHandle != undefined){
-        
+    if (timeoutHandle != undefined) 
         window.clearTimeout(timeoutHandle);
-    }
-    timeoutHandle = window.setTimeout(function(){
+    updatePerformed = false;
+    window.setTimeout(function(){
         cur_xml = xml;
         var $messages = $("#messages");
         var username = sessionStorage.getItem('username');
@@ -380,7 +380,7 @@ function check_xml(xml, socket){
                 toolbar_user: ''
             };
         socket.xml_change(data);
-
+        updatePerformed = true;
     }, 100);
 }
 
@@ -479,6 +479,7 @@ function Update(object){
     }
     
     applet.registerUpdateListener("Update");
+    if(updatePerformed)
     // on update of Geogebra view, send clients updated XML
     check_xml(document.applet.getXML(), socket);
 }
