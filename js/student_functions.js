@@ -259,21 +259,6 @@ function ggbOnInit(arg) {
     $(window).resize(function() {
         document.applet.setHeight($(window).height()/1.3);
     });
-    window.setTimeout(function(){
-        var username = sessionStorage.getItem('username');
-        var class_id = sessionStorage.getItem('class_id');
-        var group_id = sessionStorage.getItem('group_id');
-        var data = {
-                username: username,
-                class_id: class_id,
-                group_id: group_id,
-                xml: document.applet.getXML(),
-                toolbar: '',
-                toolbar_user: ''
-            };
-        socket.xml_change(data);
-
-    }, 100);
 }
 
 $step_size_slider.bind('mousemove', function() {
