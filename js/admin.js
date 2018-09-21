@@ -332,6 +332,8 @@ $(function() {
             return $( this ).attr( "visible" ) === "true";
         });
 
+        // We sort the views so that we can later send the ordered arrangement of the different view tabs present
+        // in the activity designer to the students' views
         var visible_views_sorted = visible_views.sort(function(a,b){
             var a_order = a.getAttribute('location').replace(/,/g, ''),
                 b_order = b.getAttribute('location').replace(/,/g, '');
@@ -345,6 +347,9 @@ $(function() {
                 return 0;
             }
         });
+        
+        // The following loop creates a string of the (encoded) values of the different views present in the
+        // activity designer (to be sent to the students)
         var perspectives_mapped = '';
         for (var i=0; i < visible_views_sorted.length; ++i)
         {
