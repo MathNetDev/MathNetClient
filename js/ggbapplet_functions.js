@@ -142,6 +142,7 @@ function appletSetExtXML(xml, toolbar, properties, id){
     }
 }
 
+// This function registers several event listeners only for the students' applet
 function registerListeners(cur_xml_doc){
 
     finalApplet.registerAddListener(function(label){
@@ -229,6 +230,8 @@ function addKeyboardEventListeners(){
     document.addEventListener("keypress", keypressHandler);
 }
 
+// The purpose of this function is to perform selective updates to the students' XML in order to prevent
+// conflicts between several students' views/XMLs (in the current view)
 function appletUpdateXML(appletName, cur_xml_doc, new_xml_doc)
 {
     var prev_elements = $(cur_xml_doc).find('construction').find('element');
