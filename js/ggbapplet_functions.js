@@ -11,7 +11,7 @@ var stepSize = 1.0;
 
 //This function takes the new XML, changes it and the old XML to a JSON format, and then 
 // parses it, and changes it back to XML to be set in the geogebra applet.
-function appletSetExtXML(xml, toolbar, properties, id){
+function appletSetExtXML(xml, toolbar, properties, id, username){
 
     //console.log("setXml");
     var final_xml;
@@ -52,7 +52,7 @@ function appletSetExtXML(xml, toolbar, properties, id){
     // If this is the students' website, then in most cases we only want to update certain areas of the XML
     if (window.location.href.includes("student")) {
         if (!properties && setNewXML == false) {
-            appletUpdateXML(appletName, cur_xml_doc, new_xml_doc);
+            appletUpdateXML(appletName, cur_xml_doc, new_xml_doc, username);
             return;
         }
     }
@@ -232,8 +232,9 @@ function addKeyboardEventListeners(){
 
 // The purpose of this function is to perform selective updates to the students' XML in order to prevent
 // conflicts between several students' views/XMLs (in the current view)
-function appletUpdateXML(appletName, cur_xml_doc, new_xml_doc)
+function appletUpdateXML(appletName, cur_xml_doc, new_xml_doc, prev_username)
 {
+    alert(prev_username);
     var prev_elements = $(cur_xml_doc).find('construction').find('element');
     var new_elements = $(new_xml_doc).find('construction').find('element');
 
@@ -245,7 +246,8 @@ function appletUpdateXML(appletName, cur_xml_doc, new_xml_doc)
             var username = sessionStorage.getItem('username');
             var objType = appletName.getObjectType(label);
 
-            if (objType == "point" && username != caption && username != ggb_user && caption != 'unassigned'){
+            // if (objType == "point" && username != caption && username != ggb_user && caption != 'unassigned'){
+            if (objType == "point" && (prev_username == 'admin' || prev_username == caption)) {
                 appletName.setCaption(label, caption);
                 appletName.setFixed(label, false);
                 appletName.setCoords(label, $(new_elements[i]).find('coords').attr('x'), $(new_elements[i]).find('coords').attr('y'));
@@ -384,7 +386,7 @@ function check_xml(xml, socket){
             };
         socket.xml_change(data);
 
-    }, 100);
+    }, 4000);
 }
 
 //This function is an add listener added in gbbOnInit()
@@ -483,7 +485,11 @@ function Update(object){
     
     applet.registerUpdateListener("Update");
     // on update of Geogebra view, send clients updated XML
-    check_xml(document.applet.getXML(), socket);
+    if (sessionStorage.getItem('latestXML') == "" || sessionStorage.getItem('latestXML') != document.applet.getXML())
+    {
+        sessionStorage.setItem('latestXML', document.applet.getXML())
+        check_xml(document.applet.getXML(), socket);
+    }
 }
 
 //This function appends a set of button toolbar items to a container

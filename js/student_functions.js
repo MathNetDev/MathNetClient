@@ -175,7 +175,7 @@ function xml_change_response(username, class_id, group_id, xml, toolbar, propert
     } else if (properties === null && sessionStorage.getItem('properties') !== null){
         properties = JSON.parse(sessionStorage.getItem('properties'));
     }
-    appletSetExtXML(xml, toolbar, properties);
+    appletSetExtXML(xml, toolbar, properties, null, username);
     ggbOnInit('socket_call');
 }
 
@@ -194,7 +194,7 @@ function get_xml_response(username, class_id, group_id, xml,toolbar, properties)
         toolbar = sessionStorage.getItem('toolbar');
     }
     
-    appletSetExtXML(xml, toolbar, properties);
+    appletSetExtXML(xml, toolbar, properties, null, username);
     ggbOnInit('socket_call')
 }
 
