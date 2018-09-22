@@ -624,6 +624,13 @@ $(function() {
     });
 
     //
+    //  RESET GEOGEBRA APPLET ON ADMIN CREATE PAGE
+    //
+    $resetview_button.bind('click', function(){
+        document.applet.reset();
+    });
+
+    //
     // LOGGING OUT
     //
     $logout_class_button.bind('click', function(){
