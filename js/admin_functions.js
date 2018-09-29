@@ -531,6 +531,57 @@ function view_merge(event){
         var parsing = document[value].getXML();
         var xml;
 
+        applet.setXML(parsing);
+        xml = rename_labels_on_merge(applet, num);
+        
+        var new_construction = $($.parseXML(xml)).find('construction')[0];
+
+        XMLs += new_construction.innerHTML;
+
+       
+        $("." + array[i]["name"]).hide()
+
+    }
+    cur_construction.innerHTML = XMLs;
+    var final_xml = '"' + $(cur_xml_doc).find('geogebra')[0].outerHTML + '"';
+    
+    appletSetExtXML(final_xml, '', null, numgroups);
+    var numelems = applet.getObjectNumber();
+    for (i = 0; i < numelems; i++){
+        var name = applet.getObjectName(i);
+        applet.setFixed(name, false, true);
+    }
+    
+    applet.setPerspective('G');
+    applet.setCoordSystem(-10,10,-10,10);
+    applet.evalCommand("SetAxesRatio(1,1)");
+    applet.setAxisSteps(1, 2,2,2);
+    applet.evalCommand("CenterView[(0,0)]");
+    $('#views_checkboxes :checkbox').hide();
+    $('.merge_group').css('visibility','visible');
+}
+
+function view_merge_old(event){
+    $('.mergeview_button').hide();
+    $('.unmergeview_button').show();
+    $clear_buttons.hide();
+
+    var XMLs = "";
+    var array = $('#views_checkboxes :checked');
+    var counter = 0, count = 0; // for checking and not deleteing the first admin objects
+    var numgroups = ($('ul.groups div').length)+1;
+    var applet = document['applet' + numgroups];
+    var cur_xml = applet.getXML();
+    var cur_xml_doc = $.parseXML(cur_xml);
+    var cur_construction = $(cur_xml_doc).find('construction')[0];
+
+    for (var i = 0; i < array.length ; i++){
+        var value = array[i]["value"];
+        var num = array[i]["value"].substr(value.lastIndexOf('t') + 1 , value.length - value.lastIndexOf('t'));
+        randomizeColors(gen_new_colors,filtered_merged_view_obj_colors[parseInt(num)-1],document[value]);
+        var parsing = document[value].getXML();
+        var xml;
+
         [xml, counter] = rename_labels(parsing, num, counter);
         
         if (counter == 1 && count == 0) // if these are the first admin objects dont delete them
@@ -565,7 +616,15 @@ function view_merge(event){
     $('.merge_group').css('visibility','visible');
 }
 
-
+function rename_labels_on_merge(applet, num){
+    var objs = applet.getAllObjectNames();
+    for(i = 0; i < objs.length; i++){
+        applet.renameObject(objs[i], objs[i] + "grp" + num); //Could try grp1,grp2,etc instead of __g1
+    }
+    var xobj = $.parseXML(applet.getXML());
+    var new_xml = $(xobj).find('geogebra')[0].outerHTML;
+    return new_xml;
+}
 
 //this is used to remove admin objects past those in the first group
 //so we don't have duplicate points in the construction

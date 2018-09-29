@@ -393,6 +393,7 @@ $(function() {
         perspectives_mapped.includes("L") || perspectives_mapped.includes("B"))? null: toolbar;
         console.log(perspectives_mapped);
         console.log(construction_groups);
+        set_captions_unassigned(document.applet);
         for(var i = 0; i < construction_groups.length; i++){
             var data = {
                 username: 'admin',
@@ -413,6 +414,15 @@ $(function() {
             socket.xml_change(data);
         }
     });
+
+    function set_captions_unassigned(applet){
+        var objs = applet.getAllObjectNames();
+        for(i = 0; i < objs.length; i++){
+            if(applet.getCaption(objs[i]) === ''){
+                applet.setCaption(objs[i], 'unassigned');
+            }
+        }
+    }
 
     $sendconstruction_all_button.bind('click', function(){
         var construction_groups_opt = $('.construction_groups option');
