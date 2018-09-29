@@ -561,6 +561,7 @@ function view_merge(event){
     $('.merge_group').css('visibility','visible');
 }
 
+//TODO: Remove this once we know the above approach is good enough.
 function view_merge_old(event){
     $('.mergeview_button').hide();
     $('.unmergeview_button').show();
