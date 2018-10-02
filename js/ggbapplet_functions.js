@@ -234,7 +234,6 @@ function addKeyboardEventListeners(){
 // conflicts between several students' views/XMLs (in the current view)
 function appletUpdateXML(appletName, cur_xml_doc, new_xml_doc, prev_username)
 {
-    alert(prev_username);
     var prev_elements = $(cur_xml_doc).find('construction').find('element');
     var new_elements = $(new_xml_doc).find('construction').find('element');
 
