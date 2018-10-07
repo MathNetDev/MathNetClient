@@ -620,7 +620,7 @@ $(function() {
         var toolbar = $construction_select[0][id].toolbar;
         var properties = {perspective: "AG"}
         appletSetExtXML(xml, toolbar, properties); 
-        
+        document.applet.registerAddListener("addLock");
         $(select[id]).prop("selected", false);
     });
 
@@ -641,7 +641,31 @@ $(function() {
     //  RESET GEOGEBRA APPLET ON ADMIN CREATE PAGE
     //
     $resetview_button.bind('click', function(){
-        document.applet.reset();
+        var params = {
+                    "container":"appletContainer",
+                    "id":"applet",
+                    "width":$applet_activity_designer.innerWidth(),
+                    "height":600,
+                    "perspective":"AG",
+                    "showAlgebraInput":true,
+                    "showToolBarHelp":false,
+                    "showMenubar":true,
+                    "enableLabelDrags":false,
+                    "showResetIcon":true,
+                    "showToolbar":true,
+                    "allowStyleBar":false,
+                    "useBrowserForJS":true,
+                    "enableShiftDragZoom":true,
+                    "errorDialogsActive":true,
+                    "enableRightClick":false,
+                    "enableCAS":false,
+                    "enable3d":false,
+                    "isPreloader":false,
+                    "screenshotGenerator":false,
+                    "preventFocus":false,
+                    "scaleContainerClass": "appletContainer"
+                };
+        appletInit(params);
     });
 
     //
