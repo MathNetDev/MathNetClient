@@ -762,14 +762,8 @@ function filtered_view_merge(event){
         var parsing = document[value].getXML();
         var xml;
 
-        [xml, counter] = rename_labels(parsing, num, counter);
-
-        xml = filter_objects(xml,selected_objs_for_merging);
-        
-        if (counter == 1 && count == 0) // if these are the first admin objects dont delete them
-            count++;
-        else if(counter == 1)  // if these are not the first admin objects delete them 
-            xml = remove_admin_objects(xml);
+        applet.setXML(parsing);
+        xml = rename_labels_on_merge(applet, num);
 
         var new_construction = $($.parseXML(xml)).find('construction')[0];
 
@@ -780,7 +774,7 @@ function filtered_view_merge(event){
     }
     cur_construction.innerHTML = XMLs;
     var final_xml = '"' + $(cur_xml_doc).find('geogebra')[0].outerHTML + '"';
-    // console.log(final_xml);
+
     appletSetExtXML(final_xml, '', null, numgroups);
     var numelems = applet.getObjectNumber();
     for (i = 0; i < numelems; i++){
