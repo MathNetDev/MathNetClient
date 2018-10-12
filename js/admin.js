@@ -319,10 +319,36 @@ $(function() {
 
     $sendconstruction_button.bind('click', function(){
         var xml = $.parseXML(document.applet.getXML());
-        // console.log(document.applet.getXML());
-        // console.log(document.applet.getXML());
+
+        //Gets axis tags for each of the views: Graphics 1, Graphics 2 and 3D Graphics
+        //which are finally added to the properties
+        var axis_info = {};
+        $(xml).find('axis').each(function(index){
+            var viewNo = $(this).parent().find('viewNumber').attr('viewNo');
+            if(viewNo == undefined){
+                viewNo = '3D';
+            }
+            if(viewNo in axis_info){
+                axis_info[viewNo].push($(this)['0'].outerHTML);
+            }
+            else{
+                axis_info[viewNo] = [$(this)['0'].outerHTML];
+            }
+        });
+
+        var evSettings = {};
+        $(xml).find('evSettings').each(function(index){
+            var viewNo = $(this).parent().find('viewNumber').attr('viewNo');
+            if(viewNo == undefined){
+                viewNo = '3D';
+            }
+            evSettings[viewNo] = $(this)['0'].outerHTML;
+        });
+
         var toolbar = $(xml).find('toolbar').attr('items').replace(/  /g, " ").replace(/ \| /g, "|").replace(/ /g, ",");
+        
         // var $(xml).find('view').toArray()[0].outerHTML);
+        
         var construction_groups = $('.construction_groups').val();
         if(!construction_groups){
             $('.construction_groups option').prop('selected', true);
@@ -412,7 +438,9 @@ $(function() {
                             'yZero': $(xml).find('coordSystem').attr('yZero'),
                             'scale': $(xml).find('coordSystem').attr('scale'),
                             'yscale': $(xml).find('coordSystem').attr('yscale'),
-                            'resetToolbar': $('#send-toolbar-checkbox').prop('checked')
+                            'resetToolbar': $('#send-toolbar-checkbox').prop('checked'),
+                            'axes' : axis_info,
+                            'evSettings' : evSettings
                         }
             };
             socket.xml_change(data);

@@ -81,11 +81,7 @@ function appletSetExtXML(xml, toolbar, properties, id, username){
     // console.log($(cur_xml_doc).find('geogebra')[0].innerHTML);
     // $(cur_xml_doc).find('geogebra')[0].innerHTML = $(new_xml_doc).find('geogebra')[0].innerHTML;
     // console.log($(cur_xml_doc).find('geogebra')[0].innerHTML);
-    var final_xml = $(cur_xml_doc).find('geogebra')[0].outerHTML;
     // delete the current autosave object
-
-    appletName.setXML(final_xml);
-    checkLocks(appletName);
 
     if (toolbar && toolbar !== "undefined" && toolbar !== "null" && toolbar.match(/\d+/g) && properties && properties['perspective']){
         //console.log('setting ' + appletName.id + ' custom toolbar to: ' + toolbar);
@@ -130,8 +126,35 @@ function appletSetExtXML(xml, toolbar, properties, id, username){
             appletName.evalCommand('SetActiveView(2)');
             appletName.evalCommand('ZoomIn('+properties['g2coord_system']['x_min']+','+properties['g2coord_system']['y_min']+','+properties['g2coord_system']['x_max']+','+properties['g2coord_system']['y_max']+')');
         }
-        
+        if(properties.hasOwnProperty('axes')){
+            var axis_info = properties['axes'];
+            Object.keys(axis_info).forEach(function(key) {
+                axis_info[key].forEach(function(axis_tag) {
+                    if(key == '3D'){
+                        $(cur_xml_doc).find('euclidianView3D')[0].appendChild($.parseXML(axis_tag).children[0]);       
+                    }
+                    else{
+                        $(cur_xml_doc).find('viewNumber[viewNo=' + key + ']').parent()[0].appendChild($.parseXML(axis_tag).children[0]);
+                    }
+                });
+            });
+        }
+        if(properties.hasOwnProperty('evSettings')){
+            var evSettings = properties['evSettings'];
+            Object.keys(evSettings).forEach(function(key) {
+                if(key == '3D'){
+                    $(cur_xml_doc).find('euclidianView3D')[0].appendChild($.parseXML(evSettings[key]).children[0]);       
+                }
+                else{
+                    $(cur_xml_doc).find('viewNumber[viewNo=' + key + ']').parent()[0].appendChild($.parseXML(evSettings[key]).children[0]);
+                }
+            });
+        }
     }
+
+    var final_xml = $(cur_xml_doc).find('geogebra')[0].outerHTML;
+    appletName.setXML(final_xml);
+    checkLocks(appletName);
 
     // If this is the students' website, then we register and add the listeners
     if(window.location.href.includes("student")){

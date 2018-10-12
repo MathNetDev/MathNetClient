@@ -184,7 +184,6 @@ function get_xml_response(username, class_id, group_id, xml,toolbar, properties)
     if(xml == undefined){
         xml = '{}';
     }
-    console.log(properties);
     if(properties !== null){
         sessionStorage.setItem('properties', JSON.stringify(properties));
     } else if (properties === null && sessionStorage.getItem('properties') !== null){
