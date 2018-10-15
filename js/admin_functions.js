@@ -444,7 +444,16 @@ function ggbOnInit(arg) {
 }
 
 //Called when the Live/Not Live Toggle is Set/Unset for the Merged View
-function liveUpdatesCheckboxChange(checkbox)
+function liveUpdatesCheckboxChangeMerge(checkbox)
+{
+    if(checkbox.checked == true)
+    {
+        view_merge(this); 
+    }
+}
+
+//Called when the Live/Not Live Toggle is Set/Unset for the Filtered Merged View
+function liveUpdatesCheckboxChangeFilteredMerge(checkbox)
 {
     if(checkbox.checked == true)
     {
@@ -456,19 +465,21 @@ function liveUpdatesCheckboxChange(checkbox)
 function xml_change_response(username, class_id, group_id, xml, toolbar) {
     var tab = $('a[data-toggle="tab"][aria-expanded=true]').html();
     if(tab == "View")
-        appletSetExtXML(xml, toolbar, null, group_id);
-    
-    if(tab == "Filtered Merged View" && $('.filtered_unmergeview_button').is(":visible"))
     {
         appletSetExtXML(xml, toolbar, null, group_id);
-        if($("#myonoffswitch").is(':checked'))
+        if($('.unmergeview_button').is(":visible") && $('#myonoffswitchmerge').is(':checked'))
+        {
+            view_merge(this);
+        }
+
+    }
+    else if(tab == "Filtered Merged View")
+    {
+        appletSetExtXML(xml, toolbar, null, group_id);
+        if($('.filtered_unmergeview_button').is(":visible") && $('#myonoffswitchfilteredmerge').is(':checked'))
         {
             filtered_view_merge(this);
         }
-    }
-    else if(tab == "Filtered Merged View" && $('.filtered_mergeview_button').is(":visible"))
-    {
-        appletSetExtXML(xml, toolbar, null, group_id);
     }
     else if(tab == "Overlayed Image View")
     {
@@ -513,6 +524,7 @@ function views_change(event){
 function view_merge(event){
     $('.mergeview_button').hide();
     $('.unmergeview_button').show();
+    $('.onoffswitch').show();
     $clear_buttons.hide();
 
     var XMLs = "";
@@ -717,6 +729,7 @@ function rename_labels(xml, num, counter){
 //this is called when the unmerge views button is pressed.
 //it shows all hidden divs from the merge view
 function unmerge_views(event){
+    $('.onoffswitch').hide();
     $('#views_checkboxes :checkbox').show();
     $('.mergeview_button').show();
     $('.unmergeview_button').hide();
