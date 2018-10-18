@@ -83,7 +83,6 @@ function appletSetExtXML(xml, toolbar, properties, id, username){
         }
     }
     if (properties != null){
-        console.log(properties);
         // need to set the grid and axes visibility after setXML
         if(properties.hasOwnProperty('axis_display')){
             appletName.setAxesVisible(1, properties['axis_display'], properties['axis_display']);    

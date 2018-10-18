@@ -435,8 +435,7 @@ $(function() {
         toolbar = (perspectives_mapped.includes("S") || perspectives_mapped.includes("C") ||
         perspectives_mapped.includes("L") || perspectives_mapped.includes("B") ||
         perspectives_mapped.includes("T"))? null: toolbar;
-        console.log(perspectives_mapped);
-        console.log(construction_groups);
+        
         set_captions_unassigned(document.applet);
         for(var i = 0; i < construction_groups.length; i++){
             var data = {
