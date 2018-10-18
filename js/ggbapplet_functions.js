@@ -62,21 +62,6 @@ function appletSetExtXML(xml, toolbar, properties, id, username){
         cur_construction.innerHTML = new_construction.innerHTML;
     }
 
-    if (properties != null){
-        if(properties.hasOwnProperty('xZero')){
-            $(cur_xml_doc).find('coordSystem').attr('xZero', properties['xZero']);
-        }
-        if(properties.hasOwnProperty('yZero')){
-            $(cur_xml_doc).find('coordSystem').attr('yZero', properties['yZero']);
-        }
-        if(properties.hasOwnProperty('scale')){
-            $(cur_xml_doc).find('coordSystem').attr('scale', properties['scale']);
-       }
-        if(properties.hasOwnProperty('yscale')){
-            $(cur_xml_doc).find('coordSystem').attr('yscale', properties['yscale']);
-        }
-    }
-
     // console.log($(new_xml_doc).find('geogebra')[0].innerHTML);
     // console.log($(cur_xml_doc).find('geogebra')[0].innerHTML);
     // $(cur_xml_doc).find('geogebra')[0].innerHTML = $(new_xml_doc).find('geogebra')[0].innerHTML;
@@ -98,6 +83,7 @@ function appletSetExtXML(xml, toolbar, properties, id, username){
         }
     }
     if (properties != null){
+        console.log(properties);
         // need to set the grid and axes visibility after setXML
         if(properties.hasOwnProperty('axis_display')){
             appletName.setAxesVisible(1, properties['axis_display'], properties['axis_display']);    
@@ -147,6 +133,19 @@ function appletSetExtXML(xml, toolbar, properties, id, username){
                 }
                 else{
                     $(cur_xml_doc).find('viewNumber[viewNo=' + key + ']').parent()[0].appendChild($.parseXML(evSettings[key]).children[0]);
+                }
+            });
+        }
+        if(properties.hasOwnProperty('coordSystem')){
+            var coordSystem = properties['coordSystem'];
+            Object.keys(coordSystem).forEach(function(key) {
+                if(key == '3D'){
+                    $(cur_xml_doc).find('euclidianView3D > coordSystem').remove();
+                    $(cur_xml_doc).find('euclidianView3D')[0].appendChild($.parseXML(coordSystem[key]).children[0]);
+                }
+                else{
+                    $(cur_xml_doc).find('viewNumber[viewNo=' + key + '] > coordSystem').remove();
+                    $(cur_xml_doc).find('viewNumber[viewNo=' + key + ']').parent()[0].appendChild($.parseXML(coordSystem[key]).children[0]);
                 }
             });
         }

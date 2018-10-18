@@ -336,6 +336,8 @@ $(function() {
             }
         });
 
+        //Gets evSettings for each of the views: Graphics 1, Graphics 2 and 3D Graphics
+        //which are finally added to the properties
         var evSettings = {};
         $(xml).find('evSettings').each(function(index){
             var viewNo = $(this).parent().find('viewNumber').attr('viewNo');
@@ -344,6 +346,18 @@ $(function() {
             }
             evSettings[viewNo] = $(this)['0'].outerHTML;
         });
+
+        //Gets coordSystem for each of the views: Graphics 1, Graphics 2 and 3D Graphics
+        //which are finally added to the properties
+        var coordSystem = {};
+        $(xml).find('coordSystem').each(function(index){
+            var viewNo = $(this).parent().find('viewNumber').attr('viewNo');
+            if(viewNo == undefined){
+                viewNo = '3D';
+            }
+            coordSystem[viewNo] = $(this)['0'].outerHTML;
+        });
+
 
         var toolbar = $(xml).find('toolbar').attr('items').replace(/  /g, " ").replace(/ \| /g, "|").replace(/ /g, ",");
         
@@ -434,13 +448,10 @@ $(function() {
                 toolbar_user: 'admin',
                 properties: {'perspective': perspectives_mapped == ''? 'AG': perspectives_mapped,
                             'setNewXML': 'true',
-                            'xZero': $(xml).find('coordSystem').attr('xZero'),
-                            'yZero': $(xml).find('coordSystem').attr('yZero'),
-                            'scale': $(xml).find('coordSystem').attr('scale'),
-                            'yscale': $(xml).find('coordSystem').attr('yscale'),
                             'resetToolbar': $('#send-toolbar-checkbox').prop('checked'),
                             'axes' : axis_info,
-                            'evSettings' : evSettings
+                            'evSettings' : evSettings,
+                            'coordSystem' : coordSystem
                         }
             };
             socket.xml_change(data);
