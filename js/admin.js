@@ -358,6 +358,8 @@ $(function() {
             coordSystem[viewNo] = $(this)['0'].outerHTML;
         });
 
+        //Get plate xml tag for 3D Graphics View
+        var plate = $(xml).find('plate').attr('show');
 
         var toolbar = $(xml).find('toolbar').attr('items').replace(/  /g, " ").replace(/ \| /g, "|").replace(/ /g, ",");
         
@@ -450,6 +452,7 @@ $(function() {
                             'resetToolbar': $('#send-toolbar-checkbox').prop('checked'),
                             'axes' : axis_info,
                             'evSettings' : evSettings,
+                            'plate' : plate,
                             'coordSystem' : coordSystem
                         }
             };

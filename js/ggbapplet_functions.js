@@ -148,6 +148,9 @@ function appletSetExtXML(xml, toolbar, properties, id, username){
                 }
             });
         }
+        if(properties.hasOwnProperty('plate') && properties['plate'] != undefined){
+             $(cur_xml_doc).find('plate').attr('show', properties['plate']);
+        }
     }
 
     var final_xml = $(cur_xml_doc).find('geogebra')[0].outerHTML;
