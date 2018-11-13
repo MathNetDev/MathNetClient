@@ -59,12 +59,18 @@
             socket.emit('group-color', class_id, group_id);
         }
 
+        //This function takes a username, class_id, group_id, and XML
+        //It then emits a socket event to change the class's XML in the datastructure
+        //based on the given XML, group_id, and class_id
+        var xml_update = function(username, class_id, group_id, xml, toolbar, toolbar_user, obj_xml, obj_label, obj_cmd_str, type_of_req) {
+            socket.emit('xml_update', username, class_id, group_id, xml, toolbar, obj_xml, obj_label, obj_cmd_str, type_of_req);
+        }
 
         //This function takes a username, class_id, group_id, and XML
         //It then emits a socket event to change the class's XML in the datastructure
         //based on the given XML, group_id, and class_id
-        var xml_change = function(username, class_id, group_id, xml, toolbar) {
-            socket.emit('xml_change', username, class_id, group_id, xml, toolbar);
+        var xml_change = function(username, class_id, group_id, xml, toolbar, toolbar_user, obj_xml, obj_label, obj_cmd_str) {
+            socket.emit('xml_change', username, class_id, group_id, xml, toolbar, obj_xml, obj_label, obj_cmd_str);
         }
 
         //This function takes a username, class_id, and group_id
@@ -129,8 +135,13 @@
         });
         
         socket.on('xml_change_response', function(data) {
-            xml_change_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar, data.properties);
+            xml_change_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar, data.properties, data.obj_xml, data.obj_label, data.obj_cmd_str);
         });
+
+        socket.on('xml_update_response', function(data) {
+            xml_update_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar, data.properties, data.obj_xml, data.obj_label, data.obj_cmd_str, data.type_of_req);
+        });
+
 
         socket.on('get_xml_response', function(data) {
             get_xml_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar, data.properties);
@@ -166,6 +177,7 @@
             group_info: group_info,
             group_color: group_color,
             xml_change: xml_change,
+            xml_update: xml_update,
             get_xml: get_xml,
             get_settings: get_settings,
             disconnect: disconnect,

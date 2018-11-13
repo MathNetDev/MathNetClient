@@ -168,15 +168,31 @@ function group_info_response(username, class_id, group_id, members, status) {
 }//members is undefined if group_info_response is triggered by group_leave, so short circuit it on status.
 
 //handler for xml_change response, appends message to chatbox, and calls appletSetExtXML()
-function xml_change_response(username, class_id, group_id, xml, toolbar, properties) {
+function xml_change_response(username, class_id, group_id, xml, toolbar, properties, obj_xml, obj_label, obj_cmd_str) {
     socket.group_color(sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'));
     if(properties !== null){
         sessionStorage.setItem('properties', JSON.stringify(properties));
     } else if (properties === null && sessionStorage.getItem('properties') !== null){
         properties = JSON.parse(sessionStorage.getItem('properties'));
     }
-    appletSetExtXML(xml, toolbar, properties, null, username);
+    appletSetExtXML(xml, toolbar, properties, null, username, obj_xml, obj_label, obj_cmd_str);
     ggbOnInit('socket_call');
+}
+
+//handler for xml_change response, appends message to chatbox, and calls appletSetExtXML()
+function xml_update_response(username, class_id, group_id, xml, toolbar, properties, obj_xml, obj_label, obj_cmd_str, type_of_req) {
+    socket.group_color(sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'));
+    if(properties !== null){
+        sessionStorage.setItem('properties', JSON.stringify(properties));
+    } else if (properties === null && sessionStorage.getItem('properties') !== null){
+        properties = JSON.parse(sessionStorage.getItem('properties'));
+    }
+    appletUpdate(xml, toolbar, properties, null, username, obj_xml, obj_label, obj_cmd_str, type_of_req);
+    ggbOnInit('socket_call');/*
+        socket.group_color(sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'));
+    $(window).resize(function() {
+        document.applet.setHeight($(window).height()/1.3);
+    });*/
 }
 
 //calls appletSetExtXML() to update the local geogebra applet.
@@ -193,7 +209,7 @@ function get_xml_response(username, class_id, group_id, xml,toolbar, properties)
         toolbar = sessionStorage.getItem('toolbar');
     }
     
-    appletSetExtXML(xml, toolbar, properties, null, username);
+    appletSetExtXML(xml, toolbar, properties, null, username, null, null); //Kevin
     ggbOnInit('socket_call')
 }
 
@@ -241,15 +257,30 @@ function group_color_response(colors) {
     //sessionStorage.setItem('group_colors', colors);
 }
 
+//Kevin
+function ggbOnInit(arg){
+
+    document.applet.registerAddListener("addListener");
+    document.applet.registerUpdateListener("updateListener");
+    document.applet.registerRemoveListener("removeListener");
+
+    socket.group_color(sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'));
+    $(window).resize(function() {
+        document.applet.setHeight($(window).height()/1.3);
+    });
+}
+
 //This function registers listeners on geogebra initialization 
-function ggbOnInit(arg) {
+function ggbOnInit_old(arg) {
     if(arg != 'socket_call'){
         //localStorage.setItem('setNewXML', 'true');
         setNewXML = true;
     }
+    //document.applet.registerAddListener("object_added_listener");
     document.applet.registerAddListener("addLock");
     document.applet.registerUpdateListener("Update");
-    document.applet.registerRemoveListener("checkUser");
+    document.applet.registerRemoveListener("Update");
+
     //document.applet.registerAddListener("updateColors");
     socket.group_color(sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'));
     if(arg != 'socket_call'){

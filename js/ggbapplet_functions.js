@@ -9,14 +9,97 @@ var currentLabel;
 var finalApplet;
 var stepSize = 1.0;
 
+function addListener(obj_label){
+    send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'add');
+    var username;
+    if(sessionStorage.getItem('username') != null && sessionStorage.getItem('username') != "admin")
+        username = sessionStorage.getItem('username');
+    else
+    {
+        username = "unassigned";
+    }
+
+    document.applet.setCaption(obj_label, username);
+    var type = document.applet.getObjectType(obj_label);
+    if (type === 'point'){
+        document.applet.setLabelStyle(obj_label, 3);
+    }
+}
+
+function updateListener(obj_label){
+    send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'update');   
+}
+function removeListener(obj_label){
+    send_xml(document.applet.getXML(), null, obj_label, null, socket, 'remove');   
+}
+
+function send_xml(xml, obj_xml, obj_label, obj_cmd_str, socket, type_of_req){
+
+        cur_xml = xml;
+        var $messages = $("#messages");
+        var username = sessionStorage.getItem('username');
+        var class_id = sessionStorage.getItem('class_id');
+        var group_id = sessionStorage.getItem('group_id');
+        var data = {
+                username: username,
+                class_id: class_id,
+                group_id: group_id,
+                xml: cur_xml,
+                toolbar: '',
+                toolbar_user: '',
+                obj_xml: obj_xml,
+                obj_label: obj_label,
+                obj_cmd_str: obj_cmd_str,
+                type_of_req: type_of_req
+            };
+        socket.xml_update(data);
+}
+
+function appletUpdate(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str, type_of_req){
+    var final_xml;
+    var appletName = document.applet;
+    //console.log('appletSetExtXML id param: ' + id);
+    //console.log("Command appletSet: ", obj_cmd_str);
+
+    appletName.unregisterAddListener("addListener");
+    appletName.unregisterUpdateListener("updateListener");
+    appletName.unregisterRemoveListener("removeListener");
+
+    if (typeof document['applet' + id] !== 'undefined'){
+        appletName = document['applet' + id];
+    }
+
+    if(type_of_req == 'add'){
+        //console.log(obj_label, ":", obj_cmd_str);
+        if(obj_cmd_str != null && obj_cmd_str != ''){
+            appletName.evalCommand(obj_label + ":" + obj_cmd_str);
+        }
+        appletName.evalXML(JSON.parse(obj_xml));
+        appletName.evalCommand("UpdateConstruction()");
+    }
+    else if(type_of_req == 'update'){
+        appletName.evalXML(JSON.parse(obj_xml));
+        appletName.evalCommand("UpdateConstruction()");
+    }
+    else if(type_of_req == 'remove'){
+        appletName.deleteObject(obj_label);
+    }
+    checkLocks(appletName);
+    //appletName.registerAddListener("addListener");
+    //appletName.registerUpdateListener("updateListener");
+    //appletName.registerRemoveListener("removeListener");
+
+}
+
 //This function takes the new XML, changes it and the old XML to a JSON format, and then 
 // parses it, and changes it back to XML to be set in the geogebra applet.
-function appletSetExtXML(xml, toolbar, properties, id, username){
+function appletSetExtXML_old(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str){
 
     //console.log("setXml");
     var final_xml;
     var appletName = document.applet;
     //console.log('appletSetExtXML id param: ' + id);
+    //console.log("Command appletSet: ", obj_cmd_str);
 
     if (typeof document['applet' + id] !== 'undefined'){
         appletName = document['applet' + id];
@@ -49,12 +132,12 @@ function appletSetExtXML(xml, toolbar, properties, id, username){
     xml = xml.substr(xml.indexOf("<"), xml.lastIndexOf(">"));
     var new_xml_doc = $.parseXML(xml);
 
-    // If this is the students' website, then in most cases we only want to update certain areas of the XML
-    if (window.location.href.includes("student")) {
-        if (!properties && setNewXML == false) {
-            appletUpdateXML(appletName, cur_xml_doc, new_xml_doc, username);
-            return;
+    // If this is the students' website, then in most cases we only want to update certain parts of the XML
+    if (window.location.href.includes("student") && !properties && obj_xml != null){
+        if(username != sessionStorage.getItem('username')){
+            evalXMLAppletChange(appletName, cur_xml_doc, obj_xml, obj_label, obj_cmd_str);
         }
+        return;
     }
 
     if(new_xml_doc !== null){
@@ -62,11 +145,57 @@ function appletSetExtXML(xml, toolbar, properties, id, username){
         cur_construction.innerHTML = new_construction.innerHTML;
     }
 
+    if(properties != null){
+        if(properties.hasOwnProperty('axes')){
+            var axis_info = properties['axes'];
+            Object.keys(axis_info).forEach(function(key) {
+                axis_info[key].forEach(function(axis_tag) {
+                    if(key == '3D'){
+                        $(cur_xml_doc).find('euclidianView3D')[0].appendChild($.parseXML(axis_tag).children[0]);       
+                    }
+                    else{
+                        $(cur_xml_doc).find('viewNumber[viewNo=' + key + ']').parent()[0].appendChild($.parseXML(axis_tag).children[0]);
+                    }
+                });
+            });
+        }
+        if(properties.hasOwnProperty('evSettings')){
+            var evSettings = properties['evSettings'];
+            Object.keys(evSettings).forEach(function(key) {
+                if(key == '3D'){
+                    $(cur_xml_doc).find('euclidianView3D')[0].appendChild($.parseXML(evSettings[key]).children[0]);       
+                }
+                else{
+                    $(cur_xml_doc).find('viewNumber[viewNo=' + key + ']').parent()[0].appendChild($.parseXML(evSettings[key]).children[0]);
+                }
+            });
+        }
+        if(properties.hasOwnProperty('coordSystem')){
+            var coordSystem = properties['coordSystem'];
+            Object.keys(coordSystem).forEach(function(key) {
+                if(key == '3D'){
+                    $(cur_xml_doc).find('euclidianView3D > coordSystem').remove();
+                    $(cur_xml_doc).find('euclidianView3D')[0].appendChild($.parseXML(coordSystem[key]).children[0]);
+                }
+                else{
+                    $(cur_xml_doc).find('viewNumber[viewNo=' + key + '] > coordSystem').remove();
+                    $(cur_xml_doc).find('viewNumber[viewNo=' + key + ']').parent()[0].appendChild($.parseXML(coordSystem[key]).children[0]);
+                }
+            });
+        }
+        if(properties.hasOwnProperty('plate') && properties['plate'] != undefined){
+             $(cur_xml_doc).find('plate').attr('show', properties['plate']);
+        }
+    }
+
     // console.log($(new_xml_doc).find('geogebra')[0].innerHTML);
     // console.log($(cur_xml_doc).find('geogebra')[0].innerHTML);
     // $(cur_xml_doc).find('geogebra')[0].innerHTML = $(new_xml_doc).find('geogebra')[0].innerHTML;
     // console.log($(cur_xml_doc).find('geogebra')[0].innerHTML);
     // delete the current autosave object
+    var final_xml = $(cur_xml_doc).find('geogebra')[0].outerHTML;
+    appletName.setXML(final_xml);
+    checkLocks(appletName);
 
     if (toolbar && toolbar !== "undefined" && toolbar !== "null" && toolbar.match(/\d+/g) && properties && properties['perspective']){
         //console.log('setting ' + appletName.id + ' custom toolbar to: ' + toolbar);
@@ -111,51 +240,7 @@ function appletSetExtXML(xml, toolbar, properties, id, username){
             appletName.evalCommand('SetActiveView(2)');
             appletName.evalCommand('ZoomIn('+properties['g2coord_system']['x_min']+','+properties['g2coord_system']['y_min']+','+properties['g2coord_system']['x_max']+','+properties['g2coord_system']['y_max']+')');
         }
-        if(properties.hasOwnProperty('axes')){
-            var axis_info = properties['axes'];
-            Object.keys(axis_info).forEach(function(key) {
-                axis_info[key].forEach(function(axis_tag) {
-                    if(key == '3D'){
-                        $(cur_xml_doc).find('euclidianView3D')[0].appendChild($.parseXML(axis_tag).children[0]);       
-                    }
-                    else{
-                        $(cur_xml_doc).find('viewNumber[viewNo=' + key + ']').parent()[0].appendChild($.parseXML(axis_tag).children[0]);
-                    }
-                });
-            });
-        }
-        if(properties.hasOwnProperty('evSettings')){
-            var evSettings = properties['evSettings'];
-            Object.keys(evSettings).forEach(function(key) {
-                if(key == '3D'){
-                    $(cur_xml_doc).find('euclidianView3D')[0].appendChild($.parseXML(evSettings[key]).children[0]);       
-                }
-                else{
-                    $(cur_xml_doc).find('viewNumber[viewNo=' + key + ']').parent()[0].appendChild($.parseXML(evSettings[key]).children[0]);
-                }
-            });
-        }
-        if(properties.hasOwnProperty('coordSystem')){
-            var coordSystem = properties['coordSystem'];
-            Object.keys(coordSystem).forEach(function(key) {
-                if(key == '3D'){
-                    $(cur_xml_doc).find('euclidianView3D > coordSystem').remove();
-                    $(cur_xml_doc).find('euclidianView3D')[0].appendChild($.parseXML(coordSystem[key]).children[0]);
-                }
-                else{
-                    $(cur_xml_doc).find('viewNumber[viewNo=' + key + '] > coordSystem').remove();
-                    $(cur_xml_doc).find('viewNumber[viewNo=' + key + ']').parent()[0].appendChild($.parseXML(coordSystem[key]).children[0]);
-                }
-            });
-        }
-        if(properties.hasOwnProperty('plate') && properties['plate'] != undefined){
-             $(cur_xml_doc).find('plate').attr('show', properties['plate']);
-        }
     }
-
-    var final_xml = $(cur_xml_doc).find('geogebra')[0].outerHTML;
-    appletName.setXML(final_xml);
-    checkLocks(appletName);
 
     // If this is the students' website, then we register and add the listeners
     if(window.location.href.includes("student")){
@@ -164,6 +249,67 @@ function appletSetExtXML(xml, toolbar, properties, id, username){
         addArrowButtonsEventlisteners();
         addKeyboardEventListeners();
     }
+}
+
+function evalXMLAppletChange(appletName, cur_xml_doc, obj_xml, obj_label, obj_cmd_str){
+    
+    console.log("eval Cmd: ", obj_cmd_str);
+    console.log(JSON.parse(obj_xml));
+    console.log(obj_cmd_str);
+    //obj_xml is "" when the object is being deleted so this handles that
+    if(obj_xml === '""'){
+        console.log("Delete");
+        appletName.unregisterAddListener("addLock");
+        //appletName.unregisterAddListener("object_added_listener");
+        appletName.unregisterRemoveListener("Update");     
+        appletName.unregisterUpdateListener("Update");     
+        appletName.deleteObject(obj_label);
+    }/*
+    else if(obj_cmd_str != null){
+        console.log("eval: ", obj_xml);
+        appletName.unregisterAddListener("addLock");
+        appletName.unregisterAddListener("object_added_listener");
+        appletName.unregisterUpdateListener("Update");
+        appletName.evalXML(JSON.parse(obj_xml));
+        appletName.evalCommand(obj_cmd_str);
+    }*/
+    //This handles the case for when the object is updated or added
+    else{
+        //console.log("Object XML: ", JSON.parse(obj_xml));
+        appletName.unregisterAddListener("addLock");
+        //appletName.unregisterAddListener("object_added_listener");
+        appletName.unregisterRemoveListener("Update");     
+        appletName.unregisterUpdateListener("Update");
+        appletName.evalXML(JSON.parse(obj_xml));
+
+        if(obj_cmd_str != null && obj_cmd_str != ''){
+            alert(obj_label);
+            appletName.evalCommand(obj_label + ":" + obj_cmd_str);
+        }
+        //console.log("Final XML: ", appletName.getXML());
+        appletName.evalCommand("UpdateConstruction()");
+    }
+    checkLocks(appletName);
+}
+
+function studentXMLAppletChange(appletName, cur_xml_doc, obj_xml, obj_label){
+    
+    //obj_xml is "" when the object is being deleted so this handles that
+    if(obj_xml === '""'){
+        var final_xml = $(cur_xml_doc).find('geogebra')[0].outerHTML;
+        appletName.setXML(final_xml);        
+        appletName.deleteObject(obj_label);
+        //$(cur_xml_doc).find('[label='+obj_label+']').remove();
+    }
+    //This handles the case for when the object is updated or added
+    else{
+        obj_xml = obj_xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>').replace(/\\"/g, '"').replace(/\\n/g, '').replace(/\\t/g, '');
+        obj_xml = obj_xml.substr(obj_xml.indexOf("<"), obj_xml.lastIndexOf(">"));
+        $(cur_xml_doc).find('construction')[0].appendChild($.parseXML(obj_xml).children[0]);
+        var final_xml = $(cur_xml_doc).find('geogebra')[0].outerHTML;
+        appletName.setXML(final_xml);
+    }
+    checkLocks(appletName);
 }
 
 // This function registers several event listeners only for the students' applet
@@ -190,7 +336,6 @@ function registerListeners(cur_xml_doc){
                 currentLabel = label;
                 $current_label.text(currentLabel);
             });
-            // }
         }
     }
 }
@@ -384,11 +529,30 @@ function updateColors()
     randomizeColors(true, [], document.applet, colors[0], colors[1] , colors[2]);
 }
 
-
 //This function sends the socket call that there was a XML change,
 // and takes the new XML, and the socket that the call will go through. 
-function check_xml(xml, socket){
+function check_xml(xml, obj_xml, obj_label, obj_cmd_str, socket){
 
+        cur_xml = xml;
+        var $messages = $("#messages");
+        var username = sessionStorage.getItem('username');
+        var class_id = sessionStorage.getItem('class_id');
+        var group_id = sessionStorage.getItem('group_id');
+        var data = {
+                username: username,
+                class_id: class_id,
+                group_id: group_id,
+                xml: cur_xml,
+                toolbar: '',
+                toolbar_user: '',
+                obj_xml: obj_xml,
+                obj_label: obj_label,
+                obj_cmd_str: obj_cmd_str
+            };
+        socket.xml_change(data);
+
+
+/*    
     if (timeoutHandle != undefined){
         
         window.clearTimeout(timeoutHandle);
@@ -405,11 +569,13 @@ function check_xml(xml, socket){
                 group_id: group_id,
                 xml: cur_xml,
                 toolbar: '',
-                toolbar_user: ''
+                toolbar_user: '',
+                obj_xml: obj_xml,
+                obj_label: obj_label
             };
         socket.xml_change(data);
 
-    }, 100);
+    }, 1); */
 }
 
 //This function is an add listener added in gbbOnInit()
@@ -472,10 +638,22 @@ function addLock(object){
     check_xml(document.applet.getXML(), socket);
 }*/
 
+function object_added_listener(object){
+    
+    //var xml = document.applet.getXML(object);
+
+    //var definition = document.applet.getCommandString(object);
+    //console.log('Hi');
+    console.log(object, " : ", document.applet.getCommandString(object));
+    //check_xml(document.applet.getXML(), document.applet.getXML(object), object, document.applet.getCommandString(object), socket); //Kevin
+
+}
+
 function Update(object){
     //updateColors();
     //localStorage.setItem('setNewXML', 'false');
     setNewXML = false;
+    console.log("hey");
     applet.unregisterUpdateListener("Update");
     var ggb_user = document.applet.getCaption(object);
     var username = sessionStorage.getItem('username');
@@ -507,12 +685,15 @@ function Update(object){
     }
     
     applet.registerUpdateListener("Update");
+    check_xml(document.applet.getXML(), document.applet.getXML(object), object, document.applet.getCommandString(object), socket); //Kevin
+
     // on update of Geogebra view, send clients updated XML
+    /*
     if (sessionStorage.getItem('latestXML') == "" || sessionStorage.getItem('latestXML') != document.applet.getXML())
     {
-        sessionStorage.setItem('latestXML', document.applet.getXML())
+        sessionStorage.setItem('latestXML', document.applet.getXML());
         check_xml(document.applet.getXML(), socket);
-    }
+    }*/
 }
 
 //This function appends a set of button toolbar items to a container
