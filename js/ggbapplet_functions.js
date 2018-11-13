@@ -35,6 +35,7 @@ function removeListener(obj_label){
 
 function send_xml(xml, obj_xml, obj_label, obj_cmd_str, socket, type_of_req){
 
+        console.log("Inside send_xml");
         cur_xml = xml;
         var $messages = $("#messages");
         var username = sessionStorage.getItem('username');
@@ -524,6 +525,7 @@ function updateColors()
 // and takes the new XML, and the socket that the call will go through. 
 function check_xml(xml, obj_xml, obj_label, obj_cmd_str, socket){
 
+        console.log("Inside check_xml");
         cur_xml = xml;
         var $messages = $("#messages");
         var username = sessionStorage.getItem('username');
