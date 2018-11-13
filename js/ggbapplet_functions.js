@@ -88,12 +88,11 @@ function appletUpdate(xml, toolbar, properties, id, username, obj_xml, obj_label
     //appletName.registerAddListener("addListener");
     //appletName.registerUpdateListener("updateListener");
     //appletName.registerRemoveListener("removeListener");
-
 }
 
 //This function takes the new XML, changes it and the old XML to a JSON format, and then 
 // parses it, and changes it back to XML to be set in the geogebra applet.
-function appletSetExtXML_old(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str){
+function appletSetExtXML(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str){
 
     //console.log("setXml");
     var final_xml;
@@ -134,9 +133,7 @@ function appletSetExtXML_old(xml, toolbar, properties, id, username, obj_xml, ob
 
     // If this is the students' website, then in most cases we only want to update certain parts of the XML
     if (window.location.href.includes("student") && !properties && obj_xml != null){
-        if(username != sessionStorage.getItem('username')){
-            evalXMLAppletChange(appletName, cur_xml_doc, obj_xml, obj_label, obj_cmd_str);
-        }
+        evalXMLAppletChange(appletName, cur_xml_doc, obj_xml, obj_label, obj_cmd_str);
         return;
     }
 
@@ -252,10 +249,7 @@ function appletSetExtXML_old(xml, toolbar, properties, id, username, obj_xml, ob
 }
 
 function evalXMLAppletChange(appletName, cur_xml_doc, obj_xml, obj_label, obj_cmd_str){
-    
-    console.log("eval Cmd: ", obj_cmd_str);
-    console.log(JSON.parse(obj_xml));
-    console.log(obj_cmd_str);
+
     //obj_xml is "" when the object is being deleted so this handles that
     if(obj_xml === '""'){
         console.log("Delete");
@@ -280,13 +274,10 @@ function evalXMLAppletChange(appletName, cur_xml_doc, obj_xml, obj_label, obj_cm
         //appletName.unregisterAddListener("object_added_listener");
         appletName.unregisterRemoveListener("Update");     
         appletName.unregisterUpdateListener("Update");
-        appletName.evalXML(JSON.parse(obj_xml));
-
         if(obj_cmd_str != null && obj_cmd_str != ''){
-            alert(obj_label);
             appletName.evalCommand(obj_label + ":" + obj_cmd_str);
         }
-        //console.log("Final XML: ", appletName.getXML());
+        appletName.evalXML(JSON.parse(obj_xml));
         appletName.evalCommand("UpdateConstruction()");
     }
     checkLocks(appletName);
