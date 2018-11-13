@@ -95,6 +95,7 @@ function appletUpdate(xml, toolbar, properties, id, username, obj_xml, obj_label
 // parses it, and changes it back to XML to be set in the geogebra applet.
 function appletSetExtXML(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str){
 
+    alert("appletSetExtXML");
     //console.log("setXml");
     var final_xml;
     var appletName = document.applet;
