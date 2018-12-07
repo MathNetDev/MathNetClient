@@ -35,7 +35,6 @@ function removeListener(obj_label){
 
 function send_xml(xml, obj_xml, obj_label, obj_cmd_str, socket, type_of_req){
 
-        console.log("Inside send_xml");
         cur_xml = xml;
         var $messages = $("#messages");
         var username = sessionStorage.getItem('username');
@@ -91,6 +90,44 @@ function appletUpdate(xml, toolbar, properties, id, username, obj_xml, obj_label
     //appletName.registerRemoveListener("removeListener");
 }
 
+
+
+function p2pAppletSetXML(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str){
+
+    var final_xml;
+    var appletName = document.applet;
+
+    console.log("Inside p2pAppletSetXML");
+    
+    appletName.unregisterAddListener("addListener");
+    appletName.unregisterUpdateListener("updateListener");
+    appletName.unregisterRemoveListener("removeListener");
+
+    if (typeof document['applet' + id] !== 'undefined'){
+        appletName = document['applet' + id];
+    }
+
+    cur_xml = appletName.getXML();
+    var cur_xml_doc = $.parseXML(cur_xml);
+    
+    // If this is the students' website, then in most cases we only want to update certain parts of the XML
+    if (window.location.href.includes("student") && !properties && obj_xml != null){
+        evalXMLAppletChange(appletName, cur_xml_doc, obj_xml, obj_label, obj_cmd_str);
+        return;
+    }
+
+    document.applet.setXML(xml);
+    checkLocks(appletName);
+
+    // If this is the students' website, then we register and add the listeners
+    if(window.location.href.includes("student")){
+        finalApplet = appletName;
+        registerListeners(cur_xml_doc);
+        addArrowButtonsEventlisteners();
+        addKeyboardEventListeners();
+    }
+}
+
 //This function takes the new XML, changes it and the old XML to a JSON format, and then 
 // parses it, and changes it back to XML to be set in the geogebra applet.
 function appletSetExtXML(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str){
@@ -129,7 +166,7 @@ function appletSetExtXML(xml, toolbar, properties, id, username, obj_xml, obj_la
     var cur_construction = $(cur_xml_doc).find('construction')[0];
 
     xml = xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>').replace(/\\"/g, '"').replace(/\\n/g, '').replace(/\\t/g, '');
-    xml = xml.substr(xml.indexOf("<"), xml.lastIndexOf(">"));
+    //xml = xml.substr(xml.indexOf("<"), xml.lastIndexOf(">"));
     var new_xml_doc = $.parseXML(xml);
 
     // If this is the students' website, then in most cases we only want to update certain parts of the XML
@@ -631,22 +668,10 @@ function addLock(object){
     check_xml(document.applet.getXML(), socket);
 }*/
 
-function object_added_listener(object){
-    
-    //var xml = document.applet.getXML(object);
-
-    //var definition = document.applet.getCommandString(object);
-    //console.log('Hi');
-    console.log(object, " : ", document.applet.getCommandString(object));
-    //check_xml(document.applet.getXML(), document.applet.getXML(object), object, document.applet.getCommandString(object), socket); //Kevin
-
-}
-
 function Update(object){
     //updateColors();
     //localStorage.setItem('setNewXML', 'false');
     setNewXML = false;
-    console.log("hey");
     applet.unregisterUpdateListener("Update");
     var ggb_user = document.applet.getCaption(object);
     var username = sessionStorage.getItem('username');
@@ -678,7 +703,7 @@ function Update(object){
     }
     
     applet.registerUpdateListener("Update");
-    check_xml(document.applet.getXML(), document.applet.getXML(object), object, document.applet.getCommandString(object), socket); //Kevin
+    check_xml(document.applet.getXML(), document.applet.getXML(object), object, document.applet.getCommandString(object), socket); //mathnet
 
     // on update of Geogebra view, send clients updated XML
     /*

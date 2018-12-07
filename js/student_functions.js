@@ -195,6 +195,27 @@ function xml_update_response(username, class_id, group_id, xml, toolbar, propert
     });*/
 }
 
+function p2p_get_xml_response(username, class_id, group_id){
+    socket.applet_xml(document.applet.getXML(), username, class_id, group_id);
+}
+
+function applet_xml_response(username, class_id, group_id, xml, properties){
+    if(xml == undefined){
+        xml = '{}';
+    }
+    if(properties !== null){
+        sessionStorage.setItem('properties', JSON.stringify(properties));
+    } else if (properties === null && sessionStorage.getItem('properties') !== null){
+        properties = JSON.parse(sessionStorage.getItem('properties'));
+    }
+    if(!toolbar){
+        toolbar = sessionStorage.getItem('toolbar');
+    }
+    
+    p2pAppletSetXML(xml, toolbar, properties, null, username, null, null);
+    ggbOnInit('socket_call')
+}
+
 //calls appletSetExtXML() to update the local geogebra applet.
 function get_xml_response(username, class_id, group_id, xml,toolbar, properties){
     if(xml == undefined){
@@ -209,7 +230,7 @@ function get_xml_response(username, class_id, group_id, xml,toolbar, properties)
         toolbar = sessionStorage.getItem('toolbar');
     }
     
-    appletSetExtXML(xml, toolbar, properties, null, username, null, null); //Kevin
+    appletSetExtXML(xml, toolbar, properties, null, username, null, null); //mathnet
     ggbOnInit('socket_call')
 }
 
@@ -257,7 +278,6 @@ function group_color_response(colors) {
     //sessionStorage.setItem('group_colors', colors);
 }
 
-//Kevin
 function ggbOnInit(arg){
 
     document.applet.registerAddListener("addListener");
@@ -265,6 +285,11 @@ function ggbOnInit(arg){
     document.applet.registerRemoveListener("removeListener");
 
     socket.group_color(sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'));
+
+    if(arg != 'socket_call'){
+        socket.p2p_get_xml(sessionStorage.getItem('username'),sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'));
+    }
+
     $(window).resize(function() {
         document.applet.setHeight($(window).height()/1.3);
     });

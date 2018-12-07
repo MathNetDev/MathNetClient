@@ -87,10 +87,20 @@
             socket.emit('get-settings', class_id, group_id);
         }
 
+        //This function is used to send the applet's current state(XML) to the server.
+        //Used when a new client/student joins.
+        var applet_xml = function(xml, username, class_id, group_id){
+            socket.emit('applet_xml', xml, username, class_id, group_id);
+        }
+
         //This function takes no parameters
         //and disconnects the given socket (this object) from the server.
         var disconnect = function() {
             socket.disconnect();
+        }
+
+        var p2p_get_xml = function(username, class_id, group_id){
+            socket.emit('p2p_get_xml', username, class_id, group_id);
         }
 
         //
@@ -147,6 +157,14 @@
             get_xml_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar, data.properties);
         });
 
+        socket.on('p2p_get_xml_response', function(data){
+            p2p_get_xml_response(data.username, data.class_id, data.group_id);
+        });
+
+        socket.on('applet_xml_response', function(data){
+            applet_xml_response(data.username, data.class_id, data.group_id, data.xml, data.properties);
+        });
+
         socket.on('group_numbers_response', function(data) {
             group_numbers_response(data.username, data.class_id, data.group_id, 
                                 data.status, data.group_size);
@@ -180,8 +198,10 @@
             xml_update: xml_update,
             get_xml: get_xml,
             get_settings: get_settings,
+            applet_xml: applet_xml,
             disconnect: disconnect,
-            ping:ping
+            ping:ping,
+            p2p_get_xml: p2p_get_xml
         };
     }
     
