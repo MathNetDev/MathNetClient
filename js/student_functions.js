@@ -176,11 +176,16 @@ function xml_change_response(username, class_id, group_id, xml, toolbar, propert
         properties = JSON.parse(sessionStorage.getItem('properties'));
     }
     appletSetExtXML(xml, toolbar, properties, null, username, obj_xml, obj_label, obj_cmd_str);
-    ggbOnInit('socket_call');
+    ggbOnInit('socket_call', false);
 }
 
-//handler for xml_change response, appends message to chatbox, and calls appletSetExtXML()
-function xml_update_response(username, class_id, group_id, xml, toolbar, properties, obj_xml, obj_label, obj_cmd_str, type_of_req) {
+//handler for xml_update response, appends message to chatbox, and calls appletSetExtXML() (mathnet)
+function xml_update_response(username, class_id, group_id, xml, toolbar, properties, obj_xml, obj_label, obj_cmd_str, type_of_req, recv_xml_update_ver, new_update, data){
+    if(!is_xml_update_queue_empty && new_update){
+        xml_update_queue.enqueue(data);
+        return;
+    }
+    xml_update_ver = xml_update_ver + 1;
     socket.group_color(sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'));
     if(properties !== null){
         sessionStorage.setItem('properties', JSON.stringify(properties));
@@ -188,21 +193,19 @@ function xml_update_response(username, class_id, group_id, xml, toolbar, propert
         properties = JSON.parse(sessionStorage.getItem('properties'));
     }
     appletUpdate(xml, toolbar, properties, null, username, obj_xml, obj_label, obj_cmd_str, type_of_req);
-    ggbOnInit('socket_call');/*
-        socket.group_color(sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'));
-    $(window).resize(function() {
-        document.applet.setHeight($(window).height()/1.3);
-    });*/
+    ggbOnInit('socket_call', false);
 }
 
 function p2p_get_xml_response(username, class_id, group_id){
-    socket.applet_xml(document.applet.getXML(), username, class_id, group_id);
+    socket.applet_xml(document.applet.getXML(), username, class_id, group_id, xml_update_ver);
 }
 
-function applet_xml_response(username, class_id, group_id, xml, properties){
+function applet_xml_response(username, class_id, group_id, xml, properties, received_xml_update_ver){
+    xml_update_ver = received_xml_update_ver == undefined ? 0 : received_xml_update_ver;
     if(xml == undefined){
         xml = '{}';
     }
+    /*
     if(properties !== null){
         sessionStorage.setItem('properties', JSON.stringify(properties));
     } else if (properties === null && sessionStorage.getItem('properties') !== null){
@@ -210,10 +213,20 @@ function applet_xml_response(username, class_id, group_id, xml, properties){
     }
     if(!toolbar){
         toolbar = sessionStorage.getItem('toolbar');
-    }
-    
+    }*/
     p2pAppletSetXML(xml, toolbar, properties, null, username, null, null);
-    ggbOnInit('socket_call')
+    ggbOnInit('socket_call', true);
+}
+
+function process_msgs_in_queue(){
+    var curr_user = sessionStorage.getItem('username');
+    while(!xml_update_queue.isEmpty()){
+        var update = xml_update_queue.dequeue();
+        //if((update.username == curr_user && update.xml_update_ver > xml_update_ver) || (update.username != curr_user && update.xml_update_ver >= xml_update_ver)){
+            xml_update_response(update.username, update.class_id, update.group_id, update.xml, update.toolbar, update.properties, update.obj_xml, update.obj_label, update.obj_cmd_str, update.type_of_req, update.recv_xml_update_ver, false, update.data);
+        //}
+    }
+    is_xml_update_queue_empty = true;
 }
 
 //calls appletSetExtXML() to update the local geogebra applet.
@@ -231,7 +244,7 @@ function get_xml_response(username, class_id, group_id, xml,toolbar, properties)
     }
     
     appletSetExtXML(xml, toolbar, properties, null, username, null, null); //mathnet
-    ggbOnInit('socket_call')
+    ggbOnInit('socket_call', false);
 }
 
 // updates $class_settings based on settings array
@@ -278,7 +291,7 @@ function group_color_response(colors) {
     //sessionStorage.setItem('group_colors', colors);
 }
 
-function ggbOnInit(arg){
+function ggbOnInit(arg, should_process_queue){
 
     document.applet.registerAddListener("addListener");
     document.applet.registerUpdateListener("updateListener");
@@ -293,6 +306,10 @@ function ggbOnInit(arg){
     $(window).resize(function() {
         document.applet.setHeight($(window).height()/1.3);
     });
+
+    if(should_process_queue){
+        process_msgs_in_queue();
+    }
 }
 
 //This function registers listeners on geogebra initialization 

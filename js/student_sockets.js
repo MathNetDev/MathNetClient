@@ -62,8 +62,8 @@
         //This function takes a username, class_id, group_id, and XML
         //It then emits a socket event to change the class's XML in the datastructure
         //based on the given XML, group_id, and class_id
-        var xml_update = function(username, class_id, group_id, xml, toolbar, toolbar_user, obj_xml, obj_label, obj_cmd_str, type_of_req) {
-            socket.emit('xml_update', username, class_id, group_id, xml, toolbar, obj_xml, obj_label, obj_cmd_str, type_of_req);
+        var xml_update = function(username, class_id, group_id, xml, toolbar, toolbar_user, obj_xml, obj_label, obj_cmd_str, type_of_req, xml_update_ver, new_update) {
+            socket.emit('xml_update', username, class_id, group_id, xml, toolbar, obj_xml, obj_label, obj_cmd_str, type_of_req, xml_update_ver, new_update);
         }
 
         //This function takes a username, class_id, group_id, and XML
@@ -89,8 +89,8 @@
 
         //This function is used to send the applet's current state(XML) to the server.
         //Used when a new client/student joins.
-        var applet_xml = function(xml, username, class_id, group_id){
-            socket.emit('applet_xml', xml, username, class_id, group_id);
+        var applet_xml = function(xml, username, class_id, group_id, xml_update_ver){
+            socket.emit('applet_xml', xml, username, class_id, group_id, xml_update_ver);
         }
 
         //This function takes no parameters
@@ -149,7 +149,7 @@
         });
 
         socket.on('xml_update_response', function(data) {
-            xml_update_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar, data.properties, data.obj_xml, data.obj_label, data.obj_cmd_str, data.type_of_req);
+            xml_update_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar, data.properties, data.obj_xml, data.obj_label, data.obj_cmd_str, data.type_of_req, data.xml_update_ver, data.new_update, data);
         });
 
 
@@ -162,7 +162,7 @@
         });
 
         socket.on('applet_xml_response', function(data){
-            applet_xml_response(data.username, data.class_id, data.group_id, data.xml, data.properties);
+            applet_xml_response(data.username, data.class_id, data.group_id, data.xml, data.properties, data.xml_update_ver);
         });
 
         socket.on('group_numbers_response', function(data) {

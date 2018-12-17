@@ -1,5 +1,9 @@
 //student_vars.js
 
+var xml_update_ver = 0;
+var alternate_update = 0;
+var is_xml_update_queue_empty = false;
+
 var $login_view = $('.login_view');
 var $class_view = $('.class_view');
 var $group_view = $('.group_view');

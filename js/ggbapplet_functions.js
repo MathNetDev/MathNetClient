@@ -24,17 +24,24 @@ function addListener(obj_label){
     if (type === 'point'){
         document.applet.setLabelStyle(obj_label, 3);
     }
+    //print_changes_made(document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), 'add'); 
 }
 
 function updateListener(obj_label){
     send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'update');   
+    //print_changes_made(document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), 'update'); 
 }
 function removeListener(obj_label){
-    send_xml(document.applet.getXML(), null, obj_label, null, socket, 'remove');   
+    send_xml(document.applet.getXML(), null, obj_label, null, socket, 'remove');  
+    //print_changes_made(null, obj_label, null, 'remove'); 
+}
+
+function print_changes_made(obj_xml, obj_label, cmd_str, op_type){
+    console.log("Obj XML: ", obj_xml);
+    console.log("Cmd Str: ", cmd_str);
 }
 
 function send_xml(xml, obj_xml, obj_label, obj_cmd_str, socket, type_of_req){
-
         cur_xml = xml;
         var $messages = $("#messages");
         var username = sessionStorage.getItem('username');
@@ -50,9 +57,12 @@ function send_xml(xml, obj_xml, obj_label, obj_cmd_str, socket, type_of_req){
                 obj_xml: obj_xml,
                 obj_label: obj_label,
                 obj_cmd_str: obj_cmd_str,
-                type_of_req: type_of_req
+                type_of_req: type_of_req,
+                xml_update_ver: xml_update_ver,
+                new_update: true
             };
         socket.xml_update(data);
+        xml_update_ver = xml_update_ver + 1;
 }
 
 function appletUpdate(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str, type_of_req){
