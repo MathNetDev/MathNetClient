@@ -25,23 +25,47 @@ function addListener(obj_label){
     if (type === 'point'){
         document.applet.setLabelStyle(obj_label, 3);
     }
-    //print_changes_made(document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), 'add'); 
 }
 
 function updateListener(obj_label){
+    applet.unregisterUpdateListener("updateListener");
+    var ggb_user = document.applet.getCaption(obj_label);
+    var username = sessionStorage.getItem('username');
+    var move = document.applet.isMoveable(obj_label);
+    var type = document.applet.getObjectType(obj_label);
+    var isPoint = (type == "point");
+    if(username !== ggb_user && isPoint && ggb_user != "unassigned"){
+        if (username != "admin" && move){
+            if(objType == 'numeric' || objType == 'textfield'){
+                appletName.setFixed(name, true, false);
+            } else {
+                appletName.setFixed(name, true);
+            }
+        } else if (username == "admin" && !move){
+            if(objType == 'numeric' || objType == 'textfield'){
+                appletName.setFixed(name, false, true);
+            } else {
+                appletName.setFixed(name, false);
+            }
+        }
+    }else if(username == ggb_user || ggb_user == "unassigned"){
+        document.applet.setFixed(obj_label, false, true);
+    }
+
+    if(ggb_user == "unassigned" && username != "admin" ){
+        document.applet.setCaption(obj_label, username);
+    } else if (ggb_user != "unassigned" && username == "admin"){
+        document.applet.setCaption(obj_label, "unassigned");
+    }
+    document.applet.registerUpdateListener("updateListener");
     send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'update');   
-    //print_changes_made(document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), 'update'); 
 }
+
 function removeListener(obj_label){
     send_xml(document.applet.getXML(), null, obj_label, null, socket, 'remove');  
-    //print_changes_made(null, obj_label, null, 'remove'); 
 }
 
-function print_changes_made(obj_xml, obj_label, cmd_str, op_type){
-    console.log("Obj XML: ", obj_xml);
-    console.log("Cmd Str: ", cmd_str);
-}
-
+//Makes a socket call to the server 
 function send_xml(xml, obj_xml, obj_label, obj_cmd_str, socket, type_of_req){
         cur_xml = xml;
         var $messages = $("#messages");
@@ -98,7 +122,6 @@ function appletUpdate(xml, toolbar, properties, id, username, obj_xml, obj_label
     appletName.unregisterRemoveListener("removeListener");
 
     if(type_of_req == 'add'){
-        //console.log(obj_label, ":", obj_cmd_str);
         if(obj_cmd_str != null && obj_cmd_str != ''){
             appletName.evalCommand(obj_label + ":" + obj_cmd_str);
         }
@@ -147,12 +170,6 @@ function p2pAppletSetXML(xml, toolbar, properties, id, username, obj_xml, obj_la
 
     cur_xml = appletName.getXML();
     var cur_xml_doc = $.parseXML(cur_xml);
-    
-    // If this is the students' website, then in most cases we only want to update certain parts of the XML
-    if (window.location.href.includes("student") && !properties && obj_xml != null){
-        evalXMLAppletChange(appletName, cur_xml_doc, obj_xml, obj_label, obj_cmd_str);
-        return;
-    }
 
     appletName.setXML(xml);
     checkLocks(appletName);
@@ -257,12 +274,6 @@ function appletSetExtXML(xml, toolbar, properties, id, username, obj_xml, obj_la
     xml = xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>').replace(/\\"/g, '"').replace(/\\n/g, '').replace(/\\t/g, '');
     xml = xml.substr(xml.indexOf("<"), xml.lastIndexOf(">"));
     var new_xml_doc = $.parseXML(xml);
-
-    // If this is the students' website, then in most cases we only want to update certain parts of the XML
-    if (window.location.href.includes("student") && !properties && obj_xml != null){
-        evalXMLAppletChange(appletName, cur_xml_doc, obj_xml, obj_label, obj_cmd_str);
-        return;
-    }
 
     if(new_xml_doc !== null){
         var new_construction = $(new_xml_doc).find('construction')[0];
@@ -375,61 +386,6 @@ function appletSetExtXML(xml, toolbar, properties, id, username, obj_xml, obj_la
     }
 }
 
-function evalXMLAppletChange(appletName, cur_xml_doc, obj_xml, obj_label, obj_cmd_str){
-
-    //obj_xml is "" when the object is being deleted so this handles that
-    if(obj_xml === '""'){
-        console.log("Delete");
-        appletName.unregisterAddListener("addLock");
-        //appletName.unregisterAddListener("object_added_listener");
-        appletName.unregisterRemoveListener("Update");     
-        appletName.unregisterUpdateListener("Update");     
-        appletName.deleteObject(obj_label);
-    }/*
-    else if(obj_cmd_str != null){
-        console.log("eval: ", obj_xml);
-        appletName.unregisterAddListener("addLock");
-        appletName.unregisterAddListener("object_added_listener");
-        appletName.unregisterUpdateListener("Update");
-        appletName.evalXML(JSON.parse(obj_xml));
-        appletName.evalCommand(obj_cmd_str);
-    }*/
-    //This handles the case for when the object is updated or added
-    else{
-        //console.log("Object XML: ", JSON.parse(obj_xml));
-        appletName.unregisterAddListener("addLock");
-        //appletName.unregisterAddListener("object_added_listener");
-        appletName.unregisterRemoveListener("Update");     
-        appletName.unregisterUpdateListener("Update");
-        if(obj_cmd_str != null && obj_cmd_str != ''){
-            appletName.evalCommand(obj_label + ":" + obj_cmd_str);
-        }
-        appletName.evalXML(JSON.parse(obj_xml));
-        appletName.evalCommand("UpdateConstruction()");
-    }
-    checkLocks(appletName);
-}
-
-function studentXMLAppletChange(appletName, cur_xml_doc, obj_xml, obj_label){
-    
-    //obj_xml is "" when the object is being deleted so this handles that
-    if(obj_xml === '""'){
-        var final_xml = $(cur_xml_doc).find('geogebra')[0].outerHTML;
-        appletName.setXML(final_xml);        
-        appletName.deleteObject(obj_label);
-        //$(cur_xml_doc).find('[label='+obj_label+']').remove();
-    }
-    //This handles the case for when the object is updated or added
-    else{
-        obj_xml = obj_xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>').replace(/\\"/g, '"').replace(/\\n/g, '').replace(/\\t/g, '');
-        obj_xml = obj_xml.substr(obj_xml.indexOf("<"), obj_xml.lastIndexOf(">"));
-        $(cur_xml_doc).find('construction')[0].appendChild($.parseXML(obj_xml).children[0]);
-        var final_xml = $(cur_xml_doc).find('geogebra')[0].outerHTML;
-        appletName.setXML(final_xml);
-    }
-    checkLocks(appletName);
-}
-
 // This function registers several event listeners only for the students' applet
 function registerListeners(cur_xml_doc){
 
@@ -459,7 +415,6 @@ function registerListeners(cur_xml_doc){
 }
 
 function addArrowButtonsEventlisteners(){
-    
     $arrow_up_button.unbind('click');
     $arrow_up_button.bind('click', function(){
         if (finalApplet.getObjectType(currentLabel) == "point"){
@@ -513,36 +468,7 @@ function addKeyboardEventListeners(){
             }
         }
     }
-
     document.addEventListener("keypress", keypressHandler);
-}
-
-// The purpose of this function is to perform selective updates to the students' XML in order to prevent
-// conflicts between several students' views/XMLs (in the current view)
-function appletUpdateXML(appletName, cur_xml_doc, new_xml_doc, prev_username)
-{
-    var prev_elements = $(cur_xml_doc).find('construction').find('element');
-    var new_elements = $(new_xml_doc).find('construction').find('element');
-
-    if (new_elements != undefined){
-        for (var i = 0; i < new_elements.length; i++){
-            var label = $(new_elements[i]).attr('label');
-            var caption = $(new_elements[i]).find('caption').attr('val');
-            var ggb_user = appletName.getCaption(label);
-            var username = sessionStorage.getItem('username');
-            var objType = appletName.getObjectType(label);
-
-            // if (objType == "point" && username != caption && username != ggb_user && caption != 'unassigned'){
-            if (objType == "point" && (prev_username == 'admin' || prev_username == caption)) {
-                appletName.setCaption(label, caption);
-                appletName.setFixed(label, false);
-                appletName.setCoords(label, $(new_elements[i]).find('coords').attr('x'), $(new_elements[i]).find('coords').attr('y'));
-                appletName.setFixed(label, true);
-            }
-        }
-    }
-
-    checkLocks(appletName);
 }
 
 //This clears the local applet view
@@ -622,8 +548,6 @@ function checkLocks(appletName){
         var username = sessionStorage.getItem('username');
         var objType = appletName.getObjectType(name);
 
-        //console.log(ggb_user);
-
         if ((username !== ggb_user && username != "admin") && ggb_user != "unassigned"){
             if(objType == 'numeric' || objType == 'textfield'){
                 appletName.setFixed(name, true, false);
@@ -647,66 +571,17 @@ function updateColors()
     randomizeColors(true, [], document.applet, colors[0], colors[1] , colors[2]);
 }
 
-//This function sends the socket call that there was a XML change,
-// and takes the new XML, and the socket that the call will go through. 
-function check_xml(xml, obj_xml, obj_label, obj_cmd_str, socket){
-
-        console.log("Inside check_xml");
-        cur_xml = xml;
-        var $messages = $("#messages");
-        var username = sessionStorage.getItem('username');
-        var class_id = sessionStorage.getItem('class_id');
-        var group_id = sessionStorage.getItem('group_id');
-        var data = {
-                username: username,
-                class_id: class_id,
-                group_id: group_id,
-                xml: cur_xml,
-                toolbar: '',
-                toolbar_user: '',
-                obj_xml: obj_xml,
-                obj_label: obj_label,
-                obj_cmd_str: obj_cmd_str
-            };
-        socket.xml_change(data);
-
-
-/*    
-    if (timeoutHandle != undefined){
-        
-        window.clearTimeout(timeoutHandle);
-    }
-    timeoutHandle = window.setTimeout(function(){
-        cur_xml = xml;
-        var $messages = $("#messages");
-        var username = sessionStorage.getItem('username');
-        var class_id = sessionStorage.getItem('class_id');
-        var group_id = sessionStorage.getItem('group_id');
-        var data = {
-                username: username,
-                class_id: class_id,
-                group_id: group_id,
-                xml: cur_xml,
-                toolbar: '',
-                toolbar_user: '',
-                obj_xml: obj_xml,
-                obj_label: obj_label
-            };
-        socket.xml_change(data);
-
-    }, 1); */
-}
-
 //This function is an add listener added in gbbOnInit()
 //It adds a caption to the new object with the local user's class username,
 // and can add a lock onto it.
 function addLock(object){
     var username;
-    if(sessionStorage.getItem('username') != null && sessionStorage.getItem('username') != "admin")
+    if(sessionStorage.getItem('username') != null && sessionStorage.getItem('username') != "admin"){
         username = sessionStorage.getItem('username');
-    else
+    }
+    else{
         username = "unassigned";
-
+    }
     document.applet.setCaption(object, username);
     var type = document.applet.getObjectType(object);
     if (type === 'point'){
@@ -756,52 +631,6 @@ function addLock(object){
     // on update of Geogebra view, send clients updated XML
     check_xml(document.applet.getXML(), socket);
 }*/
-
-function Update(object){
-    //updateColors();
-    //localStorage.setItem('setNewXML', 'false');
-    setNewXML = false;
-    applet.unregisterUpdateListener("Update");
-    var ggb_user = document.applet.getCaption(object);
-    var username = sessionStorage.getItem('username');
-    var move = document.applet.isMoveable(object);
-    var type = document.applet.getObjectType(object);
-    var isPoint = (type == "point");
-    if(username !== ggb_user && isPoint && ggb_user != "unassigned"){
-        if (username != "admin" && move){
-            if(objType == 'numeric' || objType == 'textfield'){
-                appletName.setFixed(name, true, false);
-            } else {
-                appletName.setFixed(name, true);
-            }
-        } else if (username == "admin" && !move){
-            if(objType == 'numeric' || objType == 'textfield'){
-                appletName.setFixed(name, false, true);
-            } else {
-                appletName.setFixed(name, false);
-            }
-        }
-    }else if(username == ggb_user || ggb_user == "unassigned"){
-        document.applet.setFixed(object, false, true);
-    }
-
-    if(ggb_user == "unassigned" && username != "admin" ){
-        document.applet.setCaption(object, username);
-    } else if (ggb_user != "unassigned" && username == "admin"){
-        document.applet.setCaption(object, "unassigned");
-    }
-    
-    applet.registerUpdateListener("Update");
-    check_xml(document.applet.getXML(), document.applet.getXML(object), object, document.applet.getCommandString(object), socket); //mathnet
-
-    // on update of Geogebra view, send clients updated XML
-    /*
-    if (sessionStorage.getItem('latestXML') == "" || sessionStorage.getItem('latestXML') != document.applet.getXML())
-    {
-        sessionStorage.setItem('latestXML', document.applet.getXML());
-        check_xml(document.applet.getXML(), socket);
-    }*/
-}
 
 //This function appends a set of button toolbar items to a container
 function getToolbarIcons(container){
@@ -896,11 +725,8 @@ function appletInit(params){
     params.enableCAS = true;
     params.ggbBase64 = ggbBase64;
     var applet = new GGBApplet(params, true);
-    
     var current_path = window.location.pathname;
     current_path = current_path.substring(0,window.location.pathname.lastIndexOf('/'));
-    applet.setHTML5Codebase(current_path + '/5.0/web3d/');
-    //applet.setHTML5Codebase('http://tetsuo.ucdavis.edu/mathnet/5.0/web3d/');
-    
+    applet.setHTML5Codebase(current_path + '/5.0/web3d/');    
     applet.inject(params.container, 'auto');
 }

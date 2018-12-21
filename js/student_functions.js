@@ -316,7 +316,6 @@ function ggbOnInit(arg, should_process_queue){
 function ggbOnInit_old(arg) {
     if(arg != 'socket_call'){
         //localStorage.setItem('setNewXML', 'true');
-        setNewXML = true;
     }
     //document.applet.registerAddListener("object_added_listener");
     document.applet.registerAddListener("addLock");
