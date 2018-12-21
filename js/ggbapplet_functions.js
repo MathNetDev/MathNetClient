@@ -28,12 +28,14 @@ function addListener(obj_label){
 }
 
 function updateListener(obj_label){
-    applet.unregisterUpdateListener("updateListener");
     var ggb_user = document.applet.getCaption(obj_label);
     var username = sessionStorage.getItem('username');
     var move = document.applet.isMoveable(obj_label);
     var type = document.applet.getObjectType(obj_label);
     var isPoint = (type == "point");
+
+    applet.unregisterUpdateListener("updateListener");
+    
     if(username !== ggb_user && isPoint && ggb_user != "unassigned"){
         if (username != "admin" && move){
             if(objType == 'numeric' || objType == 'textfield'){
@@ -117,6 +119,11 @@ function appletUpdate(xml, toolbar, properties, id, username, obj_xml, obj_label
         appletName.setPerspective(properties['perspective']);
     }
 
+    var rgb_color = null;
+    if(sessionStorage.getItem('admin_secret') != null){
+        rgb_color = hexToRgb(appletName.getColor(obj_label));
+    }
+
     appletName.unregisterAddListener("addListener");
     appletName.unregisterUpdateListener("updateListener");
     appletName.unregisterRemoveListener("removeListener");
@@ -135,12 +142,36 @@ function appletUpdate(xml, toolbar, properties, id, username, obj_xml, obj_label
     else if(type_of_req == 'remove'){
         appletName.deleteObject(obj_label);
     }
+
+    //Sets object color back to what it was earlier prior to evalXML. 
+    //Needed for maintaining the color on the admin view tabs.
+    if(rgb_color != null){
+        appletName.setColor(obj_label, rgb_color.red, rgb_color.green, rgb_color.blue);
+    }
     checkLocks(appletName);
     //appletName.registerAddListener("addListener");
     //appletName.registerUpdateListener("updateListener");
     //appletName.registerRemoveListener("removeListener");
 }
 
+//Function from: https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
+function hexToRgb(hex) {
+    // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+    var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+    hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+        return r + r + g + g + b + b;
+    });
+
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        red: parseInt(result[1], 16),
+        green: parseInt(result[2], 16),
+        blue: parseInt(result[3], 16)
+    } : null;
+}
+
+//Used to set the entire XML for student's applets.
+//Usually called when the student logs in for the first time and wants the most updated XML.
 function p2pAppletSetXML(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str){
 
     var final_xml;
@@ -164,9 +195,9 @@ function p2pAppletSetXML(xml, toolbar, properties, id, username, obj_xml, obj_la
         appletName = document['overlayed_image_view_applet' + id];
     }
 
-    appletName.unregisterAddListener("addListener");
-    appletName.unregisterUpdateListener("updateListener");
-    appletName.unregisterRemoveListener("removeListener");
+    //appletName.unregisterAddListener("addListener");
+    //appletName.unregisterUpdateListener("updateListener");
+    //appletName.unregisterRemoveListener("removeListener");
 
     cur_xml = appletName.getXML();
     var cur_xml_doc = $.parseXML(cur_xml);
@@ -183,6 +214,8 @@ function p2pAppletSetXML(xml, toolbar, properties, id, username, obj_xml, obj_la
     }
 }
 
+//Used to set the entire XML for the applets on the admin's view tabs.
+//Usually called when the admin logs in for the first time and wants the most updated XML.
 function adminP2PAppletSetXML(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str){
 
     var final_xml;
@@ -206,14 +239,9 @@ function adminP2PAppletSetXML(xml, toolbar, properties, id, username, obj_xml, o
         appletName = document['overlayed_image_view_applet' + id];
     }
 
-    appletName.unregisterAddListener("addListener");
-    appletName.unregisterUpdateListener("updateListener");
-    appletName.unregisterRemoveListener("removeListener");
-
-    //cur_xml = appletName.getXML();
-    //var cur_xml_doc = $.parseXML(cur_xml);
-    //appletName.setXML(xml);
-    //checkLocks(appletName);
+    //appletName.unregisterAddListener("addListener");
+    //appletName.unregisterUpdateListener("updateListener");
+    //appletName.unregisterRemoveListener("removeListener");
 
     cur_xml = appletName.getXML();
     var cur_xml_doc = $.parseXML(cur_xml);
