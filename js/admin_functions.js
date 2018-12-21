@@ -428,19 +428,27 @@ function ggbOnInit(arg) {
     var applet = document[arg];
     applet.setCoordSystem(-10,10,-10,10);
     applet.evalCommand("SetAxesRatio(1,1)");
-    applet.setAxisSteps(1, 2,2,2);
+    applet.setAxisSteps(1,2,2,2);
     applet.evalCommand("CenterView[(0,0)]");
     //applet.evalCommand("ZoomOut[4,(0,0)]");       
     if (index != -1){
         num = arg.slice(index);
         name = arg.slice(0, index);
         if ((name == "applet" || name == "merged_view_applet" || name == "overlayed_image_view_applet") && num <= $('ul.groups div').length){
-            var class_id = sessionStorage.getItem('admin_class_id');        
-            socket.get_xml('admin', class_id, num);
+            var class_id = sessionStorage.getItem('admin_class_id');   
+            socket.p2p_get_xml('admin', class_id, num);
         }
     }
     // fix for view tab applets not loading current group xml
     applet.registerAddListener("addLock");
+}
+
+function applet_xml_response(username, class_id, group_id, xml, properties, received_xml_update_ver){
+    if(xml == undefined){
+        xml = '{}';
+    }
+    adminP2PAppletSetXML(xml, toolbar, properties, group_id, username, null, null);
+    process_msgs_in_queue();
 }
 
 //Called when the Live/Not Live Toggle is Set/Unset for the Merged View
@@ -458,6 +466,42 @@ function liveUpdatesCheckboxChangeFilteredMerge(checkbox)
     if(checkbox.checked == true)
     {
         filtered_view_merge(this); 
+    }
+}
+
+//handler for xml_change response, appends message to chatbox, and calls appletSetExtXML()
+//TODO: Get rid of other params and keep only data
+function xml_update_response(username, class_id, group_id, xml, toolbar, properties, obj_xml, obj_label, obj_cmd_str, type_of_req, xml_update_ver, new_update, data) {
+    if(!is_admin_xml_update_queue_empty && new_update){
+        admin_xml_update_queue.enqueue(data);
+        return;
+    }
+    var tab = $('a[data-toggle="tab"][aria-expanded=true]').html();
+    if(tab == "View")
+    {
+        appletUpdate(xml, toolbar, null, group_id, username, obj_xml, obj_label, obj_cmd_str, type_of_req);
+        if($('.unmergeview_button').is(":visible") && $('#myonoffswitchmerge').is(':checked'))
+        {
+            view_merge(this);
+        }
+    }
+    else if(tab == "Filtered Merged View")
+    {
+        appletUpdate(xml, toolbar, null, group_id, username, obj_xml, obj_label, obj_cmd_str, type_of_req);
+        if($('.filtered_unmergeview_button').is(":visible") && $('#myonoffswitchfilteredmerge').is(':checked'))
+        {
+            filtered_view_merge(this);
+        }
+    }
+    else if(tab == "Overlayed Image View")
+    {
+        var id = 'img_' + group_id;
+        $('#img_'+group_id+'').remove();
+        
+        appletUpdate(xml, toolbar, null, group_id, username, obj_xml, obj_label, obj_cmd_str, type_of_req);
+
+        var img = '<img src="data:image/png;base64,'+document['overlayed_image_view_applet'+group_id].getPNGBase64(1.5, true, undefined)+'" id="img_'+group_id+'" style="position:absolute;">';
+        $('#overlayed_image_div .panel-body').append(img);
     }
 }
 
@@ -493,6 +537,14 @@ function xml_change_response(username, class_id, group_id, xml, toolbar) {
     }
     
     //ggbOnInit();
+}
+
+function process_msgs_in_queue(){
+    while(!admin_xml_update_queue.isEmpty()){
+        var update = admin_xml_update_queue.dequeue();
+        xml_update_response(update.username, update.class_id, update.group_id, update.xml, update.toolbar, update.properties, update.obj_xml, update.obj_label, update.obj_cmd_str, update.type_of_req, update.recv_xml_update_ver, false, update.data);
+    }
+    is_admin_xml_update_queue_empty = true;
 }
 
 //calls appletSetExtXML() to update the local geogebra applet.
@@ -567,7 +619,7 @@ function view_merge(event){
     applet.setPerspective('G');
     applet.setCoordSystem(-10,10,-10,10);
     applet.evalCommand("SetAxesRatio(1,1)");
-    applet.setAxisSteps(1, 2,2,2);
+    applet.setAxisSteps(1,2,2,2);
     applet.evalCommand("CenterView[(0,0)]");
     $('#views_checkboxes :checkbox').hide();
     $('.merge_group').css('visibility','visible');

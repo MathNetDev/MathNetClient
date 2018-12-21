@@ -20,7 +20,6 @@ function escapeStr(str)
  }
 
  
-
 //displays server error on client side
 function server_error(error) {
     var str = error;
@@ -180,6 +179,7 @@ function xml_change_response(username, class_id, group_id, xml, toolbar, propert
 }
 
 //handler for xml_update response, appends message to chatbox, and calls appletSetExtXML() (mathnet)
+//TODO: Get rid of other params and keep only data
 function xml_update_response(username, class_id, group_id, xml, toolbar, properties, obj_xml, obj_label, obj_cmd_str, type_of_req, recv_xml_update_ver, new_update, data){
     if(!is_xml_update_queue_empty && new_update){
         xml_update_queue.enqueue(data);

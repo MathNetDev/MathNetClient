@@ -10,6 +10,7 @@ var finalApplet;
 var stepSize = 1.0;
 
 function addListener(obj_label){
+    //setTimeout(e => document.applet.renameObject(obj_label, obj_label + '_' + 1), 0);
     send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'add');
     var username;
     if(sessionStorage.getItem('username') != null && sessionStorage.getItem('username') != "admin")
@@ -68,16 +69,33 @@ function send_xml(xml, obj_xml, obj_label, obj_cmd_str, socket, type_of_req){
 function appletUpdate(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str, type_of_req){
     var final_xml;
     var appletName = document.applet;
-    //console.log('appletSetExtXML id param: ' + id);
-    //console.log("Command appletSet: ", obj_cmd_str);
-
-    appletName.unregisterAddListener("addListener");
-    appletName.unregisterUpdateListener("updateListener");
-    appletName.unregisterRemoveListener("removeListener");
 
     if (typeof document['applet' + id] !== 'undefined'){
         appletName = document['applet' + id];
     }
+
+    //Get Appropriate appletName depending on the Currently Active View/Tab
+    if ($('a[data-toggle="tab"][aria-expanded=true]').html() == "View" && typeof document['applet' + id] !== 'undefined')
+    {
+        appletName = document['applet' + id];
+    }
+    else if ($('a[data-toggle="tab"][aria-expanded=true]').html() == "Filtered Merged View" && typeof document['merged_view_applet' + id] !== 'undefined')
+    {
+        appletName = document['merged_view_applet' + id];
+    }
+    else if($('a[data-toggle="tab"][aria-expanded=true]').html() == "Overlayed Image View" && typeof document['overlayed_image_view_applet' + id] !== 'undefined')
+    {
+        appletName = document['overlayed_image_view_applet' + id];
+    }
+
+    if(properties != null && properties.hasOwnProperty('perspective')){
+        // need to set the perspective before setting the XML
+        appletName.setPerspective(properties['perspective']);
+    }
+
+    appletName.unregisterAddListener("addListener");
+    appletName.unregisterUpdateListener("updateListener");
+    appletName.unregisterRemoveListener("removeListener");
 
     if(type_of_req == 'add'){
         //console.log(obj_label, ":", obj_cmd_str);
@@ -100,22 +118,32 @@ function appletUpdate(xml, toolbar, properties, id, username, obj_xml, obj_label
     //appletName.registerRemoveListener("removeListener");
 }
 
-
-
 function p2pAppletSetXML(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str){
 
     var final_xml;
     var appletName = document.applet;
 
-    console.log("Inside p2pAppletSetXML");
-    
-    appletName.unregisterAddListener("addListener");
-    appletName.unregisterUpdateListener("updateListener");
-    appletName.unregisterRemoveListener("removeListener");
-
     if (typeof document['applet' + id] !== 'undefined'){
         appletName = document['applet' + id];
     }
+
+    //Get Appropriate appletName depending on the Currently Active View/Tab
+    if ($('a[data-toggle="tab"][aria-expanded=true]').html() == "View" && typeof document['applet' + id] !== 'undefined')
+    {
+        appletName = document['applet' + id];
+    }
+    else if ($('a[data-toggle="tab"][aria-expanded=true]').html() == "Filtered Merged View" && typeof document['merged_view_applet' + id] !== 'undefined')
+    {
+        appletName = document['merged_view_applet' + id];
+    }
+    else if($('a[data-toggle="tab"][aria-expanded=true]').html() == "Overlayed Image View" && typeof document['overlayed_image_view_applet' + id] !== 'undefined')
+    {
+        appletName = document['overlayed_image_view_applet' + id];
+    }
+
+    appletName.unregisterAddListener("addListener");
+    appletName.unregisterUpdateListener("updateListener");
+    appletName.unregisterRemoveListener("removeListener");
 
     cur_xml = appletName.getXML();
     var cur_xml_doc = $.parseXML(cur_xml);
@@ -126,7 +154,7 @@ function p2pAppletSetXML(xml, toolbar, properties, id, username, obj_xml, obj_la
         return;
     }
 
-    document.applet.setXML(xml);
+    appletName.setXML(xml);
     checkLocks(appletName);
 
     // If this is the students' website, then we register and add the listeners
@@ -137,6 +165,57 @@ function p2pAppletSetXML(xml, toolbar, properties, id, username, obj_xml, obj_la
         addKeyboardEventListeners();
     }
 }
+
+function adminP2PAppletSetXML(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str){
+
+    var final_xml;
+    var appletName = document.applet;
+
+    if (typeof document['applet' + id] !== 'undefined'){
+        appletName = document['applet' + id];
+    }
+
+    //Get Appropriate appletName depending on the Currently Active View/Tab
+    if ($('a[data-toggle="tab"][aria-expanded=true]').html() == "View" && typeof document['applet' + id] !== 'undefined')
+    {
+        appletName = document['applet' + id];
+    }
+    else if ($('a[data-toggle="tab"][aria-expanded=true]').html() == "Filtered Merged View" && typeof document['merged_view_applet' + id] !== 'undefined')
+    {
+        appletName = document['merged_view_applet' + id];
+    }
+    else if($('a[data-toggle="tab"][aria-expanded=true]').html() == "Overlayed Image View" && typeof document['overlayed_image_view_applet' + id] !== 'undefined')
+    {
+        appletName = document['overlayed_image_view_applet' + id];
+    }
+
+    appletName.unregisterAddListener("addListener");
+    appletName.unregisterUpdateListener("updateListener");
+    appletName.unregisterRemoveListener("removeListener");
+
+    //cur_xml = appletName.getXML();
+    //var cur_xml_doc = $.parseXML(cur_xml);
+    //appletName.setXML(xml);
+    //checkLocks(appletName);
+
+    cur_xml = appletName.getXML();
+    var cur_xml_doc = $.parseXML(cur_xml);
+    var cur_construction = $(cur_xml_doc).find('construction')[0];
+
+    xml = xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>').replace(/\\"/g, '"').replace(/\\n/g, '').replace(/\\t/g, '');
+    //xml = xml.substr(xml.indexOf("<"), xml.lastIndexOf(">"));
+    var new_xml_doc = $.parseXML(xml);
+
+    if(new_xml_doc !== null){
+        var new_construction = $(new_xml_doc).find('construction')[0];
+        cur_construction.innerHTML = new_construction.innerHTML;
+    }
+
+    var final_xml = $(cur_xml_doc).find('geogebra')[0].outerHTML;
+    appletName.setXML(final_xml);
+    checkLocks(appletName);
+}
+
 
 //This function takes the new XML, changes it and the old XML to a JSON format, and then 
 // parses it, and changes it back to XML to be set in the geogebra applet.
@@ -176,7 +255,7 @@ function appletSetExtXML(xml, toolbar, properties, id, username, obj_xml, obj_la
     var cur_construction = $(cur_xml_doc).find('construction')[0];
 
     xml = xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>').replace(/\\"/g, '"').replace(/\\n/g, '').replace(/\\t/g, '');
-    //xml = xml.substr(xml.indexOf("<"), xml.lastIndexOf(">"));
+    xml = xml.substr(xml.indexOf("<"), xml.lastIndexOf(">"));
     var new_xml_doc = $.parseXML(xml);
 
     // If this is the students' website, then in most cases we only want to update certain parts of the XML

@@ -1,5 +1,6 @@
 //admin_vars.js
 var $secret = 'ucd_247';
+var is_admin_xml_update_queue_empty = false;
 
 var $view_tab = $('#view_tab');
 var $lists = $('.lists');

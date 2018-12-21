@@ -99,6 +99,8 @@
             socket.disconnect();
         }
 
+        //This function is used when a new student logs in. The new student asks another randomly selected
+        //student in the class for the current XML.
         var p2p_get_xml = function(username, class_id, group_id){
             socket.emit('p2p_get_xml', username, class_id, group_id);
         }

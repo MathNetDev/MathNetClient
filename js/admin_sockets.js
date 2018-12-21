@@ -182,6 +182,12 @@
             socket.emit('delete-class', class_id, secret, disconnect);
         };
 
+        //This function is used to get an updated copy of the current XML of the group from any one of the
+        //(randomly selected) students present in a specific class and group.
+        var p2p_get_xml = function(username, class_id, group_id){
+            socket.emit('p2p_get_xml', username, class_id, group_id);
+        }
+
         //
         // Socket event handlers
         //
@@ -246,9 +252,7 @@
             group_info_response(data.username, data.class_id, data.group_id, 
                                 data.other_members, data.status);
         });
-
-       
-        
+ 
         socket.on('get-classes-response', function(data){
             get_classes_response(data.classes, data.secret);
         });
@@ -262,7 +266,7 @@
         });
 
         socket.on('xml_update_response', function(data) {
-            xml_update_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar);
+            xml_update_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar, data.properties, data.obj_xml, data.obj_label, data.obj_cmd_str, data.type_of_req, data.xml_update_ver, data.new_update, data);
         });
 
         socket.on('xml_change_response', function(data) {
@@ -271,6 +275,10 @@
 
         socket.on('get_xml_response', function(data) {
             get_xml_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar);
+        });
+
+        socket.on('applet_xml_response', function(data){
+            applet_xml_response(data.username, data.class_id, data.group_id, data.xml, data.properties, data.xml_update_ver);
         });
 
         return {
@@ -298,6 +306,7 @@
             save_xml: save_xml,
             get_xmls: get_xmls,
             delete_xml: delete_xml,
+            p2p_get_xml: p2p_get_xml,
             ping: ping,
             disconnect: disconnect
         };
