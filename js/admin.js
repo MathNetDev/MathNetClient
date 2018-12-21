@@ -875,7 +875,7 @@ $(function() {
             $views_jsapp.empty();
 
             var merge_view_update_toggle = '<div class="onoffswitch" style="display:none;"> <input type="checkbox" name="onoffswitch" '
-            +'class="onoffswitch-checkbox" id="myonoffswitchmerge" onchange="liveUpdatesCheckboxChangeMerge(this);" checked> </input> <label class="onoffswitch-label" for="myonoffswitchmerge">' 
+            +'class="onoffswitch-checkbox" id="myonoffswitchmerge" onchange="liveUpdatesCheckboxChangeMerge(this);"> </input> <label class="onoffswitch-label" for="myonoffswitchmerge">' 
             +'<span class="onoffswitch-inner"></span> <span class="onoffswitch-switch"></span> </label></div>';
             $views_jsapp.append(merge_view_update_toggle);
 
@@ -985,7 +985,7 @@ $(function() {
             $individual_groups_view_jsapps.empty();
 
             var merge_view_update_toggle = '<div class="onoffswitch" style="display:none;"> <input type="checkbox" name="onoffswitch" '
-            +'class="onoffswitch-checkbox" id="myonoffswitchfilteredmerge" onchange="liveUpdatesCheckboxChangeFilteredMerge(this);" checked> </input> <label class="onoffswitch-label" for="myonoffswitchfilteredmerge">' 
+            +'class="onoffswitch-checkbox" id="myonoffswitchfilteredmerge" onchange="liveUpdatesCheckboxChangeFilteredMerge(this);"> </input> <label class="onoffswitch-label" for="myonoffswitchfilteredmerge">' 
             +'<span class="onoffswitch-inner"></span> <span class="onoffswitch-switch"></span> </label></div>';
             $individual_groups_view_jsapps.append(merge_view_update_toggle);
 
