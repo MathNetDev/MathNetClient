@@ -155,6 +155,11 @@
             socket.emit('get-classes', secret, admin_id);
         }
 
+
+        var xml_update = function(data) {
+            socket.emit('xml_update', data);
+        }
+
         //This function takes a username, class_id, group_id, and XML
         //It then emits a socket event to change the class's XML in the datastructure
         //based on the given XML, group_id, and class_id
@@ -176,6 +181,12 @@
         var delete_class = function(class_id, secret, disconnect){
             socket.emit('delete-class', class_id, secret, disconnect);
         };
+
+        //This function is used to get an updated copy of the current XML of the group from any one of the
+        //(randomly selected) students present in a specific class and group.
+        var p2p_get_xml = function(username, class_id, group_id){
+            socket.emit('p2p_get_xml', username, class_id, group_id);
+        }
 
         //
         // Socket event handlers
@@ -241,9 +252,7 @@
             group_info_response(data.username, data.class_id, data.group_id, 
                                 data.other_members, data.status);
         });
-
-       
-        
+ 
         socket.on('get-classes-response', function(data){
             get_classes_response(data.classes, data.secret);
         });
@@ -256,12 +265,20 @@
             check_session_response(admin_id, check);
         });
 
+        socket.on('xml_update_response', function(data) {
+            xml_update_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar, data.properties, data.obj_xml, data.obj_label, data.obj_cmd_str, data.type_of_req, data.xml_update_ver, data.new_update, data);
+        });
+
         socket.on('xml_change_response', function(data) {
             xml_change_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar);
         });
 
         socket.on('get_xml_response', function(data) {
             get_xml_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar);
+        });
+
+        socket.on('applet_xml_response', function(data){
+            applet_xml_response(data.username, data.class_id, data.group_id, data.xml, data.properties, data.xml_update_ver);
         });
 
         return {
@@ -283,11 +300,13 @@
             save_settings: save_settings,
             get_classes: get_classes,
             get_class_users: get_class_users,
+            xml_update: xml_update,
             xml_change: xml_change,
             get_xml: get_xml,
             save_xml: save_xml,
             get_xmls: get_xmls,
             delete_xml: delete_xml,
+            p2p_get_xml: p2p_get_xml,
             ping: ping,
             disconnect: disconnect
         };
