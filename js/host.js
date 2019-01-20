@@ -1,1 +1,1 @@
-var host = window.location.hostname
+var host = window.location.hostname;
