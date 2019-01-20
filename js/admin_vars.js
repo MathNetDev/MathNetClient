@@ -1,30 +1,9 @@
 //admin_vars.js
 var $secret = 'ucd_247';
-var is_admin_xml_update_queue_empty = false;
 
 var $view_tab = $('#view_tab');
 var $lists = $('.lists');
 
-var $filtered_merged_view_tab = $('#filtered_merged_view_tab');
-var $individual_groups_view_jsapps = $('#individual_groups_view_jsapps');
-var $overlayed_image_view_tab = $('#overlayed_image_view_tab');
-var $overlayed_image_views_jsapps = $('#overlayed_image_views_jsapps');
-var $onoffswitch = $('.onoffswitch');
-var gen_new_colors = true;
-var filtered_merged_view_obj_colors = [];
-
-var $g2Toggle = $('#g2Toggle');
-var $g2Box = $('#g2Box');
-var $g2axisToggle = $('#g2axisToggle');
-var $g2gridToggle = $('#g2gridToggle');
-var $g2perspective = $('#g2perspective');
-var $g2axis_step_x = $('#g2axis_step_x');
-var $g2axis_step_y = $('#g2axis_step_y');
-var $g2axis_step_z = $('#g2axis_step_z');
-var $g2coord_x_min = $('#g2coord_x_min');
-var $g2coord_x_max = $('#g2coord_x_max');
-var $g2coord_y_min = $('#g2coord_y_min');
-var $g2coord_y_max = $('#g2coord_y_max');
 
 var $container = $('.container');
 var $create_user_view = $('.create_user_view'); // Div holding user creation view
@@ -72,7 +51,6 @@ var $default_toolset_name = 'Default toolset';
 var $saveconstruction_button = $('.btn-saveconstruction'); // Saving the construction
 var $deleteconstruction_button = $('.btn-deleteconstruction'); // Deleting construction
 var $useconstruction_button = $('.btn-useconstruction'); // Using the saved construction to send to students
-var $resetview_button = $('.btn-resetview');
 var $construction_select = $('#construction_select');
 
 var $boxToggle = $('#boxToggle');
@@ -117,4 +95,3 @@ var $current_password = $('#current_password');
 var $changed_password = $('#changed_password');
 var $retyped_changed_password = $('#retyped_changed_password');
 var $change_password_button = $('#change_password_button');
-

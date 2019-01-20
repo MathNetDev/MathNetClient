@@ -59,18 +59,12 @@
             socket.emit('group-color', class_id, group_id);
         }
 
-        //This function takes a username, class_id, group_id, and XML
-        //It then emits a socket event to change the class's XML in the datastructure
-        //based on the given XML, group_id, and class_id
-        var xml_update = function(username, class_id, group_id, xml, toolbar, toolbar_user, obj_xml, obj_label, obj_cmd_str, type_of_req, xml_update_ver, new_update) {
-            socket.emit('xml_update', username, class_id, group_id, xml, toolbar, obj_xml, obj_label, obj_cmd_str, type_of_req, xml_update_ver, new_update);
-        }
 
         //This function takes a username, class_id, group_id, and XML
         //It then emits a socket event to change the class's XML in the datastructure
         //based on the given XML, group_id, and class_id
-        var xml_change = function(username, class_id, group_id, xml, toolbar, toolbar_user, obj_xml, obj_label, obj_cmd_str) {
-            socket.emit('xml_change', username, class_id, group_id, xml, toolbar, obj_xml, obj_label, obj_cmd_str);
+        var xml_change = function(username, class_id, group_id, xml, toolbar) {
+            socket.emit('xml_change', username, class_id, group_id, xml, toolbar);
         }
 
         //This function takes a username, class_id, and group_id
@@ -87,22 +81,10 @@
             socket.emit('get-settings', class_id, group_id);
         }
 
-        //This function is used to send the applet's current state(XML) to the server.
-        //Used when a new client/student joins.
-        var applet_xml = function(xml, username, class_id, group_id, xml_update_ver){
-            socket.emit('applet_xml', xml, username, class_id, group_id, xml_update_ver);
-        }
-
         //This function takes no parameters
         //and disconnects the given socket (this object) from the server.
         var disconnect = function() {
             socket.disconnect();
-        }
-
-        //This function is used when a new student logs in. The new student asks another randomly selected
-        //student in the class for the current XML.
-        var p2p_get_xml = function(username, class_id, group_id){
-            socket.emit('p2p_get_xml', username, class_id, group_id);
         }
 
         //
@@ -147,24 +129,11 @@
         });
         
         socket.on('xml_change_response', function(data) {
-            xml_change_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar, data.properties, data.obj_xml, data.obj_label, data.obj_cmd_str);
+            xml_change_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar, data.properties);
         });
-
-        socket.on('xml_update_response', function(data) {
-            xml_update_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar, data.properties, data.obj_xml, data.obj_label, data.obj_cmd_str, data.type_of_req, data.xml_update_ver, data.new_update, data);
-        });
-
 
         socket.on('get_xml_response', function(data) {
             get_xml_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar, data.properties);
-        });
-
-        socket.on('p2p_get_xml_response', function(data){
-            p2p_get_xml_response(data.username, data.class_id, data.group_id);
-        });
-
-        socket.on('applet_xml_response', function(data){
-            applet_xml_response(data.username, data.class_id, data.group_id, data.xml, data.properties, data.xml_update_ver);
         });
 
         socket.on('group_numbers_response', function(data) {
@@ -197,13 +166,10 @@
             group_info: group_info,
             group_color: group_color,
             xml_change: xml_change,
-            xml_update: xml_update,
             get_xml: get_xml,
             get_settings: get_settings,
-            applet_xml: applet_xml,
             disconnect: disconnect,
-            ping:ping,
-            p2p_get_xml: p2p_get_xml
+            ping:ping
         };
     }
     

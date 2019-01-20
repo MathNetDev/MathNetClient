@@ -85,26 +85,23 @@
             <div class="javascriptapplet">
               <div class="geogebrawebapplet applet-student" id="appletContainer"></div>
             </div>
-
+            
             <div class="col-md-4 col-lg-6 col-sm-6">
               <br/>
-              <div class="arrow-keys-ui" id="arrow_keys" style="white-space:nowrap;">
-                  <button class="btn btn-primary" id="arrow_up_button" style="margin-left:78px;">Up (I)</button>&nbsp;
-              <br/><br/>
-                <button class="btn btn-primary" id="arrow_left_button">Left (J)</button>
-                Selected: <label for="cur_label">-</label>
-                <button class="btn btn-primary" id="arrow_right_button" style="margin-left:2px;">Right (L)</button>
-                <br/><br/>
-                <button class="btn btn-primary" id="arrow_down_button" style="margin-left:67px;">Down (K)</button>
-                <br/>
-                Step Size: <label for="step_size_label">1</label>
-                <input id="step_size_slider" type="range" min="0" max="100" value="10" style="width:250px;">
+              <button class="btn btn-primary" id="update_xml_button" >Update XML</button>
+              <button class="btn btn-warning" id="randomizeColors_button">Randomize Colors</button> 
+              </br></br>
+              <div class="onoffswitch">
+                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked> </input>
+                <label class="onoffswitch-label" for="myonoffswitch"> 
+                  <span class="onoffswitch-inner"></span>
+                  <span class="onoffswitch-switch"></span>
+                </label>
               </div>
-              <br/>
             </div>
 
           </div>
-          <h5 class = "ping"> Ping : 0 </h5>
+                        <h5 class = "ping"> Ping : 0 </h5>
         </div><!-- ***** End of group_view ***** -->
 
       </div>
@@ -112,7 +109,7 @@
     
     <footer>
       <!-- normal communications library stuff -->
-      <script src="js/socket.io-2.2.0.js"></script>
+      <script src="js/socket.io-1.4.5.js"></script>
       <script src="js/jquery-2.2.3.min.js"></script>
       <script src="js/bootstrap.min.js"></script>
       <script type="text/javascript" src="js/deployggb.js"></script>
@@ -124,9 +121,7 @@
       <script src="js/login.js"></script>
       <script src="js/class.js"></script>
       <script src="js/groups.js"></script>
-      <script src="js/Queue.js"></script>
       <script>
-        var xml_update_queue = new Queue();
         var socket = Student.Socket(io(host));
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
           (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -135,23 +130,7 @@
 
         ga('create', 'UA-87061901-2', 'auto');
         ga('send', 'pageview');
-        
-        //Code for Pre-filling Class ID if URL contains it
-        $(document).ready(function() {
-          if($('.login_view').is(":visible"))
-          {
-            var url = new URL(window.location.href);
-            var class_id = url.searchParams.get("class_id");
-            if(class_id != null)
-            {
-              $('.class_id').val(class_id);
-            }
-          }
-        });
-        //End of Code for Pre-filling Class ID
       </script>
     </footer>
   </body>
 </html>
-
-

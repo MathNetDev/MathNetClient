@@ -22,8 +22,6 @@
       <li role="presentation"><a href="#settings" aria-controls="design" role="tab" data-toggle="tab" id="settings_tab" style="display:none">Settings</a></li>
       <li role="presentation"><a href="#design" aria-controls="design" role="tab" data-toggle="tab" id="design_tab" style="display:none">Design</a></li>
       <li role="presentation"><a href="#view" aria-controls="design" role="tab" data-toggle="tab" id="view_tab" style="display:none">View</a></li>
-      <li role="presentation"><a href="#filtered_merged_view" aria-controls="design" role="tab" data-toggle="tab" id="filtered_merged_view_tab" style="display:none">Filtered Merged View</a></li>
-      <li role="presentation"><a href="#overlayed_image_view" aria-controls="design" role="tab" data-toggle="tab" id="overlayed_image_view_tab" style="display:none">Overlayed Image View</a></li>
     </ul>
   
     <div class="tab-content">
@@ -167,7 +165,7 @@
               </div>
               <div class="col-md-4 col-sm-4">
                 <h1 class = "class_name" style = "text-align: center; margin-top:-5px;"></h1>
-                <a id="student_class_id_link" target="_blank"><h3 class = "class_id" style = "text-align: center; margin-top:-5px;"></h3></a>
+                <h3 class = "class_id" style = "text-align: center; margin-top:-5px;"></h3>
               </div>
               <div class="col-md-4 col-sm-4">
                 <input class="btn btn-primary add_button" type="button" style="float:right;" value="Add Group">
@@ -214,41 +212,8 @@
         <div class="col-md-12 col-sm-12">
           <h3> Designer</h3>
           <h5 class = "ping"> Ping : 0 </h5>
-
-          <button class="accordion">CREATE</button>
-            <div class="panel panel-accordion col-md-12 col-sm-12"> <br/>
-                <div class="construction_stuff">
-                    <p id = "hello">  Select Construction </p>
-                    <div class="">
-                      <select id="construction_select" style="display:block;width:30%;clear:both;height:100px;" size="1000"></select>
-                      <div>
-                        <button class="btn btn-primary btn-useconstruction">Use Construction</button>
-                        <button class="btn btn-primary btn-saveconstruction">Save Construction</button>
-                        <button class="btn btn-primary btn-deleteconstruction">Delete Construction</button>
-                      </div>
-                    </div>
-                    <div class=""> Select Group to Send View to <br/>
-                      <select multiple="true" style="display:block;width:30%;clear:both;height:100px;" class="construction_groups"></select>
-                      <button class="btn btn-primary btn-sendconstruction">Send View</button>
-                      <button class="btn btn-primary btn-sendconstructionall">Send View to All</button> &emsp;&emsp;
-                      <label>
-                        <input type="checkbox" id="toggle-menu-bar" value="1" checked> Show menu bar </input>&emsp;
-                      </label>
-                      <label>
-                        <input type="checkbox" id="send-toolbar-checkbox" value="1" checked> Send Toolbar </input>
-                      </label>
-                    </div>
-                    
-                </div>
-                <button class="btn btn-primary btn-resetview">Reset View</button>
-                <div class="javascriptapplet">
-                  <div class="geogebrawebapplet applet-activity-designer" id="appletContainer" style="width:100%;height:650px;display: block;"></div> 
-                </div>
-                <br/><br/><br/>
-            </div>
-
-            <button class="btn btn-primary accordion">CUSTOMIZE</button>
-            <div class="panel panel-accordion">
+          <button class="btn btn-primary accordion">User Customizations</button>
+          <div class="panel panel-accordion">
             <div>
               <div class="toolbox col-md-8 col-sm-12"></div>
               <div class="col-md-4 col-sm-12">
@@ -317,30 +282,6 @@
                   X-axis <input type="text" id="axis_step_x"></input> &ensp;
                   Y-axis <input type="text" id="axis_step_y"></input> &ensp;
                   Z-axis <input type="text" id="axis_step_z"></input> <br/>
-                  
-                  <!-- Code for Graphics 2 -->
-                  <br/>
-                  <input type="checkbox" id="g2Toggle" checked> Use the Above Settings for Graphics 2</input> 
-                  <div id = 'g2Box'>
-		  	<h4> Graphics 2 </h4>
-		  	<input type="checkbox" id="g2axisToggle" checked> Axis Display</input>            
-			<input type="checkbox" id="g2gridToggle" checked> Grid Display</input><br/>
-		  	<br/>
-		        <div id="g2coord-axis">
-		        	Window Dimensions <br/>
-		                <span style="margin-left:105px;">Y Max</span> <br/>
-		                <input type="text" id="g2coord_y_max" style="margin-left:100px;"></input><br/>
-		                X Min <input type="text" id="g2coord_x_min"></input> &emsp;
-		                <input type="text" id="g2coord_x_max" style="margin-left:50px;"></input> X Max <br/>
-		                <input type="text" id="g2coord_y_min" style="margin-left:100px;"></input> <br/>
-		                <span style="margin-left:105px;">Y Min</span> <br/>
-		                Axis Steps <br/>
-		                X-axis <input type="text" id="g2axis_step_x"></input> &ensp;
-		                Y-axis <input type="text" id="g2axis_step_y"></input> &ensp;
-		                Z-axis <input type="text" id="g2axis_step_z"></input> <br/>
-		          </div>
-		  </div>
-		  <!-- End of Code for Graphics 2 -->
                 </div>
                 <div class = "shifted">
                   <h1 style=" font-size: 1.2em; margin:0 0 .5em 0;">Class users</h1>
@@ -351,9 +292,37 @@
                 </div>
               </div>
             </div>
-            <br/><br/><br/>
-	  </div>
-	</div>
+          <br/><br/><br/>
+          </div>
+
+          <button class="accordion">Activity Designer</button>
+            <div class="panel panel-accordion col-md-12 col-sm-12"> <br/>
+                <div class="construction_stuff">
+                    <p id = "hello">  Select Construction </p>
+                    <div class="">
+                      <select id="construction_select" style="display:block;width:30%;clear:both;height:100px;" size="1000"></select>
+                      <div>
+                        <button class="btn btn-primary btn-useconstruction">Use Construction</button>
+                        <button class="btn btn-primary btn-saveconstruction">Save Construction</button>
+                        <button class="btn btn-primary btn-deleteconstruction">Delete Construction</button>
+                      </div>
+                    </div>
+                    <div class=""> Select Group to Send View to <br/>
+                      <select multiple="true" style="display:block;width:30%;clear:both;height:100px;" class="construction_groups"></select>
+                      <button class="btn btn-primary btn-sendconstruction">Send View</button>
+                      <button class="btn btn-primary btn-sendconstructionall">Send View to All</button> &emsp;&emsp;
+                      <label>
+                        <input type="checkbox" id="toggle-menu-bar" value="1"> Show menu bar </input>
+                      </label>
+                    </div>
+                    
+                </div>
+                <div class="javascriptapplet">
+                  <div class="geogebrawebapplet applet-activity-designer" id="appletContainer" style="width:100%;height:650px;display: block;"></div> 
+                </div>
+                <br/><br/><br/>
+            </div>
+        </div>
       </div> <!-- End of design tab -->
 
       <div role="tabpanel" class="tab-pane" id="view">
@@ -369,31 +338,6 @@
           <div class="javascriptapplet" id="views_jsapp"></div> 
         </div>
       </div> <!-- End of view tab -->
-
-	  <!-- Filtered Merged View Tab -->	
-      <div role="tabpanel" class="tab-pane" id="filtered_merged_view">
-        <div class="col-md-12">
-          <h3>Individual Group Views</h3>
-          <h5 class = "ping"> Ping : 0 </h5>
-          <div id="group_select_checkboxes" class="panel panel-default"></div>
-          <div id="filter_merge_items" class="panel panel-default"></div>
-          <div class="javascriptapplet" id="individual_groups_view_jsapps"></div> 
-          <div class="javascriptapplet" id="filtered_merge"></div>
-        </div>
-      </div> <!-- End of filtered merged view tab -->
-
-	  <!-- Overlayed Image View Tab -->
-      <div role="tabpanel" class="tab-pane" id="overlayed_image_view">
-        <div class="col-md-12">
-          <h3>Individual Group Views</h3>
-          <h5 class = "ping"> Ping : 0 </h5>
-          <div id="overlayed_image_views_checkboxes" class="panel panel-default"></div>
-          <div class="javascriptapplet" id="overlayed_image_views_jsapps"></div>
-          <br>
-          <div id="overlayed_image_div" class="panel panel-default"></div>
-        </div>
-      </div> <!-- End of overlayed image view tab -->	
-
 
     </div> <!-- End of table-content -->
   </div> <!-- End of container -->
@@ -444,7 +388,7 @@
 
 <footer>
   <script src="js/jquery-2.2.3.min.js"></script>
-  <script src="js/socket.io-2.2.0.js"></script>  
+  <script src="js/socket.io-1.4.5.js"></script>  
   <script src="js/tether.min.js"></script>
   <script src="js/bootstrap.min.js"></script>
   <script src="js/jquery-ui/jquery-ui.min.js"></script>
@@ -458,10 +402,8 @@
   <script src="js/admin.js"></script>
   <script type="text/javascript" src="js/deployggb.js"></script>
   <script src="js/ggbapplet_functions.js"></script>
-  <script src="js/Queue.js"></script>
 
   <script>
-    var admin_xml_update_queue = new Queue();
     $(document).ready(function() {
       $('#body').show();
     });

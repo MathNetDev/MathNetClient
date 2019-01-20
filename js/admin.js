@@ -133,8 +133,6 @@ $(function() {
     $add_button.bind('click', function() {
         // Tell the server to create a new group for the class in the database
         var colors = [], minimum = 0, maximum = 255;
-        gen_new_colors = true;
-        filtered_merged_view_obj_colors = [];
         colors.push(Math.floor(Math.random() * (maximum - minimum + 1)) + minimum);
         colors.push(Math.floor(Math.random() * (maximum - minimum + 1)) + minimum);
         colors.push(Math.floor(Math.random() * (maximum - minimum + 1)) + minimum);
@@ -161,8 +159,6 @@ $(function() {
     $delete_button.bind('click', function() {
         // Only remove if there are groups
         if ($('.groups > li').length > 0) {
-            gen_new_colors = true;
-            filtered_merged_view_obj_colors = [];
             socket.delete_group(sessionStorage.getItem('admin_class_id'), $('.groups > li:last').index() + 1, $secret);
         }
     });
@@ -232,54 +228,13 @@ $(function() {
                 'y_max' : (($.isNumeric($coord_y_max.val())) ? $coord_y_max.val() : 0)
             };
         }
-        
-        /* Setting Property Values for Graphics Window 2 */
-        var g2coord_system, g2axis_steps, g2axis_display, g2grid_display, g2axis_steps, g2coord_system;
-        
-        if ($g2axis_step_x.val() != "" | $g2axis_step_y.val() != "" | $g2axis_step_z.val() != ""){
-            g2axis_steps = {
-                'x' : (($.isNumeric($g2axis_step_x.val())) ? $g2axis_step_x.val() : 0),
-                'y' : (($.isNumeric($g2axis_step_y.val())) ? $g2axis_step_y.val() : 0),
-                'z' : (($.isNumeric($g2axis_step_z.val())) ? $g2axis_step_z.val() : 0)
-            };
-        }
-
-        if ($g2coord_x_min.val() != "" | $g2coord_x_max.val() != ""  | $g2coord_y_min.val() != "" | $g2coord_y_max.val() != ""){
-            g2coord_system = {
-                'x_min' : (($.isNumeric($g2coord_x_min.val())) ? $g2coord_x_min.val() : 0),
-                'x_max' : (($.isNumeric($g2coord_x_max.val())) ? $g2coord_x_max.val() : 0),
-                'y_min' : (($.isNumeric($g2coord_y_min.val())) ? $g2coord_y_min.val() : 0),
-                'y_max' : (($.isNumeric($g2coord_y_max.val())) ? $g2coord_y_max.val() : 0)
-            };
-        }
-        
-        if ($g2Toggle.is(':checked'))
-        {
-            g2axis_display = $axisToggle.prop('checked'),
-            g2grid_display = $gridToggle.prop('checked'),
-            g2axis_steps = axis_steps,
-            g2coord_system = coord_system
-        }
-        else
-        {
-            g2axis_display = $g2axisToggle.prop('checked'),
-            g2grid_display = $g2gridToggle.prop('checked'),
-            g2axis_steps = g2axis_steps,
-            g2coord_system = g2coord_system
-        }
-
-        /* End of Setting Property Values for Graphics Window 2 */
 
         var properties = {
             axis_display: $axisToggle.prop('checked'),
             grid_display: $gridToggle.prop('checked'),
             perspective: perspective,
             axis_steps: axis_steps,
-            coord_system: coord_system,
-            g2axis_display : g2axis_display,
-            g2grid_display : g2grid_display,
-            g2axis_steps : g2axis_steps,
-            g2coord_system : g2coord_system
+            coord_system: coord_system
         };
 
         for(var i = 0; i < toolbar_users.length; i++){
@@ -307,138 +262,16 @@ $(function() {
     $boxToggle.bind('click', function(){
         $perspectiveBox.toggle();
     });
-    
-    /* Use Graphics 1 Config or Different Config for Graphics 2 Window */
-    $g2Toggle.prop('checked', true);
-    $g2Box.toggle();
-    $g2Toggle.bind('click', function(){
-        $g2Box.toggle();
-    });
-    /* End of Graphics 2 Window Config Toggle */
-
 
     $sendconstruction_button.bind('click', function(){
         var xml = $.parseXML(document.applet.getXML());
-
-        //Gets axis tags for each of the views: Graphics 1, Graphics 2 and 3D Graphics
-        //which are finally added to the properties
-        var axis_info = {};
-        $(xml).find('axis').each(function(index){
-            var viewNo = $(this).parent().find('viewNumber').attr('viewNo');
-            if(viewNo == undefined){
-                viewNo = '3D';
-            }
-            if(viewNo in axis_info){
-                axis_info[viewNo].push($(this)['0'].outerHTML);
-            }
-            else{
-                axis_info[viewNo] = [$(this)['0'].outerHTML];
-            }
-        });
-
-        //Gets evSettings for each of the views: Graphics 1, Graphics 2 and 3D Graphics
-        //which are finally added to the properties
-        var evSettings = {};
-        $(xml).find('evSettings').each(function(index){
-            var viewNo = $(this).parent().find('viewNumber').attr('viewNo');
-            if(viewNo == undefined){
-                viewNo = '3D';
-            }
-            evSettings[viewNo] = $(this)['0'].outerHTML;
-        });
-
-        //Gets coordSystem for each of the views: Graphics 1, Graphics 2 and 3D Graphics
-        //which are finally added to the properties
-        var coordSystem = {};
-        $(xml).find('coordSystem').each(function(index){
-            var viewNo = $(this).parent().find('viewNumber').attr('viewNo');
-            if(viewNo == undefined){
-                viewNo = '3D';
-            }
-            coordSystem[viewNo] = $(this)['0'].outerHTML;
-        });
-
-        //Get plate xml tag for 3D Graphics View
-        var plate = $(xml).find('plate').attr('show');
-
         var toolbar = $(xml).find('toolbar').attr('items').replace(/  /g, " ").replace(/ \| /g, "|").replace(/ /g, ",");
-        
-        // var $(xml).find('view').toArray()[0].outerHTML);
-        
         var construction_groups = $('.construction_groups').val();
         if(!construction_groups){
             $('.construction_groups option').prop('selected', true);
             construction_groups = $('.construction_groups').val();
         }
-        var visible_views = $(xml).find('view').filter( function(index){
-            return $( this ).attr( "visible" ) === "true";
-        });
-
-        // We sort the views so that we can later send the ordered arrangement of the different view tabs present
-        // in the activity designer to the students' views
-        var visible_views_sorted = visible_views.sort(function(a,b){
-            var a_order = a.getAttribute('location').replace(/,/g, ''),
-                b_order = b.getAttribute('location').replace(/,/g, '');
-            if (a_order > b_order) {
-                return -1;
-            }
-            else if (b_order > a_order) {
-                return 1;
-            }
-            else {
-                return 0;
-            }
-        });
-
-        // The following loop creates a string of the (encoded) values of the different views present in the
-        // activity designer (to be sent to the students)
-        var perspectives_mapped = '';
-        for (var i=0; i < visible_views_sorted.length; ++i)
-        {
-            var id = visible_views_sorted[i].getAttribute('id');
-            if (id == '1') {
-                perspectives_mapped += 'G';
-            }
-            else if (id == '2') {
-                perspectives_mapped += 'A';
-            }
-            else if (id == '4') {
-                perspectives_mapped += 'S';
-            }
-            else if (id == '8') {
-                perspectives_mapped += 'C';
-            }
-            else if (id == '16') {
-                perspectives_mapped += 'D';
-            }
-            else if (id == '32') {
-                perspectives_mapped += 'L';
-            }
-            else if (id == '64') {
-                perspectives_mapped += 'B';
-            }
-            else if (id == '512') {
-                perspectives_mapped += 'T';
-            }
-            /*
-            else if (id == '128') {
-            }
-            else if (id == '512') {
-            }
-            else if (id == '4097') {
-            }
-            else if (id == '43') {
-            }
-            else if (id == '70') {
-            }
-            */
-        }
-
-        toolbar = (perspectives_mapped.includes("S") || perspectives_mapped.includes("C") ||
-        perspectives_mapped.includes("L") || perspectives_mapped.includes("B") ||
-        perspectives_mapped.includes("T"))? null: toolbar;
-        
-        set_captions_unassigned(document.applet);
+        console.log(construction_groups);
         for(var i = 0; i < construction_groups.length; i++){
             var data = {
                 username: 'admin',
@@ -447,27 +280,11 @@ $(function() {
                 xml: document.applet.getXML(),
                 toolbar: toolbar,
                 toolbar_user: 'admin',
-                properties: {'perspective': perspectives_mapped == ''? 'AG': perspectives_mapped,
-                            'setNewXML': 'true',
-                            'resetToolbar': $('#send-toolbar-checkbox').prop('checked'),
-                            'axes' : axis_info,
-                            'evSettings' : evSettings,
-                            'plate' : plate,
-                            'coordSystem' : coordSystem
-                        }
+                properties: {'perspective': 'AG'}
             };
             socket.xml_change(data);
         }
     });
-
-    function set_captions_unassigned(applet){
-        var objs = applet.getAllObjectNames();
-        for(i = 0; i < objs.length; i++){
-            if(applet.getCaption(objs[i]) === ''){
-                applet.setCaption(objs[i], 'unassigned');
-            }
-        }
-    }
 
     $sendconstruction_all_button.bind('click', function(){
         var construction_groups_opt = $('.construction_groups option');
@@ -661,7 +478,7 @@ $(function() {
         var toolbar = $construction_select[0][id].toolbar;
         var properties = {perspective: "AG"}
         appletSetExtXML(xml, toolbar, properties); 
-        document.applet.registerAddListener("addLock");
+        
         $(select[id]).prop("selected", false);
     });
 
@@ -676,37 +493,6 @@ $(function() {
 
             socket.delete_xml(localStorage.getItem('admin_id'), select[id].text);
         }
-    });
-
-    //
-    //  RESET GEOGEBRA APPLET ON ADMIN CREATE PAGE
-    //
-    $resetview_button.bind('click', function(){
-        var params = {
-                    "container":"appletContainer",
-                    "id":"applet",
-                    "width":$applet_activity_designer.innerWidth(),
-                    "height":600,
-                    "perspective":"AG",
-                    "showAlgebraInput":true,
-                    "showToolBarHelp":false,
-                    "showMenubar":true,
-                    "enableLabelDrags":false,
-                    "showResetIcon":true,
-                    "showToolbar":true,
-                    "allowStyleBar":false,
-                    "useBrowserForJS":true,
-                    "enableShiftDragZoom":true,
-                    "errorDialogsActive":true,
-                    "enableRightClick":false,
-                    "enableCAS":false,
-                    "enable3d":false,
-                    "isPreloader":false,
-                    "screenshotGenerator":false,
-                    "preventFocus":false,
-                    "scaleContainerClass": "appletContainer"
-                };
-        appletInit(params);
     });
 
     //
@@ -873,12 +659,6 @@ $(function() {
         }else if (tab == 'view'){
             $design_toolbox.empty();
             $views_jsapp.empty();
-
-            var merge_view_update_toggle = '<div class="onoffswitch" style="display:none;"> <input type="checkbox" name="onoffswitch" '
-            +'class="onoffswitch-checkbox" id="myonoffswitchmerge" onchange="liveUpdatesCheckboxChangeMerge(this);"> </input> <label class="onoffswitch-label" for="myonoffswitchmerge">' 
-            +'<span class="onoffswitch-inner"></span> <span class="onoffswitch-switch"></span> </label></div>';
-            $views_jsapp.append(merge_view_update_toggle);
-
             $('#views_checkboxes').html('<div class="panel-heading"><h3 class="panel-title">Show Groups</h3></div><div class="panel-body"></div>');
             var numgroups = ($('ul.groups div').length)+1;
             for(var i = 1; i < numgroups; i++){
@@ -908,7 +688,7 @@ $(function() {
                 };
                 var newgroup = '<div class="views_group_'+i+' col-md-4 col-sm-5 col-lg-4" ><h4><a href="javascript:redirect('+i+')"> Group ' + i + 
                     '</h4><div class="geogebrawebapplet" id="appletContainer'+ i + 
-                    '"style="width:100%;height:650px;display:block;visibility:hidden;"></div></div>';
+                    '"style="width:100%;height:650px;display:block;"></div></div>';
 
                 var checkbox = '<label><input checked type="checkbox" onchange="views_change(this)" value="applet'+i+'" name="views_group_'+ i
                 + '">Group '+ i + '</label>';
@@ -917,34 +697,6 @@ $(function() {
                 $('#views_checkboxes .panel-body').append(checkbox);
                 appletInit(params);                
             }
-
-            //Wait for Applets to be Loaded and Then Randomize Colors
-            var applets_loaded = 0;
-            var interval_id = setInterval(function() {
-               //Once all Applets are Loaded Stop Trying
-                if(applets_loaded == 1)
-                {
-                    for(var i = 1; i < numgroups; i++)
-                    {
-                        if(gen_new_colors == true)
-                        {
-                            filtered_merged_view_obj_colors.push(randomizeColors(gen_new_colors,[],document['applet'+i]));
-                        }
-                        else
-                        {
-                            randomizeColors(gen_new_colors,filtered_merged_view_obj_colors[i-1],document['applet'+i]);
-                        }
-                        document.getElementById('appletContainer'+i).style.visibility = "visible";
-                    }
-                    gen_new_colors = false;
-                    clearInterval(interval_id);
-                }
-                if(document['applet1'] !== undefined || numgroups === 0 )
-                {
-                    applets_loaded = 1;
-                }
-            }, 1000);
-
             var params = {
                     "container":"appletContainer"+numgroups,
                     "id":"applet"+numgroups,
@@ -978,200 +730,11 @@ $(function() {
             $('#views_checkboxes .panel-body').append(mergebutton);
             $views_jsapp.append(mergegroup);
             appletInit(params);
-        }
-        /* Filtered Merged View Tab */ 
-        else if (tab == 'filtered_merged_view'){
-            $design_toolbox.empty();
-            $individual_groups_view_jsapps.empty();
 
-            var merge_view_update_toggle = '<div class="onoffswitch" style="display:none;"> <input type="checkbox" name="onoffswitch" '
-            +'class="onoffswitch-checkbox" id="myonoffswitchfilteredmerge" onchange="liveUpdatesCheckboxChangeFilteredMerge(this);"> </input> <label class="onoffswitch-label" for="myonoffswitchfilteredmerge">' 
-            +'<span class="onoffswitch-inner"></span> <span class="onoffswitch-switch"></span> </label></div>';
-            $individual_groups_view_jsapps.append(merge_view_update_toggle);
-
-            $('#group_select_checkboxes').html('<div class="panel-heading"><h3 class="panel-title">Show Groups</h3></div><div class="panel-body"></div>');
-            $('#filter_merge_items').html('<div class="panel-heading"><h3 class="panel-title">Select Object Types to Be Merged</h3></div><div class="panel-body"></div>');
-            var numgroups = ($('ul.groups div').length)+1;
-            for(var i = 1; i < numgroups; i++){
-                var params = {
-                    "container":"merged_view_appletContainer"+i,
-                    "id":"merged_view_applet"+i,
-                    "width":300,
-                    "height":300,
-                    "perspective":"G",
-                    "showAlgebraInput":false,
-                    "showToolBarHelp":false,
-                    "showMenubar":false,
-                    "enableLabelDrags":false,
-                    "showResetIcon":false,
-                    "showToolbar":false,
-                    "data-param-id": "loadXML" + i,
-                    "allowStyleBar":false,
-                    "useBrowserForJS":true,
-                    "enableShiftDragZoom":true,
-                    "errorDialogsActive":true,
-                    "enableRightClick":false,
-                    "enableCAS":false,
-                    "enable3d":false,
-                    "isPreloader":false,
-                    "screenshotGenerator":false,
-                    "preventFocus":true
-                };
-                var newgroup = '<div class="views_group_'+i+' col-md-4 col-sm-5 col-lg-4" ><h4><a href="javascript:redirect('+i+')"> Group ' + i + 
-                    '</h4><div class="geogebrawebapplet" id="merged_view_appletContainer'+ i + 
-                    '"style="width:100%;height:650px;display:block;visibility:hidden;"></div></div>';
-
-                var checkbox = '<label><input checked type="checkbox" onchange="views_change(this)" value="merged_view_applet'+i+'" name="views_group_'+ i
-                + '">Group '+ i + '</label>';
-
-                $individual_groups_view_jsapps.append(newgroup);
-                $('#group_select_checkboxes .panel-body').append(checkbox);
-                appletInit(params);
-            }
-            
-            //Wait for Applets to be Loaded and Then Randomize Colors
-            var applets_loaded = 0;
-            var interval_id = setInterval(function() {
-               //Once all Applets are Loaded Stop Trying
-                if(applets_loaded == 1)
-                {
-                    for(var i = 1; i < numgroups; i++)
-                    {
-                        if(gen_new_colors == true)
-                        {
-                            filtered_merged_view_obj_colors.push(randomizeColors(gen_new_colors,[],document['merged_view_applet'+i]));
-                        }
-                        else
-                        {
-                            randomizeColors(gen_new_colors,filtered_merged_view_obj_colors[i-1],document['merged_view_applet'+i]);
-                        }
-                        document.getElementById('merged_view_appletContainer'+i).style.visibility = "visible";
-                    }
-                    gen_new_colors = false;
-                    clearInterval(interval_id);
-                }
-                if(document['merged_view_applet1'] !== undefined || numgroups === 0 )
-                {
-                    applets_loaded = 1;
-                }
-            }, 1000);
-            
-            var params = {
-                    "container":"merged_view_appletContainer"+numgroups,
-                    "id":"merged_view_applet"+numgroups,
-                    "width":800,
-                    "height":800,
-                    "perspective":"G",
-                    "showAlgebraInput":false,
-                    "showToolBarHelp":false,
-                    "showMenubar":true,
-                    "enableLabelDrags":false,
-                    "showResetIcon":false,
-                    "showToolbar":false,
-                    "data-param-id": "loadXML" + numgroups,
-                    "allowStyleBar":false,
-                    "useBrowserForJS":true,
-                    "enableShiftDragZoom":true,
-                    "errorDialogsActive":true,
-                    "enableRightClick":false,
-                    "enableCAS":false,
-                    "enable3d":false,
-                    "isPreloader":false,
-                    "screenshotGenerator":false,
-                    "preventFocus":true
-                };
-            var mergegroup = '<div class="filtered_merge_group" style="visibility:hidden"><h4> Merge Group</h4><div class="geogebrawebapplet"' +
-                'id="merged_view_appletContainer' + numgroups + '"style="width:100%;height:650px;display:block;"></div></div><br/>';
-
-            var mergebutton = '&emsp;&emsp;<input class="btn btn-default filtered_mergeview_button" onclick="filtered_view_merge(this)"'+
-                ' type="button" value="Merge Checked Views"><input class="btn btn-default filtered_unmergeview_button" onclick="filtered_unmerge_views(this)"'+
-                ' type="button" value="Unmerge Views" style="display:none;">';
-
-            var obj_merge_selection = '&emsp;&emsp;<input type="checkbox" name="merge_objs" style="display:inline;" value="point"> Points'+
-            '&emsp;<input type="checkbox" name="merge_objs" style="display:inline;" value="line"> Lines'+
-            '&emsp;<input type="checkbox" name="merge_objs" style="display:inline;" value="conic"> Conics';
-
-            $('#group_select_checkboxes .panel-body').append(mergebutton);
-            $('#filter_merge_items .panel-body').append(obj_merge_selection);
-            $individual_groups_view_jsapps.append(mergegroup);
-            appletInit(params);
-
-        } 
-        /* Overlayed Image View Tab */ 
-        else if (tab == 'overlayed_image_view'){
-            $design_toolbox.empty();
-            $overlayed_image_views_jsapps.empty();
-            $('#overlayed_image_views_checkboxes').html('<div class="panel-heading"><h3 class="panel-title">Show Groups</h3></div><div class="panel-body"></div>');
-            $('#overlayed_image_div').html('<div class="panel-heading"><h3 class="panel-title">Overlayed Image</h3></div><div class="panel-body" style="width:60%;height:350px;display:block;"></div>');
-            var numgroups = ($('ul.groups div').length)+1;
-            for(var i = 1; i < numgroups; i++){
-                var params = {
-                    "container":"overlayed_image_view_appletContainer"+i,
-                    "id":"overlayed_image_view_applet"+i,
-                    "width":300,
-                    "height":300,
-                    "perspective":"G",
-                    "showAlgebraInput":false,
-                    "showToolBarHelp":false,
-                    "showMenubar":false,
-                    "enableLabelDrags":false,
-                    "showResetIcon":false,
-                    "showToolbar":false,
-                    "data-param-id": "loadXML" + i,
-                    "allowStyleBar":false,
-                    "useBrowserForJS":true,
-                    "enableShiftDragZoom":false,
-                    "errorDialogsActive":true,
-                    "enableRightClick":false,
-                    "enableCAS":false,
-                    "enable3d":false,
-                    "isPreloader":false,
-                    "screenshotGenerator":false,
-                    "preventFocus":true
-                };
-                var newgroup = '<div class="views_group_'+i+' col-md-4 col-sm-5 col-lg-4" ><h4><a href="javascript:redirect('+i+')"> Group ' + i + 
-                    '</h4><div class="geogebrawebapplet" id="overlayed_image_view_appletContainer'+ i + 
-                    '"style="width:100%;height:650px;display:block;"></div></div>';
-
-                var checkbox = '<label><input checked type="checkbox" onchange="views_change(this)" value="overlayed_image_view_applet'+i+'" name="views_group_'+ i
-                + '">Group '+ i + '</label>';
-
-                $overlayed_image_views_jsapps.append(newgroup);
-                $('#overlayed_image_views_checkboxes .panel-body').append(checkbox);
-                appletInit(params);
-            }
-          
-            //Wait for Applets to be Loaded and Then Retrieve their Base64 String/Screenshot
-            //This is necessary because the applets take time to load on the admin side. Hence need
-            //to keep trying to get the screenshot of the applets till all applets have loaded successfully
-            var applets_loaded = 0;
-            var interval_id = setInterval(function() {
-                $('#overlayed_image_div .panel-body').empty();
-                for(var i = 1; i < numgroups; i++)
-                {
-                    if(document['overlayed_image_view_applet' + i] !== undefined)
-                    {
-                        var a = document['overlayed_image_view_applet' + i].getPNGBase64(1.5, true, undefined);
-                        var img = '<img src="data:image/png;base64,'+a+'" id="img_'+i+'" style="position:absolute;">';
-                        $('#overlayed_image_div .panel-body').append(img);
-                    }
-                }
-                //Once all Applets are Loaded Stop Trying
-                if(applets_loaded == 1)
-                {
-                    clearInterval(interval_id);
-                }
-                if(document['overlayed_image_view_applet1'] !== undefined || numgroups === 0 )
-                {
-                    applets_loaded = 1;
-                }
-            }, 4000);            
         } else {
              $design_toolbox.empty();
         }
         socket.get_class_users(sessionStorage.getItem('admin_class_id'),'get-class-users-response');
     });
 });
-
-
 

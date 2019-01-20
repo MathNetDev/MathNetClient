@@ -13,18 +13,6 @@ hr {
   stroke: black;
 }
 
-#overlayed_image_views_jsapps
-{
-  min-height: 200px;
-  overflow: hidden;
-}
-
-#overlayed_image_div
-{
-  min-height: 510px;
-  overflow: hidden;
-}
-
 .ping {
   text-align: right;
 }
@@ -179,10 +167,10 @@ hr {
   top:0!important;
   left:0!important;
 }
-#views_checkboxes label, #group_select_checkboxes label, #overlayed_image_views_checkboxes label {
+#views_checkboxes label{
   margin:0 1.5em 0 0;
 }
-#views_checkboxes label input, #group_select_checkboxes label input, #overlayed_image_views_checkboxes label input {
+#views_checkboxes label input{
   margin: 0 .25em 0 0;
 }
 .nav-tabs>li.active>a, 
@@ -302,50 +290,4 @@ div.panel-accordion.show {
 }
 .child_group{
   padding-left: 16px;
-}
-
-.onoffswitch {
-    position: relative; width: 150px;
-    -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
-}
-.onoffswitch-checkbox {
-    display: none;
-}
-.onoffswitch-label {
-    display: block; overflow: hidden; cursor: pointer;
-    border: 2px solid #999999; border-radius: 20px;
-}
-.onoffswitch-inner {
-    display: block; width: 200%; margin-left: -100%;
-    transition: margin 0.3s ease-in 0s;
-}
-.onoffswitch-inner:before, .onoffswitch-inner:after {
-    display: block; float: left; width: 50%; height: 29px; padding: 0; line-height: 29px;
-    font-size: 13px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
-    box-sizing: border-box;
-}
-.onoffswitch-inner:before {
-    content: "LIVE";
-    padding-left: 10px;
-    background-color: #3498EB; color: #FFFFFF;
-}
-.onoffswitch-inner:after {
-    content: "NOT LIVE";
-    padding-right: 10px;
-    background-color: #EEEEEE; color: #999999;
-    text-align: right;
-}
-.onoffswitch-switch {
-    display: block; width: 22px; margin: 3.5px;
-    background: #FFFFFF;
-    position: absolute; top: 0; bottom: 0;
-    right: 117px;
-    border: 2px solid #999999; border-radius: 20px;
-    transition: all 0.3s ease-in 0s; 
-}
-.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
-    margin-left: 0;
-}
-.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
-    right: 0; 
 }

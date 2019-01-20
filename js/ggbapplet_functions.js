@@ -2,294 +2,20 @@
 var cur_xml = '<xml/>';
 appletName = document.applet;
 var timeoutHandle;
-var keypressHandler;
 var $default_toolset = '0|1,501,67,5,19,72,75,76|2,15,45,18,65,7,37|4,3,8,9,13,44,58,47|16,51,64,70|10,34,53,11,24,20,22,21,23|55,56,57,12|36,46,38,49,50,71|30,29,54,32,31,33|17,26,62,73,14,68|25,52,60,61|40,41,42,27,28,35,6';
-
-var currentLabel;
-var finalApplet;
-var stepSize = 1.0;
-
-function addListener(obj_label){
-    //setTimeout(e => document.applet.renameObject(obj_label, obj_label + '_' + 1), 0);
-    send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'add');
-    var username;
-    if(sessionStorage.getItem('username') != null && sessionStorage.getItem('username') != "admin")
-        username = sessionStorage.getItem('username');
-    else
-    {
-        username = "unassigned";
-    }
-
-    document.applet.setCaption(obj_label, username);
-    var type = document.applet.getObjectType(obj_label);
-    if (type === 'point'){
-        document.applet.setLabelStyle(obj_label, 3);
-    }
-}
-
-function updateListener(obj_label){
-    var ggb_user = document.applet.getCaption(obj_label);
-    var username = sessionStorage.getItem('username');
-    var move = document.applet.isMoveable(obj_label);
-    var type = document.applet.getObjectType(obj_label);
-    var isPoint = (type == "point");
-
-    applet.unregisterUpdateListener("updateListener");
-    
-    if(username !== ggb_user && isPoint && ggb_user != "unassigned"){
-        if (username != "admin" && move){
-            if(objType == 'numeric' || objType == 'textfield'){
-                appletName.setFixed(name, true, false);
-            } else {
-                appletName.setFixed(name, true);
-            }
-        } else if (username == "admin" && !move){
-            if(objType == 'numeric' || objType == 'textfield'){
-                appletName.setFixed(name, false, true);
-            } else {
-                appletName.setFixed(name, false);
-            }
-        }
-    }else if(username == ggb_user || ggb_user == "unassigned"){
-        document.applet.setFixed(obj_label, false, true);
-    }
-
-    if(ggb_user == "unassigned" && username != "admin" ){
-        document.applet.setCaption(obj_label, username);
-    } else if (ggb_user != "unassigned" && username == "admin"){
-        document.applet.setCaption(obj_label, "unassigned");
-    }
-    document.applet.registerUpdateListener("updateListener");
-    send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'update');   
-}
-
-function removeListener(obj_label){
-    send_xml(document.applet.getXML(), null, obj_label, null, socket, 'remove');  
-}
-
-//Makes a socket call to the server 
-function send_xml(xml, obj_xml, obj_label, obj_cmd_str, socket, type_of_req){
-        cur_xml = xml;
-        var $messages = $("#messages");
-        var username = sessionStorage.getItem('username');
-        var class_id = sessionStorage.getItem('class_id');
-        var group_id = sessionStorage.getItem('group_id');
-        var data = {
-                username: username,
-                class_id: class_id,
-                group_id: group_id,
-                xml: cur_xml,
-                toolbar: '',
-                toolbar_user: '',
-                obj_xml: obj_xml,
-                obj_label: obj_label,
-                obj_cmd_str: obj_cmd_str,
-                type_of_req: type_of_req,
-                xml_update_ver: xml_update_ver,
-                new_update: true
-            };
-        socket.xml_update(data);
-        xml_update_ver = xml_update_ver + 1;
-}
-
-function appletUpdate(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str, type_of_req){
-    var final_xml;
-    var appletName = document.applet;
-
-    if (typeof document['applet' + id] !== 'undefined'){
-        appletName = document['applet' + id];
-    }
-
-    //Get Appropriate appletName depending on the Currently Active View/Tab
-    if ($('a[data-toggle="tab"][aria-expanded=true]').html() == "View" && typeof document['applet' + id] !== 'undefined')
-    {
-        appletName = document['applet' + id];
-    }
-    else if ($('a[data-toggle="tab"][aria-expanded=true]').html() == "Filtered Merged View" && typeof document['merged_view_applet' + id] !== 'undefined')
-    {
-        appletName = document['merged_view_applet' + id];
-    }
-    else if($('a[data-toggle="tab"][aria-expanded=true]').html() == "Overlayed Image View" && typeof document['overlayed_image_view_applet' + id] !== 'undefined')
-    {
-        appletName = document['overlayed_image_view_applet' + id];
-    }
-
-    if(properties != null && properties.hasOwnProperty('perspective')){
-        // need to set the perspective before setting the XML
-        appletName.setPerspective(properties['perspective']);
-    }
-
-    var rgb_color = null;
-    if(sessionStorage.getItem('admin_secret') != null){
-        rgb_color = hexToRgb(appletName.getColor(obj_label));
-    }
-
-    appletName.unregisterAddListener("addListener");
-    appletName.unregisterUpdateListener("updateListener");
-    appletName.unregisterRemoveListener("removeListener");
-
-    if(type_of_req == 'add'){
-        if(obj_cmd_str != null && obj_cmd_str != ''){
-            appletName.evalCommand(obj_label + ":" + obj_cmd_str);
-        }
-        appletName.evalXML(JSON.parse(obj_xml));
-        appletName.evalCommand("UpdateConstruction()");
-    }
-    else if(type_of_req == 'update'){
-        appletName.evalXML(JSON.parse(obj_xml));
-        appletName.evalCommand("UpdateConstruction()");
-    }
-    else if(type_of_req == 'remove'){
-        appletName.deleteObject(obj_label);
-    }
-
-    //Sets object color back to what it was earlier prior to evalXML. 
-    //Needed for maintaining the color on the admin view tabs.
-    if(rgb_color != null){
-        appletName.setColor(obj_label, rgb_color.red, rgb_color.green, rgb_color.blue);
-    }
-    checkLocks(appletName);
-    //appletName.registerAddListener("addListener");
-    //appletName.registerUpdateListener("updateListener");
-    //appletName.registerRemoveListener("removeListener");
-}
-
-//Function from: https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
-function hexToRgb(hex) {
-    // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
-    var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-    hex = hex.replace(shorthandRegex, function(m, r, g, b) {
-        return r + r + g + g + b + b;
-    });
-
-    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-        red: parseInt(result[1], 16),
-        green: parseInt(result[2], 16),
-        blue: parseInt(result[3], 16)
-    } : null;
-}
-
-//Used to set the entire XML for student's applets.
-//Usually called when the student logs in for the first time and wants the most updated XML.
-function p2pAppletSetXML(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str){
-
-    var final_xml;
-    var appletName = document.applet;
-
-    if (typeof document['applet' + id] !== 'undefined'){
-        appletName = document['applet' + id];
-    }
-
-    //Get Appropriate appletName depending on the Currently Active View/Tab
-    if ($('a[data-toggle="tab"][aria-expanded=true]').html() == "View" && typeof document['applet' + id] !== 'undefined')
-    {
-        appletName = document['applet' + id];
-    }
-    else if ($('a[data-toggle="tab"][aria-expanded=true]').html() == "Filtered Merged View" && typeof document['merged_view_applet' + id] !== 'undefined')
-    {
-        appletName = document['merged_view_applet' + id];
-    }
-    else if($('a[data-toggle="tab"][aria-expanded=true]').html() == "Overlayed Image View" && typeof document['overlayed_image_view_applet' + id] !== 'undefined')
-    {
-        appletName = document['overlayed_image_view_applet' + id];
-    }
-
-    //appletName.unregisterAddListener("addListener");
-    //appletName.unregisterUpdateListener("updateListener");
-    //appletName.unregisterRemoveListener("removeListener");
-
-    cur_xml = appletName.getXML();
-    var cur_xml_doc = $.parseXML(cur_xml);
-
-    appletName.setXML(xml);
-    checkLocks(appletName);
-
-    // If this is the students' website, then we register and add the listeners
-    if(window.location.href.includes("student")){
-        finalApplet = appletName;
-        registerListeners(cur_xml_doc);
-        addArrowButtonsEventlisteners();
-        addKeyboardEventListeners();
-    }
-}
-
-//Used to set the entire XML for the applets on the admin's view tabs.
-//Usually called when the admin logs in for the first time and wants the most updated XML.
-function adminP2PAppletSetXML(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str){
-
-    var final_xml;
-    var appletName = document.applet;
-
-    if (typeof document['applet' + id] !== 'undefined'){
-        appletName = document['applet' + id];
-    }
-
-    //Get Appropriate appletName depending on the Currently Active View/Tab
-    if ($('a[data-toggle="tab"][aria-expanded=true]').html() == "View" && typeof document['applet' + id] !== 'undefined')
-    {
-        appletName = document['applet' + id];
-    }
-    else if ($('a[data-toggle="tab"][aria-expanded=true]').html() == "Filtered Merged View" && typeof document['merged_view_applet' + id] !== 'undefined')
-    {
-        appletName = document['merged_view_applet' + id];
-    }
-    else if($('a[data-toggle="tab"][aria-expanded=true]').html() == "Overlayed Image View" && typeof document['overlayed_image_view_applet' + id] !== 'undefined')
-    {
-        appletName = document['overlayed_image_view_applet' + id];
-    }
-
-    //appletName.unregisterAddListener("addListener");
-    //appletName.unregisterUpdateListener("updateListener");
-    //appletName.unregisterRemoveListener("removeListener");
-
-    cur_xml = appletName.getXML();
-    var cur_xml_doc = $.parseXML(cur_xml);
-    var cur_construction = $(cur_xml_doc).find('construction')[0];
-
-    xml = xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>').replace(/\\"/g, '"').replace(/\\n/g, '').replace(/\\t/g, '');
-    //xml = xml.substr(xml.indexOf("<"), xml.lastIndexOf(">"));
-    var new_xml_doc = $.parseXML(xml);
-
-    if(new_xml_doc !== null){
-        var new_construction = $(new_xml_doc).find('construction')[0];
-        cur_construction.innerHTML = new_construction.innerHTML;
-    }
-
-    var final_xml = $(cur_xml_doc).find('geogebra')[0].outerHTML;
-    appletName.setXML(final_xml);
-    checkLocks(appletName);
-}
-
 
 //This function takes the new XML, changes it and the old XML to a JSON format, and then 
 // parses it, and changes it back to XML to be set in the geogebra applet.
-function appletSetExtXML(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str){
+function appletSetExtXML(xml, toolbar, properties, id){
 
     //console.log("setXml");
     var final_xml;
     var appletName = document.applet;
     //console.log('appletSetExtXML id param: ' + id);
-    //console.log("Command appletSet: ", obj_cmd_str);
 
     if (typeof document['applet' + id] !== 'undefined'){
         appletName = document['applet' + id];
     }
-    
-    //Get Appropriate appletName depending on the Currently Active View/Tab
-    if ($('a[data-toggle="tab"][aria-expanded=true]').html() == "View" && typeof document['applet' + id] !== 'undefined')
-    {
-        appletName = document['applet' + id];
-    }
-    else if ($('a[data-toggle="tab"][aria-expanded=true]').html() == "Filtered Merged View" && typeof document['merged_view_applet' + id] !== 'undefined')
-    {
-        appletName = document['merged_view_applet' + id];
-    }
-    else if($('a[data-toggle="tab"][aria-expanded=true]').html() == "Overlayed Image View" && typeof document['overlayed_image_view_applet' + id] !== 'undefined')
-    {
-        appletName = document['overlayed_image_view_applet' + id];
-    }
-
     if(properties != null && properties.hasOwnProperty('perspective')){
         // need to set the perspective before setting the XML
         appletName.setPerspective(properties['perspective']);
@@ -302,77 +28,24 @@ function appletSetExtXML(xml, toolbar, properties, id, username, obj_xml, obj_la
     xml = xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>').replace(/\\"/g, '"').replace(/\\n/g, '').replace(/\\t/g, '');
     xml = xml.substr(xml.indexOf("<"), xml.lastIndexOf(">"));
     var new_xml_doc = $.parseXML(xml);
-
     if(new_xml_doc !== null){
         var new_construction = $(new_xml_doc).find('construction')[0];
         cur_construction.innerHTML = new_construction.innerHTML;
     }
-
-    if(properties != null){
-        if(properties.hasOwnProperty('axes')){
-            var axis_info = properties['axes'];
-            Object.keys(axis_info).forEach(function(key) {
-                axis_info[key].forEach(function(axis_tag) {
-                    if(key == '3D'){
-                        $(cur_xml_doc).find('euclidianView3D')[0].appendChild($.parseXML(axis_tag).children[0]);       
-                    }
-                    else{
-                        $(cur_xml_doc).find('viewNumber[viewNo=' + key + ']').parent()[0].appendChild($.parseXML(axis_tag).children[0]);
-                    }
-                });
-            });
-        }
-        if(properties.hasOwnProperty('evSettings')){
-            var evSettings = properties['evSettings'];
-            Object.keys(evSettings).forEach(function(key) {
-                if(key == '3D'){
-                    $(cur_xml_doc).find('euclidianView3D')[0].appendChild($.parseXML(evSettings[key]).children[0]);       
-                }
-                else{
-                    $(cur_xml_doc).find('viewNumber[viewNo=' + key + ']').parent()[0].appendChild($.parseXML(evSettings[key]).children[0]);
-                }
-            });
-        }
-        if(properties.hasOwnProperty('coordSystem')){
-            var coordSystem = properties['coordSystem'];
-            Object.keys(coordSystem).forEach(function(key) {
-                if(key == '3D'){
-                    $(cur_xml_doc).find('euclidianView3D > coordSystem').remove();
-                    $(cur_xml_doc).find('euclidianView3D')[0].appendChild($.parseXML(coordSystem[key]).children[0]);
-                }
-                else{
-                    $(cur_xml_doc).find('viewNumber[viewNo=' + key + '] > coordSystem').remove();
-                    $(cur_xml_doc).find('viewNumber[viewNo=' + key + ']').parent()[0].appendChild($.parseXML(coordSystem[key]).children[0]);
-                }
-            });
-        }
-        if(properties.hasOwnProperty('plate') && properties['plate'] != undefined){
-             $(cur_xml_doc).find('plate').attr('show', properties['plate']);
-        }
-    }
-
     // console.log($(new_xml_doc).find('geogebra')[0].innerHTML);
     // console.log($(cur_xml_doc).find('geogebra')[0].innerHTML);
     // $(cur_xml_doc).find('geogebra')[0].innerHTML = $(new_xml_doc).find('geogebra')[0].innerHTML;
     // console.log($(cur_xml_doc).find('geogebra')[0].innerHTML);
-    // delete the current autosave object
     var final_xml = $(cur_xml_doc).find('geogebra')[0].outerHTML;
+    // delete the current autosave object
+    
     appletName.setXML(final_xml);
     checkLocks(appletName);
-
-    if (toolbar && toolbar !== "undefined" && toolbar !== "null" && toolbar.match(/\d+/g) && properties && properties['perspective']){
+    
+    if (toolbar && toolbar !== "undefined" && toolbar !== "null" && toolbar.match(/\d+/g) && properties && properties['perspective'] && properties['perspective'].includes("G")){
         //console.log('setting ' + appletName.id + ' custom toolbar to: ' + toolbar);
         sessionStorage.setItem('toolbar', toolbar);
-        if (properties.hasOwnProperty('resetToolbar')){
-            if(properties['resetToolbar']){
-                sessionStorage.setItem('toolbar-record', toolbar);
-            }
-            if(sessionStorage.getItem('toolbar-record')){
-                appletName.setCustomToolBar(sessionStorage.getItem('toolbar-record'));
-            }
-        } else {
-            appletName.setCustomToolBar(toolbar);
-        }
+        appletName.setCustomToolBar(toolbar);
     }
     if (properties != null){
         // need to set the grid and axes visibility after setXML
@@ -388,115 +61,7 @@ function appletSetExtXML(xml, toolbar, properties, id, username, obj_xml, obj_la
         if(properties.hasOwnProperty('coord_system')){
             appletName.setCoordSystem(properties['coord_system']['x_min'] ,properties['coord_system']['x_max'], properties['coord_system']['y_min'], properties['coord_system']['y_max']);
         }
-        
-        /* Set Applet's Graphics 2 Window Parameters if Present */
-        if(properties.hasOwnProperty('g2axis_display')){
-            appletName.setAxesVisible(2, properties['g2axis_display'], properties['g2axis_display']);
-        }
-        if(properties.hasOwnProperty('g2grid_display')){
-            appletName.setGridVisible(2,properties['g2grid_display']);  
-        }
-        if(properties.hasOwnProperty('g2axis_steps')){
-            appletName.setAxisSteps(2, properties['g2axis_steps']['x'], properties['g2axis_steps']['y'], properties['g2axis_steps']['z']);            
-        }
-        if(properties.hasOwnProperty('g2coord_system')){
-            appletName.evalCommand('SetActiveView(2)');
-            appletName.evalCommand('ZoomIn('+properties['g2coord_system']['x_min']+','+properties['g2coord_system']['y_min']+','+properties['g2coord_system']['x_max']+','+properties['g2coord_system']['y_max']+')');
-        }
     }
-
-    // If this is the students' website, then we register and add the listeners
-    if(window.location.href.includes("student")){
-        finalApplet = appletName;
-        registerListeners(cur_xml_doc);
-        addArrowButtonsEventlisteners();
-        addKeyboardEventListeners();
-    }
-}
-
-// This function registers several event listeners only for the students' applet
-function registerListeners(cur_xml_doc){
-
-    finalApplet.registerAddListener(function(label){
-        currentLabel = label;
-        $current_label.text(currentLabel);
-        finalApplet.registerObjectClickListener(label, function (label){
-            currentLabel = label;
-            $current_label.text(currentLabel);
-        });
-    });
-
-    var elements = $(cur_xml_doc).find('construction').find('element');
-
-     if(elements != undefined){
-        for(var i = 0; i < elements.length; i++){
-            // var obj_type = $(elements[i]).attr('type');
-            // if(obj_type == "point"){
-            var label = $(elements[i]).attr('label');
-
-            finalApplet.registerObjectClickListener(label, function (label){
-                currentLabel = label;
-                $current_label.text(currentLabel);
-            });
-        }
-    }
-}
-
-function addArrowButtonsEventlisteners(){
-    $arrow_up_button.unbind('click');
-    $arrow_up_button.bind('click', function(){
-        if (finalApplet.getObjectType(currentLabel) == "point"){
-            finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel), finalApplet.getYcoord(currentLabel)+stepSize);
-        }
-    });
-    $arrow_down_button.unbind('click');
-    $arrow_down_button.bind('click', function(){
-        if (finalApplet.getObjectType(currentLabel) == "point"){
-            finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel), finalApplet.getYcoord(currentLabel)-stepSize);
-        }
-    });
-    $arrow_right_button.unbind('click');
-    $arrow_right_button.bind('click', function(){
-        if (finalApplet.getObjectType(currentLabel) == "point"){
-            finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel)+stepSize, finalApplet.getYcoord(currentLabel));
-        }
-    });
-    $arrow_left_button.unbind('click');
-    $arrow_left_button.bind('click', function(){
-        if (finalApplet.getObjectType(currentLabel) == "point"){
-            finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel)-stepSize, finalApplet.getYcoord(currentLabel));
-        }
-    });
-}
-
-function addKeyboardEventListeners(){
-    
-    if (keypressHandler != undefined){
-        document.removeEventListener("keypress", keypressHandler);
-    }
-    keypressHandler = function(key){
-        if (key.which == 105) { // 105 is the ASCII code of 'i'
-            if (finalApplet.getObjectType(currentLabel) == "point"){
-                finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel), finalApplet.getYcoord(currentLabel)+stepSize);
-            }
-        }
-        else if (key.which == 106) { // 106 is the ASCII code of 'j'
-            if (finalApplet.getObjectType(currentLabel) == "point"){
-                finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel)-stepSize, finalApplet.getYcoord(currentLabel));
-            }
-        }
-        else if (key.which == 107) { // 107 is the ASCII code of 'k'
-            if (finalApplet.getObjectType(currentLabel) == "point"){
-                finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel), finalApplet.getYcoord(currentLabel)-stepSize);
-            }
-        }
-        else if (key.which == 108) { // 108 is the ASCII code of 'l'
-            if (finalApplet.getObjectType(currentLabel) == "point"){
-                finalApplet.setCoords(currentLabel, finalApplet.getXcoord(currentLabel)+stepSize, finalApplet.getYcoord(currentLabel));
-            }
-        }
-    }
-    document.addEventListener("keypress", keypressHandler);
 }
 
 //This clears the local applet view
@@ -505,29 +70,20 @@ function clearApplet(appletName){
 }
 
 //This function changes the colors of all elements on the local view to a random color
-function randomizeColors(gen_new_colors, received_colors, applet, r, g, b) {
+function randomizeColors(applet, r, g, b) {
     //cur_xml = appletName.getXML(); 
     var minimum = 0, maximum = 255, colors = [], i;
     var default_point = [0,0,255];
     var default_line = [153,51,0];
     var regex = /[a-z]+/
 
-    //If Colors Already Generated then Use the Colors sent in the Parameter
-    if(gen_new_colors == true)
-    {
-        if (r != undefined && g != undefined && b != undefined){
-            colors.push(r, g, b);
-        } else {
-            for(i = 0; i < 3; i++){
-                colors.push(Math.floor(Math.random() * (maximum - minimum + 1)) + minimum);
-            } //this is your color
-        }
+    if (r != undefined && g != undefined && b != undefined){
+        colors.push(r, g, b);
+    } else {
+        for(i = 0; i < 3; i++){
+            colors.push(Math.floor(Math.random() * (maximum - minimum + 1)) + minimum);
+        } //this is your color
     }
-    else
-    {
-        colors = received_colors;
-    }
-
     applet.unregisterUpdateListener("checkUser");
     var numelems = applet.getObjectNumber();
     for (i = 0; i < numelems; i++){
@@ -550,7 +106,6 @@ function randomizeColors(gen_new_colors, received_colors, applet, r, g, b) {
         }
     }
     applet.registerUpdateListener("checkUser");
-    return colors;
 }
 
 // Converts RGB color to HEX
@@ -576,6 +131,8 @@ function checkLocks(appletName){
         var username = sessionStorage.getItem('username');
         var objType = appletName.getObjectType(name);
 
+        //console.log(ggb_user);
+
         if ((username !== ggb_user && username != "admin") && ggb_user != "unassigned"){
             if(objType == 'numeric' || objType == 'textfield'){
                 appletName.setFixed(name, true, false);
@@ -596,7 +153,35 @@ function updateColors()
 {
     var colors = sessionStorage.getItem('group_colors');
     colors = colors.split("-");
-    randomizeColors(true, [], document.applet, colors[0], colors[1] , colors[2]);
+    randomizeColors(document.applet, colors[0], colors[1] , colors[2]);
+}
+
+
+//This function sends the socket call that there was a XML change,
+// and takes the new XML, and the socket that the call will go through. 
+function check_xml(xml, socket){
+
+    if (timeoutHandle != undefined){
+        
+        window.clearTimeout(timeoutHandle);
+    }
+    timeoutHandle = window.setTimeout(function(){
+        cur_xml = xml;
+        var $messages = $("#messages");
+        var username = sessionStorage.getItem('username');
+        var class_id = sessionStorage.getItem('class_id');
+        var group_id = sessionStorage.getItem('group_id');
+        var data = {
+                username: username,
+                class_id: class_id,
+                group_id: group_id,
+                xml: cur_xml,
+                toolbar: '',
+                toolbar_user: ''
+            };
+        socket.xml_change(data);
+
+    }, 500);
 }
 
 //This function is an add listener added in gbbOnInit()
@@ -604,12 +189,11 @@ function updateColors()
 // and can add a lock onto it.
 function addLock(object){
     var username;
-    if(sessionStorage.getItem('username') != null && sessionStorage.getItem('username') != "admin"){
+    if(sessionStorage.getItem('username') != null && sessionStorage.getItem('username') != "admin")
         username = sessionStorage.getItem('username');
-    }
-    else{
+    else
         username = "unassigned";
-    }
+
     document.applet.setCaption(object, username);
     var type = document.applet.getObjectType(object);
     if (type === 'point'){
@@ -622,9 +206,8 @@ function addLock(object){
 //This function is an update listener added in ggbOnInit()
 //It checks if the caption of the point is the username of the current user,
 //to figure out if the user is allowed to move the point or not.
-/*function checkUser(object){
+function checkUser(object){
     //updateColors();
-    localStorage.setItem('setNewXML', 'false');
     applet.unregisterUpdateListener("checkUser");
     var ggb_user = document.applet.getCaption(object);
     var username = sessionStorage.getItem('username');
@@ -649,16 +232,17 @@ function addLock(object){
         document.applet.setFixed(object, false, true);
     }
 
-    if(ggb_user == "unassigned" && username != "admin" ){
-        document.applet.setCaption(object, username);
-    } else if (ggb_user != "unassigned" && username == "admin"){
-        document.applet.setCaption(object, "unassigned");
+    if ($('#myonoffswitch').is(':checked')){
+        if(ggb_user == "unassigned" && username != "admin" ){
+            document.applet.setCaption(object, username);
+        } else if (ggb_user != "unassigned" && username == "admin"){
+            document.applet.setCaption(object, "unassigned");
+        }
     }
-    
     applet.registerUpdateListener("checkUser");
     // on update of Geogebra view, send clients updated XML
     check_xml(document.applet.getXML(), socket);
-}*/
+}
 
 //This function appends a set of button toolbar items to a container
 function getToolbarIcons(container){
