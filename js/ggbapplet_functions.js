@@ -753,8 +753,10 @@ function appletInit(params){
     params.enableCAS = true;
     params.ggbBase64 = ggbBase64;
     var applet = new GGBApplet(params, true);
+
     var current_path = window.location.pathname;
     current_path = current_path.substring(0,window.location.pathname.lastIndexOf('/'));
-    applet.setHTML5Codebase(current_path + '/5.0/web3d/');    
+    applet.setHTML5Codebase(current_path + '/5.0/web3d/');
+
     applet.inject(params.container, 'auto');
 }
