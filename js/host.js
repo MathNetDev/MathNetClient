@@ -1,1 +1,1 @@
-var host = "http://localhost:8889";
+var host = window.location.hostname;
