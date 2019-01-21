@@ -8,10 +8,10 @@ var $default_toolset = '0|1,501,67,5,19,72,75,76|2,15,45,18,65,7,37|4,3,8,9,13,4
 var currentLabel;
 var finalApplet;
 var stepSize = 1.0;
+var objectCount = 1;
 
 function addListener(obj_label){
     //setTimeout(e => document.applet.renameObject(obj_label, obj_label + '_' + 1), 0);
-    send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'add');
     var username;
     if(sessionStorage.getItem('username') != null && sessionStorage.getItem('username') != "admin")
         username = sessionStorage.getItem('username');
@@ -20,11 +20,17 @@ function addListener(obj_label){
         username = "unassigned";
     }
 
-    document.applet.setCaption(obj_label, username);
-    var type = document.applet.getObjectType(obj_label);
+    var new_obj_label = username + "-" + objectCount;
+    document.applet.renameObject(obj_label, new_obj_label);
+    document.applet.deleteObject(obj_label);
+    objectCount++;
+
+    document.applet.setCaption(new_obj_label, username);
+    var type = document.applet.getObjectType(new_obj_label);
     if (type === 'point'){
-        document.applet.setLabelStyle(obj_label, 3);
+        document.applet.setLabelStyle(new_obj_label, 3);
     }
+    send_xml(document.applet.getXML(), document.applet.getXML(new_obj_label), new_obj_label, document.applet.getCommandString(new_obj_label), socket, 'add');
 }
 
 function updateListener(obj_label){
