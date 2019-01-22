@@ -21,16 +21,46 @@ function addListener(obj_label){
     }
 
     var new_obj_label = username + "-" + objectCount;
-    document.applet.renameObject(obj_label, new_obj_label);
-    document.applet.deleteObject(obj_label);
     objectCount++;
+
+    var command_string = document.applet.getCommandString(obj_label);
+
+    setTimeout(e => document.applet.renameObject(obj_label, new_obj_label), 0);
+
+    var cur_xml_object = $.parseXML('<root>' + document.applet.getXML(obj_label) + '</root>');
+
+    $(cur_xml_object).find('element').attr('label', new_obj_label);
+    var string_xml_object = $(cur_xml_object).find('root').html();
+
+    console.log(string_xml_object);
+
+    /*
+    var new_obj_label = username + "-" + objectCount;
+    //document.applet.renameObject(obj_label, new_obj_label);
+    //document.applet.evalCommand(new_obj_label + ":" + cmd_string);
+    //document.applet.evalCommand("UpdateConstruction()");
+    document.applet.evalCommand(new_obj_label + document.applet.getValueString(obj_label).substring(1));
+    document.applet.evalCommand("UpdateConstruction()");
+    document.applet.deleteObject(obj_label);
+    document.applet.evalCommand("UpdateConstruction()");
+    objectCount++;
+    */
 
     document.applet.setCaption(new_obj_label, username);
     var type = document.applet.getObjectType(new_obj_label);
     if (type === 'point'){
         document.applet.setLabelStyle(new_obj_label, 3);
     }
-    send_xml(document.applet.getXML(), document.applet.getXML(new_obj_label), new_obj_label, document.applet.getCommandString(new_obj_label), socket, 'add');
+
+    send_xml(document.applet.getXML(), string_xml_object, new_obj_label, command_string, socket, 'add');
+    //send_xml(document.applet.getXML(), document.applet.getXML(new_obj_label), new_obj_label, document.applet.getCommandString(new_obj_label), socket, 'add');
+}
+
+function doRename(obj_label){
+    setTimeout(e => document.applet.renameObject(obj_label, "P"), 0);
+    var now = new Date().getTime();
+    var millisecondsToWait = 1000; /* i.e. 1 second */
+    while ( new Date().getTime() < now + millisecondsToWait );
 }
 
 function updateListener(obj_label){
