@@ -32,29 +32,6 @@ function addListener(obj_label){
         document.applet.evalCommand("UpdateConstruction()");
         send_xml(document.applet.getXML(), document.applet.getXML(new_obj_label), new_obj_label, document.applet.getCommandString(new_obj_label), socket, 'add');
     }, 0, obj_label, new_obj_label);
-
-    /*
-    //  e => document.applet.renameObject(obj_label, new_obj_label), 0);
-    // document.applet.renameObject(obj_label, new_obj_label);
-    var cur_xml_object = $.parseXML('<root>' + document.applet.getXML(obj_label) + '</root>');
-
-    $(cur_xml_object).find('element').attr('label', new_obj_label);
-    var string_xml_object = $(cur_xml_object).find('root').html();
-
-    console.log(string_xml_object);
-    */
-
-    /*
-    var new_obj_label = username + "-" + objectCount;
-    //document.applet.renameObject(obj_label, new_obj_label);
-    //document.applet.evalCommand(new_obj_label + ":" + cmd_string);
-    //document.applet.evalCommand("UpdateConstruction()");
-    document.applet.evalCommand(new_obj_label + document.applet.getValueString(obj_label).substring(1));
-    document.applet.evalCommand("UpdateConstruction()");
-    document.applet.deleteObject(obj_label);
-    document.applet.evalCommand("UpdateConstruction()");
-    objectCount++;
-    */
 }
 
 function updateListener(obj_label){
