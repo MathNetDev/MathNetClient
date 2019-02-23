@@ -10,27 +10,21 @@ var finalApplet;
 var stepSize = 1.0;
 
 function addListener(obj_label){
+    //setTimeout(e => document.applet.renameObject(obj_label, obj_label + '_' + 1), 0);
+    send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'add');
     var username;
-    if (sessionStorage.getItem('username') != null && sessionStorage.getItem('username') != "admin")
+    if(sessionStorage.getItem('username') != null && sessionStorage.getItem('username') != "admin")
         username = sessionStorage.getItem('username');
     else
     {
         username = "unassigned";
     }
 
-    var new_obj_label = username + "_{" + document.applet.getObjectNumber() + "}";
-    objectCount++;
-
-    setTimeout(function(){
-        document.applet.renameObject(obj_label, new_obj_label);
-        document.applet.setCaption(new_obj_label, username);
-        var type = document.applet.getObjectType(new_obj_label);
-        if (type === 'point'){
-            document.applet.setLabelStyle(new_obj_label, 3);
-        }
-        document.applet.evalCommand("UpdateConstruction()");
-        send_xml(document.applet.getXML(), document.applet.getXML(new_obj_label), new_obj_label, document.applet.getCommandString(new_obj_label), socket, 'add');
-    }, 0, obj_label, new_obj_label);
+    document.applet.setCaption(obj_label, username);
+    var type = document.applet.getObjectType(obj_label);
+    if (type === 'point'){
+        document.applet.setLabelStyle(obj_label, 3);
+    }
 }
 
 function updateListener(obj_label){
