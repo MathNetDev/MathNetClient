@@ -11,28 +11,38 @@ var stepSize = 1.0;
 var objectCount = 1;
 
 function addListener(obj_label){
-    //setTimeout(e => document.applet.renameObject(obj_label, obj_label + '_' + 1), 0);
     var username;
-    if(sessionStorage.getItem('username') != null && sessionStorage.getItem('username') != "admin")
+    if (sessionStorage.getItem('username') != null && sessionStorage.getItem('username') != "admin")
         username = sessionStorage.getItem('username');
     else
     {
         username = "unassigned";
     }
 
-    var new_obj_label = username + "-" + objectCount;
+    var new_obj_label = username + "_{" + document.applet.getObjectNumber() + "}";
     objectCount++;
 
-    var command_string = document.applet.getCommandString(obj_label);
+    setTimeout(function(){
+        document.applet.renameObject(obj_label, new_obj_label);
+        document.applet.setCaption(new_obj_label, username);
+        var type = document.applet.getObjectType(new_obj_label);
+        if (type === 'point'){
+            document.applet.setLabelStyle(new_obj_label, 3);
+        }
+        document.applet.evalCommand("UpdateConstruction()");
+        send_xml(document.applet.getXML(), document.applet.getXML(new_obj_label), new_obj_label, document.applet.getCommandString(new_obj_label), socket, 'add');
+    }, 0, obj_label, new_obj_label);
 
-    setTimeout(e => document.applet.renameObject(obj_label, new_obj_label), 0);
-
+    /*
+    //  e => document.applet.renameObject(obj_label, new_obj_label), 0);
+    // document.applet.renameObject(obj_label, new_obj_label);
     var cur_xml_object = $.parseXML('<root>' + document.applet.getXML(obj_label) + '</root>');
 
     $(cur_xml_object).find('element').attr('label', new_obj_label);
     var string_xml_object = $(cur_xml_object).find('root').html();
 
     console.log(string_xml_object);
+    */
 
     /*
     var new_obj_label = username + "-" + objectCount;
@@ -45,22 +55,6 @@ function addListener(obj_label){
     document.applet.evalCommand("UpdateConstruction()");
     objectCount++;
     */
-
-    document.applet.setCaption(new_obj_label, username);
-    var type = document.applet.getObjectType(new_obj_label);
-    if (type === 'point'){
-        document.applet.setLabelStyle(new_obj_label, 3);
-    }
-
-    send_xml(document.applet.getXML(), string_xml_object, new_obj_label, command_string, socket, 'add');
-    //send_xml(document.applet.getXML(), document.applet.getXML(new_obj_label), new_obj_label, document.applet.getCommandString(new_obj_label), socket, 'add');
-}
-
-function doRename(obj_label){
-    setTimeout(e => document.applet.renameObject(obj_label, "P"), 0);
-    var now = new Date().getTime();
-    var millisecondsToWait = 1000; /* i.e. 1 second */
-    while ( new Date().getTime() < now + millisecondsToWait );
 }
 
 function updateListener(obj_label){
