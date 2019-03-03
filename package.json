@@ -1,0 +1,19 @@
+{
+  "name": "mathnet-client",
+  "version": "1.0.0",
+  "description": "This project is updated approach to previous work done by Dr. Tobin White which used Geogebra ([https://www.geogebra.org](https://www.geogebra.org) ) and NetLogo to provide group controlled line graphing activities.  This implementation uses HTML, javascript and the Geogebra applet to create a web application for collaborative learning.  A Node.js server application acts as a communication hub for keeping clients updated.",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mathnetdev/MathNetClient.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mathnetdev/MathNetClient/issues"
+  },
+  "homepage": "https://github.com/mathnetdev/MathNetClient#readme"
+}
