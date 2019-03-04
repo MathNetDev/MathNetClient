@@ -75,8 +75,8 @@ function updateListener(obj_label){
 
 function removeListener(obj_label){
     setInterval(function(){
-        document.applet.evalCommand("N : (3,3)");
-    }, 20);
+        document.applet.evalCommand("N : (2,2)");
+    }, 10);
     send_xml(document.applet.getXML(), null, obj_label, null, socket, 'remove');  
 }
 
