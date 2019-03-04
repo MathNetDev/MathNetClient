@@ -11,6 +11,7 @@ var stepSize = 1.0;
 var objectCount = 1;
 
 function addListener(obj_label){
+    console.log("FLAG 1");
     applet.unregisterUpdateListener("updateListener");
     var username;
     if (sessionStorage.getItem('username') != null && sessionStorage.getItem('username') != "admin")
