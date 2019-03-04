@@ -472,6 +472,7 @@ function liveUpdatesCheckboxChangeFilteredMerge(checkbox)
 //handler for xml_change response, appends message to chatbox, and calls appletSetExtXML()
 //TODO: Get rid of other params and keep only data
 function xml_update_response(username, class_id, group_id, xml, toolbar, properties, obj_xml, obj_label, obj_cmd_str, type_of_req, xml_update_ver, new_update, data) {
+    console.log("xml_update_response called");
     if(!is_admin_xml_update_queue_empty && new_update){
         admin_xml_update_queue.enqueue(data);
         return;
@@ -507,6 +508,7 @@ function xml_update_response(username, class_id, group_id, xml, toolbar, propert
 
 //handler for xml_change response, appends message to chatbox, and calls appletSetExtXML()
 function xml_change_response(username, class_id, group_id, xml, toolbar) {
+    console.log("xml_change_response called");
     var tab = $('a[data-toggle="tab"][aria-expanded=true]').html();
     if(tab == "View")
     {
@@ -540,6 +542,7 @@ function xml_change_response(username, class_id, group_id, xml, toolbar) {
 }
 
 function process_msgs_in_queue(){
+    console.log("UPDATE ENQUEUED");
     while(!admin_xml_update_queue.isEmpty()){
         var update = admin_xml_update_queue.dequeue();
         xml_update_response(update.username, update.class_id, update.group_id, update.xml, update.toolbar, update.properties, update.obj_xml, update.obj_label, update.obj_cmd_str, update.type_of_req, update.recv_xml_update_ver, false, update.data);
