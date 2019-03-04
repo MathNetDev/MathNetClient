@@ -138,14 +138,14 @@ function appletUpdate(xml, toolbar, properties, id, username, obj_xml, obj_label
     appletName.unregisterUpdateListener("updateListener");
     appletName.unregisterRemoveListener("removeListener");
 
-    console.log("UPDATE MADE");
+    console.log("UPDATE MADE 2");
     if(type_of_req == 'add'){
         if(obj_cmd_str != null && obj_cmd_str != ''){
             appletName.evalCommand(obj_label + ":" + obj_cmd_str);
-            console.log("ADDED:");
-            console.log(obj_cmd_str);
-            console.log(obj_xml);
         }
+        console.log("ADDED:");
+        console.log(obj_cmd_str);
+        console.log(obj_xml);
         appletName.evalXML(JSON.parse(obj_xml));
         appletName.evalCommand("UpdateConstruction()");
     }
