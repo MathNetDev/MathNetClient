@@ -11,6 +11,7 @@ var stepSize = 1.0;
 var objectCount = 1;
 
 function addListener(obj_label){
+    applet.unregisterUpdateListener("updateListener");
     var username;
     if (sessionStorage.getItem('username') != null && sessionStorage.getItem('username') != "admin")
         username = sessionStorage.getItem('username');
@@ -31,6 +32,7 @@ function addListener(obj_label){
         }
         document.applet.evalCommand("UpdateConstruction()");
         send_xml(document.applet.getXML(), document.applet.getXML(new_obj_label), new_obj_label, document.applet.getCommandString(new_obj_label), socket, 'add');
+        applet.registerUpdateListener("updateListener");
     }, 0, obj_label, new_obj_label);
 }
 
