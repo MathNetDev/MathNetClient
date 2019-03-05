@@ -481,9 +481,10 @@ function xml_update_response(username, class_id, group_id, xml, toolbar, propert
     if(tab == "View")
     {
         appletUpdate(xml, toolbar, null, group_id, username, obj_xml, obj_label, obj_cmd_str, type_of_req);
+        appletUpdate(xml, toolbar, null, numgroups, username, obj_xml, obj_label, obj_cmd_str, type_of_req);
         if($('.unmergeview_button').is(":visible") && $('#myonoffswitchmerge').is(':checked'))
         {
-            view_merge(this);
+            // view_merge(this);
         }
     }
     else if(tab == "Filtered Merged View")
