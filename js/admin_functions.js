@@ -491,7 +491,8 @@ function xml_update_response(username, class_id, group_id, xml, toolbar, propert
         appletUpdate(xml, toolbar, null, group_id, username, obj_xml, obj_label, obj_cmd_str, type_of_req);
         if($('.filtered_unmergeview_button').is(":visible") && $('#myonoffswitchfilteredmerge').is(':checked'))
         {
-            filtered_view_merge(this);
+            // filtered_view_merge(this);
+            appletUpdate(xml, toolbar, null, numgroups, username, obj_xml, obj_label, obj_cmd_str, type_of_req);
         }
     }
     else if(tab == "Overlayed Image View")
@@ -828,10 +829,10 @@ function filtered_view_merge(event){
         var parsing = document[value].getXML();
         var xml;
 
-        applet.setXML(parsing);
-        xml = rename_labels_on_merge(applet, num);
+        // applet.setXML(parsing);
+        // xml = rename_labels_on_merge(applet, num);
 
-        var new_construction = $($.parseXML(xml)).find('construction')[0];
+        var new_construction = $($.parseXML(parsing)).find('construction')[0];
 
         XMLs += new_construction.innerHTML;
        
