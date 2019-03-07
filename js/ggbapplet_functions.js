@@ -371,6 +371,9 @@ function appletSetExtXML(xml, toolbar, properties, id, username, obj_xml, obj_la
     // delete the current autosave object
     var final_xml = $(cur_xml_doc).find('geogebra')[0].outerHTML;
     appletName.setXML(final_xml);
+    if(window.location.href.includes("student")){
+        rename_admin_labels(appletName);
+    }
     checkLocks(appletName);
 
     if (toolbar && toolbar !== "undefined" && toolbar !== "null" && toolbar.match(/\d+/g) && properties && properties['perspective']){
@@ -453,6 +456,12 @@ function registerListeners(cur_xml_doc){
             });
         }
     }
+}
+
+function rename_admin_labels(applet){
+    var objs = applet.getAllObjectNames();
+    for(i = 0; i < objs.length; i++)
+        applet.renameObject(objs[i], objs[i] + "_{" + sessionStorage.group_id + "}");
 }
 
 function addArrowButtonsEventlisteners(){
