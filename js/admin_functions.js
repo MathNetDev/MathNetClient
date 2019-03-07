@@ -683,6 +683,7 @@ function view_merge_old(event){
     $('.merge_group').css('visibility','visible');
 }
 
+/*
 function rename_labels_on_merge(applet, num){
     var objs = applet.getAllObjectNames();
     for(i = 0; i < objs.length; i++){
@@ -692,6 +693,7 @@ function rename_labels_on_merge(applet, num){
     var new_xml = $(xobj).find('geogebra')[0].outerHTML;
     return new_xml;
 }
+*/
 
 //this is used to remove admin objects past those in the first group
 //so we don't have duplicate points in the construction
