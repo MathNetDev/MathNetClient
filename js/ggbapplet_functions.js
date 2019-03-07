@@ -427,7 +427,7 @@ function appletSetExtXML(xml, toolbar, properties, id, username, obj_xml, obj_la
 function rename_admin_labels(applet){
     var objs = applet.getAllObjectNames();
     for(i = 0; i < objs.length; i++)
-        applet.renameObject(objs[i], objs[i] + sessionStorage.group_id);
+        applet.renameObject(objs[i], objs[i] + "_{" + sessionStorage.group_id + "}");
 }
 
 // This function registers several event listeners only for the students' applet
