@@ -454,6 +454,7 @@ function applet_xml_response(username, class_id, group_id, xml, properties, rece
 //Called when the Live/Not Live Toggle is Set/Unset for the Merged View
 function liveUpdatesCheckboxChangeMerge(checkbox)
 {
+    console.log("live updates called!");
     if(checkbox.checked == true)
     {
         view_merge(this); 
@@ -480,10 +481,10 @@ function xml_update_response(username, class_id, group_id, xml, toolbar, propert
     if(tab == "View")
     {
         appletUpdate(xml, toolbar, null, group_id, username, obj_xml, obj_label, obj_cmd_str, type_of_req);
-        appletUpdate(xml, toolbar, null, numgroups, username, obj_xml, obj_label, obj_cmd_str, type_of_req);
+        // appletUpdate(xml, toolbar, null, numgroups, username, obj_xml, obj_label, obj_cmd_str, type_of_req);
         if($('.unmergeview_button').is(":visible") && $('#myonoffswitchmerge').is(':checked'))
         {
-            // view_merge(this);
+            view_merge(this);
         }
     }
     else if(tab == "Filtered Merged View")
