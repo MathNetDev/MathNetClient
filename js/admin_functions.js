@@ -596,9 +596,6 @@ function view_merge(event){
         randomizeColors(gen_new_colors,filtered_merged_view_obj_colors[parseInt(num)-1],document[value]);
         var parsing = document[value].getXML();
         var xml;
-
-        // applet.setXML(parsing);
-        // xml = rename_labels_on_merge(applet, num);
         
         var new_construction = $($.parseXML(parsing)).find('construction')[0];
 
@@ -736,6 +733,7 @@ function remove_admin_objects(xml, counter){
 //this is used to rename all object labels within the given XML to 
 //have their group number added onto the end, preventing conflicts
 //when merging multiple XMLs together
+/*
 function rename_labels(xml, num, counter){
     var xobj = $.parseXML(xml);
     var commands = $(xobj).find('construction').find('command');
@@ -781,6 +779,7 @@ function rename_labels(xml, num, counter){
     var new_xml = $(xobj).find('geogebra')[0].outerHTML;
     return [new_xml, counter];
 }
+*/
 
 //this is called when the unmerge views button is pressed.
 //it shows all hidden divs from the merge view
@@ -830,9 +829,6 @@ function filtered_view_merge(event){
         randomizeColors(gen_new_colors,filtered_merged_view_obj_colors[parseInt(num)-1],document[value]);      
         var parsing = document[value].getXML();
         var xml;
-
-        // applet.setXML(parsing);
-        // xml = rename_labels_on_merge(applet, num);
 
         var new_construction = $($.parseXML(parsing)).find('construction')[0];
 
