@@ -477,6 +477,7 @@ function xml_update_response(username, class_id, group_id, xml, toolbar, propert
         return;
     }
     var tab = $('a[data-toggle="tab"][aria-expanded=true]').html();
+    var numgroups = ($('ul.groups div').length)+1;
     if(tab == "View")
     {
         appletUpdate(xml, toolbar, null, group_id, username, obj_xml, obj_label, obj_cmd_str, type_of_req);
