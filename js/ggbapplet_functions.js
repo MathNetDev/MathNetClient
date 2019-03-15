@@ -73,10 +73,10 @@ function updateListener(obj_label){
         if (updates_per_label[obj_label] == null)
         {
             console.log("Not created yet " + obj_label);
+            updates_per_label[obj_label] = new Queue();
         }
         else
         {
-            updates_per_label[obj_label] = new Queue();
             console.log("Existing " + obj_label);
         }
     }
