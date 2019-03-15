@@ -473,6 +473,9 @@ function liveUpdatesCheckboxChangeFilteredMerge(checkbox)
 //TODO: Get rid of other params and keep only data
 function xml_update_response(username, class_id, group_id, xml, toolbar, properties, obj_xml, obj_label, obj_cmd_str, type_of_req, xml_update_ver, new_update, data) {
     if(!is_admin_xml_update_queue_empty && new_update){
+        if (admin_xml_update_queue.length >= 5){
+            admin_xml_update_queue.dequeue();
+        }
         admin_xml_update_queue.enqueue(data);
         return;
     }
