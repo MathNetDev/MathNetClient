@@ -69,6 +69,7 @@ function updateListener(obj_label){
         document.applet.setCaption(obj_label, "unassigned");
     }
     document.applet.registerUpdateListener("updateListener");
+    console.log(obj_label);
     send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'update');   
 }
 
