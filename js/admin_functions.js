@@ -479,6 +479,7 @@ function xml_update_response(username, class_id, group_id, xml, toolbar, propert
         admin_xml_update_queue.enqueue(data);
         return;
     }
+    console.log("Begin xml_update_response - " + obj_label);
     var tab = $('a[data-toggle="tab"][aria-expanded=true]').html();
     var numgroups = ($('ul.groups div').length)+1;
     if(tab == "View")
@@ -511,6 +512,7 @@ function xml_update_response(username, class_id, group_id, xml, toolbar, propert
         var img = '<img src="data:image/png;base64,'+document['overlayed_image_view_applet'+group_id].getPNGBase64(1.5, true, undefined)+'" id="img_'+group_id+'" style="position:absolute;">';
         $('#overlayed_image_div .panel-body').append(img);
     }
+    console.log("END xml_update_response - " + obj_label);
 }
 
 //handler for xml_change response, appends message to chatbox, and calls appletSetExtXML()
