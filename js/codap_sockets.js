@@ -115,7 +115,7 @@
             group_join_response(data.username, data.class_id, data.group_id, data.group_size);
         });
 
-        socket.on('group_leave_response', function(data) {
+        socket.on('onGroupLeaveResponse', function(data) {
             group_leave_response(data.username, data.class_id, data.group_id, data.disconnect);
         });
 
