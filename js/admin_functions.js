@@ -476,13 +476,18 @@ function xml_update_response(username, class_id, group_id, xml, toolbar, propert
         admin_xml_update_queue.enqueue(data);
         return;
     }
+    console.log("Begin xml_update_response - " + obj_label);
     var tab = $('a[data-toggle="tab"][aria-expanded=true]').html();
+    var numgroups = ($('ul.groups div').length)+1;
     if(tab == "View")
     {
+        randomizeColors(gen_new_colors,filtered_merged_view_obj_colors[group_id-1],document['applet' + group_id]);
         appletUpdate(xml, toolbar, null, group_id, username, obj_xml, obj_label, obj_cmd_str, type_of_req);
         if($('.unmergeview_button').is(":visible") && $('#myonoffswitchmerge').is(':checked'))
         {
-            view_merge(this);
+            // view_merge(this);
+            randomizeColors(gen_new_colors,filtered_merged_view_obj_colors[group_id-1],document['applet' + numgroups]);
+            appletUpdate(xml, toolbar, null, numgroups, username, obj_xml, obj_label, obj_cmd_str, type_of_req);
         }
     }
     else if(tab == "Filtered Merged View")
@@ -490,7 +495,8 @@ function xml_update_response(username, class_id, group_id, xml, toolbar, propert
         appletUpdate(xml, toolbar, null, group_id, username, obj_xml, obj_label, obj_cmd_str, type_of_req);
         if($('.filtered_unmergeview_button').is(":visible") && $('#myonoffswitchfilteredmerge').is(':checked'))
         {
-            filtered_view_merge(this);
+            // filtered_view_merge(this);
+            appletUpdate(xml, toolbar, null, numgroups, username, obj_xml, obj_label, obj_cmd_str, type_of_req);
         }
     }
     else if(tab == "Overlayed Image View")
@@ -503,6 +509,7 @@ function xml_update_response(username, class_id, group_id, xml, toolbar, propert
         var img = '<img src="data:image/png;base64,'+document['overlayed_image_view_applet'+group_id].getPNGBase64(1.5, true, undefined)+'" id="img_'+group_id+'" style="position:absolute;">';
         $('#overlayed_image_div .panel-body').append(img);
     }
+    console.log("END xml_update_response - " + obj_label);
 }
 
 //handler for xml_change response, appends message to chatbox, and calls appletSetExtXML()
@@ -594,11 +601,8 @@ function view_merge(event){
         randomizeColors(gen_new_colors,filtered_merged_view_obj_colors[parseInt(num)-1],document[value]);
         var parsing = document[value].getXML();
         var xml;
-
-        applet.setXML(parsing);
-        xml = rename_labels_on_merge(applet, num);
         
-        var new_construction = $($.parseXML(xml)).find('construction')[0];
+        var new_construction = $($.parseXML(parsing)).find('construction')[0];
 
         XMLs += new_construction.innerHTML;
 
@@ -681,6 +685,7 @@ function view_merge_old(event){
     $('.merge_group').css('visibility','visible');
 }
 
+/*
 function rename_labels_on_merge(applet, num){
     var objs = applet.getAllObjectNames();
     for(i = 0; i < objs.length; i++){
@@ -690,6 +695,7 @@ function rename_labels_on_merge(applet, num){
     var new_xml = $(xobj).find('geogebra')[0].outerHTML;
     return new_xml;
 }
+*/
 
 //this is used to remove admin objects past those in the first group
 //so we don't have duplicate points in the construction
@@ -732,6 +738,7 @@ function remove_admin_objects(xml, counter){
 //this is used to rename all object labels within the given XML to 
 //have their group number added onto the end, preventing conflicts
 //when merging multiple XMLs together
+/*
 function rename_labels(xml, num, counter){
     var xobj = $.parseXML(xml);
     var commands = $(xobj).find('construction').find('command');
@@ -777,6 +784,7 @@ function rename_labels(xml, num, counter){
     var new_xml = $(xobj).find('geogebra')[0].outerHTML;
     return [new_xml, counter];
 }
+*/
 
 //this is called when the unmerge views button is pressed.
 //it shows all hidden divs from the merge view
@@ -827,10 +835,7 @@ function filtered_view_merge(event){
         var parsing = document[value].getXML();
         var xml;
 
-        applet.setXML(parsing);
-        xml = rename_labels_on_merge(applet, num);
-
-        var new_construction = $($.parseXML(xml)).find('construction')[0];
+        var new_construction = $($.parseXML(parsing)).find('construction')[0];
 
         XMLs += new_construction.innerHTML;
        
