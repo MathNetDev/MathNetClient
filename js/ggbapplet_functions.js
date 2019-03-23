@@ -78,21 +78,20 @@ function updateListener(obj_label){
         if (updateCounter[obj_label] == null){
             updateCounter[obj_label] = 0;
         }
-        if (updateCounter[obj_label] == 0){
+        if (updateCounter[obj_label] == 0 || currentlyUpdating == false){
             console.log("Timeout executed for " + obj_label);
-            // updateCounter[obj_label]++;
-            if (currentlyUpdating == false){
-                send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'update');
-            }
+            updateCounter[obj_label]++;
+            send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'update');
         }
         else {
             console.log("Counting up " + obj_label);
-            if (updateCounter[obj_label] == 1){
+            if (updateCounter[obj_label] == 5){
                 updateCounter[obj_label] = 0;
             }
+            updateCounter[obj_label]++;
         }
         currentlyUpdating = false;
-    }, 800, obj_label);
+    }, 100, obj_label);
 }
 
 function removeListener(obj_label){
