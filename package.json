@@ -4,6 +4,7 @@
   "description": "This project is updated approach to previous work done by Dr. Tobin White which used Geogebra ([https://www.geogebra.org](https://www.geogebra.org) ) and NetLogo to provide group controlled line graphing activities.  This implementation uses HTML, javascript and the Geogebra applet to create a web application for collaborative learning.  A Node.js server application acts as a communication hub for keeping clients updated.",
   "private": true,
   "scripts": {
+    "debug": "npx $NODE_DEBUG_OPTION webpack-dev-server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

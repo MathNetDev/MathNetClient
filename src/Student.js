@@ -236,7 +236,7 @@ class StudentController {
         } else if (properties === null && sessionStorage.getItem('properties') !== null){
             properties = JSON.parse(sessionStorage.getItem('properties'));
         }
-        this.appletUpdate(xml, toolbar, properties, null, username, obj_xml, obj_label, obj_cmd_str, type_of_req);
+        this.ggbInterface.appletUpdate(xml, toolbar, properties, null, username, obj_xml, obj_label, obj_cmd_str, type_of_req);
         this.ggbOnInit('socket_call', false);
     }
 
@@ -414,10 +414,6 @@ class StudentController {
             console.log('requesting xml');
             this.p2p_get_xml(sessionStorage.getItem('username'),sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'));
         }
-
-        $(window).resize(() => {
-            this.applet.setHeight($(window).height()/1.3);
-        });
 
         if(should_process_queue){
             this.process_msgs_in_queue();
