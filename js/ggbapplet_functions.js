@@ -37,6 +37,7 @@ function addListener(obj_label){
 }
 
 function updateListener(obj_label){
+    console.log("Beginning update listener " + obj_label);
     var ggb_user = document.applet.getCaption(obj_label);
     var username = sessionStorage.getItem('username');
     var move = document.applet.isMoveable(obj_label);
@@ -69,14 +70,17 @@ function updateListener(obj_label){
         document.applet.setCaption(obj_label, "unassigned");
     }
     document.applet.registerUpdateListener("updateListener");
-    send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'update');   
+    console.log("End update listener " + obj_label);
+    setTimeout(function(){
+        send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'update');
+        console.log("Timeout executed for " + obj_label);
+    }, 800, obj_label);
 }
 
 function removeListener(obj_label){
     setInterval(function(){
-        document.applet.evalCommand("N : (2,2)");
         document.applet.evalCommand("D : (1,1)");
-    }, 5);
+    }, 10);
     send_xml(document.applet.getXML(), null, obj_label, null, socket, 'remove');  
 }
 
