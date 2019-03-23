@@ -9,6 +9,7 @@ var currentLabel;
 var finalApplet;
 var stepSize = 1.0;
 var objectCount = 1;
+var updateCounter = {};
 
 function addListener(obj_label){
     applet.unregisterUpdateListener("updateListener");
@@ -72,8 +73,21 @@ function updateListener(obj_label){
     document.applet.registerUpdateListener("updateListener");
     console.log("End update listener " + obj_label);
     setTimeout(function(){
-        send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'update');
-        console.log("Timeout executed for " + obj_label);
+        if (updateCounter[obj_label] == null){
+            console.log("Initialized");
+            updateCounter[obj_label] = 0;
+        }
+        if (updateCounter[obj_label] == 0){
+            console.log("Timeout executed for " + obj_label);
+            send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'update');
+        }
+        else {
+            console.log("Counting up " + obj_label);
+            updateCounter[obj_label]++;
+            if (updateCounter[obj_label] == 5){
+                updateCounter[obj_label] = 0;
+            }
+        }
     }, 800, obj_label);
 }
 
