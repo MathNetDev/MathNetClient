@@ -10,7 +10,7 @@ var finalApplet;
 var stepSize = 1.0;
 var objectCount = 1;
 var updateCounter = {};
-var currentlyUpdating = false;
+var currentlyUpdating = {};
 
 function addListener(obj_label){
     applet.unregisterUpdateListener("updateListener");
@@ -39,7 +39,7 @@ function addListener(obj_label){
 }
 
 function updateListener(obj_label){
-    currentlyUpdating = true;
+    currentlyUpdating[obj_label] = true;
     console.log("Beginning update listener " + obj_label);
     var ggb_user = document.applet.getCaption(obj_label);
     var username = sessionStorage.getItem('username');
@@ -78,9 +78,9 @@ function updateListener(obj_label){
         if (updateCounter[obj_label] == null){
             updateCounter[obj_label] = 0;
         }
-        if (updateCounter[obj_label] == 0 || currentlyUpdating == false){
+        if (updateCounter[obj_label] == 0 || currentlyUpdating[obj_label] == false){
             console.log("Timeout executed for " + obj_label);
-            updateCounter[obj_label]++;
+            updateCounter[obj_label] = 1;
             send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'update');
         }
         else {
@@ -90,8 +90,8 @@ function updateListener(obj_label){
             }
             updateCounter[obj_label]++;
         }
-        currentlyUpdating = false;
-    }, 100, obj_label);
+        currentlyUpdating[obj_label] = false;
+    }, 20, obj_label);
 }
 
 function removeListener(obj_label){
