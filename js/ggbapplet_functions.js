@@ -88,7 +88,9 @@ function updateListener(obj_label){
             if (updateCounter[obj_label] == 7){
                 updateCounter[obj_label] = 0;
             }
-            updateCounter[obj_label]++;
+            else {
+                updateCounter[obj_label]++;
+            }
         }
         currentlyUpdating[obj_label] = false;
     }, 5, obj_label);
