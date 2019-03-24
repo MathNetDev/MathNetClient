@@ -84,7 +84,7 @@ function updateListener(obj_label){
             send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'update');
         }
         else {
-            console.log("Counting up " + obj_label);
+            console.log(updateCounter[obj_label] + " Counting up " + obj_label);
             if (updateCounter[obj_label] == 7){
                 updateCounter[obj_label] = 0;
             }
