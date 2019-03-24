@@ -93,7 +93,7 @@ function updateListener(obj_label){
             }
         }
         currentlyUpdating[obj_label] = false;
-    }, 10, obj_label);
+    }, 5, obj_label);
 }
 
 function removeListener(obj_label){
