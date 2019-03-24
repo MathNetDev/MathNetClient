@@ -85,7 +85,7 @@ function updateListener(obj_label){
         }
         else {
             console.log(updateCounter[obj_label] + " Counting up " + obj_label);
-            if (updateCounter[obj_label] == 7){
+            if (updateCounter[obj_label] == 5){
                 updateCounter[obj_label] = 0;
             }
             else {
@@ -93,7 +93,7 @@ function updateListener(obj_label){
             }
         }
         currentlyUpdating[obj_label] = false;
-    }, 5, obj_label);
+    }, 10, obj_label);
 }
 
 function removeListener(obj_label){
