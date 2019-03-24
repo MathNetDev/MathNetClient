@@ -85,13 +85,13 @@ function updateListener(obj_label){
         }
         else {
             console.log("Counting up " + obj_label);
-            if (updateCounter[obj_label] == 5){
+            if (updateCounter[obj_label] == 10){
                 updateCounter[obj_label] = 0;
             }
             updateCounter[obj_label]++;
         }
         currentlyUpdating[obj_label] = false;
-    }, 20, obj_label);
+    }, 15, obj_label);
 }
 
 function removeListener(obj_label){
