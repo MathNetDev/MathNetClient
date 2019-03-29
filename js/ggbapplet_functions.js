@@ -75,18 +75,18 @@ function updateListener(obj_label){
     document.applet.registerUpdateListener("updateListener");
     console.log("End update listener " + obj_label);
     send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'update', 'student');
-    /*setTimeout(function(){
+    setTimeout(function(){
         if (updateCounter[obj_label] == null){
             updateCounter[obj_label] = 0;
         }
-        if (updateCounter[obj_label] == 0){ // || currentlyUpdating[obj_label] == false){
+        if (updateCounter[obj_label] == 0 || currentlyUpdating[obj_label] == false){
             console.log("Timeout executed for " + obj_label);
             updateCounter[obj_label] = 1;
             send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'update', 'admin');
         }
         else {
             console.log(updateCounter[obj_label] + " Counting up " + obj_label);
-            if (updateCounter[obj_label] == 20){
+            if (updateCounter[obj_label] == 8){
                 updateCounter[obj_label] = 0;
             }
             else {
@@ -94,8 +94,7 @@ function updateListener(obj_label){
             }
         }
         currentlyUpdating[obj_label] = false;
-    }, 5, obj_label);
-    */
+    }, 15, obj_label);
 }
 
 function removeListener(obj_label){
