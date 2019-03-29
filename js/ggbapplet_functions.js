@@ -74,18 +74,19 @@ function updateListener(obj_label){
     }
     document.applet.registerUpdateListener("updateListener");
     console.log("End update listener " + obj_label);
+    send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'update', 'student');
     setTimeout(function(){
         if (updateCounter[obj_label] == null){
             updateCounter[obj_label] = 0;
         }
-        if (updateCounter[obj_label] == 0 || currentlyUpdating[obj_label] == false){
+        if (updateCounter[obj_label] == 0){ // || currentlyUpdating[obj_label] == false){
             console.log("Timeout executed for " + obj_label);
             updateCounter[obj_label] = 1;
-            send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'update');
+            send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'update', 'admin');
         }
         else {
             console.log(updateCounter[obj_label] + " Counting up " + obj_label);
-            if (updateCounter[obj_label] == 5){
+            if (updateCounter[obj_label] == 20){
                 updateCounter[obj_label] = 0;
             }
             else {
@@ -104,7 +105,7 @@ function removeListener(obj_label){
 }
 
 //Makes a socket call to the server 
-function send_xml(xml, obj_xml, obj_label, obj_cmd_str, socket, type_of_req){
+function send_xml(xml, obj_xml, obj_label, obj_cmd_str, socket, type_of_req, recipient){
         cur_xml = xml;
         var $messages = $("#messages");
         var username = sessionStorage.getItem('username');
@@ -122,7 +123,8 @@ function send_xml(xml, obj_xml, obj_label, obj_cmd_str, socket, type_of_req){
                 obj_cmd_str: obj_cmd_str,
                 type_of_req: type_of_req,
                 xml_update_ver: xml_update_ver,
-                new_update: true
+                new_update: true,
+                recipient: recipient
             };
         socket.xml_update(data);
         xml_update_ver = xml_update_ver + 1;
