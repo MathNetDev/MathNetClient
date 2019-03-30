@@ -75,6 +75,8 @@ function updateListener(obj_label){
     document.applet.registerUpdateListener("updateListener");
     console.log("End update listener " + obj_label);
 
+    send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'update');
+    /*
     // send all updates to other students in the same group
     send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'update', 'student');
 
@@ -101,6 +103,7 @@ function updateListener(obj_label){
         }
         currentlyUpdating = false;
     }, timeoutFactor, obj_label);
+    */
 }
 
 function removeListener(obj_label){
