@@ -10,10 +10,9 @@ var finalApplet;
 var stepSize = 1.0;
 var objectCount = 1;
 var updateCounter = {};
-var currentlyUpdating = {};
+var currentlyUpdating;
 
 function addListener(obj_label){
-    applet.unregisterUpdateListener("updateListener");
     var username;
     if (sessionStorage.getItem('username') != null && sessionStorage.getItem('username') != "admin")
         username = sessionStorage.getItem('username');
@@ -26,6 +25,7 @@ function addListener(obj_label){
     objectCount++;
 
     setTimeout(function(){
+        applet.unregisterUpdateListener("updateListener");
         document.applet.renameObject(obj_label, new_obj_label);
         document.applet.setCaption(new_obj_label, username);
         var type = document.applet.getObjectType(new_obj_label);
@@ -39,7 +39,7 @@ function addListener(obj_label){
 }
 
 function updateListener(obj_label){
-    currentlyUpdating[obj_label] = true;
+    currentlyUpdating = true;
     console.log("Beginning update listener " + obj_label);
     var ggb_user = document.applet.getCaption(obj_label);
     var username = sessionStorage.getItem('username');
@@ -74,27 +74,33 @@ function updateListener(obj_label){
     }
     document.applet.registerUpdateListener("updateListener");
     console.log("End update listener " + obj_label);
+
+    // send all updates to other students in the same group
     send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'update', 'student');
+
+    // send selective updates to the admin
+    var updateFactor = 8;
+    var timeoutFactor = 10;
     setTimeout(function(){
-        /*if (updateCounter[obj_label] == null){
+        if (updateCounter[obj_label] == null){
             updateCounter[obj_label] = 0;
         }
-        if (updateCounter[obj_label] == 0 || currentlyUpdating[obj_label] == false){
+        if (updateCounter[obj_label] == 0 || currentlyUpdating == false){
             console.log("Timeout executed for " + obj_label);
-            updateCounter[obj_label] = 1;*/
+            updateCounter[obj_label] = 1;
             send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'update', 'admin');
-       /* }
+        }
         else {
             console.log(updateCounter[obj_label] + " Counting up " + obj_label);
-            if (updateCounter[obj_label] == 10){
+            if (updateCounter[obj_label] == updateFactor){
                 updateCounter[obj_label] = 0;
             }
             else {
                 updateCounter[obj_label]++;
             }
         }
-        currentlyUpdating[obj_label] = false;*/
-    }, 7000, obj_label);
+        currentlyUpdating = false;
+    }, timeoutFactor, obj_label);
 }
 
 function removeListener(obj_label){
