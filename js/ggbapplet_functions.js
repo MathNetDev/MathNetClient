@@ -94,13 +94,10 @@ function updateListener(obj_label){
             }
         }
         currentlyUpdating[obj_label] = false;*/
-    }, 1200, obj_label);
+    }, 7000, obj_label);
 }
 
 function removeListener(obj_label){
-    setInterval(function(){
-        document.applet.evalCommand("D : (1,1)");
-    }, 10);
     send_xml(document.applet.getXML(), null, obj_label, null, socket, 'remove');  
 }
 
