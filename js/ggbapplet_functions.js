@@ -249,7 +249,7 @@ function p2pAppletSetXML(xml, toolbar, properties, id, username, obj_xml, obj_la
     // If this is the students' website, then we register and add the listeners
     if(window.location.href.includes("student")){
         finalApplet = appletName;
-        registerListeners(cur_xml_doc);
+        registerListeners();
         addArrowButtonsEventlisteners();
         addKeyboardEventListeners();
     }
@@ -452,37 +452,9 @@ function appletSetExtXML(xml, toolbar, properties, id, username, obj_xml, obj_la
     // If this is the students' website, then we register and add the listeners
     if(window.location.href.includes("student")){
         finalApplet = appletName;
-        registerListeners(cur_xml_doc);
+        registerListeners();
         addArrowButtonsEventlisteners();
         addKeyboardEventListeners();
-    }
-}
-
-// This function registers several event listeners only for the students' applet
-function registerListeners(cur_xml_doc){
-
-    finalApplet.registerAddListener(function(label){
-        currentLabel = label;
-        $current_label.text(currentLabel);
-        finalApplet.registerObjectClickListener(label, function (label){
-            currentLabel = label;
-            $current_label.text(currentLabel);
-        });
-    });
-
-    var elements = $(cur_xml_doc).find('construction').find('element');
-
-     if(elements != undefined){
-        for(var i = 0; i < elements.length; i++){
-            // var obj_type = $(elements[i]).attr('type');
-            // if(obj_type == "point"){
-            var label = $(elements[i]).attr('label');
-
-            finalApplet.registerObjectClickListener(label, function (label){
-                currentLabel = label;
-                $current_label.text(currentLabel);
-            });
-        }
     }
 }
 
@@ -490,6 +462,28 @@ function rename_admin_labels(applet){
     var objs = applet.getAllObjectNames();
     for(i = 0; i < objs.length; i++)
         applet.renameObject(objs[i], objs[i] + "_{" + sessionStorage.group_id + "}");
+}
+
+// This function registers several event listeners only for the students' applet
+function registerListeners(){
+
+    finalApplet.registerAddListener(function(label){
+        currentLabel = label;
+        $current_label.text(currentLabel);
+        finalApplet.registerObjectClickListener(label, function(label){
+            currentLabel = label;
+            $current_label.text(currentLabel);
+        });
+    });
+
+    var objs = finalApplet.getAllObjectNames();
+    for (i = 0; i < objs.length; i++){
+        var label = objs[i];
+        finalApplet.registerObjectClickListener(label, function(label){
+            currentLabel = label;
+            $current_label.text(currentLabel);
+        });
+    }
 }
 
 function addArrowButtonsEventlisteners(){
