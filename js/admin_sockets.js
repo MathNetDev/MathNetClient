@@ -281,7 +281,7 @@
             applet_xml_response(data.username, data.class_id, data.group_id, data.xml, data.properties, data.xml_update_ver);
         });
 
-        socket.on('admin_applet_xml_response', function(data){
+        socket.on('get_admin_applet_xml_response', function(data){
             console.log("NEW STUDENT PINGING");
         });
 
