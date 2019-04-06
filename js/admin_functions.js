@@ -451,11 +451,6 @@ function applet_xml_response(username, class_id, group_id, xml, properties, rece
     process_msgs_in_queue();
 }
 
-function get_admin_applet_xml_response(username, class_id, group_id){
-    var admin_xml_sent = admin_data_per_group[group_id];
-    socket.send_admin_applet_xml(admin_xml_sent, username, class_id, group_id);
-}
-
 //Called when the Live/Not Live Toggle is Set/Unset for the Merged View
 function liveUpdatesCheckboxChangeMerge(checkbox)
 {
