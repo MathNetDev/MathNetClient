@@ -188,6 +188,10 @@
             socket.emit('p2p_get_xml', username, class_id, group_id);
         }
 
+        var send_admin_applet_xml = function(xml, username, class_id, group_id){
+            socket.emit('applet_xml', xml, username, class_id, group_id, 0);
+        }
+
         //
         // Socket event handlers
         //
@@ -282,6 +286,7 @@
         });
 
         socket.on('get_admin_applet_xml_response', function(data){
+            get_admin_applet_xml_response(data.username, data.class_id, data.group_id);
             console.log("NEW STUDENT PINGING");
         });
 
@@ -311,6 +316,7 @@
             get_xmls: get_xmls,
             delete_xml: delete_xml,
             p2p_get_xml: p2p_get_xml,
+            send_admin_applet_xml: send_admin_applet_xml,
             ping: ping,
             disconnect: disconnect
         };
