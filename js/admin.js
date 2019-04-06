@@ -456,7 +456,7 @@ $(function() {
                             'coordSystem' : coordSystem
                         }
             };
-            admin_data_per_group[group_id] = data;
+            admin_data_per_group[data.group_id] = data;
             socket.xml_change(data);
         }
     });
