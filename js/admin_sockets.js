@@ -287,7 +287,6 @@
 
         socket.on('get_admin_applet_xml_response', function(data){
             get_admin_applet_xml_response(data.username, data.class_id, data.group_id);
-            console.log("NEW STUDENT PINGING");
         });
 
         return {
