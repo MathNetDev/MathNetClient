@@ -452,7 +452,7 @@ function applet_xml_response(username, class_id, group_id, xml, properties, rece
 }
 
 function get_admin_applet_xml_response(username, class_id, group_id){
-    var admin_xml_sent = admin_data_per_group[group_id];
+    var admin_xml_sent = admin_data_per_group[group_id].xml;
     if (admin_xml_sent != null){
         console.log(admin_xml_sent);
         socket.send_admin_applet_xml(admin_xml_sent, username, class_id, group_id);
