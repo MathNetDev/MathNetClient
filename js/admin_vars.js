@@ -118,3 +118,5 @@ var $changed_password = $('#changed_password');
 var $retyped_changed_password = $('#retyped_changed_password');
 var $change_password_button = $('#change_password_button');
 
+var admin_data_per_group = {};
+

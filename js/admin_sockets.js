@@ -188,6 +188,10 @@
             socket.emit('p2p_get_xml', username, class_id, group_id);
         }
 
+        var send_admin_applet_xml = function(xml, username, class_id, group_id){
+            socket.emit('applet_xml', xml, username, class_id, group_id, 0);
+        }
+
         //
         // Socket event handlers
         //
@@ -281,6 +285,10 @@
             applet_xml_response(data.username, data.class_id, data.group_id, data.xml, data.properties, data.xml_update_ver);
         });
 
+        socket.on('get_admin_applet_xml_response', function(data){
+            get_admin_applet_xml_response(data.username, data.class_id, data.group_id);
+        });
+
         return {
             add_class: add_class,
             create_admin: create_admin,
@@ -307,6 +315,7 @@
             get_xmls: get_xmls,
             delete_xml: delete_xml,
             p2p_get_xml: p2p_get_xml,
+            send_admin_applet_xml: send_admin_applet_xml,
             ping: ping,
             disconnect: disconnect
         };
