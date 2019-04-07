@@ -337,7 +337,7 @@ $step_size_slider.bind('mousemove', function() {
     $step_size_label.text($step_size_slider.val()/10);
 });
 
-update_frequency_testing_button.bind('click', function() {
+$update_frequency_testing_button.bind('click', function() {
     clearInterval(interval_testing_function);
     interval_testing_function = setInterval(function(){
         let xCoordinate = getTime()%17-8;
