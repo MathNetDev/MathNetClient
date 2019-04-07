@@ -35,3 +35,8 @@ var $step_size_slider = $('#step_size_slider');
 var $step_size_label = $('label[for="step_size_label"]');
 
 var setNewXML = true;
+
+var $update_frequency_testing_button = $('#update_frequency_testing_button');
+var $update_frequency_label = $('label[for="update_frequency_label"]');
+var $update_frequency_slider = $('#update_frequency_slider');
+var interval_testing_function;
