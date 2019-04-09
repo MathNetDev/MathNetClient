@@ -8,9 +8,9 @@ import Login from './Login'
 import Geogebra from './Geogebra'
 
 class StudentController {
-    constructor(socket, ggbInterface){
-        this.ggbInterface = ggbInterface;
-        this.ggbInterface.setSocketInterface(this);
+    constructor(socket) {
+        this.ggbInterface = new Geogebra("applet");
+        this.ggbInterface.setListener(this);
         this.xmlQueue = new Queue();
         this.xml_update_ver = 0;
         this.alternate_update = 0;
@@ -18,6 +18,7 @@ class StudentController {
         this.setNewXML = true;
         this.socket = socket;
         this.init(this.socket);
+        this.stepSize = 1.0;
         this.views = {
             $login_view: $('.login_view'),
             $class_view: $('.class_view'),
@@ -44,8 +45,8 @@ class StudentController {
         };
 
         this.views.$step_size_slider.bind('mousemove', () => {
-            stepSize = this.views.$step_size_slider.val()/10;
-            this.views.$step_size_label.text(this.views.$step_size_slider.val()/10);
+            this.stepSize = this.views.$step_size_slider.val() / 10;
+            this.views.$step_size_label.text(this.views.$step_size_slider.val() / 10);
         });
 
         this.views.$logout_button.bind('click', () => {
@@ -62,16 +63,19 @@ class StudentController {
             );
         });
 
-        this.views.$leave_group_button.bind('click', function() {
-           this.socket.group_leave(sessionStorage.getItem('username'),
+        this.views.$leave_group_button.bind('click', function () {
+            this.listener.group_leave(sessionStorage.getItem('username'),
                 sessionStorage.getItem('class_id'),
                 sessionStorage.getItem('group_id'),
                 false
             );
         });
+
+        this.addKeyboardEventListeners();
+        this.addArrowButtonsEventListeners();
     }
 
-    init(socket){
+    init(socket) {
 
         //Initialize callbacks
         socket.on('server_error', data => {
@@ -147,10 +151,10 @@ class StudentController {
     }//init
 
     //adds a new group button
-     on_add_group_response() {
+    on_add_group_response() {
         const group_number = $groups.children().length + 1;
         let button = '<input type="button" class="btn btn-md btn-primary " style="margin: 0em 1em 1em 0em" id="grp' + group_number + '" value="Group ';
-        button += group_number + ' - '+ 0;
+        button += group_number + ' - ' + 0;
         button += '" />';
         this.views.$groups.append(button);
     }
@@ -168,15 +172,16 @@ class StudentController {
     //populates $groups with buttons with info from groups.
     groups_get_response(username, class_id, groups) {
         this.views.$groups.empty();
-        for (let i in groups){
+        for (let i in groups) {
             let button = '<input type="button" class="btn btn-md btn-primary " style="margin: 0em 1em 1em 0em" id="grp' + groups[i].grp_name + '" value="Group ';
-            button += groups[i].grp_name + ' - '+ groups[i].num;
+            button += groups[i].grp_name + ' - ' + groups[i].num;
             button += '" />';
             this.views.$groups.append(button);
         }
     }
+
     //increments group_size if status is true (user is joining group), else decrements
-    on_group_numbers_response(username, class_id, group_id, status, group_size){
+    on_group_numbers_response(username, class_id, group_id, status, group_size) {
         group_size = (status ? group_size++ : group_size--);
         $("#grp" + group_id).val('Group ' + group_id + ' - ' + group_size);
     }
@@ -199,11 +204,11 @@ class StudentController {
         const current_user = sessionStorage.getItem('username');
         const current_group = sessionStorage.getItem('group_id');
 
-        if(status){
+        if (status) {
             for (let i in members) {
                 members[i].member_info = JSON.parse(members[i].member_info);
-                const member = members[i].member_name.replace(/&lt;/g,'<').replace(/&gt;/g, '>');
-                if(member === current_user) {
+                const member = members[i].member_name.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+                if (member === current_user) {
                     this.views.$group_name.html('Group: ' + current_group + ', ' + members[i].member_name); //only update this for the new member
                 }
             }
@@ -212,41 +217,43 @@ class StudentController {
 
     //handler for xml_change response, appends message to chatbox, and calls appletSetExtXML()
     xml_change_response(username, class_id, group_id, xml, toolbar, properties, obj_xml, obj_label, obj_cmd_str) {
-        this.group_color(sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'));
-        if(properties !== null){
+        this.group_color(sessionStorage.getItem('class_id'), sessionStorage.getItem('group_id'));
+        if (properties !== null) {
             sessionStorage.setItem('properties', JSON.stringify(properties));
-        } else if (properties === null && sessionStorage.getItem('properties') !== null){
+        } else if (properties === null && sessionStorage.getItem('properties') !== null) {
             properties = JSON.parse(sessionStorage.getItem('properties'));
         }
-        this.applet.appletSetExtXML(xml, toolbar, properties, null, username, obj_xml, obj_label, obj_cmd_str);
-        this.ggbOnInit('socket_call', false);
+        this.ggbInterface.appletSetExtXML(xml, toolbar, properties, null, username, obj_xml, obj_label, obj_cmd_str);
+        this.updateGroupColor();
     }
 
     //handler for xml_update response, appends message to chatbox, and calls appletSetExtXML() (mathnet)
 //TODO: Get rid of other params and keep only data
-    xml_update_response(username, class_id, group_id, xml, toolbar, properties, obj_xml, obj_label, obj_cmd_str, type_of_req, recv_xml_update_ver, new_update, data){
-        if(!this.is_xml_update_queue_empty && new_update){
+    xml_update_response(username, class_id, group_id, xml, toolbar, properties, obj_xml, obj_label, obj_cmd_str, type_of_req, recv_xml_update_ver, new_update, data) {
+        if (!this.is_xml_update_queue_empty && new_update) {
             this.xmlQueue.enqueue(data);
             return;
         }
         this.xml_update_ver = this.xml_update_ver + 1;
-        this.group_color(sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'));
-        if(properties !== null){
+        this.group_color(sessionStorage.getItem('class_id'), sessionStorage.getItem('group_id'));
+        if (properties !== null) {
             sessionStorage.setItem('properties', JSON.stringify(properties));
-        } else if (properties === null && sessionStorage.getItem('properties') !== null){
+        } else if (properties === null && sessionStorage.getItem('properties') !== null) {
             properties = JSON.parse(sessionStorage.getItem('properties'));
         }
         this.ggbInterface.appletUpdate(xml, toolbar, properties, null, username, obj_xml, obj_label, obj_cmd_str, type_of_req);
-        this.ggbOnInit('socket_call', false);
     }
 
-    p2p_get_xml_response(username, class_id, group_id){
+    p2p_get_xml_response(username, class_id, group_id) {
+        if (!this.ggbInterface || !this.ggbInterface.applet){
+            return;
+        }
         this.applet_xml(this.ggbInterface.applet.getXML(), username, class_id, group_id, this.xml_update_ver);
     }
 
-    applet_xml_response(username, class_id, group_id, xml, properties, received_xml_update_ver){
+    applet_xml_response(username, class_id, group_id, xml, properties, received_xml_update_ver) {
         this.xml_update_ver = received_xml_update_ver === undefined ? 0 : received_xml_update_ver;
-        if(xml === undefined){
+        if (xml === undefined) {
             xml = '{}';
         }
         /*
@@ -259,12 +266,11 @@ class StudentController {
             toolbar = sessionStorage.getItem('toolbar');
         }*/
         this.ggbInterface.p2pAppletSetXML(xml, toolbar, properties, null, username, null, null);
-        this.ggbOnInit('socket_call', true);
+        this.process_msgs_in_queue();
     }
 
-    process_msgs_in_queue(){
-        const curr_user = sessionStorage.getItem('username');
-        while(!this.xmlQueue.isEmpty()){
+    process_msgs_in_queue() {
+        while (!this.xmlQueue.isEmpty()) {
             const update = this.xmlQueue.dequeue();
             //if((update.username == curr_user && update.xml_update_ver > xml_update_ver) || (update.username != curr_user && update.xml_update_ver >= xml_update_ver)){
             this.xml_update_response(update.username, update.class_id, update.group_id, update.xml, update.toolbar, update.properties, update.obj_xml, update.obj_label, update.obj_cmd_str, update.type_of_req, update.recv_xml_update_ver, false, update.data);
@@ -281,7 +287,7 @@ class StudentController {
         for (let setting in settings) {
             const setting_item = "<li>" + setting + ": " + settings[setting] + "</li>";
             this.views.$class_settings.append(setting_item);
-            if (setting === "Hide Options" ){
+            if (setting === "Hide Options") {
                 settings[setting] ? (
                     $("#display-settings").hide(),
                         $("#display-settings input:checkbox").prop('checked', ''),
@@ -299,27 +305,27 @@ class StudentController {
         this.views.$group_view.show();
 
         const params = {
-            "container":"appletContainer",
-            "id":"applet",
-            "width":this.views.$applet.innerWidth(),
-            "height":this.views.$applet.innerWidth()*0.53,
-            "perspective":"AG",
-            "showAlgebraInput":true,
-            "showToolBarHelp":false,
-            "showMenubar":true,
-            "enableLabelDrags":false,
-            "showResetIcon":true,
-            "showToolbar":true,
-            "allowStyleBar":false,
-            "useBrowserForJS":true,
-            "enableShiftDragZoom":true,
-            "errorDialogsActive":true,
-            "enableRightClick":false,
-            "enableCAS":false,
-            "enable3d":false,
-            "isPreloader":false,
-            "screenshotGenerator":false,
-            "preventFocus":false
+            "container": "appletContainer",
+            "id": "applet",
+            "width": this.views.$applet.innerWidth(),
+            "height": this.views.$applet.innerWidth() * 0.53,
+            "perspective": "AG",
+            "showAlgebraInput": true,
+            "showToolBarHelp": false,
+            "showMenubar": true,
+            "enableLabelDrags": false,
+            "showResetIcon": true,
+            "showToolbar": true,
+            "allowStyleBar": false,
+            "useBrowserForJS": true,
+            "enableShiftDragZoom": true,
+            "errorDialogsActive": true,
+            "enableRightClick": false,
+            "enableCAS": false,
+            "enable3d": false,
+            "isPreloader": false,
+            "screenshotGenerator": false,
+            "preventFocus": false
         };
 
         this.ggbInterface.appletInit(params);
@@ -337,7 +343,7 @@ class StudentController {
         this.views.$login_view.hide();
         this.views.$class_view.show();
         this.views.$group_view.hide();
-        if(!disconnect){
+        if (!disconnect) {
             sessionStorage.removeItem('group_id');
         }
     }
@@ -351,7 +357,7 @@ class StudentController {
         this.views.$class_view.show();
         this.views.$group_view.hide();
 
-        username = username.replace(/&lt;/g,'<').replace(/&gt;/g, '>');
+        username = username.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
 
         sessionStorage.setItem('class_id', class_id);
         sessionStorage.setItem('username', username);
@@ -375,7 +381,7 @@ class StudentController {
         this.views.$class_id.val("");
         this.views.$username.val("");
 
-        if(!disconnect){
+        if (!disconnect) {
             sessionStorage.removeItem('class_id');
             sessionStorage.removeItem('username');
             sessionStorage.removeItem('group_id');
@@ -387,37 +393,31 @@ class StudentController {
     }
 
     //calls appletSetExtXML() to update the local geogebra applet.
-    on_get_xml_response(username, class_id, group_id, xml,toolbar, properties){
-        if(!xml){
+    on_get_xml_response(username, class_id, group_id, xml, toolbar, properties) {
+        if (!xml) {
             xml = '{}';
         }
-        if(properties !== null){
+        if (properties !== null) {
             sessionStorage.setItem('properties', JSON.stringify(properties));
-        } else if (properties === null && sessionStorage.getItem('properties') !== null){
+        } else if (properties === null && sessionStorage.getItem('properties') !== null) {
             properties = JSON.parse(sessionStorage.getItem('properties'));
         }
-        if(!toolbar){
+        if (!toolbar) {
             toolbar = sessionStorage.getItem('toolbar');
         }
 
         this.ggbInterface.appletSetExtXML(xml, toolbar, properties, null, username, null, null); //mathnet
-        this.ggbOnInit('socket_call', false);
+        this.updateGroupColor();
     }
 
-    //TODO move this to the ggb interface and stop using it for multiple things.
-    ggbOnInit(arg, should_process_queue){
-        console.log(`ggbOnInit called ${JSON.stringify(arguments)}`);
+    updateGroupColor() {
+        this.group_color(sessionStorage.getItem('class_id'), sessionStorage.getItem('group_id'));
+    }
 
-        this.group_color(sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'));
-
-        if(arg !== 'socket_call'){
-            console.log('requesting xml');
-            this.p2p_get_xml(sessionStorage.getItem('username'),sessionStorage.getItem('class_id'),sessionStorage.getItem('group_id'));
-        }
-
-        if(should_process_queue){
-            this.process_msgs_in_queue();
-        }
+    ggbOnInit() {
+        this.updateGroupColor();
+        //app is initialized, load the xml
+        this.p2p_get_xml(sessionStorage.getItem('username'), sessionStorage.getItem('class_id'), sessionStorage.getItem('group_id'));
     }
 
     server_error(error) {
@@ -426,12 +426,10 @@ class StudentController {
         if (str.indexOf("Invalid username") !== -1) {
             this.views.$username.css("border-color", "red");
             this.views.$error_username.show();
-        }
-        else if (str.indexOf("invalid.") !== -1) {
+        } else if (str.indexOf("invalid.") !== -1) {
             this.views.$class_id.css("border-color", "red");
             this.views.$error_class_id.show();
-        }
-        else {
+        } else {
             console.log(error);
             sessionStorage.setItem('error', error);
             location.reload();
@@ -442,6 +440,7 @@ class StudentController {
     API Functions
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`
      */
+
     // This function takes a time and pings it
     ping(time) {
         this.socket.emit('ping', time);
@@ -508,7 +507,7 @@ class StudentController {
     //This function takes a username, class_id, and group_id
     //It then emits a socket event to retrieve the group's XML
     //using the given class_id and group_id
-    get_xml(username, class_id, group_id){
+    get_xml(username, class_id, group_id) {
         this.socket.emit('get_xml', username, class_id, group_id);
     }
 
@@ -521,7 +520,7 @@ class StudentController {
 
     //This function is used to send the applet's current state(XML) to the server.
     //Used when a new client/student joins.
-    applet_xml(xml, username, class_id, group_id, xml_update_ver){
+    applet_xml(xml, username, class_id, group_id, xml_update_ver) {
         this.socket.emit('applet_xml', xml, username, class_id, group_id, xml_update_ver);
     }
 
@@ -533,25 +532,90 @@ class StudentController {
 
     //This function is used when a new student logs in. The new student asks another randomly selected
     //student in the class for the current XML.
-    p2p_get_xml(username, class_id, group_id){
+    p2p_get_xml(username, class_id, group_id) {
         console.log('loading xml from peer');
         this.socket.emit('p2p_get_xml', username, class_id, group_id);
+    }
+
+    addArrowButtonsEventListeners() {
+        const {
+            $arrow_up_button,
+            $arrow_down_button,
+            $arrow_right_button,
+            $arrow_left_button
+        } = this.views;
+        const currentLabel = this.currentLabel;
+        $arrow_up_button.unbind('click');
+        $arrow_up_button.bind('click', () => {
+            if (this.ggbInterface.getObjectType(currentLabel) === "point") {
+                this.ggbInterface.setCoords(currentLabel, this.ggbInterface.getXcoord(currentLabel), this.ggbInterface.getYcoord(currentLabel) + this.stepSize);
+            }
+        });
+        $arrow_down_button.unbind('click');
+        $arrow_down_button.bind('click', () => {
+            if (this.ggbInterface.getObjectType(currentLabel) === "point") {
+                this.ggbInterface.setCoords(currentLabel, this.ggbInterface.getXcoord(currentLabel), this.ggbInterface.getYcoord(currentLabel) - this.stepSize);
+            }
+        });
+        $arrow_right_button.unbind('click');
+        $arrow_right_button.bind('click', () => {
+            if (this.ggbInterface.getObjectType(currentLabel) === "point") {
+                this.ggbInterface.setCoords(currentLabel, this.ggbInterface.getXcoord(currentLabel) + this.stepSize, this.ggbInterface.getYcoord(currentLabel));
+            }
+        });
+        $arrow_left_button.unbind('click');
+        $arrow_left_button.bind('click', () => {
+            if (this.ggbInterface.getObjectType(currentLabel) === "point") {
+                this.ggbInterface.setCoords(currentLabel, this.ggbInterface.getXcoord(currentLabel) - this.stepSize, this.ggbInterface.getYcoord(currentLabel));
+            }
+        });
+    }
+
+    onElementChange(label) {
+        this.currentLabel = label;
+        this.views.$current_label.text(this.currentLabel);
+    }
+
+    onKeyPress(key) {
+        const currentLabel = this.currentLabel;
+        if (!currentLabel){
+            return;
+        }
+        if (key.which === 105) { // 105 is the ASCII code of 'i'
+            if (this.ggbInterface.getObjectType(currentLabel) === "point") {
+                this.ggbInterface.setCoords(currentLabel, this.ggbInterface.getXcoord(currentLabel), this.ggbInterface.getYcoord(currentLabel) + this.stepSize);
+            }
+        } else if (key.which === 106) { // 106 is the ASCII code of 'j'
+            if (this.ggbInterface.getObjectType(currentLabel) === "point") {
+                this.ggbInterface.setCoords(currentLabel, this.ggbInterface.getXcoord(currentLabel) - this.stepSize, this.ggbInterface.getYcoord(currentLabel));
+            }
+        } else if (key.which === 107) { // 107 is the ASCII code of 'k'
+            if (this.ggbInterface.getObjectType(currentLabel) === "point") {
+                this.ggbInterface.setCoords(currentLabel, this.ggbInterface.getXcoord(currentLabel), this.ggbInterface.getYcoord(currentLabel) - this.stepSize);
+            }
+        } else if (key.which === 108) { // 108 is the ASCII code of 'l'
+            if (this.ggbInterface.getObjectType(currentLabel) === "point") {
+                this.ggbInterface.setCoords(currentLabel, this.ggbInterface.getXcoord(currentLabel) + this.stepSize, this.ggbInterface.getYcoord(currentLabel));
+            }
+        }
+    }
+
+    addKeyboardEventListeners() {
+        document.addEventListener("keypress", (key) => this.onKeyPress(key));
     }
 }
 
 $(document).ready(() => {
     const server = `http://${window.location.hostname === "" ? "localhost" : window.location.hostname}:8889`;
     console.log(`server is ${server}`);
-    const ggb = new Geogebra();
-    const studentController = new StudentController(io(server), ggb);
-    if(studentController.views.$login_view.is(":visible"))
-    {
+    const studentController = new StudentController(io(server));
+    const login = new Login(studentController);
+    if (studentController.views.$login_view.is(":visible")) {
         const url = new URL(window.location.href);
         const class_id = url.searchParams.get("class_id");
-        if(class_id)
-        {
-           studentController.views.$class_id.val(class_id);
+        if (class_id) {
+            studentController.views.$class_id.val(class_id);
         }
     }
-    const login = new Login(studentController);
+
 });

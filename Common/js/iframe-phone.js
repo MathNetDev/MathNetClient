@@ -182,7 +182,7 @@ module.exports = function IframePhoneRpcEndpoint(handler, namespace, targetWindo
         phone = new ParentEndpoint(targetWindow, targetOrigin);
     }
 
-    phone.addListener(namespace, function(message) {
+    phone.onAddElement(namespace, function(message) {
         var callbackObj;
 
         if (message.messageType === 'call') {

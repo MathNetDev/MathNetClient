@@ -1,23 +1,66 @@
-import $ from "jquery";
+import "jquery";
+import 'jquery-ui/ui/widgets/draggable'
 
 class GeogebraInterface{
-    constructor(){
-        this.$default_toolset = '0|1,501,67,5,19,72,75,76|2,15,45,18,65,7,37|4,3,8,9,13,44,58,47|16,51,64,70|10,34,53,11,24,20,22,21,23|55,56,57,12|36,46,38,49,50,71|30,29,54,32,31,33|17,26,62,73,14,68|25,52,60,61|40,41,42,27,28,35,6';
-        this.currentLabel = '';
-        this.stepSize = 1.0;
-        this.$current_label = $('label[for="cur_label"]');
+    constructor(appletId){
         this.xml_update_ver = 0;
         this.objectCount = 0;
+        this.ignoreUpdates = false;
+        this.appletId = appletId;
+        this.isInitialized = false;
     }
 
-    setSocketInterface(socketInterface){
-        this.socket = socketInterface;
+
+    static initRegistry(){
+        if (!GeogebraInterface.appletRegistry){
+            GeogebraInterface.appletRegistry = {};
+        }
+    }
+    static registerApplet(appletId, initCallback){
+        GeogebraInterface.initRegistry();
+        GeogebraInterface.appletRegistry[appletId] = initCallback;
+    }
+
+    static globalInitHandler(applet){
+        GeogebraInterface.initRegistry();
+        if (GeogebraInterface.appletRegistry[applet]){
+            GeogebraInterface.appletRegistry[applet](applet);
+        }else{
+            console.log(`Could not find applet for ID ${applet}`);
+        }
+    }
+
+    set_captions_unassigned(){
+        const applet = this.applet;
+        const objs = applet.getAllObjectNames();
+        for(let i = 0; i < objs.length; i++){
+            if(applet.getCaption(objs[i]) === ''){
+                applet.setCaption(objs[i], 'unassigned');
+            }
+        }
+    }
+
+    getXML(){
+        return this.applet.getXML();
+    }
+
+    setListener(listener){
+        this.listener = listener;
     }
 //all document.applet (geogebra) calls are documented at http://www.geogebra.org/manual/en/Reference:JavaScript
 
-    addListener(obj_label){
+    onAddElement(obj_label){
+        if (window.location.href.includes("student")){
+            this.applet.registerObjectClickListener(obj_label, (label) => this.onElementClicked(label));
+        }
+
+        if (this.ignoreUpdates)
+            return;
+
         console.log(`add listener called ${JSON.stringify(arguments)}`);
-        this.applet.unregisterUpdateListener("updateListener");
+
+
+        this.ignoreUpdates = true;
         let username;
         if (sessionStorage.getItem('username') != null && sessionStorage.getItem('username') !== "admin")
             username = sessionStorage.getItem('username');
@@ -38,11 +81,17 @@ class GeogebraInterface{
             }
             this.applet.evalCommand("UpdateConstruction()");
             this.send_xml(this.applet.getXML(), this.applet.getXML(new_obj_label), new_obj_label, this.applet.getCommandString(new_obj_label), 'add');
-            this.applet.registerUpdateListener("updateListener");
+            this.ignoreUpdates = false;
         }, 0, obj_label, new_obj_label);
+
+        if(this.listener && this.listener.onElementChange){
+            this.listener.onElementChange(label);
+        }
     }
 
-     updateListener(obj_label){
+     onUpdateElement(obj_label){
+        if (this.ignoreUpdates)
+            return;
          console.log(`update listener called ${JSON.stringify(arguments)}`);
         const ggb_user = this.applet.getCaption(obj_label);
         const username = sessionStorage.getItem('username');
@@ -50,7 +99,7 @@ class GeogebraInterface{
         const type = this.applet.getObjectType(obj_label);
         const isPoint = (type === "point");
 
-        this.applet.unregisterUpdateListener("updateListener");
+        this.ignoreUpdates = true;
         const appletName = this.applet;
 
         if(username !== ggb_user && isPoint && ggb_user !== "unassigned"){
@@ -76,11 +125,13 @@ class GeogebraInterface{
         } else if (ggb_user !== "unassigned" && username === "admin"){
             this.applet.setCaption(obj_label, "unassigned");
         }
-        this.applet.registerUpdateListener("updateListener");
+        this.ignoreUpdates = false;
         this.send_xml(this.applet.getXML(), this.applet.getXML(obj_label), obj_label, this.applet.getCommandString(obj_label), 'update');
     }
 
-    removeListener(obj_label){
+    onRemoveElement(obj_label){
+        if (this.ignoreUpdates)
+            return;
         console.log(`remove listener called ${JSON.stringify(arguments)}`);
         this.send_xml(this.applet.getXML(), null, obj_label, null,'remove');
     }
@@ -105,7 +156,7 @@ class GeogebraInterface{
             xml_update_ver: this.xml_update_ver,
             new_update: true
         };
-        this.socket.xml_update(data);
+        if (this.listener) this.listener.xml_update(data);
         this.xml_update_ver++;
     }
 
@@ -140,10 +191,7 @@ class GeogebraInterface{
             rgb_color = this.hexToRgb(appletName.getColor(obj_label));
         }
 
-        appletName.unregisterAddListener("addListener");
-        appletName.unregisterUpdateListener("updateListener");
-        appletName.unregisterRemoveListener("removeListener");
-
+        this.ignoreUpdates = true;
         if(type_of_req === 'add'){
             if(obj_cmd_str != null && obj_cmd_str != ''){
                 appletName.evalCommand(obj_label + ":" + obj_cmd_str);
@@ -164,10 +212,8 @@ class GeogebraInterface{
         if(rgb_color != null){
             appletName.setColor(obj_label, rgb_color.red, rgb_color.green, rgb_color.blue);
         }
-        this.checkLocks(appletName);
-        appletName.registerAddListener("addListener");
-        appletName.registerUpdateListener("updateListener");
-        appletName.registerRemoveListener("removeListener");
+        this.checkLocks();
+        this.ignoreUpdates = false;
     }
 
 //Function from: https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
@@ -189,75 +235,16 @@ class GeogebraInterface{
 //Used to set the entire XML for student's applets.
 //Usually called when the student logs in for the first time and wants the most updated XML.
     p2pAppletSetXML(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str){
-
-        let appletName = this.applet;
-
-        if (typeof document['applet' + id] !== 'undefined'){
-            appletName = document['applet' + id];
-        }
-
-        //Get Appropriate appletName depending on the Currently Active View/Tab
-        if ($('a[data-toggle="tab"][aria-expanded=true]').html() == "View" && typeof document['applet' + id] !== 'undefined')
-        {
-            appletName = document['applet' + id];
-        }
-        else if ($('a[data-toggle="tab"][aria-expanded=true]').html() == "Filtered Merged View" && typeof document['merged_view_applet' + id] !== 'undefined')
-        {
-            appletName = document['merged_view_applet' + id];
-        }
-        else if($('a[data-toggle="tab"][aria-expanded=true]').html() == "Overlayed Image View" && typeof document['overlayed_image_view_applet' + id] !== 'undefined')
-        {
-            appletName = document['overlayed_image_view_applet' + id];
-        }
-
-        appletName.unregisterAddListener("addListener");
-        appletName.unregisterUpdateListener("updateListener");
-        appletName.unregisterRemoveListener("removeListener");
-
-        const cur_xml = appletName.getXML();
-        const cur_xml_doc = $.parseXML(cur_xml);
-
-        appletName.setXML(xml);
-        this.checkLocks(appletName);
-
-        // If this is the students' website, then we register and add the listeners
-        if(window.location.href.includes("student")){
-            this.registerListeners(cur_xml_doc);
-            this.addArrowButtonsEventlisteners();
-            this.addKeyboardEventListeners();
-        }
-        this.registerGlobalListeners();
+        this.ignoreUpdates = true;
+        this.applet.setXML(xml);
+        this.checkLocks();
+        this.ignoreUpdates = false;
     }
 
 //Used to set the entire XML for the applets on the admin's view tabs.
 //Usually called when the admin logs in for the first time and wants the most updated XML.
     adminP2PAppletSetXML(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str){
-
-        let appletName = this.applet;
-
-        if (typeof document['applet' + id] !== 'undefined'){
-            appletName = document['applet' + id];
-        }
-
-        //Get Appropriate appletName depending on the Currently Active View/Tab
-        if ($('a[data-toggle="tab"][aria-expanded=true]').html() == "View" && typeof document['applet' + id] !== 'undefined')
-        {
-            appletName = document['applet' + id];
-        }
-        else if ($('a[data-toggle="tab"][aria-expanded=true]').html() == "Filtered Merged View" && typeof document['merged_view_applet' + id] !== 'undefined')
-        {
-            appletName = document['merged_view_applet' + id];
-        }
-        else if($('a[data-toggle="tab"][aria-expanded=true]').html() == "Overlayed Image View" && typeof document['overlayed_image_view_applet' + id] !== 'undefined')
-        {
-            appletName = document['overlayed_image_view_applet' + id];
-        }
-
-        //appletName.unregisterAddListener("addListener");
-        //appletName.unregisterUpdateListener("updateListener");
-        //appletName.unregisterRemoveListener("removeListener");
-
-        cur_xml = appletName.getXML();
+        const cur_xml = this.applet.getXML();
         const cur_xml_doc = $.parseXML(cur_xml);
         const cur_construction = $(cur_xml_doc).find('construction')[0];
 
@@ -271,44 +258,24 @@ class GeogebraInterface{
         }
 
         const final_xml = $(cur_xml_doc).find('geogebra')[0].outerHTML;
-        appletName.setXML(final_xml);
-        this.checkLocks(appletName);
+        this.applet.setXML(final_xml);
+        this.checkLocks();
     }
 
 
 //This function takes the new XML, changes it and the old XML to a JSON format, and then
 // parses it, and changes it back to XML to be set in the geogebra applet.
     appletSetExtXML(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str){
-
         //console.log("setXml");
         let appletName = this.applet;
         //console.log('appletSetExtXML id param: ' + id);
         //console.log("Command appletSet: ", obj_cmd_str);
-
-        if (typeof document['applet' + id] !== 'undefined'){
-            appletName = document['applet' + id];
-        }
-
-        //Get Appropriate appletName depending on the Currently Active View/Tab
-        if ($('a[data-toggle="tab"][aria-expanded=true]').html() == "View" && typeof document['applet' + id] !== 'undefined')
-        {
-            appletName = document['applet' + id];
-        }
-        else if ($('a[data-toggle="tab"][aria-expanded=true]').html() == "Filtered Merged View" && typeof document['merged_view_applet' + id] !== 'undefined')
-        {
-            appletName = document['merged_view_applet' + id];
-        }
-        else if($('a[data-toggle="tab"][aria-expanded=true]').html() == "Overlayed Image View" && typeof document['overlayed_image_view_applet' + id] !== 'undefined')
-        {
-            appletName = document['overlayed_image_view_applet' + id];
-        }
-
         if(properties != null && properties.hasOwnProperty('perspective')){
             // need to set the perspective before setting the XML
             appletName.setPerspective(properties['perspective']);
         }
 
-        cur_xml = appletName.getXML();
+        const cur_xml = appletName.getXML();
         const cur_xml_doc = $.parseXML(cur_xml);
         const cur_construction = $(cur_xml_doc).find('construction')[0];
 
@@ -327,10 +294,17 @@ class GeogebraInterface{
                 Object.keys(axis_info).forEach(function(key) {
                     axis_info[key].forEach(function(axis_tag) {
                         if(key === '3D'){
-                            $(cur_xml_doc).find('euclidianView3D')[0].appendChild($.parseXML(axis_tag).children[0]);
+                            const euclidianView = $(cur_xml_doc).find('euclidianView3D');
+                            if (euclidianView.length > 0){
+                                euclidianView[0].appendChild($.parseXML(axis_tag).children[0]);
+                            }
                         }
                         else{
-                            $(cur_xml_doc).find('viewNumber[viewNo=' + key + ']').parent()[0].appendChild($.parseXML(axis_tag).children[0]);
+                            const view =$(cur_xml_doc).find('viewNumber[viewNo=' + key + ']').parent();
+                            if (view.length > 0){
+                                view[0].appendChild($.parseXML(axis_tag).children[0]);
+                            }
+
                         }
                     });
                 });
@@ -374,7 +348,7 @@ class GeogebraInterface{
         if(window.location.href.includes("student")){
             this.rename_admin_labels(appletName);
         }
-        this.checkLocks(appletName);
+        this.checkLocks();
 
         if (toolbar && toolbar !== "undefined" && toolbar !== "null" && toolbar.match(/\d+/g) && properties && properties['perspective']){
             //console.log('setting ' + appletName.id + ' custom toolbar to: ' + toolbar);
@@ -421,126 +395,59 @@ class GeogebraInterface{
             }
         }
 
+        /*
+        This may not be needed
+         */
         // If this is the students' website, then we register and add the listeners
-        if(window.location.href.includes("student")){
-            this.registerListeners(cur_xml_doc);
-            this.addArrowButtonsEventlisteners();
-            this.addKeyboardEventListeners();
-        }
+        // if(window.location.href.includes("student")){
+        //     this.registerListeners(cur_xml_doc);
+        // }
 
-        this.registerGlobalListeners();
+        this.ignoreUpdates = false;
     }
     rename_admin_labels(applet){
+
         const objs = applet.getAllObjectNames();
-        for(i = 0; i < objs.length; i++)
+        this.ignoreUpdates = true;
+        for(let i = 0; i < objs.length; i++){
             applet.renameObject(objs[i], objs[i] + "_{" + sessionStorage.group_id + "}");
+        }
+
+        this.ignoreUpdates = false;
     }
+
 
 
     registerGlobalListeners(){
         console.log('registering listeners');
-        window.addListener = this.addListener.bind(this);
-        this.applet.registerAddListener("addListener");
-        //TODO convert to this style to get rid of the global
-        //this.applet.registerAddListener(this.addListener.bind(this));
+        this.applet.registerAddListener((label)=> {
+            console.log(`element added ${label}`);
+            this.onAddElement(label)
+        });
+        this.applet.registerUpdateListener((label) => this.onUpdateElement(label));
+        this.applet.registerRemoveListener((label) => this.onRemoveElement(label));
 
-        window.updateListener = this.updateListener.bind(this);
-        this.applet.registerUpdateListener("updateListener");
-
-        window.removeListener = this.removeListener.bind(this);
-        this.applet.registerRemoveListener("removeListener");
     }
 
-// This function registers several event listeners only for the students' applet
-    registerListeners(cur_xml_doc){
-        this.applet.registerAddListener((label) => {
-            this.currentLabel = label;
-            this.$current_label.text(this.currentLabel);
-            this.applet.registerObjectClickListener(label, (label) => {
-                this.currentLabel = label;
-                this.$current_label.text(this.currentLabel);
-            });
-        });
-
-        const elements = $(cur_xml_doc).find('construction').find('element');
-
-        if(elements !== undefined){
-            for(let i = 0; i < elements.length; i++){
-                // var obj_type = $(elements[i]).attr('type');
-                // if(obj_type == "point"){
-                const label = $(elements[i]).attr('label');
-
-                this.applet.registerObjectClickListener(label,  (label) => {
-                    this.currentLabel = label;
-                    this.$current_label.text(label);
-                });
-            }
+    onElementClicked(label){
+        if (this.listener && this.listener.onElementChange){
+            this.listener.onElementChange(label);
         }
     }
-
-    addArrowButtonsEventlisteners(){
-        const {
-            $arrow_up_button,
-            $arrow_down_button,
-            $arrow_right_button,
-            $arrow_left_button
-        } = this.socket.views;
-        const currentLabel = this.currentLabel;
-        $arrow_up_button.unbind('click');
-        $arrow_up_button.bind('click', function(){
-            if (this.applet.getObjectType(currentLabel) === "point"){
-                this.applet.setCoords(currentLabel, this.applet.getXcoord(currentLabel), this.applet.getYcoord(currentLabel)+this.stepSize);
-            }
-        });
-        $arrow_down_button.unbind('click');
-        $arrow_down_button.bind('click', function(){
-            if (this.applet.getObjectType(currentLabel) === "point"){
-                this.applet.setCoords(currentLabel, this.applet.getXcoord(currentLabel), this.applet.getYcoord(currentLabel)-this.stepSize);
-            }
-        });
-        $arrow_right_button.unbind('click');
-        $arrow_right_button.bind('click', function(){
-            if (this.applet.getObjectType(currentLabel) === "point"){
-                this.applet.setCoords(currentLabel, this.applet.getXcoord(currentLabel)+this.stepSize, this.applet.getYcoord(currentLabel));
-            }
-        });
-        $arrow_left_button.unbind('click');
-        $arrow_left_button.bind('click', function(){
-            if (this.applet.getObjectType(currentLabel) === "point"){
-                this.applet.setCoords(currentLabel, this.applet.getXcoord(currentLabel)-this.stepSize, this.applet.getYcoord(currentLabel));
-            }
-        });
+    getXcoord(label){
+        this.applet.getXcoord(label);
     }
 
-    addKeyboardEventListeners(keypressHandler){
+    getYcoord(label){
+        this.applet.getYcoord(label);
+    }
 
-        const currentLabel = this.currentLabel;
-        if (this.keypressHandler !== undefined){
-            document.removeEventListener("keypress", this.keypressHandler);
-        }
-        this.keypressHandler = (key) => {
-            if (key.which === 105) { // 105 is the ASCII code of 'i'
-                if (this.applet.getObjectType(currentLabel) === "point"){
-                    this.applet.setCoords(currentLabel, this.applet.getXcoord(currentLabel), this.applet.getYcoord(currentLabel)+this.stepSize);
-                }
-            }
-            else if (key.which === 106) { // 106 is the ASCII code of 'j'
-                if (this.applet.getObjectType(currentLabel) === "point"){
-                    this.applet.setCoords(currentLabel, this.applet.getXcoord(currentLabel)-this.stepSize, this.applet.getYcoord(currentLabel));
-                }
-            }
-            else if (key.which === 107) { // 107 is the ASCII code of 'k'
-                if (this.applet.getObjectType(currentLabel) === "point"){
-                    this.applet.setCoords(currentLabel, this.applet.getXcoord(currentLabel), this.applet.getYcoord(currentLabel)-this.stepSize);
-                }
-            }
-            else if (key.which === 108) { // 108 is the ASCII code of 'l'
-                if (this.applet.getObjectType(currentLabel) === "point"){
-                    this.applet.setCoords(currentLabel, this.applet.getXcoord(currentLabel)+this.stepSize, this.applet.getYcoord(currentLabel));
-                }
-            }
-        };
-        document.addEventListener("keypress", this.keypressHandler.bind(this));
+    getObjectType(label){
+        this.applet.getObjectType(label);
+    }
+
+    setCoords(label, x, y){
+        this.applet.setCoords(label, x, y);
     }
 
 //This clears the local applet view
@@ -549,7 +456,7 @@ class GeogebraInterface{
     }
 
 //This function changes the colors of all elements on the local view to a random color
-    randomizeColors(gen_new_colors, received_colors, applet, r, g, b) {
+    static randomizeColors(gen_new_colors, received_colors, applet, r, g, b) {
         //cur_xml = appletName.getXML();
         const minimum = 0, maximum = 255;
         let colors = [];
@@ -573,23 +480,23 @@ class GeogebraInterface{
             colors = received_colors;
         }
 
-        applet.unregisterUpdateListener("checkUser");
+        //applet.unregisterUpdateListener("checkUser");
         const numelems = applet.getObjectNumber();
         for (let i = 0; i < numelems; i++){
             const name = applet.getObjectName(i);
             if(r === "default"){
                 if (regex.exec(name)){
-                    if(applet.getColor(name) !== "#" + this.rgbToHex(default_line[0], default_line[1], default_line[2])){
+                    if(applet.getColor(name) !== "#" + GeogebraInterface.rgbToHex(default_line[0], default_line[1], default_line[2])){
                         //console.log("Updating color for obj " + name);
                         applet.setColor(name, default_line[0], default_line[1], default_line[2]);
                     }
                 } else {
-                    if(applet.getColor(name) !== "#" + this.rgbToHex(default_point[0], default_point[1], default_point[2])){
+                    if(applet.getColor(name) !== "#" + GeogebraInterface.rgbToHex(default_point[0], default_point[1], default_point[2])){
                         //console.log("Updating color for obj " + name);
                         applet.setColor(name, default_point[0], default_point[1], default_point[2]);
                     }
                 }
-            } else if(applet.getColor(name) !== "#" + this.rgbToHex(colors[0], colors[1], colors[2])){
+            } else if(applet.getColor(name) !== "#" + GeogebraInterface.rgbToHex(colors[0], colors[1], colors[2])){
                 //console.log("Updating color for obj " + name);
                 applet.setColor(name, colors[0], colors[1], colors[2]);
             }
@@ -599,11 +506,11 @@ class GeogebraInterface{
     }
 
 // Converts RGB color to HEX
-    rgbToHex(R,G,B) {
-        return this.toHex(R) + this.toHex(G) + this.toHex(B);
+    static rgbToHex(R, G, B) {
+        return GeogebraInterface.toHex(R) + GeogebraInterface.toHex(G) + GeogebraInterface.toHex(B);
     }
 
-    toHex(n) {
+    static toHex(n) {
         n = parseInt(n,10);
         if (isNaN(n)) return "00";
         n = Math.max(0,Math.min(n,255));
@@ -613,7 +520,8 @@ class GeogebraInterface{
 
 //This function grabs all objects in the construction, and sets a lock on them
 //if the username in the caption is not the current user.
-    checkLocks(appletName){
+    checkLocks(){
+        const appletName = this.applet;
         const numelems = appletName.getObjectNumber();
         for (let i = 0; i < numelems; i++){
             const name = appletName.getObjectName(i);
@@ -640,7 +548,7 @@ class GeogebraInterface{
     updateColors()
     {
         const colors = sessionStorage.getItem('group_colors').split("-");
-        this.randomizeColors(true, [], document.applet, colors[0], colors[1] , colors[2]);
+        GeogebraInterface.randomizeColors(true, [], document.applet, colors[0], colors[1] , colors[2]);
     }
 
 //This function is an add listener added in gbbOnInit()
@@ -787,13 +695,16 @@ class GeogebraInterface{
         }
     }
 
+
     ggbOnInit(applet){
         this.applet = this.appletContainer.getAppletObject();
         this.registerGlobalListeners();
+        this.isInitialized = true;
         $(window).resize(() => {
             this.applet.setHeight($(window).height()/1.3);
         });
-        this.socket.ggbOnInit(applet);
+
+        if (this.listener) this.listener.ggbOnInit(applet);
     }
 
 //This function is called in group_join_response(), initializing the geogebra applet
@@ -880,7 +791,8 @@ class GeogebraInterface{
         params.enable3D = true;
         params.enableCAS = true;
         params.ggbBase64 = ggbBase64;
-        window.ggbOnInit = this.ggbOnInit.bind(this);
+        params.id = this.appletId;
+        GeogebraInterface.registerApplet(this.appletId, this.ggbOnInit.bind(this));
         this.appletContainer = new GGBApplet(params, true);
         let current_path = window.location.pathname;
         current_path = current_path.substring(0,window.location.pathname.lastIndexOf('/'));
@@ -888,7 +800,9 @@ class GeogebraInterface{
 
         this.appletContainer.inject(params.container, 'auto');
     }
-
 }
+
+//Currently (until Chris does a PR to fix this), GGB only looks for the global callback
+window.ggbOnInit = GeogebraInterface.globalInitHandler;
 
 export default GeogebraInterface;

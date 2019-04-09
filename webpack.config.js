@@ -1,8 +1,9 @@
 const path = require('path');
 const webpack = require('webpack');
 module.exports = {
-    entry:{
-        student:"./src/Student.js"
+    entry: {
+        student: "./src/Student.js",
+        admin: "./src/Admin.js"
     },
     devtool: "source-map",
     devServer: {
@@ -17,8 +18,10 @@ module.exports = {
     },
     plugins: [
         new webpack.ProvidePlugin({
-        jQuery: 'jquery',
-        $: 'jquery',
-        jquery: 'jquery'
-    })]
+            jQuery: 'jquery',
+            $: 'jquery',
+            jquery: 'jquery',
+            'window.jQuery': 'jquery',
+            'window.$': 'jquery'
+        })]
 };
