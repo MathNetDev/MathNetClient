@@ -14,7 +14,6 @@ class StudentController {
         this.xmlQueue = new Queue();
         this.xml_update_ver = 0;
         this.alternate_update = 0;
-        this.is_xml_update_queue_empty = false;
         this.setNewXML = true;
         this.socket = socket;
         this.init(this.socket);
@@ -217,20 +216,20 @@ class StudentController {
 
     //handler for xml_change response, appends message to chatbox, and calls appletSetExtXML()
     xml_change_response(username, class_id, group_id, xml, toolbar, properties, obj_xml, obj_label, obj_cmd_str) {
-        this.group_color(sessionStorage.getItem('class_id'), sessionStorage.getItem('group_id'));
         if (properties !== null) {
             sessionStorage.setItem('properties', JSON.stringify(properties));
         } else if (properties === null && sessionStorage.getItem('properties') !== null) {
             properties = JSON.parse(sessionStorage.getItem('properties'));
         }
         this.ggbInterface.appletSetExtXML(xml, toolbar, properties, null, username, obj_xml, obj_label, obj_cmd_str);
-        this.updateGroupColor();
+        //TODO this doesn't do anything atm
+        // this.updateGroupColor();
     }
 
     //handler for xml_update response, appends message to chatbox, and calls appletSetExtXML() (mathnet)
 //TODO: Get rid of other params and keep only data
     xml_update_response(username, class_id, group_id, xml, toolbar, properties, obj_xml, obj_label, obj_cmd_str, type_of_req, recv_xml_update_ver, new_update, data) {
-        if (!this.is_xml_update_queue_empty && new_update) {
+        if (!this.xmlQueue.isEmpty() && new_update) {
             this.xmlQueue.enqueue(data);
             return;
         }
@@ -276,7 +275,7 @@ class StudentController {
             this.xml_update_response(update.username, update.class_id, update.group_id, update.xml, update.toolbar, update.properties, update.obj_xml, update.obj_label, update.obj_cmd_str, update.type_of_req, update.recv_xml_update_ver, false, update.data);
             //}
         }
-        this.is_xml_update_queue_empty = true;
+
     }
 
 

@@ -1,8 +1,8 @@
 import "jquery";
 import 'jquery-ui/ui/widgets/draggable'
 
-class GeogebraInterface{
-    constructor(appletId){
+class GeogebraInterface {
+    constructor(appletId) {
         this.xml_update_ver = 0;
         this.objectCount = 0;
         this.ignoreUpdates = false;
@@ -11,46 +11,50 @@ class GeogebraInterface{
     }
 
 
-    static initRegistry(){
-        if (!GeogebraInterface.appletRegistry){
+    static initRegistry() {
+        if (!GeogebraInterface.appletRegistry) {
             GeogebraInterface.appletRegistry = {};
         }
     }
-    static registerApplet(appletId, initCallback){
+
+    static registerApplet(appletId, initCallback) {
         GeogebraInterface.initRegistry();
         GeogebraInterface.appletRegistry[appletId] = initCallback;
     }
 
-    static globalInitHandler(applet){
+    static globalInitHandler(applet) {
+        console.log(`Initializing ${applet}`);
         GeogebraInterface.initRegistry();
-        if (GeogebraInterface.appletRegistry[applet]){
+        if (GeogebraInterface.appletRegistry[applet]) {
+            console.log(`${applet} has callbacks`);
             GeogebraInterface.appletRegistry[applet](applet);
-        }else{
+        } else {
             console.log(`Could not find applet for ID ${applet}`);
         }
     }
 
-    set_captions_unassigned(){
+    set_captions_unassigned() {
         const applet = this.applet;
         const objs = applet.getAllObjectNames();
-        for(let i = 0; i < objs.length; i++){
-            if(applet.getCaption(objs[i]) === ''){
+        for (let i = 0; i < objs.length; i++) {
+            if (applet.getCaption(objs[i]) === '') {
                 applet.setCaption(objs[i], 'unassigned');
             }
         }
     }
 
-    getXML(){
+    getXML() {
         return this.applet.getXML();
     }
 
-    setListener(listener){
+    setListener(listener) {
         this.listener = listener;
     }
+
 //all document.applet (geogebra) calls are documented at http://www.geogebra.org/manual/en/Reference:JavaScript
 
-    onAddElement(obj_label){
-        if (window.location.href.includes("student")){
+    onAddElement(obj_label) {
+        if (window.location.href.includes("student")) {
             this.applet.registerObjectClickListener(obj_label, (label) => this.onElementClicked(label));
         }
 
@@ -64,8 +68,7 @@ class GeogebraInterface{
         let username;
         if (sessionStorage.getItem('username') != null && sessionStorage.getItem('username') !== "admin")
             username = sessionStorage.getItem('username');
-        else
-        {
+        else {
             username = "unassigned";
         }
 
@@ -76,23 +79,25 @@ class GeogebraInterface{
             this.applet.renameObject(obj_label, new_obj_label);
             this.applet.setCaption(new_obj_label, username);
             const type = this.applet.getObjectType(new_obj_label);
-            if (type === 'point'){
-               this.applet.setLabelStyle(new_obj_label, 3);
+            if (type === 'point') {
+                this.applet.setLabelStyle(new_obj_label, 3);
             }
             this.applet.evalCommand("UpdateConstruction()");
             this.send_xml(this.applet.getXML(), this.applet.getXML(new_obj_label), new_obj_label, this.applet.getCommandString(new_obj_label), 'add');
+            if (this.listener && this.listener.onElementChange) {
+                this.listener.onElementChange(new_obj_label);
+            }
             this.ignoreUpdates = false;
         }, 0, obj_label, new_obj_label);
 
-        if(this.listener && this.listener.onElementChange){
-            this.listener.onElementChange(label);
-        }
+
     }
 
-     onUpdateElement(obj_label){
+    onUpdateElement(obj_label) {
+        console.log(`update listener called ${JSON.stringify(arguments)}`);
         if (this.ignoreUpdates)
             return;
-         console.log(`update listener called ${JSON.stringify(arguments)}`);
+
         const ggb_user = this.applet.getCaption(obj_label);
         const username = sessionStorage.getItem('username');
         const move = this.applet.isMoveable(obj_label);
@@ -102,42 +107,42 @@ class GeogebraInterface{
         this.ignoreUpdates = true;
         const appletName = this.applet;
 
-        if(username !== ggb_user && isPoint && ggb_user !== "unassigned"){
-            if (username !== "admin" && move){
-                if(objType === 'numeric' || objType === 'textfield'){
+        if (username !== ggb_user && isPoint && ggb_user !== "unassigned") {
+            if (username !== "admin" && move) {
+                if (objType === 'numeric' || objType === 'textfield') {
                     appletName.setFixed(name, true, false);
                 } else {
                     appletName.setFixed(name, true);
                 }
-            } else if (username === "admin" && !move){
-                if(objType === 'numeric' || objType === 'textfield'){
+            } else if (username === "admin" && !move) {
+                if (objType === 'numeric' || objType === 'textfield') {
                     appletName.setFixed(name, false, true);
                 } else {
                     appletName.setFixed(name, false);
                 }
             }
-        }else if(username === ggb_user || ggb_user === "unassigned"){
+        } else if (username === ggb_user || ggb_user === "unassigned") {
             this.applet.setFixed(obj_label, false, true);
         }
 
-        if(ggb_user === "unassigned" && username !== "admin" ){
+        if (ggb_user === "unassigned" && username !== "admin") {
             this.applet.setCaption(obj_label, username);
-        } else if (ggb_user !== "unassigned" && username === "admin"){
+        } else if (ggb_user !== "unassigned" && username === "admin") {
             this.applet.setCaption(obj_label, "unassigned");
         }
         this.ignoreUpdates = false;
         this.send_xml(this.applet.getXML(), this.applet.getXML(obj_label), obj_label, this.applet.getCommandString(obj_label), 'update');
     }
 
-    onRemoveElement(obj_label){
+    onRemoveElement(obj_label) {
         if (this.ignoreUpdates)
             return;
         console.log(`remove listener called ${JSON.stringify(arguments)}`);
-        this.send_xml(this.applet.getXML(), null, obj_label, null,'remove');
+        this.send_xml(this.applet.getXML(), null, obj_label, null, 'remove');
     }
 
 //Makes a socket call to the server
-    send_xml(xml, obj_xml, obj_label, obj_cmd_str, type_of_req){
+    send_xml(xml, obj_xml, obj_label, obj_cmd_str, type_of_req) {
         // const $messages = $("#messages");
         const username = sessionStorage.getItem('username');
         const class_id = sessionStorage.getItem('class_id');
@@ -160,56 +165,40 @@ class GeogebraInterface{
         this.xml_update_ver++;
     }
 
-    appletUpdate(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str, type_of_req){
+    appletUpdate(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str, type_of_req) {
         let appletName = this.applet;
 
-        if (typeof document['applet' + id] !== 'undefined'){
-            appletName = document['applet' + id];
-        }
-
-        //Get Appropriate appletName depending on the Currently Active View/Tab
-        if ($('a[data-toggle="tab"][aria-expanded=true]').html() == "View" && typeof document['applet' + id] !== 'undefined')
-        {
-            appletName = document['applet' + id];
-        }
-        else if ($('a[data-toggle="tab"][aria-expanded=true]').html() == "Filtered Merged View" && typeof document['merged_view_applet' + id] !== 'undefined')
-        {
-            appletName = document['merged_view_applet' + id];
-        }
-        else if($('a[data-toggle="tab"][aria-expanded=true]').html() == "Overlayed Image View" && typeof document['overlayed_image_view_applet' + id] !== 'undefined')
-        {
-            appletName = document['overlayed_image_view_applet' + id];
-        }
-
-        if(properties != null && properties.hasOwnProperty('perspective')){
+        if (properties != null && properties.hasOwnProperty('perspective')) {
             // need to set the perspective before setting the XML
             appletName.setPerspective(properties['perspective']);
         }
 
         let rgb_color = null;
-        if(sessionStorage.getItem('admin_secret') != null){
+        if (sessionStorage.getItem('admin_secret') != null) {
             rgb_color = this.hexToRgb(appletName.getColor(obj_label));
         }
 
         this.ignoreUpdates = true;
-        if(type_of_req === 'add'){
-            if(obj_cmd_str != null && obj_cmd_str != ''){
+        if (type_of_req === 'add') {
+            if (obj_cmd_str != null && obj_cmd_str !== '') {
+                console.log(`Evaling command ${obj_label}:${obj_cmd_str}`);
                 appletName.evalCommand(obj_label + ":" + obj_cmd_str);
             }
+            console.log(`Setting XML: add`);
             appletName.evalXML(JSON.parse(obj_xml));
             appletName.evalCommand("UpdateConstruction()");
-        }
-        else if(type_of_req === 'update'){
+        } else if (type_of_req === 'update') {
+            console.log(`Setting XML: update`);
             appletName.evalXML(JSON.parse(obj_xml));
             appletName.evalCommand("UpdateConstruction()");
-        }
-        else if(type_of_req === 'remove'){
+        } else if (type_of_req === 'remove') {
+            console.log(`Removing object`);
             appletName.deleteObject(obj_label);
         }
 
         //Sets object color back to what it was earlier prior to evalXML.
         //Needed for maintaining the color on the admin view tabs.
-        if(rgb_color != null){
+        if (rgb_color) {
             appletName.setColor(obj_label, rgb_color.red, rgb_color.green, rgb_color.blue);
         }
         this.checkLocks();
@@ -220,7 +209,7 @@ class GeogebraInterface{
     hexToRgb(hex) {
         // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
         const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-        hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+        hex = hex.replace(shorthandRegex, function (m, r, g, b) {
             return r + r + g + g + b + b;
         });
 
@@ -234,25 +223,25 @@ class GeogebraInterface{
 
 //Used to set the entire XML for student's applets.
 //Usually called when the student logs in for the first time and wants the most updated XML.
-    p2pAppletSetXML(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str){
-        this.ignoreUpdates = true;
-        this.applet.setXML(xml);
-        this.checkLocks();
-        this.ignoreUpdates = false;
+    p2pAppletSetXML(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str) {
+        // this.ignoreUpdates = true;
+        // this.applet.setXML(xml);
+        // this.checkLocks();
+        // this.ignoreUpdates = false;
     }
 
 //Used to set the entire XML for the applets on the admin's view tabs.
 //Usually called when the admin logs in for the first time and wants the most updated XML.
-    adminP2PAppletSetXML(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str){
+    adminP2PAppletSetXML(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str) {
         const cur_xml = this.applet.getXML();
         const cur_xml_doc = $.parseXML(cur_xml);
         const cur_construction = $(cur_xml_doc).find('construction')[0];
 
-        xml = xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>').replace(/\\"/g, '"').replace(/\\n/g, '').replace(/\\t/g, '');
+        xml = xml.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/\\"/g, '"').replace(/\\n/g, '').replace(/\\t/g, '');
         //xml = xml.substr(xml.indexOf("<"), xml.lastIndexOf(">"));
         const new_xml_doc = $.parseXML(xml);
 
-        if(new_xml_doc !== null){
+        if (new_xml_doc !== null) {
             const new_construction = $(new_xml_doc).find('construction')[0];
             cur_construction.innerHTML = new_construction.innerHTML;
         }
@@ -260,17 +249,16 @@ class GeogebraInterface{
         const final_xml = $(cur_xml_doc).find('geogebra')[0].outerHTML;
         this.applet.setXML(final_xml);
         this.checkLocks();
+        this.registerGlobalListeners();
     }
 
 
 //This function takes the new XML, changes it and the old XML to a JSON format, and then
 // parses it, and changes it back to XML to be set in the geogebra applet.
-    appletSetExtXML(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str){
-        //console.log("setXml");
+    appletSetExtXML(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str) {
+        console.log(`XML is ${xml}`);
         let appletName = this.applet;
-        //console.log('appletSetExtXML id param: ' + id);
-        //console.log("Command appletSet: ", obj_cmd_str);
-        if(properties != null && properties.hasOwnProperty('perspective')){
+        if (properties != null && properties.hasOwnProperty('perspective')) {
             // need to set the perspective before setting the XML
             appletName.setPerspective(properties['perspective']);
         }
@@ -279,29 +267,28 @@ class GeogebraInterface{
         const cur_xml_doc = $.parseXML(cur_xml);
         const cur_construction = $(cur_xml_doc).find('construction')[0];
 
-        xml = xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>').replace(/\\"/g, '"').replace(/\\n/g, '').replace(/\\t/g, '');
+        xml = xml.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/\\"/g, '"').replace(/\\n/g, '').replace(/\\t/g, '');
         xml = xml.substr(xml.indexOf("<"), xml.lastIndexOf(">"));
         const new_xml_doc = $.parseXML(xml);
 
-        if(new_xml_doc !== null){
+        if (new_xml_doc !== null) {
             const new_construction = $(new_xml_doc).find('construction')[0];
             cur_construction.innerHTML = new_construction.innerHTML;
         }
 
-        if(properties != null){
-            if(properties.hasOwnProperty('axes')){
+        if (properties != null) {
+            if (properties.hasOwnProperty('axes')) {
                 const axis_info = properties['axes'];
-                Object.keys(axis_info).forEach(function(key) {
-                    axis_info[key].forEach(function(axis_tag) {
-                        if(key === '3D'){
+                Object.keys(axis_info).forEach(function (key) {
+                    axis_info[key].forEach(function (axis_tag) {
+                        if (key === '3D') {
                             const euclidianView = $(cur_xml_doc).find('euclidianView3D');
-                            if (euclidianView.length > 0){
+                            if (euclidianView.length > 0) {
                                 euclidianView[0].appendChild($.parseXML(axis_tag).children[0]);
                             }
-                        }
-                        else{
-                            const view =$(cur_xml_doc).find('viewNumber[viewNo=' + key + ']').parent();
-                            if (view.length > 0){
+                        } else {
+                            const view = $(cur_xml_doc).find('viewNumber[viewNo=' + key + ']').parent();
+                            if (view.length > 0) {
                                 view[0].appendChild($.parseXML(axis_tag).children[0]);
                             }
 
@@ -309,92 +296,87 @@ class GeogebraInterface{
                     });
                 });
             }
-            if(properties.hasOwnProperty('evSettings')){
+            if (properties.hasOwnProperty('evSettings')) {
                 const evSettings = properties['evSettings'];
-                Object.keys(evSettings).forEach(function(key) {
-                    if(key === '3D'){
+                Object.keys(evSettings).forEach(function (key) {
+                    if (key === '3D') {
                         $(cur_xml_doc).find('euclidianView3D')[0].appendChild($.parseXML(evSettings[key]).children[0]);
-                    }
-                    else{
+                    } else {
                         $(cur_xml_doc).find('viewNumber[viewNo=' + key + ']').parent()[0].appendChild($.parseXML(evSettings[key]).children[0]);
                     }
                 });
             }
-            if(properties.hasOwnProperty('coordSystem')){
+            if (properties.hasOwnProperty('coordSystem')) {
                 const coordSystem = properties['coordSystem'];
-                Object.keys(coordSystem).forEach(function(key) {
-                    if(key === '3D'){
+                Object.keys(coordSystem).forEach(function (key) {
+                    if (key === '3D') {
                         $(cur_xml_doc).find('euclidianView3D > coordSystem').remove();
                         $(cur_xml_doc).find('euclidianView3D')[0].appendChild($.parseXML(coordSystem[key]).children[0]);
-                    }
-                    else{
+                    } else {
                         $(cur_xml_doc).find('viewNumber[viewNo=' + key + '] > coordSystem').remove();
                         $(cur_xml_doc).find('viewNumber[viewNo=' + key + ']').parent()[0].appendChild($.parseXML(coordSystem[key]).children[0]);
                     }
                 });
             }
-            if(properties.hasOwnProperty('plate') && properties['plate'] != undefined){
+            if (properties.hasOwnProperty('plate') && properties['plate'] != undefined) {
                 $(cur_xml_doc).find('plate').attr('show', properties['plate']);
             }
         }
 
-        // console.log($(new_xml_doc).find('geogebra')[0].innerHTML);
-        // console.log($(cur_xml_doc).find('geogebra')[0].innerHTML);
-        // $(cur_xml_doc).find('geogebra')[0].innerHTML = $(new_xml_doc).find('geogebra')[0].innerHTML;
-        // console.log($(cur_xml_doc).find('geogebra')[0].innerHTML);
-        // delete the current autosave object
         const final_xml = $(cur_xml_doc).find('geogebra')[0].outerHTML;
+        this.ignoreUpdates = true;
         appletName.setXML(final_xml);
-        if(window.location.href.includes("student")){
-            this.rename_admin_labels(appletName);
+        this.ignoreUpdates = false;
+        if (window.location.href.includes("student")) {
+            this.rename_admin_labels();
         }
         this.checkLocks();
 
-        if (toolbar && toolbar !== "undefined" && toolbar !== "null" && toolbar.match(/\d+/g) && properties && properties['perspective']){
+        if (toolbar && toolbar !== "undefined" && toolbar !== "null" && toolbar.match(/\d+/g) && properties && properties['perspective']) {
             //console.log('setting ' + appletName.id + ' custom toolbar to: ' + toolbar);
             sessionStorage.setItem('toolbar', toolbar);
-            if (properties.hasOwnProperty('resetToolbar')){
-                if(properties['resetToolbar']){
+            if (properties.hasOwnProperty('resetToolbar')) {
+                if (properties['resetToolbar']) {
                     sessionStorage.setItem('toolbar-record', toolbar);
                 }
-                if(sessionStorage.getItem('toolbar-record')){
+                if (sessionStorage.getItem('toolbar-record')) {
                     appletName.setCustomToolBar(sessionStorage.getItem('toolbar-record'));
                 }
             } else {
                 appletName.setCustomToolBar(toolbar);
             }
         }
-        if (properties != null){
+        if (properties != null) {
             // need to set the grid and axes visibility after setXML
-            if(properties.hasOwnProperty('axis_display')){
+            if (properties.hasOwnProperty('axis_display')) {
                 appletName.setAxesVisible(1, properties['axis_display'], properties['axis_display']);
             }
-            if(properties.hasOwnProperty('grid_display')){
+            if (properties.hasOwnProperty('grid_display')) {
                 appletName.setGridVisible(properties['grid_display']);
             }
-            if(properties.hasOwnProperty('axis_steps')){
+            if (properties.hasOwnProperty('axis_steps')) {
                 appletName.setAxisSteps(1, properties['axis_steps']['x'], properties['axis_steps']['y'], properties['axis_steps']['z']);
             }
-            if(properties.hasOwnProperty('coord_system')){
-                appletName.setCoordSystem(properties['coord_system']['x_min'] ,properties['coord_system']['x_max'], properties['coord_system']['y_min'], properties['coord_system']['y_max']);
+            if (properties.hasOwnProperty('coord_system')) {
+                appletName.setCoordSystem(properties['coord_system']['x_min'], properties['coord_system']['x_max'], properties['coord_system']['y_min'], properties['coord_system']['y_max']);
             }
 
             /* Set Applet's Graphics 2 Window Parameters if Present */
-            if(properties.hasOwnProperty('g2axis_display')){
+            if (properties.hasOwnProperty('g2axis_display')) {
                 appletName.setAxesVisible(2, properties['g2axis_display'], properties['g2axis_display']);
             }
-            if(properties.hasOwnProperty('g2grid_display')){
-                appletName.setGridVisible(2,properties['g2grid_display']);
+            if (properties.hasOwnProperty('g2grid_display')) {
+                appletName.setGridVisible(2, properties['g2grid_display']);
             }
-            if(properties.hasOwnProperty('g2axis_steps')){
+            if (properties.hasOwnProperty('g2axis_steps')) {
                 appletName.setAxisSteps(2, properties['g2axis_steps']['x'], properties['g2axis_steps']['y'], properties['g2axis_steps']['z']);
             }
-            if(properties.hasOwnProperty('g2coord_system')){
+            if (properties.hasOwnProperty('g2coord_system')) {
                 appletName.evalCommand('SetActiveView(2)');
-                appletName.evalCommand('ZoomIn('+properties['g2coord_system']['x_min']+','+properties['g2coord_system']['y_min']+','+properties['g2coord_system']['x_max']+','+properties['g2coord_system']['y_max']+')');
+                appletName.evalCommand('ZoomIn(' + properties['g2coord_system']['x_min'] + ',' + properties['g2coord_system']['y_min'] + ',' + properties['g2coord_system']['x_max'] + ',' + properties['g2coord_system']['y_max'] + ')');
             }
         }
-
+        // this.registerGlobalListeners();
         /*
         This may not be needed
          */
@@ -403,55 +385,62 @@ class GeogebraInterface{
         //     this.registerListeners(cur_xml_doc);
         // }
 
-        this.ignoreUpdates = false;
-    }
-    rename_admin_labels(applet){
+        this.registerGlobalListeners();
 
-        const objs = applet.getAllObjectNames();
+    }
+
+    rename_admin_labels() {
+
+        const objs = this.applet.getAllObjectNames();
         this.ignoreUpdates = true;
-        for(let i = 0; i < objs.length; i++){
-            applet.renameObject(objs[i], objs[i] + "_{" + sessionStorage.group_id + "}");
+        for (let i = 0; i < objs.length; i++) {
+            this.applet.renameObject(objs[i], objs[i] + "_{" + sessionStorage.group_id + "}");
         }
-
         this.ignoreUpdates = false;
     }
 
 
-
-    registerGlobalListeners(){
+    registerGlobalListeners() {
         console.log('registering listeners');
-        this.applet.registerAddListener((label)=> {
-            console.log(`element added ${label}`);
-            this.onAddElement(label)
-        });
-        this.applet.registerUpdateListener((label) => this.onUpdateElement(label));
-        this.applet.registerRemoveListener((label) => this.onRemoveElement(label));
+
+        this.applet.unregisterAddListener(`addListener${this.appletId}`);
+        window[`addListener${this.appletId}`] = (label) => this.onAddElement(label);
+        this.applet.registerAddListener(`addListener${this.appletId}`);
+
+        this.applet.unregisterUpdateListener(`updateListener${this.appletId}`);
+        window[`updateListener${this.appletId}`] = (label) => this.onUpdateElement(label);
+        this.applet.registerUpdateListener(`updateListener${this.appletId}`);
+
+        this.applet.unregisterRemoveListener(`removeListener${this.appletId}`);
+        window[`removeListener${this.appletId}`] = (label) => this.onRemoveElement(label);
+        this.applet.registerRemoveListener(`removeListener${this.appletId}`);
 
     }
 
-    onElementClicked(label){
-        if (this.listener && this.listener.onElementChange){
+    onElementClicked(label) {
+        if (this.listener && this.listener.onElementChange) {
             this.listener.onElementChange(label);
         }
     }
-    getXcoord(label){
+
+    getXcoord(label) {
         this.applet.getXcoord(label);
     }
 
-    getYcoord(label){
+    getYcoord(label) {
         this.applet.getYcoord(label);
     }
 
-    getObjectType(label){
+    getObjectType(label) {
         this.applet.getObjectType(label);
     }
 
-    setCoords(label, x, y){
+    setCoords(label, x, y) {
         this.applet.setCoords(label, x, y);
     }
 
 //This clears the local applet view
-    clearApplet(appletName){
+    clearApplet(appletName) {
         appletName.reset();
     }
 
@@ -460,43 +449,40 @@ class GeogebraInterface{
         //cur_xml = appletName.getXML();
         const minimum = 0, maximum = 255;
         let colors = [];
-        const default_point = [0,0,255];
-        const default_line = [153,51,0];
+        const default_point = [0, 0, 255];
+        const default_line = [153, 51, 0];
         const regex = /[a-z]+/;
 
         //If Colors Already Generated then Use the Colors sent in the Parameter
-        if(gen_new_colors)
-        {
-            if (r !== undefined && g !== undefined && b !== undefined){
+        if (gen_new_colors) {
+            if (r !== undefined && g !== undefined && b !== undefined) {
                 colors.push(r, g, b);
             } else {
-                for(let i = 0; i < 3; i++){
+                for (let i = 0; i < 3; i++) {
                     colors.push(Math.floor(Math.random() * (maximum - minimum + 1)) + minimum);
                 } //this is your color
             }
-        }
-        else
-        {
+        } else {
             colors = received_colors;
         }
 
         //applet.unregisterUpdateListener("checkUser");
         const numelems = applet.getObjectNumber();
-        for (let i = 0; i < numelems; i++){
+        for (let i = 0; i < numelems; i++) {
             const name = applet.getObjectName(i);
-            if(r === "default"){
-                if (regex.exec(name)){
-                    if(applet.getColor(name) !== "#" + GeogebraInterface.rgbToHex(default_line[0], default_line[1], default_line[2])){
+            if (r === "default") {
+                if (regex.exec(name)) {
+                    if (applet.getColor(name) !== "#" + GeogebraInterface.rgbToHex(default_line[0], default_line[1], default_line[2])) {
                         //console.log("Updating color for obj " + name);
                         applet.setColor(name, default_line[0], default_line[1], default_line[2]);
                     }
                 } else {
-                    if(applet.getColor(name) !== "#" + GeogebraInterface.rgbToHex(default_point[0], default_point[1], default_point[2])){
+                    if (applet.getColor(name) !== "#" + GeogebraInterface.rgbToHex(default_point[0], default_point[1], default_point[2])) {
                         //console.log("Updating color for obj " + name);
                         applet.setColor(name, default_point[0], default_point[1], default_point[2]);
                     }
                 }
-            } else if(applet.getColor(name) !== "#" + GeogebraInterface.rgbToHex(colors[0], colors[1], colors[2])){
+            } else if (applet.getColor(name) !== "#" + GeogebraInterface.rgbToHex(colors[0], colors[1], colors[2])) {
                 //console.log("Updating color for obj " + name);
                 applet.setColor(name, colors[0], colors[1], colors[2]);
             }
@@ -511,32 +497,32 @@ class GeogebraInterface{
     }
 
     static toHex(n) {
-        n = parseInt(n,10);
+        n = parseInt(n, 10);
         if (isNaN(n)) return "00";
-        n = Math.max(0,Math.min(n,255));
-        return "0123456789ABCDEF".charAt((n-n%16)/16)
-            + "0123456789ABCDEF".charAt(n%16);
+        n = Math.max(0, Math.min(n, 255));
+        return "0123456789ABCDEF".charAt((n - n % 16) / 16)
+            + "0123456789ABCDEF".charAt(n % 16);
     }
 
 //This function grabs all objects in the construction, and sets a lock on them
 //if the username in the caption is not the current user.
-    checkLocks(){
+    checkLocks() {
         const appletName = this.applet;
         const numelems = appletName.getObjectNumber();
-        for (let i = 0; i < numelems; i++){
+        for (let i = 0; i < numelems; i++) {
             const name = appletName.getObjectName(i);
             const ggb_user = appletName.getCaption(name);
             const username = sessionStorage.getItem('username');
             const objType = appletName.getObjectType(name);
 
-            if ((username !== ggb_user && username !== "admin") && ggb_user !== "unassigned"){
-                if(objType === 'numeric' || objType === 'textfield'){
+            if ((username !== ggb_user && username !== "admin") && ggb_user !== "unassigned") {
+                if (objType === 'numeric' || objType === 'textfield') {
                     appletName.setFixed(name, true, false);
                 } else {
                     appletName.setFixed(name, true);
                 }
-            } else if (username === ggb_user || username === "admin"){
-                if(objType === 'numeric' || objType === 'textfield'){
+            } else if (username === ggb_user || username === "admin") {
+                if (objType === 'numeric' || objType === 'textfield') {
                     appletName.setFixed(name, false, true);
                 } else {
                     appletName.setFixed(name, false);
@@ -545,26 +531,24 @@ class GeogebraInterface{
         }
     }
 
-    updateColors()
-    {
+    updateColors() {
         const colors = sessionStorage.getItem('group_colors').split("-");
-        GeogebraInterface.randomizeColors(true, [], document.applet, colors[0], colors[1] , colors[2]);
+        GeogebraInterface.randomizeColors(true, [], document.applet, colors[0], colors[1], colors[2]);
     }
 
 //This function is an add listener added in gbbOnInit()
 //It adds a caption to the new object with the local user's class username,
 // and can add a lock onto it.
-    addLock(object){
+    addLock(object) {
         let username;
-        if(sessionStorage.getItem('username') != null && sessionStorage.getItem('username') !== "admin"){
+        if (sessionStorage.getItem('username') != null && sessionStorage.getItem('username') !== "admin") {
             username = sessionStorage.getItem('username');
-        }
-        else{
+        } else {
             username = "unassigned";
         }
         this.applet.setCaption(object, username);
         const type = this.applet.getObjectType(object);
-        if (type === 'point'){
+        if (type === 'point') {
             this.applet.setLabelStyle(object, 3);
         }
         //updateColors();
@@ -613,102 +597,102 @@ class GeogebraInterface{
     }*/
 
 //This function appends a set of button toolbar items to a container
-    getToolbarIcons(container){
+    getToolbarIcons(container) {
         container = typeof container !== 'undefined' ? container : '.toolbox';
         const icons = [
-            {"name":"Move", "mode":0, "src":"./images/Mode_move.svg"},
-            {"name":"Point", "mode":1, "src":"./images/Mode_point.svg"},
-            {"name":"Join", "mode":2, "src":"./images/Mode_join.svg"},
-            {"name":"Parallel", "mode":3, "src":"./images/Mode_parallel.svg"},
-            {"name":"Orthogonal", "mode":4, "src":"./images/Mode_orthogonal.svg"},
-            {"name":"Intersect", "mode":5, "src":"./images/Mode_intersect.svg"},
-            {"name":"Delete", "mode":6, "src":"./images/Mode_delete.svg"},
-            {"name":"Vector", "mode":7, "src":"./images/Mode_vector.svg"},
-            {"name":"Line_Bisector", "mode":8, "src":"./images/Mode_linebisector.svg"},
-            {"name":"Angular_Bisector", "mode":9, "src":"./images/Mode_angularbisector.svg"},
-            {"name":"Circle_Two_Points", "mode":10, "src":"./images/Mode_circle2.svg"},
-            {"name":"Circle_Three_Points", "mode":11, "src":"./images/Mode_circle3.svg"},
-            {"name":"Conic_Five_Points", "mode":12, "src":"./images/Mode_conic5.svg"},
-            {"name":"Tangents", "mode":13, "src":"./images/Mode_tangent.svg"},
-            {"name":"Relation", "mode":14, "src":"./images/Mode_relation.svg"},
-            {"name":"Segment", "mode":15, "src":"./images/Mode_segment.svg"},
-            {"name":"Polygon", "mode":16, "src":"./images/Mode_polygon.svg"},
-            {"name":"Text", "mode":17, "src":"./images/Mode_text.svg"},
-            {"name":"Ray", "mode":18, "src":"./images/Mode_ray.svg"},
-            {"name":"Midpoint", "mode":19, "src":"./images/Mode_midpoint.svg"},
-            {"name":"Circle_Arc_Three_Points", "mode":20, "src":"./images/Mode_circlearc3.svg"},
-            {"name":"Circle_Sector_Three_Points", "mode":21, "src":"./images/Mode_circlesector3.svg"},
-            {"name":"Circumcircle_Arc_Three_Points", "mode":22, "src":"./images/Mode_circumcirclearc3.svg"},
-            {"name":"Circumcircle_Sector_Three_Points", "mode":23, "src":"./images/Mode_circumcirclesector3.svg"},
-            {"name":"Semicircle", "mode":24, "src":"./images/Mode_semicircle.svg"},
-            {"name":"Slider", "mode":25, "src":"./images/Mode_slider.svg"},
-            {"name":"Image", "mode":26, "src":"./images/Mode_image.svg"},
-            {"name":"Show_Hide_Object", "mode":27, "src":"./images/Mode_showhideobject.svg"},
-            {"name":"Show_Hide_Label", "mode":28, "src":"./images/Mode_showhidelabel.svg"},
-            {"name":"Mirror_At_Point", "mode":29, "src":"./images/Mode_mirroratpoint.svg"},
-            {"name":"Mirror_At_Line", "mode":30, "src":"./images/Mode_mirroratline.svg"},
-            {"name":"Translate_By_Vector", "mode":31, "src":"./images/Mode_translatebyvector.svg"},
-            {"name":"Rotate_By_Angle", "mode":32, "src":"./images/Mode_rotatebyangle.svg"},
-            {"name":"Dilate_From_Point", "mode":33, "src":"./images/Mode_dilatefrompoint.svg"},
-            {"name":"Circle_Point_Radius", "mode":34, "src":"./images/Mode_circlepointradius.svg"},
-            {"name":"Copy_Visual_Style", "mode":35, "src":"./images/Mode_copyvisualstyle.svg"},
-            {"name":"Angle", "mode":36, "src":"./images/Mode_angle.svg"},
-            {"name":"Vector_From_Point", "mode":37, "src":"./images/Mode_vectorfrompoint.svg"},
-            {"name":"Distance", "mode":38, "src":"./images/Mode_distance.svg"},
-            {"name":"Move_Rotate", "mode":39, "src":"./images/Mode_moverotate.svg"},
-            {"name":"Translateview", "mode":40, "src":"./images/Mode_translateview.svg"},
-            {"name":"Zoom_In", "mode":41, "src":"./images/Mode_zoomin.svg"},
-            {"name":"Zoom_Out", "mode":42, "src":"./images/Mode_zoomout.svg"},
-            {"name":"Polar_Diameter", "mode":44, "src":"./images/Mode_polardiameter.svg"},
-            {"name":"Segment_Fixed", "mode":45, "src":"./images/Mode_segmentfixed.svg"},
-            {"name":"Angle_Fixed", "mode":46, "src":"./images/Mode_anglefixed.svg"},
-            {"name":"Locus", "mode":47, "src":"./images/Mode_locus.svg"},
-            {"name":"Macro", "mode":48, "src":"./images/Mode_tool.svg"},
-            {"name":"Area", "mode":49, "src":"./images/Mode_area.svg"},
-            {"name":"Slope", "mode":50, "src":"./images/Mode_slope.svg"},
-            {"name":"Regular_Polygon", "mode":51, "src":"./images/Mode_regularpolygon.svg"},
-            {"name":"Show_Hide_Checkbox", "mode":52, "src":"./images/Mode_showcheckbox.svg"},
-            {"name":"Compasses", "mode":53, "src":"./images/Mode_compasses.svg"},
-            {"name":"Mirror_At_Circle", "mode":54, "src":"./images/Mode_mirroratcircle.svg"},
-            {"name":"Ellipse_Three_Points", "mode":55, "src":"./images/Mode_ellipse3.svg"},
-            {"name":"Hyperbola_Three_Points", "mode":56, "src":"./images/Mode_hyperbola3.svg"},
-            {"name":"Parabola", "mode":57, "src":"./images/Mode_parabola.svg"},
-            {"name":"Fitline", "mode":58, "src":"./images/Mode_fitline.svg"},
-            {"name":"Record_To_Spreadsheet", "mode":59, "src":"./images/Mode_recordtospreadsheet.svg"},
-            {"name":"Attach_Detach_Point","mode":67,"src":"./images/Mode_attachdetachpoint.svg"}
+            {"name": "Move", "mode": 0, "src": "./images/Mode_move.svg"},
+            {"name": "Point", "mode": 1, "src": "./images/Mode_point.svg"},
+            {"name": "Join", "mode": 2, "src": "./images/Mode_join.svg"},
+            {"name": "Parallel", "mode": 3, "src": "./images/Mode_parallel.svg"},
+            {"name": "Orthogonal", "mode": 4, "src": "./images/Mode_orthogonal.svg"},
+            {"name": "Intersect", "mode": 5, "src": "./images/Mode_intersect.svg"},
+            {"name": "Delete", "mode": 6, "src": "./images/Mode_delete.svg"},
+            {"name": "Vector", "mode": 7, "src": "./images/Mode_vector.svg"},
+            {"name": "Line_Bisector", "mode": 8, "src": "./images/Mode_linebisector.svg"},
+            {"name": "Angular_Bisector", "mode": 9, "src": "./images/Mode_angularbisector.svg"},
+            {"name": "Circle_Two_Points", "mode": 10, "src": "./images/Mode_circle2.svg"},
+            {"name": "Circle_Three_Points", "mode": 11, "src": "./images/Mode_circle3.svg"},
+            {"name": "Conic_Five_Points", "mode": 12, "src": "./images/Mode_conic5.svg"},
+            {"name": "Tangents", "mode": 13, "src": "./images/Mode_tangent.svg"},
+            {"name": "Relation", "mode": 14, "src": "./images/Mode_relation.svg"},
+            {"name": "Segment", "mode": 15, "src": "./images/Mode_segment.svg"},
+            {"name": "Polygon", "mode": 16, "src": "./images/Mode_polygon.svg"},
+            {"name": "Text", "mode": 17, "src": "./images/Mode_text.svg"},
+            {"name": "Ray", "mode": 18, "src": "./images/Mode_ray.svg"},
+            {"name": "Midpoint", "mode": 19, "src": "./images/Mode_midpoint.svg"},
+            {"name": "Circle_Arc_Three_Points", "mode": 20, "src": "./images/Mode_circlearc3.svg"},
+            {"name": "Circle_Sector_Three_Points", "mode": 21, "src": "./images/Mode_circlesector3.svg"},
+            {"name": "Circumcircle_Arc_Three_Points", "mode": 22, "src": "./images/Mode_circumcirclearc3.svg"},
+            {"name": "Circumcircle_Sector_Three_Points", "mode": 23, "src": "./images/Mode_circumcirclesector3.svg"},
+            {"name": "Semicircle", "mode": 24, "src": "./images/Mode_semicircle.svg"},
+            {"name": "Slider", "mode": 25, "src": "./images/Mode_slider.svg"},
+            {"name": "Image", "mode": 26, "src": "./images/Mode_image.svg"},
+            {"name": "Show_Hide_Object", "mode": 27, "src": "./images/Mode_showhideobject.svg"},
+            {"name": "Show_Hide_Label", "mode": 28, "src": "./images/Mode_showhidelabel.svg"},
+            {"name": "Mirror_At_Point", "mode": 29, "src": "./images/Mode_mirroratpoint.svg"},
+            {"name": "Mirror_At_Line", "mode": 30, "src": "./images/Mode_mirroratline.svg"},
+            {"name": "Translate_By_Vector", "mode": 31, "src": "./images/Mode_translatebyvector.svg"},
+            {"name": "Rotate_By_Angle", "mode": 32, "src": "./images/Mode_rotatebyangle.svg"},
+            {"name": "Dilate_From_Point", "mode": 33, "src": "./images/Mode_dilatefrompoint.svg"},
+            {"name": "Circle_Point_Radius", "mode": 34, "src": "./images/Mode_circlepointradius.svg"},
+            {"name": "Copy_Visual_Style", "mode": 35, "src": "./images/Mode_copyvisualstyle.svg"},
+            {"name": "Angle", "mode": 36, "src": "./images/Mode_angle.svg"},
+            {"name": "Vector_From_Point", "mode": 37, "src": "./images/Mode_vectorfrompoint.svg"},
+            {"name": "Distance", "mode": 38, "src": "./images/Mode_distance.svg"},
+            {"name": "Move_Rotate", "mode": 39, "src": "./images/Mode_moverotate.svg"},
+            {"name": "Translateview", "mode": 40, "src": "./images/Mode_translateview.svg"},
+            {"name": "Zoom_In", "mode": 41, "src": "./images/Mode_zoomin.svg"},
+            {"name": "Zoom_Out", "mode": 42, "src": "./images/Mode_zoomout.svg"},
+            {"name": "Polar_Diameter", "mode": 44, "src": "./images/Mode_polardiameter.svg"},
+            {"name": "Segment_Fixed", "mode": 45, "src": "./images/Mode_segmentfixed.svg"},
+            {"name": "Angle_Fixed", "mode": 46, "src": "./images/Mode_anglefixed.svg"},
+            {"name": "Locus", "mode": 47, "src": "./images/Mode_locus.svg"},
+            {"name": "Macro", "mode": 48, "src": "./images/Mode_tool.svg"},
+            {"name": "Area", "mode": 49, "src": "./images/Mode_area.svg"},
+            {"name": "Slope", "mode": 50, "src": "./images/Mode_slope.svg"},
+            {"name": "Regular_Polygon", "mode": 51, "src": "./images/Mode_regularpolygon.svg"},
+            {"name": "Show_Hide_Checkbox", "mode": 52, "src": "./images/Mode_showcheckbox.svg"},
+            {"name": "Compasses", "mode": 53, "src": "./images/Mode_compasses.svg"},
+            {"name": "Mirror_At_Circle", "mode": 54, "src": "./images/Mode_mirroratcircle.svg"},
+            {"name": "Ellipse_Three_Points", "mode": 55, "src": "./images/Mode_ellipse3.svg"},
+            {"name": "Hyperbola_Three_Points", "mode": 56, "src": "./images/Mode_hyperbola3.svg"},
+            {"name": "Parabola", "mode": 57, "src": "./images/Mode_parabola.svg"},
+            {"name": "Fitline", "mode": 58, "src": "./images/Mode_fitline.svg"},
+            {"name": "Record_To_Spreadsheet", "mode": 59, "src": "./images/Mode_recordtospreadsheet.svg"},
+            {"name": "Attach_Detach_Point", "mode": 67, "src": "./images/Mode_attachdetachpoint.svg"}
         ];
 
-        for(let i = 0; i < icons.length; i++){
+        for (let i = 0; i < icons.length; i++) {
             const data = icons[i];
             const b = $('<div>');
             const img = $('<img>');
 
-            img.attr('src',data.src);
-            img.attr('alt',data.name);
+            img.attr('src', data.src);
+            img.attr('alt', data.name);
 
             b.append(img);
             b.addClass('btn-toolbox');
             b.attr('data-mode', data.mode);
-            b.draggable({ revert: true });
+            b.draggable({revert: true});
 
             $(container).append(b);
         }
     }
 
 
-    ggbOnInit(applet){
+    ggbOnInit(applet) {
         this.applet = this.appletContainer.getAppletObject();
         this.registerGlobalListeners();
         this.isInitialized = true;
         $(window).resize(() => {
-            this.applet.setHeight($(window).height()/1.3);
+            this.applet.setHeight($(window).height() / 1.3);
         });
 
         if (this.listener) this.listener.ggbOnInit(applet);
     }
 
 //This function is called in group_join_response(), initializing the geogebra applet
-    appletInit(params){
+    appletInit(params) {
         const ggbBase64 = "UEsDBBQACAgIAJhspkgAAAAAAAAAAAAAAAAWAAAAZ2VvZ2VicmFfdGh1bWJuYWlsLnBuZ92W6Tfb2xrHfyEqjUPC" +
             "EVSRkJprOM1t1VUSoijXFKXGNr1majgNikiE1jGUamNoe80zoaG0Yix6zmqoGnrMpRE1K6VHCa1yf/fN/Q/uXeucN3vv9Xz3Wvv7PG" +
             "s/n71THewsxeHycAAAxC9ZmZMAAAIugR7YMXDEPA39FZwgFJKlGcAeVFgFAHjKJXPTy9GQjffxAWPOctzP/hS7E8TTwuLSp3AOieTs" +
@@ -795,7 +779,7 @@ class GeogebraInterface{
         GeogebraInterface.registerApplet(this.appletId, this.ggbOnInit.bind(this));
         this.appletContainer = new GGBApplet(params, true);
         let current_path = window.location.pathname;
-        current_path = current_path.substring(0,window.location.pathname.lastIndexOf('/'));
+        current_path = current_path.substring(0, window.location.pathname.lastIndexOf('/'));
         this.appletContainer.setHTML5Codebase(current_path + '/5.0/web3d/');
 
         this.appletContainer.inject(params.container, 'auto');

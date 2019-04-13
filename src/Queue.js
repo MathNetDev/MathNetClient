@@ -28,7 +28,7 @@ function Queue(){
 
   // Returns true if the queue is empty, and false otherwise.
   this.isEmpty = function(){
-    return (queue.length == 0);
+    return (queue.length === 0);
   }
 
   /* Enqueues the specified item. The parameter is:

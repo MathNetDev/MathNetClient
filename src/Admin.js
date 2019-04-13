@@ -454,7 +454,7 @@ class Admin {
             //Gets axis tags for each of the views: Graphics 1, Graphics 2 and 3D Graphics
             //which are finally added to the properties
             const axis_info = {};
-            $(xml).find('axis').each((index) => {
+            $(xml).find('axis').each(function(index){
                 let viewNo = $(this).parent().find('viewNumber').attr('viewNo');
                 if(!viewNo){
                     viewNo = '3D';
@@ -470,7 +470,7 @@ class Admin {
             //Gets evSettings for each of the views: Graphics 1, Graphics 2 and 3D Graphics
             //which are finally added to the properties
             const evSettings = {};
-            $(xml).find('evSettings').each((index) => {
+            $(xml).find('evSettings').each(function(index) {
                 let viewNo = $(this).parent().find('viewNumber').attr('viewNo');
                 if(!viewNo){
                     viewNo = '3D';
@@ -481,7 +481,7 @@ class Admin {
             //Gets coordSystem for each of the views: Graphics 1, Graphics 2 and 3D Graphics
             //which are finally added to the properties
             const coordSystem = {};
-            $(xml).find('coordSystem').each((index) => {
+            $(xml).find('coordSystem').each(function(index){
                 let viewNo = $(this).parent().find('viewNumber').attr('viewNo');
                 if(!viewNo){
                     viewNo = '3D';
@@ -501,7 +501,7 @@ class Admin {
                 $('.construction_groups option').prop('selected', true);
                 construction_groups = $('.construction_groups').val();
             }
-            const visible_views = $(xml).find('view').filter((index) => {
+            const visible_views = $(xml).find('view').filter(function(index){
                 return $( this ).attr( "visible" ) === "true";
             });
 
@@ -575,7 +575,7 @@ class Admin {
                     username: 'admin',
                     class_id: sessionStorage.getItem('admin_class_id'),
                     group_id: construction_groups[i],
-                    xml: xml,
+                    xml: new XMLSerializer().serializeToString(xml),
                     toolbar: toolbar,
                     toolbar_user: 'admin',
                     properties: {'perspective': perspectives_mapped === ''? 'AG': perspectives_mapped,
@@ -1932,15 +1932,14 @@ class Admin {
                 member += group[i].member_name;
                 member += '</li></ul></li>';
 
-                const real_member = '<p id="l' + group[i].member_name + '"style = "text-align : center; color: white;">' + group[i].member_name;
-                +'</p>';
+                const real_member = '<p id="l' + group[i].member_name + '"style = "text-align : center; color: white;">' + group[i].member_name +'</p>';
 
                 $people.append(member);
                 $real_people.append(real_member);
             }
         } else {
             username = username.replace(/&lt;/g, "<").replace(/&gt;/g, ">");
-            username = escapeStr(username);
+            username = this.escapeStr(username);
             $('li[id="' + username + '"]').remove();
             $('p[id="l' + username + '"]').remove();
         }
