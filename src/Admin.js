@@ -2102,19 +2102,19 @@ class Admin {
         }
         const tab = $('a[data-toggle="tab"][aria-expanded=true]').html();
         if (tab === "View") {
-            this.appletUpdate(xml, toolbar, null, group_id, username, obj_xml, obj_label, obj_cmd_str, type_of_req);
+            this.applets[group_id - 1].appletUpdate(xml, toolbar, null, group_id, username, obj_xml, obj_label, obj_cmd_str, type_of_req);
             if ($('.unmergeview_button').is(":visible") && $('#myonoffswitchmerge').is(':checked')) {
                 this.view_merge(this);
             }
         } else if (tab === "Filtered Merged View") {
-            this.appletUpdate(xml, toolbar, null, group_id, username, obj_xml, obj_label, obj_cmd_str, type_of_req);
+            this.applets[group_id - 1].appletUpdate(xml, toolbar, null, group_id, username, obj_xml, obj_label, obj_cmd_str, type_of_req);
             if ($('.filtered_unmergeview_button').is(":visible") && $('#myonoffswitchfilteredmerge').is(':checked')) {
                 this.filtered_view_merge(this);
             }
         } else if (tab === "Overlayed Image View") {
             $('#img_' + group_id + '').remove();
 
-            this.appletUpdate(xml, toolbar, null, group_id, username, obj_xml, obj_label, obj_cmd_str, type_of_req);
+            this.applets[group_id - 1].appletUpdate(xml, toolbar, null, group_id, username, obj_xml, obj_label, obj_cmd_str, type_of_req);
 
             const img = '<img src="data:image/png;base64,' + document['overlayed_image_view_applet' + group_id].getPNGBase64(1.5, true, undefined) + '" id="img_' + group_id + '" style="position:absolute;">';
             $('#overlayed_image_div .panel-body').append(img);
@@ -2125,20 +2125,20 @@ class Admin {
     xml_change_response(username, class_id, group_id, xml, toolbar) {
         const tab = $('a[data-toggle="tab"][aria-expanded=true]').html();
         if (tab === "View") {
-            this.appletSetExtXML(xml, toolbar, null, group_id);
+            this.applets[group_id - 1].appletSetExtXML(xml, toolbar, null, group_id);
             if ($('.unmergeview_button').is(":visible") && $('#myonoffswitchmerge').is(':checked')) {
                 this.view_merge(this);
             }
 
         } else if (tab === "Filtered Merged View") {
-            this.appletSetExtXML(xml, toolbar, null, group_id);
+            this.applets[group_id - 1].appletSetExtXML(xml, toolbar, null, group_id);
             if ($('.filtered_unmergeview_button').is(":visible") && $('#myonoffswitchfilteredmerge').is(':checked')) {
                 this.filtered_view_merge(this);
             }
         } else if (tab === "Overlayed Image View") {
             $('#img_' + group_id + '').remove();
 
-            this.appletSetExtXML(xml, toolbar, null, group_id);
+            this.applets[group_id - 1].appletSetExtXML(xml, toolbar, null, group_id);
 
             const img = '<img src="data:image/png;base64,' + document['overlayed_image_view_applet' + group_id].getPNGBase64(1.5, true, undefined) + '" id="img_' + group_id + '" style="position:absolute;">';
             $('#overlayed_image_div .panel-body').append(img);
