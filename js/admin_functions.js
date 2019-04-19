@@ -493,7 +493,7 @@ function xml_update_response(username, class_id, group_id, xml, toolbar, propert
         if($('.unmergeview_button').is(":visible") && $('#myonoffswitchmerge').is(':checked'))
         {
             // view_merge(this);
-            randomizeColors(gen_new_colors,filtered_merged_view_obj_colors[group_id-1],document['applet' + numgroups]);
+            // randomizeColors(gen_new_colors,filtered_merged_view_obj_colors[group_id-1],document['applet' + numgroups]);
             appletUpdate(xml, toolbar, null, numgroups, username, obj_xml, obj_label, obj_cmd_str, type_of_req);
         }
     }
