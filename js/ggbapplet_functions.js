@@ -598,6 +598,21 @@ function randomizeColors(gen_new_colors, received_colors, applet, r, g, b) {
     return colors;
 }
 
+
+function randomizeColorsMergedView(received_colors, applet, group_members_array) {
+    applet.unregisterUpdateListener("checkUser");
+    var numelems = applet.getObjectNumber();
+    for (i = 0; i < numelems; i++){
+        var name = applet.getObjectName(i);
+        for (var j = 0; j < group_members_array.length; ++j){
+            if (name.startsWith(group_members_array[j].id)){
+                applet.setColor(name, received_colors[0], received_colors[1], received_colors[2]);
+            }
+        }
+    }
+    applet.registerUpdateListener("checkUser");
+}
+
 // Converts RGB color to HEX
 function rgbToHex(R,G,B) {
     return toHex(R) + toHex(G) + toHex(B);
