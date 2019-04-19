@@ -598,7 +598,7 @@ function randomizeColors(gen_new_colors, received_colors, applet, r, g, b) {
 }
 
 
-function randomizeColors(received_colors, applet, group_members_array) {
+function randomizeColorsMergedView(received_colors, applet, group_members_array) {
     applet.unregisterUpdateListener("checkUser");
     var numelems = applet.getObjectNumber();
     for (i = 0; i < numelems; i++){
