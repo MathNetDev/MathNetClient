@@ -874,7 +874,6 @@ $(function() {
         }else if (tab == 'view'){
             var numgroups = ($('ul.groups div').length)+1;
             if (num_group_applets != numgroups){
-            num_group_applets = numgroups;
             $design_toolbox.empty();
             $views_jsapp.empty();
 
@@ -928,6 +927,7 @@ $(function() {
                //Once all Applets are Loaded Stop Trying
                 if(applets_loaded == 1)
                 {
+                    num_group_applets = numgroups;
                     for(var i = 1; i < numgroups; i++)
                     {
                         if(gen_new_colors == true)
