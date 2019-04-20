@@ -346,6 +346,17 @@ $update_frequency_testing_button.bind('click', function() {
     }, $update_frequency_label.text());
 });
 
+$stop_update_testing_button.bind('click', function() {
+    clearInterval(interval_testing_function);
+});
+
+$clear_update_testing_button.bind('click', function() {
+    var objs = document.applet.getAllObjectNames();
+    for(i = 0; i < objs.length; i++){
+        document.applet.deleteObject(objs[i]);
+    }
+});
+
 $update_frequency_slider.bind('mousemove', function() {
     $update_frequency_label.text($update_frequency_slider.val());
 });
