@@ -882,8 +882,8 @@ $(function() {
 
             $('#views_checkboxes').html('<div class="panel-heading"><h3 class="panel-title">Show Groups</h3></div><div class="panel-body"></div>');
             var numgroups = ($('ul.groups div').length)+1;
-            if (parseInt(sessionStorage.getItem('num_group_applets')) != numgroups){
-                sessionStorage.setItem('num_group_applets', toString(numgroups));
+            if (num_group_applets != numgroups){
+                num_group_applets = numgroups;
                 for(var i = 1; i < numgroups; i++){
                     var params = {
                         "container":"appletContainer"+i,

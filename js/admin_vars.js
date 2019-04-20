@@ -120,4 +120,4 @@ var $change_password_button = $('#change_password_button');
 
 var admin_data_per_group = {};
 
-sessionStorage.setItem('num_group_applets', '0');
+var num_group_applets = 0;
