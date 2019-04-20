@@ -124,7 +124,7 @@ $(function() {
     // JOIN CLASS
     //
     $join_button.bind('click', function() {
-        sessionStorage.setItem('num_group_applets', 0);
+        sessionStorage.setItem('num_group_applets', '0');
         socket.join_class($class_id.val().trim(), $secret);
     });
 
