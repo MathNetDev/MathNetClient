@@ -140,7 +140,7 @@ function appletUpdate(xml, toolbar, properties, id, username, obj_xml, obj_label
     if (typeof document['applet' + id] !== 'undefined'){
         appletName = document['applet' + id];
     }
-
+    appletName = document['applet' + id];
     //Get Appropriate appletName depending on the Currently Active View/Tab
     if ($('a[data-toggle="tab"][aria-expanded=true]').html() == "View" && typeof document['applet' + id] !== 'undefined')
     {
