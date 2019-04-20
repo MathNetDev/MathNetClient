@@ -921,7 +921,7 @@ $(function() {
                         num_group_applets = numgroups;
                         appletInit(params);
                     }               
-                }
+                
             }
 
             //Wait for Applets to be Loaded and Then Randomize Colors
