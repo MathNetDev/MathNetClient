@@ -352,7 +352,7 @@ $stop_update_testing_button.bind('click', function() {
 
 $clear_update_testing_button.bind('click', function() {
     var objs = document.applet.getAllObjectNames();
-    for(i = 0; i < objs.length; i++){
+    for(var i = 0; i < objs.length; i++){
         document.applet.deleteObject(objs[i]);
     }
 });
