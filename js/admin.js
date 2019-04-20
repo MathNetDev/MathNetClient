@@ -917,12 +917,9 @@ $(function() {
                 $views_jsapp.append(newgroup);
                 $('#views_checkboxes .panel-body').append(checkbox);
                 if (num_group_applets != numgroups){
+                    num_group_applets = numgroups;
                     appletInit(params);
                 }               
-            }
-
-            if (num_group_applets != numgroups){
-                num_group_applets = numgroups;
             }
 
             //Wait for Applets to be Loaded and Then Randomize Colors
