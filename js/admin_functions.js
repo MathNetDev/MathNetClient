@@ -486,18 +486,17 @@ function xml_update_response(username, class_id, group_id, xml, toolbar, propert
     console.log("Begin xml_update_response - " + obj_label);
     var tab = $('a[data-toggle="tab"][aria-expanded=true]').html();
     var numgroups = ($('ul.groups div').length)+1;
-    //if(tab == "View")
-    //{
-        var changes_to_view_tab = true;
-        randomizeColors(gen_new_colors,filtered_merged_view_obj_colors[group_id-1],document['applet' + group_id]);
-        appletUpdate(xml, toolbar, null, group_id, username, obj_xml, obj_label, obj_cmd_str, type_of_req, changes_to_view_tab);
-        if($('.unmergeview_button').is(":visible") && $('#myonoffswitchmerge').is(':checked'))
-        {
-            var group_members_array = $('.g' + group_id)[0].childNodes
-            randomizeColorsMergedView(filtered_merged_view_obj_colors[group_id-1],document['applet' + numgroups], group_members_array);
-            appletUpdate(xml, toolbar, null, numgroups, username, obj_xml, obj_label, obj_cmd_str, type_of_req, changes_to_view_tab);
-        }
-    //}
+
+    // The folowing nippet of code updates the admin applets on the view tab even while hidden
+    var changes_to_view_tab = true;
+    randomizeColors(gen_new_colors,filtered_merged_view_obj_colors[group_id-1],document['applet' + group_id]);
+    appletUpdate(xml, toolbar, null, group_id, username, obj_xml, obj_label, obj_cmd_str, type_of_req, changes_to_view_tab);
+    if($('.unmergeview_button').is(":visible") && $('#myonoffswitchmerge').is(':checked')){
+        var group_members_array = $('.g' + group_id)[0].childNodes
+        randomizeColorsMergedView(filtered_merged_view_obj_colors[group_id-1],document['applet' + numgroups], group_members_array);
+        appletUpdate(xml, toolbar, null, numgroups, username, obj_xml, obj_label, obj_cmd_str, type_of_req, changes_to_view_tab);
+    }
+    
     if(tab == "Filtered Merged View")
     {
         appletUpdate(xml, toolbar, null, group_id, username, obj_xml, obj_label, obj_cmd_str, type_of_req);

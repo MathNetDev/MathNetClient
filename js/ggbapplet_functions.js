@@ -140,6 +140,7 @@ function appletUpdate(xml, toolbar, properties, id, username, obj_xml, obj_label
     if (typeof document['applet' + id] !== 'undefined'){
         appletName = document['applet' + id];
     }
+    // This allows admin applets on the view tab to get uupdates even while hidden
     if (changes_to_view_tab){
         appletName = document['applet' + id];
     }
