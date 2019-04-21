@@ -214,7 +214,7 @@ function applet_xml_response(username, class_id, group_id, xml, properties, rece
     if(!toolbar){
         toolbar = sessionStorage.getItem('toolbar');
     }*/
-    p2pAppletSetXML(xml, toolbar, properties, null, username, null, null);
+    p2pAppletSetXML(xml, toolbar, properties, null, username, null, null, parseInt($("#grp" + sessionStorage.group_id).val().slice(-1)));
     ggbOnInit('socket_call', true);
 }
 

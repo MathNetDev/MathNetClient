@@ -242,7 +242,7 @@ function p2pAppletSetXML(xml, toolbar, properties, id, username, obj_xml, obj_la
     //appletName.unregisterRemoveListener("removeListener");
 
     // We rename the labels if this is the first student in the group
-    if ($('.g' + id)[0].childNodes.length == 1){
+    if (obj_cmd_str && obj_cmd_str == 1){
         rename_admin_labels(appletName);
     }
 
