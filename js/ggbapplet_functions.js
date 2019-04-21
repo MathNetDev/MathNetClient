@@ -174,7 +174,7 @@ function appletUpdate(xml, toolbar, properties, id, username, obj_xml, obj_label
         if(obj_cmd_str != null && obj_cmd_str != ''){
             appletName.evalCommand(obj_label + ":" + obj_cmd_str);
         }
-        appletName.evalXML(JSON.parse(obj_xml));
+        //appletName.evalXML(JSON.parse(obj_xml));
         appletName.evalCommand("UpdateConstruction()");
     }
     else if(type_of_req == 'update'){
