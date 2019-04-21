@@ -340,10 +340,21 @@ $step_size_slider.bind('mousemove', function() {
 $update_frequency_testing_button.bind('click', function() {
     clearInterval(interval_testing_function);
     interval_testing_function = setInterval(function(){
-        let xCoordinate = Math.random()*14-7;
-        let yCoordinate = Math.random()*14-7;
+        let xCoordinate = Math.random()*20-10;
+        let yCoordinate = Math.random()*20-10;
         document.applet.evalCommand("D : (" + xCoordinate + "," + yCoordinate + ")");
     }, $update_frequency_label.text());
+});
+
+$stop_update_testing_button.bind('click', function() {
+    clearInterval(interval_testing_function);
+});
+
+$clear_update_testing_button.bind('click', function() {
+    var objs = document.applet.getAllObjectNames();
+    for(var i = 0; i < objs.length; i++){
+        document.applet.deleteObject(objs[i]);
+    }
 });
 
 $update_frequency_slider.bind('mousemove', function() {

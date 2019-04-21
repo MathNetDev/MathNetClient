@@ -872,113 +872,117 @@ $(function() {
             socket.get_xmls(localStorage.getItem('admin_id'));
 
         }else if (tab == 'view'){
-            $design_toolbox.empty();
-            $views_jsapp.empty();
-
-            var merge_view_update_toggle = '<div class="onoffswitch" style="display:none;"> <input type="checkbox" name="onoffswitch" '
-            +'class="onoffswitch-checkbox" id="myonoffswitchmerge" onchange="liveUpdatesCheckboxChangeMerge(this);"> </input> <label class="onoffswitch-label" for="myonoffswitchmerge">' 
-            +'<span class="onoffswitch-inner"></span> <span class="onoffswitch-switch"></span> </label></div>';
-            $views_jsapp.append(merge_view_update_toggle);
-
-            $('#views_checkboxes').html('<div class="panel-heading"><h3 class="panel-title">Show Groups</h3></div><div class="panel-body"></div>');
             var numgroups = ($('ul.groups div').length)+1;
-            for(var i = 1; i < numgroups; i++){
-                var params = {
-                    "container":"appletContainer"+i,
-                    "id":"applet"+i,
-                    "width":300,
-                    "height":300,
-                    "perspective":"G",
-                    "showAlgebraInput":false,
-                    "showToolBarHelp":false,
-                    "showMenubar":false,
-                    "enableLabelDrags":false,
-                    "showResetIcon":false,
-                    "showToolbar":false,
-                    "data-param-id": "loadXML" + i,
-                    "allowStyleBar":false,
-                    "useBrowserForJS":true,
-                    "enableShiftDragZoom":true,
-                    "errorDialogsActive":true,
-                    "enableRightClick":false,
-                    "enableCAS":false,
-                    "enable3d":false,
-                    "isPreloader":false,
-                    "screenshotGenerator":false,
-                    "preventFocus":true
-                };
-                var newgroup = '<div class="views_group_'+i+' col-md-4 col-sm-5 col-lg-4" ><h4><a href="javascript:redirect('+i+')"> Group ' + i + 
-                    '</h4><div class="geogebrawebapplet" id="appletContainer'+ i + 
-                    '"style="width:100%;height:650px;display:block;visibility:hidden;"></div></div>';
+            if (num_group_applets != numgroups){
+                $design_toolbox.empty();
+                $views_jsapp.empty();
 
-                var checkbox = '<label><input checked type="checkbox" onchange="views_change(this)" value="applet'+i+'" name="views_group_'+ i
-                + '">Group '+ i + '</label>';
+                var merge_view_update_toggle = '<div class="onoffswitch" style="display:none;"> <input type="checkbox" name="onoffswitch" '
+                +'class="onoffswitch-checkbox" id="myonoffswitchmerge" onchange="liveUpdatesCheckboxChangeMerge(this);"> </input> <label class="onoffswitch-label" for="myonoffswitchmerge">' 
+                +'<span class="onoffswitch-inner"></span> <span class="onoffswitch-switch"></span> </label></div>';
+                $views_jsapp.append(merge_view_update_toggle);
 
-                $views_jsapp.append(newgroup);
-                $('#views_checkboxes .panel-body').append(checkbox);
-                appletInit(params);                
-            }
+                $('#views_checkboxes').html('<div class="panel-heading"><h3 class="panel-title">Show Groups</h3></div><div class="panel-body"></div>');
+                var numgroups = ($('ul.groups div').length)+1;
+                for(var i = 1; i < numgroups; i++){
+                    var params = {
+                        "container":"appletContainer"+i,
+                        "id":"applet"+i,
+                        "width":300,
+                        "height":300,
+                        "perspective":"G",
+                        "showAlgebraInput":false,
+                        "showToolBarHelp":false,
+                        "showMenubar":false,
+                        "enableLabelDrags":false,
+                        "showResetIcon":false,
+                        "showToolbar":false,
+                        "data-param-id": "loadXML" + i,
+                        "allowStyleBar":false,
+                        "useBrowserForJS":true,
+                        "enableShiftDragZoom":true,
+                        "errorDialogsActive":true,
+                        "enableRightClick":false,
+                        "enableCAS":false,
+                        "enable3d":false,
+                        "isPreloader":false,
+                        "screenshotGenerator":false,
+                        "preventFocus":true
+                    };
+                    var newgroup = '<div class="views_group_'+i+' col-md-4 col-sm-5 col-lg-4" ><h4><a href="javascript:redirect('+i+')"> Group ' + i + 
+                        '</h4><div class="geogebrawebapplet" id="appletContainer'+ i + 
+                        '"style="width:100%;height:650px;display:block;visibility:hidden;"></div></div>';
 
-            //Wait for Applets to be Loaded and Then Randomize Colors
-            var applets_loaded = 0;
-            var interval_id = setInterval(function() {
-               //Once all Applets are Loaded Stop Trying
-                if(applets_loaded == 1)
-                {
-                    for(var i = 1; i < numgroups; i++)
+                    var checkbox = '<label><input checked type="checkbox" onchange="views_change(this)" value="applet'+i+'" name="views_group_'+ i
+                    + '">Group '+ i + '</label>';
+
+                    $views_jsapp.append(newgroup);
+                    $('#views_checkboxes .panel-body').append(checkbox);
+                    appletInit(params);
+                }
+
+                //Wait for Applets to be Loaded and Then Randomize Colors
+                var applets_loaded = 0;
+                var interval_id = setInterval(function() {
+                //Once all Applets are Loaded Stop Trying
+                    if(applets_loaded == 1)
                     {
-                        if(gen_new_colors == true)
+                        num_group_applets = numgroups;
+                        for(var i = 1; i < numgroups; i++)
                         {
-                            filtered_merged_view_obj_colors.push(randomizeColors(gen_new_colors,[],document['applet'+i]));
+                            if(gen_new_colors == true)
+                            {
+                                filtered_merged_view_obj_colors.push(randomizeColors(gen_new_colors,[],document['applet'+i]));
+                            }
+                            else
+                            {
+                                randomizeColors(gen_new_colors,filtered_merged_view_obj_colors[i-1],document['applet'+i]);
+                            }
+                            document.getElementById('appletContainer'+i).style.visibility = "visible";
                         }
-                        else
-                        {
-                            randomizeColors(gen_new_colors,filtered_merged_view_obj_colors[i-1],document['applet'+i]);
-                        }
-                        document.getElementById('appletContainer'+i).style.visibility = "visible";
+                        gen_new_colors = false;
+                        clearInterval(interval_id);
                     }
-                    gen_new_colors = false;
-                    clearInterval(interval_id);
-                }
-                if(document['applet1'] !== undefined || numgroups === 0 )
-                {
-                    applets_loaded = 1;
-                }
-            }, 1000);
+                    if(document['applet1'] !== undefined || numgroups === 0 )
+                    {
+                        applets_loaded = 1;
+                    }
+                }, 1000);
 
-            var params = {
-                    "container":"appletContainer"+numgroups,
-                    "id":"applet"+numgroups,
-                    "width":800,
-                    "height":800,
-                    "perspective":"G",
-                    "showAlgebraInput":false,
-                    "showToolBarHelp":false,
-                    "showMenubar":true,
-                    "enableLabelDrags":false,
-                    "showResetIcon":false,
-                    "showToolbar":false,
-                    "data-param-id": "loadXML" + numgroups,
-                    "allowStyleBar":false,
-                    "useBrowserForJS":true,
-                    "enableShiftDragZoom":true,
-                    "errorDialogsActive":true,
-                    "enableRightClick":false,
-                    "enableCAS":false,
-                    "enable3d":false,
-                    "isPreloader":false,
-                    "screenshotGenerator":false,
-                    "preventFocus":true
-                };
-            var mergegroup = '<div class="merge_group" style="visibility:hidden"><h4> Merge Group</h4><div class="geogebrawebapplet"' +
-                'id="appletContainer' + numgroups + '"style="width:100%;height:650px;display:block;"></div></div><br/>';
+                var params = {
+                        "container":"appletContainer"+numgroups,
+                        "id":"applet"+numgroups,
+                        "width":800,
+                        "height":800,
+                        "perspective":"G",
+                        "showAlgebraInput":false,
+                        "showToolBarHelp":false,
+                        "showMenubar":true,
+                        "enableLabelDrags":false,
+                        "showResetIcon":false,
+                        "showToolbar":false,
+                        "data-param-id": "loadXML" + numgroups,
+                        "allowStyleBar":false,
+                        "useBrowserForJS":true,
+                        "enableShiftDragZoom":true,
+                        "errorDialogsActive":true,
+                        "enableRightClick":false,
+                        "enableCAS":false,
+                        "enable3d":false,
+                        "isPreloader":false,
+                        "screenshotGenerator":false,
+                        "preventFocus":true
+                    };
+                var mergegroup = '<div class="merge_group" style="visibility:hidden"><h4> Merge Group</h4><div class="geogebrawebapplet"' +
+                    'id="appletContainer' + numgroups + '"style="width:100%;height:650px;display:block;"></div></div><br/>';
 
-            var mergebutton = '&emsp;&emsp;<input class="btn btn-default mergeview_button" onclick="view_merge(this)"'+
-                ' type="button" value="Merge Checked Views"><input class="btn btn-default unmergeview_button" onclick="unmerge_views(this)"'+
-                ' type="button" value="Unmerge Views" style="display:none;">';
-            $('#views_checkboxes .panel-body').append(mergebutton);
-            $views_jsapp.append(mergegroup);
-            appletInit(params);
+                var mergebutton = '&emsp;&emsp;<input class="btn btn-default mergeview_button" onclick="view_merge(this)"'+
+                    ' type="button" value="Merge Checked Views"><input class="btn btn-default unmergeview_button" onclick="unmerge_views(this)"'+
+                    ' type="button" value="Unmerge Views" style="display:none;">';
+                $('#views_checkboxes .panel-body').append(mergebutton);
+                $views_jsapp.append(mergegroup);
+                appletInit(params);
+            }
         }
         /* Filtered Merged View Tab */ 
         else if (tab == 'filtered_merged_view'){

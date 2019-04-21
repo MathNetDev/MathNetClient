@@ -134,14 +134,17 @@ function send_xml(xml, obj_xml, obj_label, obj_cmd_str, socket, type_of_req, rec
         xml_update_ver = xml_update_ver + 1;
 }
 
-function appletUpdate(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str, type_of_req){
+function appletUpdate(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str, type_of_req, changes_to_view_tab){
     var final_xml;
     var appletName = document.applet;
 
     if (typeof document['applet' + id] !== 'undefined'){
         appletName = document['applet' + id];
     }
-
+    // This allows admin applets on the view tab to get uupdates even while hidden
+    if (changes_to_view_tab){
+        appletName = document['applet' + id];
+    }
     //Get Appropriate appletName depending on the Currently Active View/Tab
     if ($('a[data-toggle="tab"][aria-expanded=true]').html() == "View" && typeof document['applet' + id] !== 'undefined')
     {
