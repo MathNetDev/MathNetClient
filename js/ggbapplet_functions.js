@@ -171,10 +171,10 @@ function appletUpdate(xml, toolbar, properties, id, username, obj_xml, obj_label
     appletName.unregisterRemoveListener("removeListener");
 
     if(type_of_req == 'add'){
-        if(obj_cmd_str != null && obj_cmd_str != ''){
+        /*if(obj_cmd_str != null && obj_cmd_str != ''){
             appletName.evalCommand(obj_label + ":" + obj_cmd_str);
-        }
-        //appletName.evalXML(JSON.parse(obj_xml));
+        }*/
+        appletName.evalXML(JSON.parse(obj_xml));
         appletName.evalCommand("UpdateConstruction()");
     }
     else if(type_of_req == 'update'){
@@ -250,7 +250,7 @@ function p2pAppletSetXML(xml, toolbar, properties, id, username, obj_xml, obj_la
     if (obj_cmd_str && obj_cmd_str == 1){
         rename_admin_labels(appletName);
     }
-    
+
     checkLocks(appletName);
 
     // If this is the students' website, then we register and add the listeners
