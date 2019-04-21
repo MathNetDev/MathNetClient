@@ -241,6 +241,11 @@ function p2pAppletSetXML(xml, toolbar, properties, id, username, obj_xml, obj_la
     //appletName.unregisterUpdateListener("updateListener");
     //appletName.unregisterRemoveListener("removeListener");
 
+    // We rename the labels if this is the first student in the group
+    if ($('.g' + id)[0].childNodes.length == 1){
+        rename_admin_labels(appletName);
+    }
+
     cur_xml = appletName.getXML();
     var cur_xml_doc = $.parseXML(cur_xml);
 
