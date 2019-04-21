@@ -340,8 +340,8 @@ $step_size_slider.bind('mousemove', function() {
 $update_frequency_testing_button.bind('click', function() {
     clearInterval(interval_testing_function);
     interval_testing_function = setInterval(function(){
-        let xCoordinate = Math.random()*14-7;
-        let yCoordinate = Math.random()*14-7;
+        let xCoordinate = Math.random()*20-10;
+        let yCoordinate = Math.random()*20-10;
         document.applet.evalCommand("D : (" + xCoordinate + "," + yCoordinate + ")");
     }, $update_frequency_label.text());
 });
