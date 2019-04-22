@@ -72,11 +72,16 @@ class GeogebraInterface {
             username = "unassigned";
         }
 
-        const new_obj_label = username + "_{" + this.applet.getObjectNumber() + "}";
-        this.objectCount++;
 
+        this.objectCount++;
+        this.renameElement(obj_label, username);
+    }
+
+    renameElement(obj_label, username) {
         setTimeout(() => {
+            const new_obj_label = username + "_{" + this.applet.getObjectNumber() + "}";
             this.applet.renameObject(obj_label, new_obj_label);
+            console.log(`setting caption of ${obj_label} to ${username}`);
             this.applet.setCaption(new_obj_label, username);
             const type = this.applet.getObjectType(new_obj_label);
             if (type === 'point') {
@@ -88,9 +93,7 @@ class GeogebraInterface {
                 this.listener.onElementChange(new_obj_label);
             }
             this.ignoreUpdates = false;
-        }, 0, obj_label, new_obj_label);
-
-
+        }, 0);
     }
 
     onUpdateElement(obj_label) {
@@ -98,40 +101,40 @@ class GeogebraInterface {
         if (this.ignoreUpdates)
             return;
 
-        const ggb_user = this.applet.getCaption(obj_label);
+        const currentCaption = this.applet.getCaption(obj_label);
         const username = sessionStorage.getItem('username');
         const move = this.applet.isMoveable(obj_label);
         const type = this.applet.getObjectType(obj_label);
         const isPoint = (type === "point");
 
         this.ignoreUpdates = true;
-        const appletName = this.applet;
 
-        if (username !== ggb_user && isPoint && ggb_user !== "unassigned") {
+        if (username !== currentCaption && isPoint && currentCaption !== "unassigned") {
             if (username !== "admin" && move) {
                 if (objType === 'numeric' || objType === 'textfield') {
-                    appletName.setFixed(name, true, false);
-                } else {
-                    appletName.setFixed(name, true);
+                    this.applet.setFixed(name, true, false);  // \
+                } else {                                     //  -- > these two look functionally equivalent to me?
+                    this.applet.setFixed(name, true);         // /
                 }
             } else if (username === "admin" && !move) {
                 if (objType === 'numeric' || objType === 'textfield') {
-                    appletName.setFixed(name, false, true);
+                    this.applet.setFixed(name, false, true);
                 } else {
-                    appletName.setFixed(name, false);
+                    this.applet.setFixed(name, false);
                 }
             }
-        } else if (username === ggb_user || ggb_user === "unassigned") {
+        } else if (username === currentCaption || currentCaption === "unassigned") {
             this.applet.setFixed(obj_label, false, true);
         }
 
-        if (ggb_user === "unassigned" && username !== "admin") {
-            this.applet.setCaption(obj_label, username);
-        } else if (ggb_user !== "unassigned" && username === "admin") {
+        if (currentCaption === "unassigned" && username !== "admin") {
+            this.applet.setCaption(obj_label, username)
+        } else if (currentCaption !== "unassigned" && username === "admin") {
             this.applet.setCaption(obj_label, "unassigned");
         }
-        this.ignoreUpdates = false;
         this.send_xml(this.applet.getXML(), this.applet.getXML(obj_label), obj_label, this.applet.getCommandString(obj_label), 'update');
+        this.ignoreUpdates = false;
+
     }
 
     onRemoveElement(obj_label) {
@@ -440,8 +443,8 @@ class GeogebraInterface {
     }
 
 //This clears the local applet view
-    clearApplet(appletName) {
-        appletName.reset();
+    clearApplet() {
+        this.applet.reset();
     }
 
 //This function changes the colors of all elements on the local view to a random color
@@ -517,15 +520,15 @@ class GeogebraInterface {
 
             if ((username !== ggb_user && username !== "admin") && ggb_user !== "unassigned") {
                 if (objType === 'numeric' || objType === 'textfield') {
-                    appletName.setFixed(name, true, false);
+                    appletName.setFixed(name, /*fixed*/true, /*selection allowed*/false);
                 } else {
-                    appletName.setFixed(name, true);
+                    appletName.setFixed(name, /*fixed*/true);
                 }
             } else if (username === ggb_user || username === "admin") {
                 if (objType === 'numeric' || objType === 'textfield') {
-                    appletName.setFixed(name, false, true);
+                    appletName.setFixed(name, /*fixed*/false, /*selection allowed*/true);
                 } else {
-                    appletName.setFixed(name, false);
+                    appletName.setFixed(name, /*fixed*/false);
                 }
             }
         }

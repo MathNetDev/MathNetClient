@@ -492,15 +492,31 @@ class StudentController {
     //This function takes a username, class_id, group_id, and XML
     //It then emits a socket event to change the class's XML in the datastructure
     //based on the given XML, group_id, and class_id
-    xml_update(username, class_id, group_id, xml, toolbar, toolbar_user, obj_xml, obj_label, obj_cmd_str, type_of_req, xml_update_ver, new_update) {
-        this.socket.emit('xml_update', username, class_id, group_id, xml, toolbar, obj_xml, obj_label, obj_cmd_str, type_of_req, xml_update_ver, new_update);
+    /*
+    const data = {
+            username: username,
+            class_id: class_id,
+            group_id: group_id,
+            xml: xml,
+            toolbar: '',
+            toolbar_user: '',
+            obj_xml: obj_xml,
+            obj_label: obj_label,
+            obj_cmd_str: obj_cmd_str,
+            type_of_req: type_of_req,
+            xml_update_ver: this.xml_update_ver,
+            new_update: true
+        };
+     */
+    xml_update(data) {
+        this.socket.emit('xml_update', data);
     }
 
     //This function takes a username, class_id, group_id, and XML
     //It then emits a socket event to change the class's XML in the datastructure
     //based on the given XML, group_id, and class_id
-    xml_change(username, class_id, group_id, xml, toolbar, toolbar_user, obj_xml, obj_label, obj_cmd_str) {
-        this.socket.emit('xml_change', username, class_id, group_id, xml, toolbar, obj_xml, obj_label, obj_cmd_str);
+    xml_change(data) {
+        this.socket.emit('xml_change', data);
     }
 
     //This function takes a username, class_id, and group_id
