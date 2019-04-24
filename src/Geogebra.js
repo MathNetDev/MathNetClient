@@ -4,7 +4,6 @@ import 'jquery-ui/ui/widgets/draggable'
 class GeogebraInterface {
     constructor(appletId) {
         this.xml_update_ver = 0;
-        this.objectCount = 0;
         this.ignoreUpdates = false;
         this.appletId = appletId;
         this.isInitialized = false;
@@ -53,47 +52,57 @@ class GeogebraInterface {
 
 //all document.applet (geogebra) calls are documented at http://www.geogebra.org/manual/en/Reference:JavaScript
 
+    registerObjectClickListener(obj_label, listener){
+        this.applet.registerObjectClickListener(obj_label, listener);
+    }
+
     onAddElement(obj_label) {
-        if (window.location.href.includes("student")) {
-            this.applet.registerObjectClickListener(obj_label, (label) => this.onElementClicked(label));
-        }
-
-        if (this.ignoreUpdates)
-            return;
-
         console.log(`add listener called ${JSON.stringify(arguments)}`);
-
-
-        this.ignoreUpdates = true;
-        let username;
-        if (sessionStorage.getItem('username') != null && sessionStorage.getItem('username') !== "admin")
-            username = sessionStorage.getItem('username');
-        else {
-            username = "unassigned";
+        if (this.ignoreUpdates){
+            return;
         }
-
-
-        this.objectCount++;
-        this.renameElement(obj_label, username);
+        if (this.listener.onAddElement){
+            this.listener.onAddElement(obj_label, this);
+        }
     }
 
     renameElement(obj_label, username) {
         setTimeout(() => {
+            this.ignoreUpdates = true;
             const new_obj_label = username + "_{" + this.applet.getObjectNumber() + "}";
             this.applet.renameObject(obj_label, new_obj_label);
             console.log(`setting caption of ${obj_label} to ${username}`);
-            this.applet.setCaption(new_obj_label, username);
-            const type = this.applet.getObjectType(new_obj_label);
-            if (type === 'point') {
-                this.applet.setLabelStyle(new_obj_label, 3);
-            }
+            this.setCaption(new_obj_label, username);
             this.applet.evalCommand("UpdateConstruction()");
-            this.send_xml(this.applet.getXML(), this.applet.getXML(new_obj_label), new_obj_label, this.applet.getCommandString(new_obj_label), 'add');
-            if (this.listener && this.listener.onElementChange) {
-                this.listener.onElementChange(new_obj_label);
+            if (this.listener.onRenameElement){
+                this.listener.onRenameElement(new_obj_label);
             }
             this.ignoreUpdates = false;
         }, 0);
+    }
+
+    getCaption(obj_label){
+        return this.applet.getCaption(obj_label);
+    }
+
+    isMovable(obj_label){
+        return this.applet.isMoveable(obj_label);
+    }
+
+    setFixed(object_label, fixed, selectable){
+        this.ignoreUpdates = true;
+        this.applet.setFixed(object_label, fixed, selectable);
+        this.ignoreUpdates = false
+    }
+
+    setCaption(object_label, caption){
+        this.ignoreUpdates = true;
+        const type = this.applet.getObjectType(object_label);
+        if (type === 'point') {
+            this.applet.setLabelStyle(object_label, 3);
+        }
+        this.applet.setCaption(object_label, caption);
+        this.ignoreUpdates = false
     }
 
     onUpdateElement(obj_label) {
@@ -101,71 +110,21 @@ class GeogebraInterface {
         if (this.ignoreUpdates)
             return;
 
-        const currentCaption = this.applet.getCaption(obj_label);
-        const username = sessionStorage.getItem('username');
-        const move = this.applet.isMoveable(obj_label);
-        const type = this.applet.getObjectType(obj_label);
-        const isPoint = (type === "point");
-
-        this.ignoreUpdates = true;
-
-        if (username !== currentCaption && isPoint && currentCaption !== "unassigned") {
-            if (username !== "admin" && move) {
-                if (objType === 'numeric' || objType === 'textfield') {
-                    this.applet.setFixed(name, true, false);  // \
-                } else {                                     //  -- > these two look functionally equivalent to me?
-                    this.applet.setFixed(name, true);         // /
-                }
-            } else if (username === "admin" && !move) {
-                if (objType === 'numeric' || objType === 'textfield') {
-                    this.applet.setFixed(name, false, true);
-                } else {
-                    this.applet.setFixed(name, false);
-                }
-            }
-        } else if (username === currentCaption || currentCaption === "unassigned") {
-            this.applet.setFixed(obj_label, false, true);
+        if (this.listener.onUpdateElement){
+            this.listener.onUpdateElement(obj_label, this);
         }
+    }
 
-        if (currentCaption === "unassigned" && username !== "admin") {
-            this.applet.setCaption(obj_label, username)
-        } else if (currentCaption !== "unassigned" && username === "admin") {
-            this.applet.setCaption(obj_label, "unassigned");
-        }
-        this.send_xml(this.applet.getXML(), this.applet.getXML(obj_label), obj_label, this.applet.getCommandString(obj_label), 'update');
-        this.ignoreUpdates = false;
-
+    getCommandString(object_label){
+        return this.applet.getCommandString(object_label);
     }
 
     onRemoveElement(obj_label) {
         if (this.ignoreUpdates)
             return;
-        console.log(`remove listener called ${JSON.stringify(arguments)}`);
-        this.send_xml(this.applet.getXML(), null, obj_label, null, 'remove');
-    }
-
-//Makes a socket call to the server
-    send_xml(xml, obj_xml, obj_label, obj_cmd_str, type_of_req) {
-        // const $messages = $("#messages");
-        const username = sessionStorage.getItem('username');
-        const class_id = sessionStorage.getItem('class_id');
-        const group_id = sessionStorage.getItem('group_id');
-        const data = {
-            username: username,
-            class_id: class_id,
-            group_id: group_id,
-            xml: xml,
-            toolbar: '',
-            toolbar_user: '',
-            obj_xml: obj_xml,
-            obj_label: obj_label,
-            obj_cmd_str: obj_cmd_str,
-            type_of_req: type_of_req,
-            xml_update_ver: this.xml_update_ver,
-            new_update: true
-        };
-        if (this.listener) this.listener.xml_update(data);
-        this.xml_update_ver++;
+        if (this.listener.onRemoveElement){
+            this.listener.onRemoveElement(obj_label, this);
+        }
     }
 
     appletUpdate(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str, type_of_req) {
@@ -227,10 +186,11 @@ class GeogebraInterface {
 //Used to set the entire XML for student's applets.
 //Usually called when the student logs in for the first time and wants the most updated XML.
     p2pAppletSetXML(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str) {
-        // this.ignoreUpdates = true;
-        // this.applet.setXML(xml);
-        // this.checkLocks();
-        // this.ignoreUpdates = false;
+        this.ignoreUpdates = true;
+        this.applet.setXML(xml);
+        this.checkLocks();
+        this.registerGlobalListeners();
+        this.ignoreUpdates = false;
     }
 
 //Used to set the entire XML for the applets on the admin's view tabs.
@@ -420,22 +380,16 @@ class GeogebraInterface {
 
     }
 
-    onElementClicked(label) {
-        if (this.listener && this.listener.onElementChange) {
-            this.listener.onElementChange(label);
-        }
-    }
-
     getXcoord(label) {
-        this.applet.getXcoord(label);
+        return this.applet.getXcoord(label);
     }
 
     getYcoord(label) {
-        this.applet.getYcoord(label);
+        return this.applet.getYcoord(label);
     }
 
     getObjectType(label) {
-        this.applet.getObjectType(label);
+        return this.applet.getObjectType(label);
     }
 
     setCoords(label, x, y) {

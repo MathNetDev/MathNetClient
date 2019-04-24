@@ -2491,6 +2491,24 @@ class Admin {
         $('#redirect_modal').modal('show');
     }
 
+    /**
+     * Called when something is added to the canvas by the current user, should not be called otherwise
+     * @param obj_label
+     * @param applet
+     */
+    onAddElement(obj_label, applet){
+        console.log('Admin add listener called');
+        applet.setCaption(obj_label, "unassigned");
+    }
+
+    onRemoveElement(obj_label, applet){
+
+    }
+
+    onUpdateElement(obj_label, applet){
+
+    }
+
     //this is called when the user submits a username after the
 //redirect modal is opened
     redirect_modal_submit(group, username) {

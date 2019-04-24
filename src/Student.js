@@ -586,7 +586,88 @@ class StudentController {
         });
     }
 
-    onElementChange(label) {
+    /**
+     * Called by the GGB interface when an element is added to the GGB canvas
+     * @param obj_label
+     */
+    onAddElement(obj_label){
+        let username;
+        if (sessionStorage.getItem('username') != null && sessionStorage.getItem('username') !== "admin")
+            username = sessionStorage.getItem('username');
+        else {
+            username = "unassigned";
+        }
+        this.ggbInterface.renameElement(obj_label, username);
+    }
+
+    onRenameElement(object_label){
+        this.ggbInterface.registerObjectClickListener(object_label, (label) => this.onElementClicked(label));
+        this.send_xml(this.ggbInterface.getXML(), this.ggbInterface.getXML(object_label), object_label, this.ggbInterface.getCommandString(object_label), 'add');
+    }
+
+    onRemoveElement(object_name){
+        console.log(`remove listener called ${JSON.stringify(arguments)}`);
+        this.send_xml(this.ggbInterface.getXML(), null, object_name, null, 'remove');
+    }
+
+    onUpdateElement(obj_label){
+        const currentCaption = this.ggbInterface.getCaption(obj_label);
+        const username = sessionStorage.getItem('username');
+        const move = this.ggbInterface.isMovable(obj_label);
+        const type = this.ggbInterface.getObjectType(obj_label);
+        const isPoint = (type === "point");
+
+        if (username !== currentCaption && isPoint && currentCaption !== "unassigned") {
+            if (username !== "admin" && move) {
+                if (type === 'numeric' || type === 'textfield') {
+                    this.ggbInterface.setFixed(name, true, false);  // \
+                } else {                                     //  -- > these two look functionally equivalent to me?
+                    this.ggbInterface.setFixed(name, true);         // /
+                }
+            } else if (username === "admin" && !move) {
+                if (type === 'numeric' || type === 'textfield') {
+                    this.ggbInterface.setFixed(name, false, true);
+                } else {
+                    this.ggbInterface.setFixed(name, false);
+                }
+            }
+        } else if (username === currentCaption || currentCaption === "unassigned") {
+            this.ggbInterface.setFixed(obj_label, false, true);
+        }
+
+        if (currentCaption === "unassigned" && username !== "admin") {
+            this.ggbInterface.setCaption(obj_label, username)
+        } else if (currentCaption !== "unassigned" && username === "admin") {
+            this.ggbInterface.setCaption(obj_label, "unassigned");
+        }
+        this.send_xml(this.ggbInterface.getXML(), this.ggbInterface.getXML(obj_label), obj_label, this.ggbInterface.getCommandString(obj_label), 'update');
+    }
+
+    send_xml(xml, obj_xml, obj_label, obj_cmd_str, type_of_req) {
+        // const $messages = $("#messages");
+        const username = sessionStorage.getItem('username');
+        const class_id = sessionStorage.getItem('class_id');
+        const group_id = sessionStorage.getItem('group_id');
+        const data = {
+            username: username,
+            class_id: class_id,
+            group_id: group_id,
+            xml: xml,
+            toolbar: '',
+            toolbar_user: '',
+            obj_xml: obj_xml,
+            obj_label: obj_label,
+            obj_cmd_str: obj_cmd_str,
+            type_of_req: type_of_req,
+            xml_update_ver: this.xml_update_ver,
+            new_update: true
+        };
+        this.xml_update_ver++;
+        this.xml_update(data);
+    }
+
+    /////////////
+    onElementClicked(label) {
         this.currentLabel = label;
         this.views.$current_label.text(this.currentLabel);
     }
