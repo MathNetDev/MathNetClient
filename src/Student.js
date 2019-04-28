@@ -119,6 +119,7 @@ class StudentController {
         });
 
         socket.on('xml_update_response', data => {
+            console.log(JSON.parse(data.obj_xml));
             this.xml_update_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar, data.properties, data.obj_xml, data.obj_label, data.obj_cmd_str, data.type_of_req, data.xml_update_ver, data.new_update, data);
         });
 
@@ -645,6 +646,7 @@ class StudentController {
 
     send_xml(xml, obj_xml, obj_label, obj_cmd_str, type_of_req) {
         // const $messages = $("#messages");
+        console.log(obj_xml);
         const username = sessionStorage.getItem('username');
         const class_id = sessionStorage.getItem('class_id');
         const group_id = sessionStorage.getItem('group_id');

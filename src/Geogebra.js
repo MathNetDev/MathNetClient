@@ -42,8 +42,8 @@ class GeogebraInterface {
         }
     }
 
-    getXML() {
-        return this.applet.getXML();
+    getXML(object_label) {
+        return this.applet.getXML(object_label);
     }
 
     setListener(listener) {
@@ -69,15 +69,20 @@ class GeogebraInterface {
     renameElement(obj_label, username) {
         setTimeout(() => {
             this.ignoreUpdates = true;
-            const new_obj_label = username + "_{" + this.applet.getObjectNumber() + "}";
-            this.applet.renameObject(obj_label, new_obj_label);
-            console.log(`setting caption of ${obj_label} to ${username}`);
-            this.setCaption(new_obj_label, username);
-            this.applet.evalCommand("UpdateConstruction()");
-            if (this.listener.onRenameElement){
-                this.listener.onRenameElement(new_obj_label);
+            try{
+                const new_obj_label = username + "_{" + this.applet.getObjectNumber() + "}";
+                this.applet.renameObject(obj_label, new_obj_label);
+                console.log(`setting caption of ${obj_label} to ${username}`);
+                this.setCaption(new_obj_label, username);
+                this.applet.evalCommand("UpdateConstruction()");
+                if (this.listener.onRenameElement){
+                    this.listener.onRenameElement(new_obj_label);
+                }
+            }catch(err){
+                console.error(err);
             }
             this.ignoreUpdates = false;
+
         }, 0);
     }
 
