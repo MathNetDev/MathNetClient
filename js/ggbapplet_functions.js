@@ -8,26 +8,39 @@ var $default_toolset = '0|1,501,67,5,19,72,75,76|2,15,45,18,65,7,37|4,3,8,9,13,4
 var currentLabel;
 var finalApplet;
 var stepSize = 1.0;
+var objectCount = 1;
+var updateCounter = {};
+var currentlyUpdating;
 
 function addListener(obj_label){
-    //setTimeout(e => document.applet.renameObject(obj_label, obj_label + '_' + 1), 0);
-    send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'add');
     var username;
-    if(sessionStorage.getItem('username') != null && sessionStorage.getItem('username') != "admin")
+    if (sessionStorage.getItem('username') != null && sessionStorage.getItem('username') != "admin")
         username = sessionStorage.getItem('username');
     else
     {
         username = "unassigned";
     }
 
-    document.applet.setCaption(obj_label, username);
-    var type = document.applet.getObjectType(obj_label);
-    if (type === 'point'){
-        document.applet.setLabelStyle(obj_label, 3);
-    }
+    var new_obj_label = username + "_{" + document.applet.getObjectNumber() + "}";
+    objectCount++;
+
+    setTimeout(function(){
+        applet.unregisterUpdateListener("updateListener");
+        document.applet.renameObject(obj_label, new_obj_label);
+        document.applet.setCaption(new_obj_label, username);
+        var type = document.applet.getObjectType(new_obj_label);
+        if (type === 'point'){
+            document.applet.setLabelStyle(new_obj_label, 3);
+        }
+        document.applet.evalCommand("UpdateConstruction()");
+        send_xml(document.applet.getXML(), document.applet.getXML(new_obj_label), new_obj_label, document.applet.getCommandString(new_obj_label), socket, 'add');
+        applet.registerUpdateListener("updateListener");
+    }, 0, obj_label, new_obj_label);
 }
 
 function updateListener(obj_label){
+    currentlyUpdating = true;
+    console.log("Beginning update listener " + obj_label);
     var ggb_user = document.applet.getCaption(obj_label);
     var username = sessionStorage.getItem('username');
     var move = document.applet.isMoveable(obj_label);
@@ -60,7 +73,35 @@ function updateListener(obj_label){
         document.applet.setCaption(obj_label, "unassigned");
     }
     document.applet.registerUpdateListener("updateListener");
-    send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'update');   
+    console.log("End update listener " + obj_label);
+
+    // send all updates to other students in the same group
+    // send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'update', 'student');
+    send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'update');
+
+    // send selective updates to the admin
+    /*var updateFactor = 8;
+    var timeoutFactor = 10;
+    setTimeout(function(){
+        if (updateCounter[obj_label] == null){
+            updateCounter[obj_label] = 0;
+        }
+        if (updateCounter[obj_label] == 0 || currentlyUpdating == false){
+            console.log("Timeout executed for " + obj_label);
+            updateCounter[obj_label] = 1;
+            send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'update', 'admin');
+        }
+        else {
+            console.log(updateCounter[obj_label] + " Counting up " + obj_label);
+            if (updateCounter[obj_label] == updateFactor){
+                updateCounter[obj_label] = 0;
+            }
+            else {
+                updateCounter[obj_label]++;
+            }
+        }
+        currentlyUpdating = false;
+    }, timeoutFactor, obj_label);*/
 }
 
 function removeListener(obj_label){
@@ -68,7 +109,7 @@ function removeListener(obj_label){
 }
 
 //Makes a socket call to the server 
-function send_xml(xml, obj_xml, obj_label, obj_cmd_str, socket, type_of_req){
+function send_xml(xml, obj_xml, obj_label, obj_cmd_str, socket, type_of_req, recipient){
         cur_xml = xml;
         var $messages = $("#messages");
         var username = sessionStorage.getItem('username');
@@ -86,7 +127,8 @@ function send_xml(xml, obj_xml, obj_label, obj_cmd_str, socket, type_of_req){
                 obj_cmd_str: obj_cmd_str,
                 type_of_req: type_of_req,
                 xml_update_ver: xml_update_ver,
-                new_update: true
+                new_update: true,
+                recipient: recipient
             };
         socket.xml_update(data);
         xml_update_ver = xml_update_ver + 1;
@@ -203,12 +245,18 @@ function p2pAppletSetXML(xml, toolbar, properties, id, username, obj_xml, obj_la
     var cur_xml_doc = $.parseXML(cur_xml);
 
     appletName.setXML(xml);
+
+    // We rename the labels if this is the first student in the group
+    if (obj_cmd_str && obj_cmd_str == 1){
+        rename_admin_labels(appletName);
+    }
+    
     checkLocks(appletName);
 
     // If this is the students' website, then we register and add the listeners
     if(window.location.href.includes("student")){
         finalApplet = appletName;
-        registerListeners(cur_xml_doc);
+        registerListeners();
         addArrowButtonsEventlisteners();
         addKeyboardEventListeners();
     }
@@ -358,6 +406,9 @@ function appletSetExtXML(xml, toolbar, properties, id, username, obj_xml, obj_la
     // delete the current autosave object
     var final_xml = $(cur_xml_doc).find('geogebra')[0].outerHTML;
     appletName.setXML(final_xml);
+    if(window.location.href.includes("student")){
+        rename_admin_labels(appletName);
+    }
     checkLocks(appletName);
 
     if (toolbar && toolbar !== "undefined" && toolbar !== "null" && toolbar.match(/\d+/g) && properties && properties['perspective']){
@@ -408,37 +459,37 @@ function appletSetExtXML(xml, toolbar, properties, id, username, obj_xml, obj_la
     // If this is the students' website, then we register and add the listeners
     if(window.location.href.includes("student")){
         finalApplet = appletName;
-        registerListeners(cur_xml_doc);
+        registerListeners();
         addArrowButtonsEventlisteners();
         addKeyboardEventListeners();
     }
 }
 
+function rename_admin_labels(applet){
+    var objs = applet.getAllObjectNames();
+    for(i = 0; i < objs.length; i++)
+        applet.renameObject(objs[i], objs[i] + "_{" + sessionStorage.group_id + "}");
+}
+
 // This function registers several event listeners only for the students' applet
-function registerListeners(cur_xml_doc){
+function registerListeners(){
 
     finalApplet.registerAddListener(function(label){
         currentLabel = label;
         $current_label.text(currentLabel);
-        finalApplet.registerObjectClickListener(label, function (label){
+        finalApplet.registerObjectClickListener(label, function(label){
             currentLabel = label;
             $current_label.text(currentLabel);
         });
     });
 
-    var elements = $(cur_xml_doc).find('construction').find('element');
-
-     if(elements != undefined){
-        for(var i = 0; i < elements.length; i++){
-            // var obj_type = $(elements[i]).attr('type');
-            // if(obj_type == "point"){
-            var label = $(elements[i]).attr('label');
-
-            finalApplet.registerObjectClickListener(label, function (label){
-                currentLabel = label;
-                $current_label.text(currentLabel);
-            });
-        }
+    var objs = finalApplet.getAllObjectNames();
+    for (i = 0; i < objs.length; i++){
+        var label = objs[i];
+        finalApplet.registerObjectClickListener(label, function(label){
+            currentLabel = label;
+            $current_label.text(currentLabel);
+        });
     }
 }
 
@@ -551,6 +602,21 @@ function randomizeColors(gen_new_colors, received_colors, applet, r, g, b) {
     }
     applet.registerUpdateListener("checkUser");
     return colors;
+}
+
+
+function randomizeColorsMergedView(received_colors, applet, group_members_array) {
+    applet.unregisterUpdateListener("checkUser");
+    var numelems = applet.getObjectNumber();
+    for (i = 0; i < numelems; i++){
+        var name = applet.getObjectName(i);
+        for (var j = 0; j < group_members_array.length; ++j){
+            if (name.startsWith(group_members_array[j].id)){
+                applet.setColor(name, received_colors[0], received_colors[1], received_colors[2]);
+            }
+        }
+    }
+    applet.registerUpdateListener("checkUser");
 }
 
 // Converts RGB color to HEX
