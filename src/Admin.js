@@ -1060,8 +1060,10 @@ class Admin {
                         '</h4><div class="geogebrawebapplet" id="appletContainer'+ i +
                         '"style="width:100%;height:650px;display:block;visibility:hidden;"></div></div>';
 
-                    let checkbox = '<label><input checked type="checkbox" onchange="views_change(this)" value="applet'+i+'" name="views_group_'+ i
+                    let checkbox = '<label><input checked type="checkbox"  value="applet'+i+'" name="views_group_'+ i
                         + '">Group '+ i + '</label>';
+
+                    $(checkbox).find("input[type=checkbox]").change(() => this.views_change());
 
                     this.views.$views_jsapp.append(newgroup);
                     $('#views_checkboxes .panel-body').append(checkbox);
@@ -1123,9 +1125,11 @@ class Admin {
                 let mergegroup = '<div class="merge_group" style="visibility:hidden"><h4> Merge Group</h4><div class="geogebrawebapplet"' +
                     'id="appletContainer' + numgroups + '"style="width:100%;height:650px;display:block;"></div></div><br/>';
 
-                let mergebutton = '&emsp;&emsp;<input class="btn btn-default mergeview_button" onclick="view_merge(this)"'+
-                    ' type="button" value="Merge Checked Views"><input class="btn btn-default unmergeview_button" onclick="unmerge_views(this)"'+
-                    ' type="button" value="Unmerge Views" style="display:none;">';
+                let mergebutton = $('&emsp;&emsp;<input class="btn btn-default mergeview_button"'+
+                    ' type="button" value="Merge Checked Views"><input class="btn btn-default unmergeview_button"'+
+                    ' type="button" value="Unmerge Views" style="display:none;">');
+                mergebutton.find(".mergeview_button").click(() => this.view_merge());
+                mergebutton.find(".unmergeview_button").click(() => this.unmerge_views());
                 $('#views_checkboxes .panel-body').append(mergebutton);
                 this.views.$views_jsapp.append(mergegroup);
                 const applet = new GeogebraInterface(`applet${numgroups}`);
@@ -1242,8 +1246,10 @@ class Admin {
                     'id="merged_view_appletContainer' + numgroups + '"style="width:100%;height:650px;display:block;"></div></div><br/>';
 
                 let mergebutton = $('<input class="btn btn-default filtered_mergeview_button"'+
-                    ' type="button" value="Merge Checked Views"><input class="btn btn-default filtered_unmergeview_button" onclick="filtered_unmerge_views(this)"'+
+                    ' type="button" value="Merge Checked Views"><input class="btn btn-default filtered_unmergeview_button" '+
                     ' type="button" value="Unmerge Views" style="display:none;">');
+
+                mergebutton.find(".filtered_unmergeview_button").click(()=>this.filtered_unmerge_views());
 
                 $(mergebutton).click(() => {
                     this.filtered_view_merge()
@@ -2203,7 +2209,7 @@ class Admin {
             const parsing = this.applets.find(a => a.appletId === value).getXML();
 
 
-            applet.setXML(parsing);
+            this.mergedApplet.applet.setXML(parsing);
             let xml = this.rename_labels_on_merge(applet, num);
 
             const new_construction = $($.parseXML(xml)).find('construction')[0];
@@ -2217,18 +2223,18 @@ class Admin {
         cur_construction.innerHTML = XMLs;
         let final_xml = '"' + $(cur_xml_doc).find('geogebra')[0].outerHTML + '"';
 
-        applet.appletSetExtXML(final_xml, '', null, numgroups);
-        const numelems = applet.applet.getObjectNumber();
+        this.mergedApplet.appletSetExtXML(final_xml, '', null, numgroups);
+        const numelems = this.mergedApplet.applet.getObjectNumber();
         for (let i = 0; i < numelems; i++) {
-            const name = applet.applet.getObjectName(i);
+            const name = this.mergedApplet.applet.getObjectName(i);
             applet.applet.setFixed(name, false, true);
         }
 
-        applet.applet.setPerspective('G');
-        applet.applet.setCoordSystem(-10, 10, -10, 10);
-        applet.applet.evalCommand("SetAxesRatio(1,1)");
-        applet.applet.setAxisSteps(1, 2, 2, 2);
-        applet.applet.evalCommand("CenterView[(0,0)]");
+        this.mergedApplet.applet.setPerspective('G');
+        this.mergedApplet.applet.setCoordSystem(-10, 10, -10, 10);
+        this.mergedApplet.applet.evalCommand("SetAxesRatio(1,1)");
+        this.mergedApplet.applet.setAxisSteps(1, 2, 2, 2);
+        this.mergedApplet.applet.evalCommand("CenterView[(0,0)]");
         $('#views_checkboxes :checkbox').hide();
         $('.merge_group').css('visibility', 'visible');
     }
