@@ -1125,12 +1125,12 @@ class Admin {
                 let mergegroup = '<div class="merge_group" style="visibility:hidden"><h4> Merge Group</h4><div class="geogebrawebapplet"' +
                     'id="appletContainer' + numgroups + '"style="width:100%;height:650px;display:block;"></div></div><br/>';
 
-                let mergebutton = $('&emsp;&emsp;<input class="btn btn-default mergeview_button"'+
-                    ' type="button" value="Merge Checked Views"><input class="btn btn-default unmergeview_button"'+
-                    ' type="button" value="Unmerge Views" style="display:none;">');
-                mergebutton.find(".mergeview_button").click(() => this.view_merge());
-                mergebutton.find(".unmergeview_button").click(() => this.unmerge_views());
+                let mergebutton = $('<input class="btn btn-default mergeview_button" type="button" value="Merge Checked Views" />');
+                let unmergebutton = $('<input class="btn btn-default unmergeview_button" type="button" value="Unmerge Views" style="display:none;">');
+                mergebutton.click(() => this.view_merge());
+                unmergebutton.click(() => this.unmerge_views());
                 $('#views_checkboxes .panel-body').append(mergebutton);
+                $('#views_checkboxes .panel-body').append(unmergebutton);
                 this.views.$views_jsapp.append(mergegroup);
                 const applet = new GeogebraInterface(`applet${numgroups}`);
                 applet.setListener(this);
