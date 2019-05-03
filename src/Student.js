@@ -62,8 +62,8 @@ class StudentController {
             );
         });
 
-        this.views.$leave_group_button.bind('click', function () {
-            this.listener.group_leave(sessionStorage.getItem('username'),
+        this.views.$leave_group_button.bind('click', () => {
+            this.group_leave(sessionStorage.getItem('username'),
                 sessionStorage.getItem('class_id'),
                 sessionStorage.getItem('group_id'),
                 false
