@@ -305,6 +305,12 @@ function adminP2PAppletSetXML(xml, toolbar, properties, id, username, obj_xml, o
     checkLocks(appletName);
 }
 
+function deleteExistingObjects(applet){
+    var objs = applet.getAllObjectNames();
+    for(var i = 0; i < objs.length; i++){
+        applet.deleteObject(objs[i]);
+    }
+}
 
 //This function takes the new XML, changes it and the old XML to a JSON format, and then 
 // parses it, and changes it back to XML to be set in the geogebra applet.
@@ -348,6 +354,7 @@ function appletSetExtXML(xml, toolbar, properties, id, username, obj_xml, obj_la
     var new_xml_doc = $.parseXML(xml);
 
     if(new_xml_doc !== null){
+        deleteExistingObjects(appletName);
         var new_construction = $(new_xml_doc).find('construction')[0];
         cur_construction.innerHTML = new_construction.innerHTML;
     }
