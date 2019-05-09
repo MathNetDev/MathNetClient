@@ -491,7 +491,7 @@ function xml_update_response(username, class_id, group_id, xml, toolbar, propert
     var changes_to_view_tab = true;
     randomizeColors(gen_new_colors,filtered_merged_view_obj_colors[group_id-1],document['applet' + group_id]);
     appletUpdate(xml, toolbar, null, group_id, username, obj_xml, obj_label, obj_cmd_str, type_of_req, changes_to_view_tab);
-    if($('.unmergeview_button').is(":visible") && $('#myonoffswitchmerge').is(':checked')){
+    if($('#myonoffswitchmerge').is(':checked')){
         var group_members_array = $('.g' + group_id)[0].childNodes
         randomizeColorsMergedView(filtered_merged_view_obj_colors[group_id-1],document['applet' + numgroups], group_members_array);
         appletUpdate(xml, toolbar, null, numgroups, username, obj_xml, obj_label, obj_cmd_str, type_of_req, changes_to_view_tab);

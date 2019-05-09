@@ -354,7 +354,7 @@ function appletSetExtXML(xml, toolbar, properties, id, username, obj_xml, obj_la
     var new_xml_doc = $.parseXML(xml);
 
     if(new_xml_doc !== null){
-        deleteExistingObjects(appletName);
+        // deleteExistingObjects(appletName);
         var new_construction = $(new_xml_doc).find('construction')[0];
         cur_construction.innerHTML = new_construction.innerHTML;
     }
