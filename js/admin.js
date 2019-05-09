@@ -458,6 +458,7 @@ $(function() {
             };
             admin_data_per_group[data.group_id] = data;
             socket.xml_change(data);
+            new_activity_sent = true;
         }
     });
 
@@ -873,7 +874,8 @@ $(function() {
 
         }else if (tab == 'view'){
             var numgroups = ($('ul.groups div').length)+1;
-            if (num_group_applets != numgroups){
+            if (num_group_applets != numgroups || new_activity_sent){
+                new_activity_sent = false;
                 $design_toolbox.empty();
                 $views_jsapp.empty();
 
