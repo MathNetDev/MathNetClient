@@ -449,7 +449,7 @@ function ggbOnInit(arg) {
 function initializeAdminGroupApplet(group_id){
     var group_data = admin_data_per_group[group_id];
     if (group_data != null){
-        adminP2PAppletSetXML(group_data.xml, null, null, num);
+        adminP2PAppletSetXML(group_data.xml, null, null, group_id);
     }
     process_msgs_in_queue();
 }
