@@ -464,8 +464,10 @@ $(function() {
                         }
             };
             admin_data_per_group[data.group_id] = data;
+            if (typeof document['applet' + data.group_id] !== 'undefined'){
+                adminP2PAppletSetXML(data.xml, data.group_id);
+            }
             socket.xml_change(data);
-            new_activity_sent = true;
         }
     });
 
@@ -881,8 +883,7 @@ $(function() {
 
         }else if (tab == 'view'){
             var numgroups = ($('ul.groups div').length)+1;
-            if (num_group_applets != numgroups || new_activity_sent){
-                new_activity_sent = false;
+            if (num_group_applets != numgroups){
                 $design_toolbox.empty();
                 $views_jsapp.empty();
 

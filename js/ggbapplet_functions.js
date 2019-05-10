@@ -260,32 +260,10 @@ function p2pAppletSetXML(xml, toolbar, properties, id, username, obj_xml, obj_la
 
 //Used to set the entire XML for the applets on the admin's view tabs.
 //Usually called when the admin logs in for the first time and wants the most updated XML.
-function adminP2PAppletSetXML(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str){
+function adminP2PAppletSetXML(xml, id){
 
     var final_xml;
-    var appletName = document.applet;
-
-    if (typeof document['applet' + id] !== 'undefined'){
-        appletName = document['applet' + id];
-    }
-
-    //Get Appropriate appletName depending on the Currently Active View/Tab
-    if ($('a[data-toggle="tab"][aria-expanded=true]').html() == "View" && typeof document['applet' + id] !== 'undefined')
-    {
-        appletName = document['applet' + id];
-    }
-    else if ($('a[data-toggle="tab"][aria-expanded=true]').html() == "Filtered Merged View" && typeof document['merged_view_applet' + id] !== 'undefined')
-    {
-        appletName = document['merged_view_applet' + id];
-    }
-    else if($('a[data-toggle="tab"][aria-expanded=true]').html() == "Overlayed Image View" && typeof document['overlayed_image_view_applet' + id] !== 'undefined')
-    {
-        appletName = document['overlayed_image_view_applet' + id];
-    }
-
-    //appletName.unregisterAddListener("addListener");
-    //appletName.unregisterUpdateListener("updateListener");
-    //appletName.unregisterRemoveListener("removeListener");
+    var appletName = document['applet' + id];
 
     cur_xml = appletName.getXML();
     var cur_xml_doc = $.parseXML(cur_xml);
