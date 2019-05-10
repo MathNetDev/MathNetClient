@@ -430,8 +430,7 @@ function ggbOnInit(arg) {
     applet.evalCommand("SetAxesRatio(1,1)");
     applet.setAxisSteps(1,2,2,2);
     applet.evalCommand("CenterView[(0,0)]");
-    //applet.evalCommand("ZoomOut[4,(0,0)]"); 
-    /*      
+    //applet.evalCommand("ZoomOut[4,(0,0)]");      
     if (index != -1){
         num = arg.slice(index);
         name = arg.slice(0, index);
@@ -440,7 +439,6 @@ function ggbOnInit(arg) {
             socket.p2p_get_xml('admin', class_id, num);
         }
     }
-    */
     // fix for view tab applets not loading current group xml
     applet.registerAddListener("addLock");
 }
