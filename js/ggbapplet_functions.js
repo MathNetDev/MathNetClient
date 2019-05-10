@@ -247,9 +247,7 @@ function p2pAppletSetXML(xml, toolbar, properties, id, username, obj_xml, obj_la
     var cur_xml_doc = $.parseXML(cur_xml);
 
     appletName.setXML(xml);
-    if(window.location.href.includes("student")){
-        rename_admin_labels(appletName);
-    }
+    rename_admin_labels(appletName);
     checkLocks(appletName);
 
     // If this is the students' website, then we register and add the listeners
@@ -283,9 +281,7 @@ function adminP2PAppletSetXML(xml, id){
 
     var final_xml = $(cur_xml_doc).find('geogebra')[0].outerHTML;
     appletName.setXML(final_xml);
-    if(window.location.href.includes("student")){
-        rename_admin_labels(appletName, id);
-    }
+    rename_admin_labels(appletName, id);
     checkLocks(appletName);
 }
 
