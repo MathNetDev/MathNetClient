@@ -431,14 +431,7 @@ function ggbOnInit(arg) {
     applet.setAxisSteps(1,2,2,2);
     applet.evalCommand("CenterView[(0,0)]");
     //applet.evalCommand("ZoomOut[4,(0,0)]");       
-    if (index != -1){
-        num = arg.slice(index);
-        name = arg.slice(0, index);
-        if ((name == "applet" || name == "merged_view_applet" || name == "overlayed_image_view_applet") && num <= $('ul.groups div').length){
-            var class_id = sessionStorage.getItem('admin_class_id');   
-            socket.p2p_get_xml('admin', class_id, num);
-        }
-    }
+    process_msgs_in_queue();
     // fix for view tab applets not loading current group xml
     applet.registerAddListener("addLock");
 }
