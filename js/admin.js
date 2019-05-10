@@ -439,6 +439,13 @@ $(function() {
         perspectives_mapped.includes("T"))? null: toolbar;
         
         set_captions_unassigned(document.applet);
+
+        // Clearing previous group data
+        var numgroups = ($('ul.groups div').length)+1;
+        for(var i = 1; i < numgroups; i++){
+            admin_data_per_group[i] = null;
+        }
+
         for(var i = 0; i < construction_groups.length; i++){
             var data = {
                 username: 'admin',

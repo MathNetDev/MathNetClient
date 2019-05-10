@@ -422,16 +422,35 @@ function join_class(class_id){
     socket.join_class(class_id, $secret);
 }
 
-//This function registers listeners on geogebra initialization 
-function ggbOnInit(arg) {
+// This function registers listeners on geogebra initialization
+// Notice that ggbOnInit is called automatically once the construction is loaded
+function ggbOnInit(arg, class_id) {
     var name, num, index = arg.search('[0-9]');
     var applet = document[arg];
     applet.setCoordSystem(-10,10,-10,10);
     applet.evalCommand("SetAxesRatio(1,1)");
     applet.setAxisSteps(1,2,2,2);
     applet.evalCommand("CenterView[(0,0)]");
-    //applet.evalCommand("ZoomOut[4,(0,0)]");       
-    process_msgs_in_queue();
+    //applet.evalCommand("ZoomOut[4,(0,0)]");
+    if (index != -1){
+        num = arg.slice(index);
+        name = arg.slice(0, index);
+        var group_data = admin_data_per_group[num];
+        var group_size = $('.g' + num)[0].childNodes.length;
+        if (group_data != null && group_size != 0){
+            adminP2PAppletSetXML(group_data.xml, null, null, num);
+        }
+        process_msgs_in_queue();
+    }
+    // if arg is null and class_id is not, then this means that a new student joined a previously empty group
+    // In that case, we proceed to initialize the group view applet
+    else if (class_id != undefined) {
+        var group_data = admin_data_per_group[num];
+        if (group_data != null){
+            adminP2PAppletSetXML(group_data.xml, null, null, num);
+        }
+        process_msgs_in_queue();
+    }
     // fix for view tab applets not loading current group xml
     applet.registerAddListener("addLock");
 }
@@ -446,8 +465,12 @@ function applet_xml_response(username, class_id, group_id, xml, properties, rece
 
 function get_admin_applet_xml_response(username, class_id, group_id){
     if (admin_data_per_group[group_id] != null){
+        // the function below initializes the group view applet if the class is not empty anymore
+        ggbOnInit("", group_id);
+        // we then send the previously stored xml (correspondent to group_id) to the student requesting it
         var admin_xml_sent = admin_data_per_group[group_id].xml;
         socket.send_admin_applet_xml(admin_xml_sent, username, class_id, group_id);
+
     }
 }
 
