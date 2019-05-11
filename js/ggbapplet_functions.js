@@ -265,9 +265,9 @@ function p2pAppletSetXML(xml, toolbar, properties, id, username, obj_xml, obj_la
     }
 }
 
-//Used to set the entire XML for the applets on the admin's view tabs.
-//Usually called when the admin logs in for the first time and wants the most updated XML.
-function adminP2PAppletSetXML(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str){
+//Used to set the entire XML for student's applets.
+//Usually called when the student logs in for the first time and wants the most updated XML.
+function adminToStudentAppletSetXML(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str){
 
     var final_xml;
     var appletName = document.applet;
@@ -290,9 +290,28 @@ function adminP2PAppletSetXML(xml, toolbar, properties, id, username, obj_xml, o
         appletName = document['overlayed_image_view_applet' + id];
     }
 
-    //appletName.unregisterAddListener("addListener");
-    //appletName.unregisterUpdateListener("updateListener");
-    //appletName.unregisterRemoveListener("removeListener");
+    cur_xml = appletName.getXML();
+    var cur_xml_doc = $.parseXML(cur_xml);
+
+    appletName.setXML(xml);
+    rename_admin_labels(appletName);
+    checkLocks(appletName);
+
+    // If this is the students' website, then we register and add the listeners
+    if(window.location.href.includes("student")){
+        finalApplet = appletName;
+        registerListeners();
+        addArrowButtonsEventlisteners();
+        addKeyboardEventListeners();
+    }
+}
+
+//Used to set the entire XML for the applets on the admin's view tabs.
+//Usually called when the admin logs in for the first time and wants the most updated XML.
+function adminP2PAppletSetXML(xml, id){
+
+    var final_xml;
+    var appletName = document['applet' + id];
 
     cur_xml = appletName.getXML();
     var cur_xml_doc = $.parseXML(cur_xml);
@@ -309,6 +328,7 @@ function adminP2PAppletSetXML(xml, toolbar, properties, id, username, obj_xml, o
 
     var final_xml = $(cur_xml_doc).find('geogebra')[0].outerHTML;
     appletName.setXML(final_xml);
+    rename_admin_labels(appletName, id);
     checkLocks(appletName);
 }
 
@@ -475,10 +495,16 @@ function appletSetExtXML(xml, toolbar, properties, id, username, obj_xml, obj_la
     }
 }
 
-function rename_admin_labels(applet){
+function rename_admin_labels(applet, id){
     var objs = applet.getAllObjectNames();
-    for(i = 0; i < objs.length; i++)
-        applet.renameObject(objs[i], objs[i] + "_{" + sessionStorage.group_id + "}");
+    for(i = 0; i < objs.length; i++) {
+        if(id == undefined) {
+            applet.renameObject(objs[i], objs[i] + "_{" + sessionStorage.group_id + "}");
+        }
+        else{
+            applet.renameObject(objs[i], objs[i] + "_{" + id + "}");
+        }
+    }
 }
 
 // This function registers several event listeners only for the students' applet

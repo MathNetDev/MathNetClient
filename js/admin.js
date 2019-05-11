@@ -439,6 +439,13 @@ $(function() {
         perspectives_mapped.includes("T"))? null: toolbar;
         
         set_captions_unassigned(document.applet);
+
+        // Clearing previous group data
+        var numgroups = ($('ul.groups div').length)+1;
+        for(var i = 1; i < numgroups; i++){
+            admin_data_per_group[i] = null;
+        }
+
         for(var i = 0; i < construction_groups.length; i++){
             var data = {
                 username: 'admin',
@@ -457,8 +464,10 @@ $(function() {
                         }
             };
             admin_data_per_group[data.group_id] = data;
+            if (typeof document['applet' + data.group_id] !== 'undefined'){
+                adminP2PAppletSetXML(data.xml, data.group_id);
+            }
             socket.xml_change(data);
-            new_activity_sent = true;
         }
     });
 
@@ -874,8 +883,7 @@ $(function() {
 
         }else if (tab == 'view'){
             var numgroups = ($('ul.groups div').length)+1;
-            if (num_group_applets != numgroups || new_activity_sent){
-                new_activity_sent = false;
+            if (num_group_applets != numgroups){
                 $design_toolbox.empty();
                 $views_jsapp.empty();
 

@@ -189,7 +189,7 @@
         }
 
         var send_admin_applet_xml = function(xml, username, class_id, group_id){
-            socket.emit('applet_xml', xml, username, class_id, group_id, 0);
+            socket.emit('send_admin_applet_xml', xml, username, class_id, group_id);
         }
 
         //

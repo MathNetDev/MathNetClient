@@ -218,6 +218,24 @@ function applet_xml_response(username, class_id, group_id, xml, properties, rece
     ggbOnInit('socket_call', true);
 }
 
+function admin_to_student_applet_xml_response(username, class_id, group_id, xml, properties, received_xml_update_ver){
+    xml_update_ver = received_xml_update_ver == undefined ? 0 : received_xml_update_ver;
+    if(xml == undefined){
+        xml = '{}';
+    }
+    /*
+    if(properties !== null){
+        sessionStorage.setItem('properties', JSON.stringify(properties));
+    } else if (properties === null && sessionStorage.getItem('properties') !== null){
+        properties = JSON.parse(sessionStorage.getItem('properties'));
+    }
+    if(!toolbar){
+        toolbar = sessionStorage.getItem('toolbar');
+    }*/
+    adminToStudentAppletSetXML(xml, toolbar, properties, null, username, null, null);
+    ggbOnInit('socket_call', true);
+}
+
 function process_msgs_in_queue(){
     var curr_user = sessionStorage.getItem('username');
     while(!xml_update_queue.isEmpty()){
