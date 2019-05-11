@@ -76,7 +76,9 @@ function updateListener(obj_label){
     console.log("End update listener " + obj_label);
 
     // send all updates to other students in the same group
-    send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'update', 'student');
+    if (obj_label.startsWith(username)){
+        send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'update', 'student');
+    }
 
     // send selective updates to the admin
     var updateFactor = 8;
