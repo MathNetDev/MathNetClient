@@ -167,6 +167,10 @@
             applet_xml_response(data.username, data.class_id, data.group_id, data.xml, data.properties, data.xml_update_ver);
         });
 
+        socket.on('send_admin_applet_xml_response', function(data){
+            admin_to_student_applet_xml_response(data.username, data.class_id, data.group_id, data.xml, data.properties, data.xml_update_ver);
+        });
+
         socket.on('group_numbers_response', function(data) {
             group_numbers_response(data.username, data.class_id, data.group_id, 
                                 data.status, data.group_size);
