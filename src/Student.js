@@ -128,6 +128,10 @@ class StudentController {
             this.on_get_xml_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar, data.properties);
         });
 
+        socket.on('send_admin_applet_xml_response', (data) => {
+            this.admin_to_student_applet_xml_response(data.username, data.class_id, data.group_id, data.xml, data.properties, data.xml_update_ver);
+        });
+
         socket.on('p2p_get_xml_response', data => {
             this.p2p_get_xml_response(data.username, data.class_id, data.group_id);
         });
@@ -157,6 +161,14 @@ class StudentController {
         button += group_number + ' - ' + 0;
         button += '" />';
         this.views.$groups.append(button);
+    }
+
+    admin_to_student_applet_xml_response(username, class_id, group_id, xml, properties, received_xml_update_ver){
+        const xml_update_ver = received_xml_update_ver ? received_xml_update_ver : 0;
+        if(!xml){
+            xml = '{}';
+        }
+        this.ggbInterface.appletSetExtXML(xml, undefined, properties, null, username, null, null);
     }
 
     /**

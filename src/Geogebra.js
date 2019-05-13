@@ -231,12 +231,16 @@ class GeogebraInterface {
             appletName.setPerspective(properties['perspective']);
         }
 
-        const cur_xml = appletName.getXML();
+        let cur_xml = appletName.getXML();
         const cur_xml_doc = $.parseXML(cur_xml);
         const cur_construction = $(cur_xml_doc).find('construction')[0];
 
         xml = xml.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/\\"/g, '"').replace(/\\n/g, '').replace(/\\t/g, '');
-        xml = xml.substr(xml.indexOf("<"), xml.lastIndexOf(">"));
+        if (xml.startsWith("\"")){
+            //sometimes xml is a string, othertimes it's xml....this removes the leading and trailing quotes
+            xml = xml.substr(xml.indexOf("<"), xml.lastIndexOf(">"));
+        }
+
         const new_xml_doc = $.parseXML(xml);
 
         if (new_xml_doc !== null) {
@@ -292,6 +296,7 @@ class GeogebraInterface {
         }
 
         const final_xml = $(cur_xml_doc).find('geogebra')[0].outerHTML;
+        console.log(`Final xml is`, final_xml);
         this.ignoreUpdates = true;
         appletName.setXML(final_xml);
         this.ignoreUpdates = false;

@@ -111,6 +111,7 @@ class Admin {
             $retyped_changed_password: $('#retyped_changed_password'),
             $change_password_button: $('#change_password_button')
         };
+        this.admin_data_per_group = {};
         this.$default_toolset = '0|1,501,67,5,19,72,75,76|2,15,45,18,65,7,37|4,3,8,9,13,44,58,47|16,51,64,70|10,34,53,11,24,20,22,21,23|55,56,57,12|36,46,38,49,50,71|30,29,54,32,31,33|17,26,62,73,14,68|25,52,60,61|40,41,42,27,28,35,6';
         this.$secret = 'ucd_247';
         this.is_admin_xml_update_queue_empty = false;
@@ -570,6 +571,11 @@ class Admin {
                 perspectives_mapped.includes("T"))? null: toolbar;
 
             this.activityCreateApplet.set_captions_unassigned();
+            // Clearing previous group data
+            let numgroups = ($('ul.groups div').length)+1;
+            for(let i = 1; i < numgroups; i++){
+                this.admin_data_per_group[i] = null;
+            }
             for(let i = 0; i < construction_groups.length; i++){
                 const data = {
                     username: 'admin',
@@ -587,6 +593,7 @@ class Admin {
                         'coordSystem' : coordSystem
                     }
                 };
+                this.admin_data_per_group[data.group_id] = data;
                 this.xml_change(data);
             }
         });
@@ -1443,6 +1450,8 @@ class Admin {
             this.get_xml_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar);
         });
 
+        socket.on('get_admin_applet_xml_response', (data) => this.get_admin_applet_xml_response(data.username, data.class_id, data.group_id));
+
         socket.on('applet_xml_response', (data) => {
             this.applet_xml_response(data.username, data.class_id, data.group_id, data.xml, data.properties, data.xml_update_ver);
         });
@@ -1601,6 +1610,12 @@ class Admin {
         this.socket.emit('xml_change', data);
     }
 
+    send_admin_applet_xml(xml, username, class_id, group_id) {
+        this.socket.emit('send_admin_applet_xml', xml, username, class_id, group_id);
+    }
+
+
+
     //This function takes a username, class_id, and group_id
     //It then emits a socket event to retrieve the group's XML
     //using the given class_id and group_id
@@ -1656,6 +1671,14 @@ class Admin {
         const d = new Date();
         //console.log(d.getTime() - time)
         $('.ping').html("Ping: " + (d.getTime() - time).toString());
+    }
+
+    get_admin_applet_xml_response(username, class_id, group_id){
+        if (this.admin_data_per_group[group_id] != null){
+            // we send the previously stored xml (correspondent to group_id) to the student requesting it
+            const admin_xml_sent = this.admin_data_per_group[group_id].xml;
+            this.send_admin_applet_xml(admin_xml_sent, username, class_id, group_id);
+        }
     }
 
     /**
