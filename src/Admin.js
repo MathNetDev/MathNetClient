@@ -1261,7 +1261,7 @@ class Admin {
 
                 $('#group_select_checkboxes .panel-body').append(mergebutton);
                 $('#filter_merge_items .panel-body').append(obj_merge_selection);
-                this.views.$individual_groups_view_jsapps.append(mergegroup);
+                    this.views.$individual_groups_view_jsapps.append(mergegroup);
                 const mergedApplet = new GeogebraInterface(`merged_view_applet${numgroups}`);
                 mergedApplet.setListener(this);
                 mergedApplet.appletInit(params);
@@ -2197,8 +2197,7 @@ class Admin {
         const array = $('#views_checkboxes :checked');
         let counter = 0, count = 0; // for checking and not deleteing the first admin objects
         const numgroups = ($('ul.groups div').length) + 1;
-        const applet = this.applets[this.applets.length - 1];
-        const cur_xml = applet.getXML();
+        const cur_xml = this.mergedApplet.getXML();
         const cur_xml_doc = $.parseXML(cur_xml);
         const cur_construction = $(cur_xml_doc).find('construction')[0];
 
@@ -2210,7 +2209,7 @@ class Admin {
 
 
             this.mergedApplet.applet.setXML(parsing);
-            let xml = this.rename_labels_on_merge(applet, num);
+            let xml = this.rename_labels_on_merge(this.mergedApplet.applet, num);
 
             const new_construction = $($.parseXML(xml)).find('construction')[0];
 
@@ -2227,7 +2226,7 @@ class Admin {
         const numelems = this.mergedApplet.applet.getObjectNumber();
         for (let i = 0; i < numelems; i++) {
             const name = this.mergedApplet.applet.getObjectName(i);
-            applet.applet.setFixed(name, false, true);
+            this.mergedApplet.applet.setFixed(name, false, true);
         }
 
         this.mergedApplet.applet.setPerspective('G');
