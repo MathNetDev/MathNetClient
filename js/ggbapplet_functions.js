@@ -303,7 +303,7 @@ function adminToStudentAppletSetXML(xml, toolbar, properties, id, username, obj_
 
 //Used to set the entire XML for the applets on the admin's view tabs.
 //Usually called when the admin logs in for the first time and wants the most updated XML.
-function adminP2PAppletSetXML(xml, id){
+function adminViewAppletSetXML(xml, id){
 
     var final_xml;
     var appletName = document['applet' + id];

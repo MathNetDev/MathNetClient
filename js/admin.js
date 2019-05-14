@@ -464,8 +464,9 @@ $(function() {
                         }
             };
             admin_data_per_group[data.group_id] = data;
-            if (typeof document['applet' + data.group_id] !== 'undefined'){
-                adminP2PAppletSetXML(data.xml, data.group_id);
+            var group_size = $('.g' + num)[0].childNodes.length;
+            if (typeof document['applet' + data.group_id] !== 'undefined' && group_size > 0){
+                adminViewAppletSetXML(data.xml, data.group_id);
             }
             socket.xml_change(data);
         }
