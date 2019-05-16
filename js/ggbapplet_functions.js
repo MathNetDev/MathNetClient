@@ -37,7 +37,7 @@ function addListener(obj_label){
             document.applet.setLabelStyle(new_obj_label, 3);
         }
         document.applet.evalCommand("UpdateConstruction()");
-        send_xml(document.applet.getXML(), document.applet.getXML(new_obj_label), new_obj_label, document.applet.getCommandString(new_obj_label), socket, 'add', "", document.applet.getMode());
+        send_xml(document.applet.getXML(), document.applet.getXML(new_obj_label), new_obj_label, document.applet.getCommandString(new_obj_label), socket, 'add', "", document.applet.getMode().toString());
         applet.registerUpdateListener("updateListener");
     }, 0, obj_label, new_obj_label);
 }
@@ -174,7 +174,7 @@ function appletUpdate(xml, toolbar, properties, id, username, obj_xml, obj_label
         appletName = document['overlayed_image_view_applet' + id];
     }
 
-    if (mode == 51){
+    if (parseInt(mode) == 51){
         processRegularPolygon();
         return;
     }
