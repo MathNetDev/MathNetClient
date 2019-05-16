@@ -379,4 +379,7 @@ $update_frequency_slider.bind('mousemove', function() {
     $update_frequency_label.text($update_frequency_slider.val());
 });
 
+$myonoffadminselectiveupdates.bind('change', function() {
+    selective_updates_to_admin = !selective_updates_to_admin;
+});
 
