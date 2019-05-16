@@ -470,7 +470,7 @@ $(function() {
             }
             // if a group is empty and the admin sends a new construction, then the group view applet should be cleared
             else if (typeof document['applet' + data.group_id] !== 'undefined' && group_size == 0){
-                clear_construction_objects('applet' + data.group_id);
+                clear_construction_objects(document['applet' + data.group_id]);
             }
             socket.xml_change(data);
         }
