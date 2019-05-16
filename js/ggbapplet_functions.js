@@ -173,7 +173,8 @@ function appletUpdate(xml, toolbar_option, properties, id, username, obj_xml, ob
         appletName = document['overlayed_image_view_applet' + id];
     }
 
-    if (parseInt(toolbar_option) == 51){
+    // edge case: the applet cannot be updated one step at a time whenever a regular polygon is created by another student
+    if (type_of_req == 'add' && parseInt(toolbar_option) == 51){
         processRegularPolygon(appletName, xml, obj_cmd_str);
         return;
     }

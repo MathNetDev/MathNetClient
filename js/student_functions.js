@@ -192,7 +192,7 @@ function xml_update_response(username, class_id, group_id, xml, toolbar, propert
     } else if (properties === null && sessionStorage.getItem('properties') !== null){
         properties = JSON.parse(sessionStorage.getItem('properties'));
     }
-    appletUpdate(xml, toolbar, properties, null, username, obj_xml, obj_label, obj_cmd_str, type_of_req, toolbar);
+    appletUpdate(xml, toolbar, properties, null, username, obj_xml, obj_label, obj_cmd_str, type_of_req);
     ggbOnInit('socket_call', false);
 }
 
