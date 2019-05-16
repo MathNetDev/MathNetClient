@@ -76,32 +76,17 @@ function updateListener(obj_label){
     console.log("End update listener " + obj_label);
 
     // send all updates to other students in the same group
-    // send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'update', 'student');
-    send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'update');
+    if (document.applet.getCaption(obj_label).startsWith(username)){
+        send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'update', 'student');
+    }
 
     // send selective updates to the admin
-    /*var updateFactor = 8;
-    var timeoutFactor = 10;
-    setTimeout(function(){
-        if (updateCounter[obj_label] == null){
-            updateCounter[obj_label] = 0;
-        }
-        if (updateCounter[obj_label] == 0 || currentlyUpdating == false){
-            console.log("Timeout executed for " + obj_label);
-            updateCounter[obj_label] = 1;
-            send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'update', 'admin');
-        }
-        else {
-            console.log(updateCounter[obj_label] + " Counting up " + obj_label);
-            if (updateCounter[obj_label] == updateFactor){
-                updateCounter[obj_label] = 0;
-            }
-            else {
-                updateCounter[obj_label]++;
-            }
-        }
-        currentlyUpdating = false;
-    }, timeoutFactor, obj_label);*/
+    if (selective_updates_to_admin != undefined && selective_updates_to_admin == true){
+        send_selective_udpates_to_admin(obj_label);
+    }
+    else{
+        send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'update', 'admin');
+    }
 }
 
 function removeListener(obj_label){
@@ -132,6 +117,31 @@ function send_xml(xml, obj_xml, obj_label, obj_cmd_str, socket, type_of_req, rec
             };
         socket.xml_update(data);
         xml_update_ver = xml_update_ver + 1;
+}
+
+function send_selective_udpates_to_admin(obj_label){
+    var updateFactor = 8;
+    var timeoutFactor = 10;
+    setTimeout(function(){
+        if (updateCounter[obj_label] == null){
+            updateCounter[obj_label] = 0;
+        }
+        if (updateCounter[obj_label] == 0 || currentlyUpdating == false){
+            console.log("Timeout executed for " + obj_label);
+            updateCounter[obj_label] = 1;
+            send_xml(document.applet.getXML(), document.applet.getXML(obj_label), obj_label, document.applet.getCommandString(obj_label), socket, 'update', 'admin');
+        }
+        else {
+            console.log(updateCounter[obj_label] + " Counting up " + obj_label);
+            if (updateCounter[obj_label] == updateFactor){
+                updateCounter[obj_label] = 0;
+            }
+            else {
+                updateCounter[obj_label]++;
+            }
+        }
+        currentlyUpdating = false;
+    }, timeoutFactor, obj_label);
 }
 
 function appletUpdate(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str, type_of_req, changes_to_view_tab){
@@ -308,7 +318,7 @@ function adminToStudentAppletSetXML(xml, toolbar, properties, id, username, obj_
 
 //Used to set the entire XML for the applets on the admin's view tabs.
 //Usually called when the admin logs in for the first time and wants the most updated XML.
-function adminP2PAppletSetXML(xml, id){
+function adminViewAppletSetXML(xml, id){
 
     var final_xml;
     var appletName = document['applet' + id];
@@ -504,6 +514,13 @@ function rename_admin_labels(applet, id){
         else{
             applet.renameObject(objs[i], objs[i] + "_{" + id + "}");
         }
+    }
+}
+
+function clear_construction_objects(applet){
+    var objs = applet.getAllObjectNames();
+    for(i = 0; i < objs.length; i++) {
+        applet.deleteObject(objs[i]);
     }
 }
 
