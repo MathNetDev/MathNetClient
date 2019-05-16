@@ -43,4 +43,5 @@ var $update_frequency_label = $('label[for="update_frequency_label"]');
 var $update_frequency_slider = $('#update_frequency_slider');
 var interval_testing_function;
 
+var $selective_updates_checkbox = $('#selective_updates_checkbox');
 var selective_updates_to_admin = false;
