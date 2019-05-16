@@ -148,7 +148,7 @@ function send_selective_udpates_to_admin(obj_label){
     }, timeoutFactor, obj_label);
 }
 
-function appletUpdate(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str, type_of_req, changes_to_view_tab, toolbar_option){
+function appletUpdate(xml, toolbar_option, properties, id, username, obj_xml, obj_label, obj_cmd_str, type_of_req, changes_to_view_tab){
     var final_xml;
     var appletName = document.applet;
 
@@ -174,7 +174,7 @@ function appletUpdate(xml, toolbar, properties, id, username, obj_xml, obj_label
     }
 
     if (parseInt(toolbar_option) == 51){
-        processRegularPolygon();
+        processRegularPolygon(appletName, xml, obj_cmd_str);
         return;
     }
 
@@ -218,7 +218,7 @@ function appletUpdate(xml, toolbar, properties, id, username, obj_xml, obj_label
     //appletName.registerRemoveListener("removeListener");
 }
 
-function processRegularPolygon(){
+function processRegularPolygon(applet, xml, obj_cmd_str){
     regularPolygonTotalIterations++;
     if (obj_cmd_str.startsWith("Polygon") && regularPolygonSidesDetermined == false){
         regularPolygonNumSides = parseInt(obj_cmd_str.split(",")[2]);
@@ -226,8 +226,8 @@ function processRegularPolygon(){
         regularPolygonSidesDetermined = true;
     }
     if (regularPolygonTotalIterations == 0){
-        appletName.setXML(xml);
-        checkLocks(appletName);
+        applet.setXML(xml);
+        checkLocks(applet);
         regularPolygonSidesDetermined = false;
     }
 }
