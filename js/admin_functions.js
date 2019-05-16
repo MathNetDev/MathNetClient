@@ -457,7 +457,7 @@ function applet_xml_response(username, class_id, group_id, xml, properties, rece
 function initializeAdminGroupApplet(group_id){
     var group_data = admin_data_per_group[group_id];
     if (group_data != null){
-        adminViewAppletSetXML(group_data.xml, null, null, group_id);
+        adminViewAppletSetXML(group_data.xml, group_id);
     }
     process_msgs_in_queue();
 }
