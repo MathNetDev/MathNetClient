@@ -37,7 +37,7 @@ function addListener(obj_label){
             document.applet.setLabelStyle(new_obj_label, 3);
         }
         document.applet.evalCommand("UpdateConstruction()");
-        send_xml(document.applet.getXML(), document.applet.getXML(new_obj_label), new_obj_label, document.applet.getCommandString(new_obj_label), socket, 'add', "", document.applet.getMode().toString());
+        send_xml(document.applet.getXML(), document.applet.getXML(new_obj_label), new_obj_label, document.applet.getCommandString(new_obj_label), socket, 'add');
         applet.registerUpdateListener("updateListener");
     }, 0, obj_label, new_obj_label);
 }
@@ -109,7 +109,7 @@ function send_xml(xml, obj_xml, obj_label, obj_cmd_str, socket, type_of_req, rec
                 class_id: class_id,
                 group_id: group_id,
                 xml: cur_xml,
-                toolbar: '',
+                toolbar: document.applet.getMode().toString(),
                 toolbar_user: '',
                 obj_xml: obj_xml,
                 obj_label: obj_label,
@@ -117,8 +117,7 @@ function send_xml(xml, obj_xml, obj_label, obj_cmd_str, socket, type_of_req, rec
                 type_of_req: type_of_req,
                 xml_update_ver: xml_update_ver,
                 new_update: true,
-                recipient: recipient,
-                mode: mode
+                recipient: recipient
             };
         socket.xml_update(data);
         xml_update_ver = xml_update_ver + 1;
@@ -149,7 +148,7 @@ function send_selective_udpates_to_admin(obj_label){
     }, timeoutFactor, obj_label);
 }
 
-function appletUpdate(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str, type_of_req, changes_to_view_tab, mode){
+function appletUpdate(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str, type_of_req, changes_to_view_tab, toolbar_option){
     var final_xml;
     var appletName = document.applet;
 
@@ -174,7 +173,7 @@ function appletUpdate(xml, toolbar, properties, id, username, obj_xml, obj_label
         appletName = document['overlayed_image_view_applet' + id];
     }
 
-    if (parseInt(mode) == 51){
+    if (parseInt(toolbar_option) == 51){
         processRegularPolygon();
         return;
     }
