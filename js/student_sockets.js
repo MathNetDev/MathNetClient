@@ -151,7 +151,7 @@
         });
 
         socket.on('xml_update_response', function(data) {
-            xml_update_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar, data.properties, data.obj_xml, data.obj_label, data.obj_cmd_str, data.type_of_req, data.xml_update_ver, data.new_update, data);
+            xml_update_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar, data.properties, data.obj_xml, data.obj_label, data.obj_cmd_str, data.type_of_req, data.xml_update_ver, data.new_update, data, data.mode);
         });
 
 

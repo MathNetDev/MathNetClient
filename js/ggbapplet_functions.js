@@ -12,6 +12,10 @@ var objectCount = 1;
 var updateCounter = {};
 var currentlyUpdating;
 
+var regularPolygonSidesDetermined = false;
+var regularPolygonNumSides = 0;
+var regularPolygonTotalIterations = 0;
+
 function addListener(obj_label){
     var username;
     if (sessionStorage.getItem('username') != null && sessionStorage.getItem('username') != "admin")
@@ -33,7 +37,7 @@ function addListener(obj_label){
             document.applet.setLabelStyle(new_obj_label, 3);
         }
         document.applet.evalCommand("UpdateConstruction()");
-        send_xml(document.applet.getXML(), document.applet.getXML(new_obj_label), new_obj_label, document.applet.getCommandString(new_obj_label), socket, 'add');
+        send_xml(document.applet.getXML(), document.applet.getXML(new_obj_label), new_obj_label, document.applet.getCommandString(new_obj_label), socket, 'add', "", document.applet.getMode());
         applet.registerUpdateListener("updateListener");
     }, 0, obj_label, new_obj_label);
 }
@@ -94,7 +98,7 @@ function removeListener(obj_label){
 }
 
 //Makes a socket call to the server 
-function send_xml(xml, obj_xml, obj_label, obj_cmd_str, socket, type_of_req, recipient){
+function send_xml(xml, obj_xml, obj_label, obj_cmd_str, socket, type_of_req, recipient, mode){
         cur_xml = xml;
         var $messages = $("#messages");
         var username = sessionStorage.getItem('username');
@@ -113,7 +117,8 @@ function send_xml(xml, obj_xml, obj_label, obj_cmd_str, socket, type_of_req, rec
                 type_of_req: type_of_req,
                 xml_update_ver: xml_update_ver,
                 new_update: true,
-                recipient: recipient
+                recipient: recipient,
+                mode: mode
             };
         socket.xml_update(data);
         xml_update_ver = xml_update_ver + 1;
@@ -144,7 +149,7 @@ function send_selective_udpates_to_admin(obj_label){
     }, timeoutFactor, obj_label);
 }
 
-function appletUpdate(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str, type_of_req, changes_to_view_tab){
+function appletUpdate(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str, type_of_req, changes_to_view_tab, mode){
     var final_xml;
     var appletName = document.applet;
 
@@ -167,6 +172,11 @@ function appletUpdate(xml, toolbar, properties, id, username, obj_xml, obj_label
     else if($('a[data-toggle="tab"][aria-expanded=true]').html() == "Overlayed Image View" && typeof document['overlayed_image_view_applet' + id] !== 'undefined')
     {
         appletName = document['overlayed_image_view_applet' + id];
+    }
+
+    if (mode == 51){
+        processRegularPolygon();
+        return;
     }
 
     if(properties != null && properties.hasOwnProperty('perspective')){
@@ -207,6 +217,20 @@ function appletUpdate(xml, toolbar, properties, id, username, obj_xml, obj_label
     //appletName.registerAddListener("addListener");
     //appletName.registerUpdateListener("updateListener");
     //appletName.registerRemoveListener("removeListener");
+}
+
+function processRegularPolygon(){
+    regularPolygonTotalIterations++;
+    if (obj_cmd_str.startsWith("Polygon") && regularPolygonSidesDetermined == false){
+        regularPolygonNumSides = parseInt(obj_cmd_str.split(",")[2]);
+        regularPolygonTotalIterations = regularPolygonTotalIterations - 2*regularPolygonNumSides - 1;
+        regularPolygonSidesDetermined = true;
+    }
+    if (regularPolygonTotalIterations == 0){
+        appletName.setXML(xml);
+        checkLocks(appletName);
+        regularPolygonSidesDetermined = false;
+    }
 }
 
 //Function from: https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
