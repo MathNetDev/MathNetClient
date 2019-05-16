@@ -121,3 +121,5 @@ var $change_password_button = $('#change_password_button');
 var admin_data_per_group = {};
 
 var num_group_applets = 0;
+
+var selective_updates_to_admin = false;
