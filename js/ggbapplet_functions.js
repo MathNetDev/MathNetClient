@@ -502,6 +502,13 @@ function rename_admin_labels(applet, id){
     }
 }
 
+function clear_construction_objects(applet){
+    var objs = applet.getAllObjectNames();
+    for(i = 0; i < objs.length; i++) {
+        applet.deleteObject(objs[i]);
+    }
+}
+
 // This function registers several event listeners only for the students' applet
 function registerListeners(){
 
