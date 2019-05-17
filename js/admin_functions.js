@@ -464,8 +464,10 @@ function initializeAdminGroupApplet(group_id){
 
 function get_admin_applet_xml_response(username, class_id, group_id){
     if (admin_data_per_group[group_id] != null){
-        // the function below initializes the group view applet if the group is not empty anymore
-        initializeAdminGroupApplet(group_id);
+        if (typeof document['applet' + group_id] !== 'undefined'){
+            // the function below initializes the group view applet if the group is not empty anymore
+            initializeAdminGroupApplet(group_id);
+        }
         // we send the previously stored xml (correspondent to group_id) to the student requesting it
         var admin_xml_sent = admin_data_per_group[group_id].xml;
         socket.send_admin_applet_xml(admin_xml_sent, username, class_id, group_id);
