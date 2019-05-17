@@ -227,6 +227,7 @@ function processRegularPolygon(applet, xml, obj_cmd_str){
         regularPolygonSidesDetermined = true;
     }
     if (regularPolygonTotalIterations == 0){
+        xml = xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>').replace(/\\"/g, '"').replace(/\\n/g, '').replace(/\\t/g, '');
         applet.setXML(xml);
         checkLocks(applet);
         regularPolygonSidesDetermined = false;
