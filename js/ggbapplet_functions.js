@@ -12,6 +12,10 @@ var objectCount = 1;
 var updateCounter = {};
 var currentlyUpdating;
 
+var regularPolygonSidesDetermined = false;
+var regularPolygonNumSides = 0;
+var regularPolygonTotalIterations = 0;
+
 function addListener(obj_label){
     var username;
     if (sessionStorage.getItem('username') != null && sessionStorage.getItem('username') != "admin")
@@ -94,7 +98,7 @@ function removeListener(obj_label){
 }
 
 //Makes a socket call to the server 
-function send_xml(xml, obj_xml, obj_label, obj_cmd_str, socket, type_of_req, recipient){
+function send_xml(xml, obj_xml, obj_label, obj_cmd_str, socket, type_of_req, recipient, mode){
         cur_xml = xml;
         var $messages = $("#messages");
         var username = sessionStorage.getItem('username');
@@ -105,7 +109,7 @@ function send_xml(xml, obj_xml, obj_label, obj_cmd_str, socket, type_of_req, rec
                 class_id: class_id,
                 group_id: group_id,
                 xml: cur_xml,
-                toolbar: '',
+                toolbar: document.applet.getMode().toString(),
                 toolbar_user: '',
                 obj_xml: obj_xml,
                 obj_label: obj_label,
@@ -144,7 +148,7 @@ function send_selective_udpates_to_admin(obj_label){
     }, timeoutFactor, obj_label);
 }
 
-function appletUpdate(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str, type_of_req, changes_to_view_tab){
+function appletUpdate(xml, toolbar_option, properties, id, username, obj_xml, obj_label, obj_cmd_str, type_of_req, changes_to_view_tab){
     var final_xml;
     var appletName = document.applet;
 
@@ -167,6 +171,12 @@ function appletUpdate(xml, toolbar, properties, id, username, obj_xml, obj_label
     else if($('a[data-toggle="tab"][aria-expanded=true]').html() == "Overlayed Image View" && typeof document['overlayed_image_view_applet' + id] !== 'undefined')
     {
         appletName = document['overlayed_image_view_applet' + id];
+    }
+
+    // edge case: the applet cannot be updated one step at a time whenever a regular polygon is created by another student
+    if (type_of_req == 'add' && parseInt(toolbar_option) == 51){
+        processRegularPolygon(appletName, xml, obj_cmd_str);
+        return;
     }
 
     if(properties != null && properties.hasOwnProperty('perspective')){
@@ -207,6 +217,21 @@ function appletUpdate(xml, toolbar, properties, id, username, obj_xml, obj_label
     //appletName.registerAddListener("addListener");
     //appletName.registerUpdateListener("updateListener");
     //appletName.registerRemoveListener("removeListener");
+}
+
+function processRegularPolygon(applet, xml, obj_cmd_str){
+    regularPolygonTotalIterations++;
+    if (obj_cmd_str.startsWith("Polygon") && regularPolygonSidesDetermined == false){
+        regularPolygonNumSides = parseInt(obj_cmd_str.split(",")[2]);
+        regularPolygonTotalIterations = regularPolygonTotalIterations - 2*regularPolygonNumSides - 1;
+        regularPolygonSidesDetermined = true;
+    }
+    if (regularPolygonTotalIterations == 0){
+        xml = xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>').replace(/\\"/g, '"').replace(/\\n/g, '').replace(/\\t/g, '');
+        applet.setXML(xml);
+        checkLocks(applet);
+        regularPolygonSidesDetermined = false;
+    }
 }
 
 //Function from: https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
