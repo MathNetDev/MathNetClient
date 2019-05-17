@@ -175,7 +175,7 @@ function appletUpdate(xml, toolbar_option, properties, id, username, obj_xml, ob
 
     // edge case: the applet cannot be updated one step at a time whenever a regular polygon is created by another student
     if (type_of_req == 'add' && parseInt(toolbar_option) == 51){
-        processRegularPolygon(appletName, xml, obj_cmd_str);
+        processRegularPolygon(appletName, xml, obj_cmd_str, id);
         return;
     }
 
@@ -219,7 +219,7 @@ function appletUpdate(xml, toolbar_option, properties, id, username, obj_xml, ob
     //appletName.registerRemoveListener("removeListener");
 }
 
-function processRegularPolygon(applet, xml, obj_cmd_str){
+function processRegularPolygon(applet, xml, obj_cmd_str, id){
     regularPolygonTotalIterations++;
     if (obj_cmd_str.startsWith("Polygon") && regularPolygonSidesDetermined == false){
         regularPolygonNumSides = parseInt(obj_cmd_str.split(",")[2]);
@@ -230,6 +230,10 @@ function processRegularPolygon(applet, xml, obj_cmd_str){
         xml = xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>').replace(/\\"/g, '"').replace(/\\n/g, '').replace(/\\t/g, '');
         applet.setXML(xml);
         checkLocks(applet);
+        // we adjust the size of the admin applets after setting the xml
+        if (window.location.href.includes("admin")){
+            document['applet' + id].setSize(300, 300);
+        }
         regularPolygonSidesDetermined = false;
     }
 }
