@@ -174,8 +174,19 @@ function appletUpdate(xml, toolbar_option, properties, id, username, obj_xml, ob
     }
 
     // edge case: the applet cannot be updated one step at a time whenever a regular polygon is created by another student
+    // notice that number 51 is the mode (toolbar option) for the regular polygon
     if (type_of_req == 'add' && parseInt(toolbar_option) == 51){
-        processRegularPolygon(appletName, xml, obj_cmd_str, id);
+        var all_objects_received = processRegularPolygon(obj_cmd_str);
+        // we adjust the size of the admin applets after setting the xml
+        if (all_objects_received && window.location.href.includes("admin")){
+            appletSetExtXML(xml, null, properties, id, username, obj_xml, obj_label, obj_cmd_str);
+        }
+        else if (all_objects_received){
+            // we set the xml only once all updates regarding the regular polygon construction have been received
+            xml = xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>').replace(/\\"/g, '"').replace(/\\n/g, '').replace(/\\t/g, '');
+            appletName.setXML(xml);
+            checkLocks(appletName);
+        }
         return;
     }
 
@@ -219,23 +230,19 @@ function appletUpdate(xml, toolbar_option, properties, id, username, obj_xml, ob
     //appletName.registerRemoveListener("removeListener");
 }
 
-function processRegularPolygon(applet, xml, obj_cmd_str, id){
+function processRegularPolygon(obj_cmd_str){
     regularPolygonTotalIterations++;
     if (obj_cmd_str.startsWith("Polygon") && regularPolygonSidesDetermined == false){
         regularPolygonNumSides = parseInt(obj_cmd_str.split(",")[2]);
+        // notice that each regular polygon is composed of 2*sides+1 different objects
         regularPolygonTotalIterations = regularPolygonTotalIterations - 2*regularPolygonNumSides - 1;
         regularPolygonSidesDetermined = true;
     }
     if (regularPolygonTotalIterations == 0){
-        xml = xml.replace(/&lt;/g,'<').replace(/&gt;/g, '>').replace(/\\"/g, '"').replace(/\\n/g, '').replace(/\\t/g, '');
-        applet.setXML(xml);
-        checkLocks(applet);
-        // we adjust the size of the admin applets after setting the xml
-        if (window.location.href.includes("admin")){
-            document['applet' + id].setSize(300, 300);
-        }
         regularPolygonSidesDetermined = false;
+        return true;
     }
+    return false;
 }
 
 //Function from: https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
