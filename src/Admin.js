@@ -594,6 +594,15 @@ class Admin {
                     }
                 };
                 this.admin_data_per_group[data.group_id] = data;
+                const group_size = $('.g' + data.group_id)[0].childNodes.length;
+                if (this.applets[data.group_id] && group_size > 0){
+                    this.applets[data.group_id].adminP2PAppletSetXML(data.xml, data.group_id);
+                }
+                // if a group is empty and the admin sends a new construction, then the group view applet should be cleared
+                else if (typeof document['applet' + data.group_id] !== 'undefined' && group_size == 0){
+                    this.applets[data.group_id].clear_construction_objects('applet' + data.group_id);
+                }
+
                 this.xml_change(data);
             }
         });
@@ -2237,11 +2246,12 @@ class Admin {
             const new_construction = $($.parseXML(xml)).find('construction')[0];
 
             XMLs += new_construction.innerHTML;
-
-
-            $("." + array[i]["name"]).hide()
-
         }
+
+        for (let i = 0; i < numgroups; ++i){
+            $(`.views_group_${i + 1}`).hide();
+        }
+
         cur_construction.innerHTML = XMLs;
         let final_xml = '"' + $(cur_xml_doc).find('geogebra')[0].outerHTML + '"';
 

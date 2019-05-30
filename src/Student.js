@@ -120,7 +120,7 @@ class StudentController {
 
         socket.on('xml_update_response', data => {
             console.log(JSON.parse(data.obj_xml));
-            this.xml_update_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar, data.properties, data.obj_xml, data.obj_label, data.obj_cmd_str, data.type_of_req, data.xml_update_ver, data.new_update, data);
+            this.xml_update_response(data.username, data.class_id, data.group_id, data.xml, data.toolbar, data.properties, data.obj_xml, data.obj_label, data.obj_cmd_str, data.type_of_req, data.xml_update_ver, data.new_update, data, data.mode);
         });
 
 
@@ -241,7 +241,7 @@ class StudentController {
 
     //handler for xml_update response, appends message to chatbox, and calls appletSetExtXML() (mathnet)
 //TODO: Get rid of other params and keep only data
-    xml_update_response(username, class_id, group_id, xml, toolbar, properties, obj_xml, obj_label, obj_cmd_str, type_of_req, recv_xml_update_ver, new_update, data) {
+    xml_update_response(username, class_id, group_id, xml, toolbar, properties, obj_xml, obj_label, obj_cmd_str, type_of_req, recv_xml_update_ver, new_update, data, mode) {
         if (!this.xmlQueue.isEmpty() && new_update) {
             this.xmlQueue.enqueue(data);
             return;
@@ -253,7 +253,7 @@ class StudentController {
         } else if (properties === null && sessionStorage.getItem('properties') !== null) {
             properties = JSON.parse(sessionStorage.getItem('properties'));
         }
-        this.ggbInterface.appletUpdate(xml, toolbar, properties, null, username, obj_xml, obj_label, obj_cmd_str, type_of_req);
+        this.ggbInterface.appletUpdate(xml, toolbar, properties, null, username, obj_xml, obj_label, obj_cmd_str, type_of_req, mode);
     }
 
     p2p_get_xml_response(username, class_id, group_id) {

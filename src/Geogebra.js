@@ -7,6 +7,10 @@ class GeogebraInterface {
         this.ignoreUpdates = false;
         this.appletId = appletId;
         this.isInitialized = false;
+        this.regularPolygonSidesDetermined = false;
+        this.regularPolygonNumSides = 0;
+        this.regularPolygonTotalIterations = 0;
+
     }
 
 
@@ -132,8 +136,34 @@ class GeogebraInterface {
         }
     }
 
-    appletUpdate(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str, type_of_req) {
+    appletUpdate(xml, toolbar, properties, id, username, obj_xml, obj_label, obj_cmd_str, type_of_req, mode) {
         let appletName = this.applet;
+
+        // edge case: the applet cannot be updated one step at a time whenever a regular polygon is created by another student
+        // notice that number 51 is the mode (toolbar option) for the regular polygon
+        if (type_of_req === 'add' && parseInt(toolbar) === 51){
+            const all_objects_received = this.processRegularPolygon(obj_cmd_str);
+            // we adjust the size of the admin applets after setting the xml
+            if (all_objects_received && window.location.href.includes("admin")){
+                this.appletSetExtXML(xml, null, properties, id, username, obj_xml, obj_label, obj_cmd_str);
+            }
+            else if (all_objects_received){
+                // we set the xml only once all updates regarding the regular polygon construction have been received
+                xml = xml.replace(/&lt;/g,'<')
+                    .replace(/&gt;/g, '>')
+                    .replace(/\\"/g, '"')
+                    .replace(/\\n/g, '')
+                    .replace(/\\t/g, '');
+                this.applet.setXML(xml);
+                this.checkLocks(this.applet);
+            }
+            return;
+        }
+        if (mode === 51){
+            this.processRegularPolygon(obj_cmd_str, xml);
+            return;
+        }
+
 
         if (properties != null && properties.hasOwnProperty('perspective')) {
             // need to set the perspective before setting the XML
@@ -218,6 +248,30 @@ class GeogebraInterface {
         this.applet.setXML(final_xml);
         this.checkLocks();
         this.registerGlobalListeners();
+    }
+
+    clear_construction_objects(){
+        const objs = this.applet.getAllObjectNames();
+        for(let i = 0; i < objs.length; i++) {
+            this.applet.deleteObject(objs[i]);
+        }
+    }
+
+    processRegularPolygon(obj_cmd_str, xml){
+        this.regularPolygonTotalIterations++;
+        if (obj_cmd_str.startsWith("Polygon") && !this.regularPolygonSidesDetermined){
+            this.regularPolygonNumSides = parseInt(obj_cmd_str.split(",")[2]);
+            this.regularPolygonTotalIterations = this.regularPolygonTotalIterations - 2*this.regularPolygonNumSides - 1;
+            this.regularPolygonSidesDetermined = true;
+        }
+        if (this.regularPolygonTotalIterations === 0){
+            this.applet.setXML(xml);
+            this.checkLocks(appletName);
+            if (window.location.href.includes("admin")){
+                this.applet.setSize(300, 300);
+            }
+            this.regularPolygonSidesDetermined = false;
+        }
     }
 
 
