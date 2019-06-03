@@ -1047,6 +1047,7 @@ class Admin {
                 for(let i = 1; i < numgroups; i++){
                     const appletId = `applet${i}`;
                     const applet = new GeogebraInterface(appletId);
+                    applet.viewOnly = true;
                     applet.setListener(this);
                     const params = {
                         "container":"appletContainer"+i,

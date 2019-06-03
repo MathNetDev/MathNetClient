@@ -10,6 +10,7 @@ class GeogebraInterface {
         this.regularPolygonSidesDetermined = false;
         this.regularPolygonNumSides = 0;
         this.regularPolygonTotalIterations = 0;
+        this.viewOnly = false;
 
     }
 
@@ -536,7 +537,9 @@ class GeogebraInterface {
             const username = sessionStorage.getItem('username');
             const objType = appletName.getObjectType(name);
 
-            if ((username !== ggb_user && username !== "admin") && ggb_user !== "unassigned") {
+            if (this.viewOnly){
+                appletName.setFixed(name, /*fixed*/true);
+            }else if ((username !== ggb_user && username !== "admin") && ggb_user !== "unassigned") {
                 if (objType === 'numeric' || objType === 'textfield') {
                     appletName.setFixed(name, /*fixed*/true, /*selection allowed*/false);
                 } else {
