@@ -1,0 +1,4 @@
+# One year for most static assets
+<filesMatch "deployggb.js">
+Header set Cache-Control "max-age=31536000, public"
+</filesMatch>
