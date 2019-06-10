@@ -111,6 +111,7 @@ class Admin {
             $retyped_changed_password: $('#retyped_changed_password'),
             $change_password_button: $('#change_password_button')
         };
+
         this.admin_data_per_group = {};
         this.$default_toolset = '0|1,501,67,5,19,72,75,76|2,15,45,18,65,7,37|4,3,8,9,13,44,58,47|16,51,64,70|10,34,53,11,24,20,22,21,23|55,56,57,12|36,46,38,49,50,71|30,29,54,32,31,33|17,26,62,73,14,68|25,52,60,61|40,41,42,27,28,35,6';
         this.$secret = 'ucd_247';
@@ -763,8 +764,8 @@ class Admin {
         //
         this.views.$saveconstruction_button.bind('click', () => {
             const $construction_select_opt = $('#construction_select option');
-            const index = $construction_select[0].selectedIndex;
-            const construction_name = index > -1 ? (confirm("This will save over the old construction."), $construction_select[0][index].text) : prompt("Enter construction name");
+            const index = this.views.$construction_select[0].selectedIndex;
+            const construction_name = index > -1 ? (confirm("This will save over the old construction."), this.views.$construction_select[0][index].text) : prompt("Enter construction name");
             const len = $construction_select_opt.length;
             const xml = this.activityCreateApplet.getXML();
             const parsedXML = $.parseXML(xml);
@@ -778,9 +779,11 @@ class Admin {
 
 
             if (i === len && index === -1)
-                this.socket.save_xml(localStorage.getItem('admin_id'), construction_name, xml, toolbar, "insert");
+                this.save_xml(localStorage.getItem('admin_id'), construction_name, xml, toolbar, "insert");
             else if (i !== len && index !== -1)
-                this.socket.save_xml(localStorage.getItem('admin_id'), construction_name, xml, toolbar, "update");
+            {
+                this.save_xml(localStorage.getItem('admin_id'), construction_name, xml, toolbar, "update");
+            }
             else if (i !== len && index === -1)
                 alert("You already have a construction with that name");
 
@@ -790,10 +793,10 @@ class Admin {
         // USING A CONSTRUCTION
         //
         this.views.$useconstruction_button.bind('click', () => {
-            const select = $construction_select[0];
+            const select = this.views.$construction_select[0];
             const id = select.selectedIndex;
-            const xml = $construction_select[0][id].xml;
-            const toolbar = $construction_select[0][id].toolbar;
+            const xml = this.views.$construction_select[0][id].xml;
+            const toolbar = this.views.$construction_select[0][id].toolbar;
             const properties = {perspective: "AG"};
             this.activityCreateApplet.appletSetExtXML(xml, toolbar, properties);
             this.activityCreateApplet.applet.registerAddListener((object) => {
@@ -819,10 +822,10 @@ class Admin {
         this.views.$deleteconstruction_button.bind('click', () => {
             const result = confirm("Are you sure you want to delete this toolbar?");
             if (result) {
-                const select = $construction_select[0];
+                const select = this.views.$construction_select[0];
                 const id = select.selectedIndex;
 
-                this.socket.delete_xml(localStorage.getItem('admin_id'), select[id].text);
+                this.delete_xml(localStorage.getItem('admin_id'), select[id].text);
             }
         });
 
@@ -1858,7 +1861,7 @@ class Admin {
     delete_xml_response(response) {
         const select = this.views.$construction_select[0];
         const id = select.selectedIndex;
-        $construction_select[0][id].remove();
+        this.views.$construction_select[0][id].remove();
     }
 
     /**
